@@ -1,19 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MonitorSpeaker, 
-  Cog, 
-  TrendingUp, 
-  DollarSign, 
-  CreditCard, 
-  Users, 
-  ArrowRight,
-  CheckCircle,
-  Zap,
-  Target,
-  BarChart3,
-} from 'lucide-react';
-
+import { ArrowRight, CheckCircle, Zap, Target, Cog, BarChart3, TrendingUp, DollarSign, CreditCard, Users, type LucideIcon } from 'lucide-react';
+import AnimatedTab from '../ui/AnimatedTab';
+import FeatureItem from '../ui/FeatureItem';
+import StatCard from '../ui/StatCard';
+import FloatingIcon from '../ui/FloatingIcon';
+import { departments } from '../../lib/featuresData';
 import itImg from "/src/assets/img/IT.webp"
 import maketingImg from "/src/assets/img/marketing.webp"
 import operationsImg from "/src/assets/img/operations.webp"
@@ -39,50 +31,12 @@ type DepartmentName =
 const Features = () => {
   const [activeTab, setActiveTab] = useState<DepartmentName>('Customer Experience');
 
-  const departments: Department[] = [
-    {
-      name: 'IT',
-      icon: MonitorSpeaker,
-      color: 'blue'
-    },
-    {
-      name: 'Operations',
-      icon: Cog,
-      color: 'gray'
-    },
-    {
-      name: 'Marketing',
-      icon: TrendingUp,
-      color: 'green'
-    },
-    {
-      name: 'Sales',
-      icon: DollarSign,
-      color: 'yellow'
-    },
-    {
-      name: 'Finance',
-      icon: CreditCard,
-      color: 'blue'
-    },
-    {
-      name: 'Customer Experience',
-      icon: Users,
-      color: 'pink'
-    },
-    {
-      name: 'People',
-      icon: Users,
-      color: 'purple'
-    }
-  ];
-
   const departmentContent: Record<DepartmentName, {
     title: string;
     description: string;
     buttonText: string;
     image: string;
-    features: { icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; text: string }[];
+    features: { icon: LucideIcon; text: string }[];
     stats: Stat[];
   }> = {
     'IT': {
@@ -249,25 +203,17 @@ const Features = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          {departments.map((dept, index) => {
-            const Icon = dept.icon;
-            return (
-              <motion.button
-                key={dept.name}
-                onClick={() => setActiveTab(dept.name)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full border-2 font-medium transition-all duration-300 ${getTabColor(dept)}`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                viewport={{ once: true }}
-              >
-                <Icon className="w-5 h-5" />
-                <span>{dept.name}</span>
-              </motion.button>
-            );
-          })}
+          {departments.map((dept, index) => (
+            <AnimatedTab
+              key={dept.name}
+              name={dept.name}
+              icon={dept.icon}
+              isActive={dept.name === activeTab}
+              onClick={() => setActiveTab(dept.name)}
+              index={index}
+              colorClass={getTabColor(dept)}
+            />
+          ))}
         </motion.div>
 
         {/* Content Area */}
@@ -314,27 +260,14 @@ const Features = () => {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                  {activeContent.features.map((feature: { icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; text: string }, index: number) => {
-                    const FeatureIcon: React.ComponentType<React.SVGProps<SVGSVGElement>> = feature.icon;
-                    return (
-                      <motion.div 
-                        key={index} 
-                        className="flex items-center gap-3"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
-                        whileHover={{ x: 5 }}
-                      >
-                        <motion.div 
-                          className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center"
-                          whileHover={{ scale: 1.1, rotate: 5 }}
-                        >
-                          <FeatureIcon className="w-4 h-4 text-white" />
-                        </motion.div>
-                        <span className="text-gray-700 font-medium">{feature.text}</span>
-                      </motion.div>
-                    );
-                  })}
+                  {activeContent.features.map((feature, index) => (
+                    <FeatureItem
+                      key={index}
+                      icon={feature.icon}
+                      text={feature.text}
+                      index={index}
+                    />
+                  ))}
                 </motion.div>
 
                 {/* Stats */}
@@ -344,15 +277,8 @@ const Features = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.6 }}
                 >
-                  {activeContent.stats.map((stat: Stat, index: number) => (
-                    <motion.div 
-                      key={index} 
-                      className="text-center"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                      <div className="text-sm text-gray-500">{stat.label}</div>
-                    </motion.div>
+                  {activeContent.stats.map((stat, index) => (
+                    <StatCard key={index} value={stat.value} label={stat.label} />
                   ))}
                 </motion.div>
 
@@ -393,35 +319,17 @@ const Features = () => {
                   />
                   
                   {/* Floating elements */}
-                  <motion.div 
-                    className="absolute top-4 right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
-                    animate={{ 
-                      y: [0, -10, 0],
-                      rotate: [0, 5, -5, 0]
-                    }}
-                    transition={{ 
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <CheckCircle className="w-8 h-8 text-white" />
-                  </motion.div>
-                  <motion.div 
-                    className="absolute bottom-4 left-4 w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg"
-                    animate={{ 
-                      y: [0, 10, 0],
-                      rotate: [0, -5, 5, 0]
-                    }}
-                    transition={{ 
-                      duration: 2.5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 0.5
-                    }}
-                  >
-                    <Zap className="w-8 h-8 text-white" />
-                  </motion.div>
+                  <FloatingIcon 
+                    icon={CheckCircle} 
+                    position="top-right" 
+                    bgColor="bg-green-500" 
+                  />
+                  <FloatingIcon 
+                    icon={Zap} 
+                    position="bottom-left" 
+                    bgColor="bg-yellow-500" 
+                    delay={0.5}
+                  />
                 </motion.div>
               </motion.div>
             </AnimatePresence>
