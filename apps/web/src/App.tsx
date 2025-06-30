@@ -1,12 +1,15 @@
 import './App.css'
 import Navbar from './components/layout/navbar'
+import Hero from './components/layout/hero'
+import Features from './components/layout/features'
 
 function App() {
   return (
     <>
       <div>
         <Navbar />
-        <h1 className='text-3xl font-bold underline'>Hello world!</h1>
+        <Hero />
+        <Features />
       </div>
     </>
   )
