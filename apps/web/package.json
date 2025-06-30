@@ -18,8 +18,10 @@
     "lucide-react": "^0.513.0",
     "react": "^19.1.0",
     "react-confetti": "^6.4.0",
+    "react-countup": "^6.5.3",
     "react-dom": "^19.1.0",
     "react-dom-confetti": "^0.2.0",
+    "react-intersection-observer": "^9.16.0",
     "react-router-dom": "^7.6.2"
   },
   "devDependencies": {
