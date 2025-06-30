@@ -11,8 +11,15 @@ import {
   Zap,
   Target,
   BarChart3,
-  ShoppingBag
 } from 'lucide-react';
+
+import itImg from "/src/assets/img/IT.webp"
+import maketingImg from "/src/assets/img/marketing.webp"
+import operationsImg from "/src/assets/img/operations.webp"
+import peopleImg  from "/src/assets/img/people.webp"
+import salesImg from "/src/assets/img/sales-automation.webp"
+import financeImg from "/src/assets/img/finance.webp"
+import costumerImg from "/src/assets/img/costumer.webp"
 
 type Stat = {
   label: string;
@@ -81,7 +88,7 @@ const Features = () => {
       title: 'IT Infrastructure',
       description: 'Streamline your technology stack with automated deployments, infrastructure monitoring, and seamless integrations that keep your systems running smoothly.',
       buttonText: 'Optimize IT',
-      image: '/api/placeholder/600/400',
+      image: itImg,
       features: [
         { icon: Zap, text: 'Automated deployment' },
         { icon: CheckCircle, text: 'System monitoring' },
@@ -96,7 +103,7 @@ const Features = () => {
       title: 'Operations Excellence',
       description: 'Optimize workflows, reduce bottlenecks, and improve efficiency across all operational processes with intelligent automation and real-time insights.',
       buttonText: 'Streamline Ops',
-      image: '/api/placeholder/600/400',
+      image: operationsImg,
       features: [
         { icon: Cog, text: 'Process automation' },
         { icon: BarChart3, text: 'Performance metrics' },
@@ -111,7 +118,7 @@ const Features = () => {
       title: 'Marketing Automation',
       description: 'Drive growth with data-driven marketing campaigns, automated lead nurturing, and comprehensive analytics that turn prospects into customers.',
       buttonText: 'Boost Marketing',
-      image: '/api/placeholder/600/400',
+      image: maketingImg,
       features: [
         { icon: TrendingUp, text: 'Campaign automation' },
         { icon: Target, text: 'Lead scoring' },
@@ -126,7 +133,7 @@ const Features = () => {
       title: 'Sales Acceleration',
       description: 'Close deals faster with intelligent pipeline management, automated follow-ups, and predictive analytics that identify your best opportunities.',
       buttonText: 'Accelerate Sales',
-      image: '/api/placeholder/600/400',
+      image: salesImg,
       features: [
         { icon: DollarSign, text: 'Pipeline management' },
         { icon: Target, text: 'Lead prioritization' },
@@ -141,7 +148,7 @@ const Features = () => {
       title: 'Financial Intelligence',
       description: 'Gain complete financial visibility with automated reporting, expense tracking, and predictive budgeting that keeps your business profitable.',
       buttonText: 'Optimize Finance',
-      image: '/api/placeholder/600/400',
+      image: financeImg,
       features: [
         { icon: CreditCard, text: 'Expense automation' },
         { icon: BarChart3, text: 'Financial reporting' },
@@ -156,7 +163,7 @@ const Features = () => {
       title: 'Customer Experience',
       description: 'Deliver a smoother CX than you ever imagined by automating onboarding, records management, SLAs, support management and more.',
       buttonText: 'Automate CX',
-      image: '/api/placeholder/600/400',
+      image: costumerImg,
       features: [
         { icon: Users, text: 'Customer onboarding' },
         { icon: CheckCircle, text: 'SLA management' },
@@ -171,7 +178,7 @@ const Features = () => {
       title: 'People Operations',
       description: 'Empower your workforce with streamlined HR processes, automated onboarding, and comprehensive employee lifecycle management.',
       buttonText: 'Empower People',
-      image: '/api/placeholder/600/400',
+      image: peopleImg,
       features: [
         { icon: Users, text: 'Employee onboarding' },
         { icon: BarChart3, text: 'Performance tracking' },
@@ -291,23 +298,18 @@ const Features = () => {
 
             {/* Right Image/Visual */}
             <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 p-8 lg:p-12 flex items-center justify-center">
-              {/* Placeholder for image - you can replace with actual image */}
-              <div className="relative w-full max-w-md">
-                <div className="aspect-square bg-white rounded-2xl shadow-lg flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <ShoppingBag className="w-10 h-10 text-white" />
-                    </div>
-                    <h4 className="text-xl font-bold text-gray-900 mb-2">Enhanced Experience</h4>
-                    <p className="text-gray-600">Seamless integration across all touchpoints</p>
-                  </div>
-                </div>
+              <div className="relative w-full h-full rounded-2xl overflow-hidden">
+                <img
+                  src={activeContent.image}
+                  alt={activeContent.title}
+                  className="object-cover w-full h-full rounded-xl shadow-lg"
+                />
                 
                 {/* Floating elements */}
-                <div className="absolute -top-4 -right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="absolute top-4 right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
                   <CheckCircle className="w-8 h-8 text-white" />
                 </div>
-                <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="absolute bottom-4 left-4 w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg">
                   <Zap className="w-8 h-8 text-white" />
                 </div>
               </div>
