@@ -22,7 +22,7 @@ const Hero = () => {
 
           {/* Main Heading */}
           <div className="space-y-6">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
+            <h1 className="text-5xl sm:text-6xl lg:text-5xl font-bold tracking-tight">
               <span className="bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
                 Transform Your
               </span>
@@ -31,7 +31,7 @@ const Hero = () => {
                 Business Operations
               </span>
             </h1>
-            <p className="text-xl sm:text-2xl text-gray-400 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl sm:text-1xl text-gray-400 max-w-4xl mx-auto leading-relaxed">
               Streamline projects, manage teams, and boost productivity with our comprehensive business management platform.
             </p>
           </div>

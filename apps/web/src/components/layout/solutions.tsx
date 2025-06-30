@@ -75,7 +75,7 @@ const Solutions = () => {
       <div className="max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+          <h2 className="text-4xl sm:text-3xl font-bold mb-6">
             <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               Complete Business
             </span>
@@ -84,7 +84,7 @@ const Solutions = () => {
               Solutions Suite
             </span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className="text-base text-gray-400 max-w-3xl mx-auto">
             Specialized tools designed for different aspects of your business operations, all integrated into one powerful platform.
           </p>
         </div>

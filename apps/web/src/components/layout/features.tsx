@@ -174,23 +174,23 @@ const Features = () => {
   const activeContent = departmentContent[activeTab];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+    <section className="py-14 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Header */}
         <motion.div 
-          className="text-center mb-16"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl sm:text-4xl lg:text-4xl font-bold text-gray-900 mb-3">
             Accelerate innovation across{' '}
             <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               your business
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-base text-gray-600 max-w-4xl mx-auto leading-relaxed">
             Make drives efficiencies, solves problems and speeds innovation by breaking down silos across your business
           </p>
         </motion.div>
