@@ -5,6 +5,9 @@ import Features from './components/layout/features'
 import Solutions from './components/layout/solutions'
 import Results from './components/layout/results'
 import UseCases from './components/layout/useCases'
+import Pricing from './components/layout/Pricing'
+import CTA from './components/layout/CTA'
+import Footer from './components/layout/Footer'
 
 function App() {
   return (
@@ -16,7 +19,10 @@ function App() {
         <Solutions />
         <Results />
         <UseCases />
-      </div>
+        <Pricing />
+        <CTA />
+        <Footer />
+        </div>
     </>
   )
 }
