@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MonitorSpeaker, 
   Cog, 
@@ -222,7 +223,13 @@ const Features = () => {
     <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         {/* Header */}
-        <div className="text-center mb-16">
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
             Accelerate innovation across{' '}
             <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -232,90 +239,194 @@ const Features = () => {
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
             Make drives efficiencies, solves problems and speeds innovation by breaking down silos across your business
           </p>
-        </div>
+        </motion.div>
 
         {/* Department Tabs */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {departments.map((dept) => {
+        <motion.div 
+          className="flex flex-wrap justify-center gap-4 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          {departments.map((dept, index) => {
             const Icon = dept.icon;
             return (
-              <button
+              <motion.button
                 key={dept.name}
                 onClick={() => setActiveTab(dept.name)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full border-2 font-medium transition-all duration-300 transform hover:scale-105 ${getTabColor(dept)}`}
+                className={`flex items-center gap-2 px-6 py-3 rounded-full border-2 font-medium transition-all duration-300 ${getTabColor(dept)}`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                viewport={{ once: true }}
               >
                 <Icon className="w-5 h-5" />
                 <span>{dept.name}</span>
-              </button>
+              </motion.button>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Content Area */}
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <motion.div 
+          className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true }}
+        >
           <div className="grid lg:grid-cols-2 gap-0">
             {/* Left Content */}
-            <div className="p-8 lg:p-12 flex flex-col justify-center">
-              <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
-                {activeContent.title}
-              </h3>
-              
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                {activeContent.description}
-              </p>
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={activeTab}
+                className="p-8 lg:p-12 flex flex-col justify-center"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <motion.h3 
+                  className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                >
+                  {activeContent.title}
+                </motion.h3>
+                
+                <motion.p 
+                  className="text-lg text-gray-600 mb-8 leading-relaxed"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  {activeContent.description}
+                </motion.p>
 
-              {/* Features */}
-              <div className="space-y-4 mb-8">
-                {activeContent.features.map((feature: { icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; text: string }, index: number) => {
-                  const FeatureIcon: React.ComponentType<React.SVGProps<SVGSVGElement>> = feature.icon;
-                  return (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <FeatureIcon className="w-4 h-4 text-white" />
-                      </div>
-                      <span className="text-gray-700 font-medium">{feature.text}</span>
-                    </div>
-                  );
-                })}
-              </div>
+                {/* Features */}
+                <motion.div 
+                  className="space-y-4 mb-8"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  {activeContent.features.map((feature: { icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; text: string }, index: number) => {
+                    const FeatureIcon: React.ComponentType<React.SVGProps<SVGSVGElement>> = feature.icon;
+                    return (
+                      <motion.div 
+                        key={index} 
+                        className="flex items-center gap-3"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
+                        whileHover={{ x: 5 }}
+                      >
+                        <motion.div 
+                          className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center"
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                        >
+                          <FeatureIcon className="w-4 h-4 text-white" />
+                        </motion.div>
+                        <span className="text-gray-700 font-medium">{feature.text}</span>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
 
-              {/* Stats */}
-              <div className="flex gap-8 mb-8">
-                {activeContent.stats.map((stat: Stat, index: number) => (
-                  <div key={index} className="text-center">
-                  <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                  <div className="text-sm text-gray-500">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
+                {/* Stats */}
+                <motion.div 
+                  className="flex gap-8 mb-8"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                >
+                  {activeContent.stats.map((stat: Stat, index: number) => (
+                    <motion.div 
+                      key={index} 
+                      className="text-center"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
+                      <div className="text-sm text-gray-500">{stat.label}</div>
+                    </motion.div>
+                  ))}
+                </motion.div>
 
-              {/* CTA Button */}
-              <button className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl self-start">
-                {activeContent.buttonText}
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
+                {/* CTA Button */}
+                <motion.button 
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-xl self-start"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.7 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {activeContent.buttonText}
+                  <ArrowRight className="w-5 h-5" />
+                </motion.button>
+              </motion.div>
+            </AnimatePresence>
 
             {/* Right Image/Visual */}
-            <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 p-8 lg:p-12 flex items-center justify-center">
-              <div className="relative w-full h-full rounded-2xl overflow-hidden">
-                <img
-                  src={activeContent.image}
-                  alt={activeContent.title}
-                  className="object-cover w-full h-full rounded-xl shadow-lg"
-                />
-                
-                {/* Floating elements */}
-                <div className="absolute top-4 right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle className="w-8 h-8 text-white" />
-                </div>
-                <div className="absolute bottom-4 left-4 w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg">
-                  <Zap className="w-8 h-8 text-white" />
-                </div>
-              </div>
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={activeTab}
+                className="relative bg-gradient-to-br from-gray-100 to-gray-200 p-8 lg:p-12 flex items-center justify-center"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.1 }}
+                transition={{ duration: 0.6 }}
+              >
+                <motion.div 
+                  className="relative w-full h-full rounded-2xl overflow-hidden"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <img
+                    src={activeContent.image}
+                    alt={activeContent.title}
+                    className="object-cover w-full h-full rounded-xl shadow-lg"
+                  />
+                  
+                  {/* Floating elements */}
+                  <motion.div 
+                    className="absolute top-4 right-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
+                    animate={{ 
+                      y: [0, -10, 0],
+                      rotate: [0, 5, -5, 0]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <CheckCircle className="w-8 h-8 text-white" />
+                  </motion.div>
+                  <motion.div 
+                    className="absolute bottom-4 left-4 w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg"
+                    animate={{ 
+                      y: [0, 10, 0],
+                      rotate: [0, -5, 5, 0]
+                    }}
+                    transition={{ 
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 0.5
+                    }}
+                  >
+                    <Zap className="w-8 h-8 text-white" />
+                  </motion.div>
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
