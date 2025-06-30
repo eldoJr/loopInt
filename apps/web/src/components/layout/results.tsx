@@ -68,7 +68,7 @@ const Results = () => {
       <div className="max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
             <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               Proven Results That
             </span>
@@ -77,7 +77,7 @@ const Results = () => {
               Drive Success
             </span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className="text-base text-gray-400 max-w-3xl mx-auto">
             Join thousands of businesses that have transformed their operations with our comprehensive platform.
           </p>
         </div>
@@ -97,7 +97,7 @@ const Results = () => {
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colorClasses.icon}`}>
                         <Icon className="w-6 h-6" />
                       </div>
-                      <div className={`text-4xl font-bold mb-2 ${colorClasses.text}`}>
+                      <div className={`text-3xl font-bold mb-2 ${colorClasses.text}`}>
                         {inView ? (
                           <CountUp start={0} end={value} duration={2.5} decimals={value % 1 !== 0 ? 1 : 0} />
                         ) : (
@@ -126,7 +126,7 @@ const Results = () => {
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110 ${colorClasses.icon}`}>
                   <Icon className="w-8 h-8" />
                 </div>
-                <div className={`text-5xl font-bold mb-4 ${colorClasses.text}`}>
+                <div className={`text-3xl font-bold mb-4 ${colorClasses.text}`}>
                   {inView ? (
                     <CountUp start={0} end={value} duration={2.5} decimals={value % 1 !== 0 ? 1 : 0} />
                   ) : (
