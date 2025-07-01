@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { User } from '../lib/auth';
+import type { User } from '../lib/api';
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);

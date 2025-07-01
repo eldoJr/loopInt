@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import LoginForm from '../components/forms/LoginForm';
-import { loginUser } from '../lib/auth';
+import { loginUser } from '../lib/api';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);

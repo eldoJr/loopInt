@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import RegisterForm from '../components/forms/RegisterForm';
-import { createUser } from '../lib/auth';
+import { createUser } from '../lib/api';
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
