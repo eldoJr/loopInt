@@ -120,7 +120,7 @@ const Solutions = () => {
                     <div className="grid grid-cols-2 gap-2 mb-6">
                       {solution.features.map((feature, idx) => (
                         <div key={idx} className="flex items-center text-sm text-gray-500">
-                          <div className={`w-1.5 h-1.5 rounded-full mr-2 ${colorClasses.bg.replace('/10', '/60')}`}></div>
+                          <div className={`w-1.5 h-1.5 rounded-fuscale-105ll mr-2 ${colorClasses.bg.replace('/10', '/60')}`}></div>
                           {feature}
                         </div>
                       ))}

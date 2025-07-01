@@ -66,22 +66,6 @@ const Results = () => {
   return (
     <section ref={ref} className="py-20 bg-gradient-to-b from-black to-gray-900">
       <div className="max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Proven Results That
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-              Drive Success
-            </span>
-          </h2>
-          <p className="text-base text-gray-400 max-w-3xl mx-auto">
-            Join thousands of businesses that have transformed their operations with our comprehensive platform.
-          </p>
-        </div>
-
         {/* Mobile Scroll */}
         <div className="lg:hidden overflow-hidden">
           <div className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
@@ -121,7 +105,7 @@ const Results = () => {
             return (
               <div
                 key={index}
-                className={`group p-8 rounded-2xl backdrop-blur-sm border transition-all duration-300 hover:scale-105 ${colorClasses.bg} ${colorClasses.border}`}
+                className={`group p-8 rounded-2xl backdrop-blur-sm border duration-300 hover: ${colorClasses.bg} ${colorClasses.border}`}
               >
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110 ${colorClasses.icon}`}>
                   <Icon className="w-8 h-8" />

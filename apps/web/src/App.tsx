@@ -17,10 +17,10 @@ function App() {
         <Hero />
         <Features />
         <Solutions />
-        <Results />
         <UseCases />
         <Pricing />
         <CTA />
+        <Results />
         <Footer />
         </div>
     </>
