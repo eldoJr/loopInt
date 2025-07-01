@@ -63,7 +63,7 @@ const LoginForm = ({ onSubmit, isLoading = false }: LoginFormProps) => {
         </div>
       </div>
 
-      <Button className="w-full" disabled={isLoading}>
+      <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? 'Signing In...' : 'Sign In'}
       </Button>
     </motion.form>
