@@ -10,6 +10,8 @@ interface ButtonProps {
   onClick?: () => void;
   href?: string;
   className?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 }
 
 const Button = ({ 
@@ -20,7 +22,9 @@ const Button = ({
   iconPosition = 'right',
   onClick,
   href,
-  className = ''
+  className = '',
+  type = 'button',
+  disabled = false
 }: ButtonProps) => {
   const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-100';
   
@@ -55,7 +59,7 @@ const Button = ({
   }
 
   return (
-    <button onClick={onClick} className={`${classes} group`}>
+    <button onClick={onClick} type={type} disabled={disabled} className={`${classes} group ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
       {content}
     </button>
   );
