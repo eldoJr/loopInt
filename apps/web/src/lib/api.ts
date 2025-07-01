@@ -8,47 +8,35 @@ export interface User {
   updated_at: Date;
 }
 
-// Mock authentication for demo purposes
+const API_BASE = 'http://localhost:3000/api';
+
 export const createUser = async (email: string, password: string, name: string): Promise<User> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  const response = await fetch(`${API_BASE}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, name })
+  });
   
-  // Check if user already exists
-  const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-  if (existingUsers.find((u: User) => u.email === email)) {
-    throw new Error('Email already exists');
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || 'Registration failed');
   }
   
-  // Create new user
-  const newUser: User = {
-    id: crypto.randomUUID(),
-    email,
-    name,
-    role: 'user',
-    created_at: new Date(),
-    updated_at: new Date()
-  };
-  
-  // Store user and password
-  existingUsers.push(newUser);
-  localStorage.setItem('users', JSON.stringify(existingUsers));
-  localStorage.setItem(`password_${email}`, password);
-  
-  return newUser;
+  return response.json();
 };
 
 export const loginUser = async (email: string, password: string): Promise<User | null> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  const response = await fetch(`${API_BASE}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
   
-  // Check credentials
-  const users = JSON.parse(localStorage.getItem('users') || '[]');
-  const user = users.find((u: User) => u.email === email);
-  const storedPassword = localStorage.getItem(`password_${email}`);
-  
-  if (!user || storedPassword !== password) {
-    return null;
+  if (!response.ok) {
+    if (response.status === 401) return null;
+    const error = await response.text();
+    throw new Error(error || 'Login failed');
   }
   
-  return user;
+  return response.json();
 };
