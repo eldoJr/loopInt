@@ -382,19 +382,19 @@ const Navbar = () => {
             <div className="hidden lg:flex items-center space-x-3">
               {/* Action Buttons */}
               <div className="flex items-center space-x-2">
-                <a 
-                  href="#login" 
+                <button 
+                  onClick={() => window.location.href = '/login'}
                   className="px-4 py-2 text-sm font-semibold text-gray-300 hover:text-white transition-all duration-200 hover:bg-gray-800/20 rounded-lg border border-gray-700/40 hover:border-gray-600/60"
                 >
                   Login
-                </a>
-                <a 
-                  href="#join" 
+                </button>
+                <button 
+                  onClick={() => window.location.href = '/register'}
                   className="px-5 py-2 text-sm font-bold bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow hover:shadow-lg hover:shadow-blue-500/20 transform hover:scale-105 active:scale-100 relative overflow-hidden group"
                 >
                   <span className="relative z-10">Join Free</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                </a>
+                </button>
               </div>
 
               {/* Social Links */}
@@ -510,20 +510,18 @@ const Navbar = () => {
             
             {/* Footer Actions */}
             <div className="sticky bottom-0 border-t border-gray-800/30 p-5 space-y-3 bg-gray-900/95">
-              <a 
-                href="#login" 
-                className="block px-4 py-3 text-base font-semibold text-center text-gray-300 hover:text-white hover:bg-gray-800/20 rounded-lg border border-gray-700/60 hover:border-gray-600/80 transition-all duration-200"
-                onClick={closeMenu}
+              <button 
+                onClick={() => { closeMenu(); window.location.href = '/login'; }}
+                className="block w-full px-4 py-3 text-base font-semibold text-center text-gray-300 hover:text-white hover:bg-gray-800/20 rounded-lg border border-gray-700/60 hover:border-gray-600/80 transition-all duration-200"
               >
                 Login
-              </a>
-              <a 
-                href="#join" 
-                className="block px-4 py-3 text-base font-bold text-center bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow transform hover:scale-105 active:scale-100"
-                onClick={closeMenu}
+              </button>
+              <button 
+                onClick={() => { closeMenu(); window.location.href = '/register'; }}
+                className="block w-full px-4 py-3 text-base font-bold text-center bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow transform hover:scale-105 active:scale-100"
               >
                 Join Free
-              </a>
+              </button>
 
                {/* Social Links */}
               <div className="pt-3 border-t border-gray-800/30">

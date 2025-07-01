@@ -1,30 +1,36 @@
-import './App.css'
-import Navbar from './components/layout/navbar'
-import Hero from './components/layout/hero'
-import Features from './components/layout/features'
-import Solutions from './components/layout/solutions'
-import Results from './components/layout/results'
-import UseCases from './components/layout/useCases'
-import Pricing from './components/layout/pricing'
-import CTA from './components/layout/cta'
-import Footer from './components/layout/Footer'
+import './App.css';
+import { useEffect, useState } from 'react';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 
 function App() {
-  return (
-    <>
-      <div>
-        <Navbar />
-        <Hero />
-        <Features />
-        <Solutions />
-        <UseCases />
-        <Pricing />
-        <CTA />
-        <Results />
-        <Footer />
-        </div>
-    </>
-  )
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const renderPage = () => {
+    switch (currentPath) {
+      case '/login':
+        return <Login />;
+      case '/register':
+        return <Register />;
+      case '/dashboard':
+        return <Dashboard />;
+      default:
+        return <Home />;
+    }
+  };
+
+  return renderPage();
 }
 
-export default App
+export default App;

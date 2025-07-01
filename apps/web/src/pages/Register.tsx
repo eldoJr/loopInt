@@ -43,12 +43,12 @@ const Register = () => {
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Account Created!</h1>
             <p className="text-gray-400 mb-6">Your account has been successfully created.</p>
-            <a
-              href="/login"
+            <button
+              onClick={() => window.location.href = '/login'}
               className="inline-block px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
             >
               Sign In Now
-            </a>
+            </button>
           </div>
         </motion.div>
       </div>

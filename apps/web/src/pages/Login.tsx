@@ -14,8 +14,8 @@ const Login = () => {
     try {
       const user = await loginUser(email, password);
       if (user) {
-        // Handle successful login (redirect, store user data, etc.)
-        console.log('Login successful:', user);
+        localStorage.setItem('user', JSON.stringify(user));
+        window.location.href = '/dashboard';
       } else {
         setError('Invalid email or password');
       }
