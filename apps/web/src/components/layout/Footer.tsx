@@ -69,7 +69,7 @@ export default function Footer() {
       </div>
 
       <div className="text-center text-gray-500 text-sm mt-12 border-t border-gray-800/50 pt-8 max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12">
-        <p>&copy; 2025 Firmbee. All rights reserved.</p>
+        <p>&copy; 2025 LoopInt. All rights reserved.</p>
         <div className="flex justify-center space-x-4 mt-2">
           <a href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
           <span>|</span>
