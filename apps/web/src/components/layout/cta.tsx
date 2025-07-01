@@ -14,7 +14,7 @@ const CTA = () => {
         <div className="text-center space-y-8">
           {/* Main Content */}
           <div className="space-y-6">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
               <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 Ready to Transform
               </span>

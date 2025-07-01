@@ -21,7 +21,7 @@ const Pricing = () => {
     },
     {
       name: 'Professional',
-      price: '$29',
+      price: '$0',
       period: 'per month',
       description: 'Ideal for growing businesses and professional teams',
       features: [
@@ -81,7 +81,7 @@ const Pricing = () => {
       <div className="max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
             <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               Simple, Transparent
             </span>
@@ -90,7 +90,7 @@ const Pricing = () => {
               Pricing Plans
             </span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className="text-base text-gray-400 max-w-3xl mx-auto">
             Choose the perfect plan for your business needs. Start free and scale as you grow.
           </p>
         </div>
