@@ -1,6 +1,7 @@
 import { Menu, Search, Bell } from 'lucide-react';
 import logoImg from '../../assets/img/logo/logo-b.svg';
 import UserProfileDropdown from './UserProfileDropdown';
+import AddDropdown from './AddDropdown';
 
 interface User {
   name?: string;
@@ -29,8 +30,9 @@ const DashboardHeader = ({ user, activeTab, setActiveTab, setSidebarOpen, onLogo
     <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-800/50 px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             <img src={logoImg} alt="Loopint" className="h-8 w-auto" />
+            <AddDropdown />
           </div>
           
           <button 
