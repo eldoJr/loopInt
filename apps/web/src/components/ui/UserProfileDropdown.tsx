@@ -90,7 +90,7 @@ const UserProfileDropdown = ({ user, onLogout }: UserProfileDropdownProps) => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="fixed right-6 top-20 w-64 bg-gray-900/95 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-2xl z-[9999]"
+          className="fixed right-6 top-20 w-auto bg-gray-900/95 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-2xl z-[9999]"
         >
             {/* User Info Header */}
             <div className="p-4 border-b border-gray-800/50">

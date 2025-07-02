@@ -64,7 +64,7 @@ const AllActionsDropdown = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="fixed right-32 top-32 w-72 bg-gray-900/95 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-2xl z-[9999]"
+          className="fixed right-32 top-36 w-auto bg-gray-900/95 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-2xl z-[9999]"
         >
           <div className="p-3 grid grid-cols-2 gap-1">
             {menuItems.map((item, index) => {
@@ -83,10 +83,10 @@ const AllActionsDropdown = () => {
                     }
                     setIsOpen(false);
                   }}
-                  className="px-2 py-2 flex items-center space-x-2 hover:bg-gray-800/50 transition-colors text-left rounded-lg text-gray-300 hover:text-white"
+                  className="px-3 py-3 flex items-center space-x-2 hover:bg-gray-800/50 transition-colors text-left rounded-lg text-gray-300 hover:text-white"
                 >
-                  <item.icon className="w-3 h-3 flex-shrink-0 text-blue-400" />
-                  <span className="text-xs truncate">{item.label}</span>
+                  <item.icon className="w-4 h-4 flex-shrink-0 text-blue-400" />
+                  <span className="text-base truncate">{item.label}</span>
                 </button>
               );
             })}

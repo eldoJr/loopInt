@@ -69,7 +69,7 @@ const AddDropdown = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="fixed left-32 top-20 w-96 bg-gray-900/95 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-2xl z-[9999]"
+          className="fixed left-32 top-20 w-auto bg-gray-900/95 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-2xl z-[9999]"
         >
           <div className="p-3 grid grid-cols-2 gap-1">
             {menuItems.map((item, index) => (

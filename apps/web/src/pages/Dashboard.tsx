@@ -10,6 +10,9 @@ import {
   BarChart3,
   Users,
   X,
+  StickyNote,
+  History,
+  Settings
 } from 'lucide-react';
 import type { User as UserType } from '../lib/api';
 import DashboardHeader from '../components/ui/DashboardHeader';
@@ -174,30 +177,27 @@ const Dashboard = () => {
               <div className="hidden lg:flex items-center space-x-2">
                 <button
                   onClick={() => console.log('Short Notes')}
-                  className="px-3 py-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors text-sm border border-gray-700/50"
+                  className="p-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors border border-gray-700/50"
+                  title="Short Notes"
                 >
-                  Short Notes
+                  <StickyNote className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => console.log('History')}
-                  className="px-3 py-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors text-sm border border-gray-700/50"
+                  className="p-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors border border-gray-700/50"
+                  title="History"
                 >
-                  History
+                  <History className="w-4 h-4" />
                 </button>
                 <AllActionsDropdown />
                 <button
                   onClick={() => console.log('Settings')}
-                  className="px-3 py-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors text-sm border border-gray-700/50"
+                  className="p-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors border border-gray-700/50"
+                  title="Settings"
                 >
-                  Settings
+                  <Settings className="w-4 h-4" />
                 </button>
               </div>
-              <button
-                onClick={handleLogout}
-                className="hidden lg:block px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors border border-red-500/30"
-              >
-                Logout
-              </button>
             </div>
           </div>
         </div>
