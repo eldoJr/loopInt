@@ -58,10 +58,9 @@ const AddDropdown = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium"
+        className="flex items-center space-x-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors text-sm"
       >
         <Plus className="w-4 h-4" />
-        <span>Add</span>
       </button>
 
       {isOpen && createPortal(
@@ -70,9 +69,9 @@ const AddDropdown = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.2 }}
-          className="fixed left-32 top-20 w-64 bg-gray-900/95 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-2xl z-[9999] max-h-96 overflow-y-auto"
+          className="fixed left-32 top-20 w-96 bg-gray-900/95 backdrop-blur-sm border border-gray-800/50 rounded-xl shadow-2xl z-[9999]"
         >
-          <div className="p-2">
+          <div className="p-3 grid grid-cols-2 gap-1">
             {menuItems.map((item, index) => (
               <button
                 key={index}
@@ -80,10 +79,10 @@ const AddDropdown = () => {
                   item.action();
                   setIsOpen(false);
                 }}
-                className="w-full px-3 py-2 flex items-center space-x-3 hover:bg-gray-800/50 transition-colors text-left rounded-lg text-gray-300 hover:text-white"
+                className="px-2 py-2 flex items-center space-x-2 hover:bg-gray-800/50 transition-colors text-left rounded-lg text-gray-300 hover:text-white"
               >
                 <item.icon className="w-4 h-4 flex-shrink-0 text-blue-400" />
-                <span className="text-sm">{item.label}</span>
+                <span className="text-base truncate">{item.label}</span>
               </button>
             ))}
           </div>
