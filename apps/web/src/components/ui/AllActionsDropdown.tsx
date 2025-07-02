@@ -29,19 +29,23 @@ const AllActionsDropdown = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const menuItems = [
-    { icon: Briefcase, label: 'New job ad', action: () => console.log('New job ad') },
-    { icon: Receipt, label: 'New bill', action: () => console.log('New bill') },
-    { icon: UserCheck, label: 'New candidate', action: () => console.log('New candidate') },
-    { icon: Users, label: 'New coworker', action: () => console.log('New coworker') },
-    { icon: FileCheck, label: 'New document', action: () => console.log('New document') },
-    { icon: DollarSign, label: 'New expense', action: () => console.log('New expense') },
-    { icon: ShoppingBag, label: 'New offer', action: () => console.log('New offer') },
-    { icon: Package, label: 'New product/service', action: () => console.log('New product/service') },
-    { icon: Briefcase, label: 'New HR project', action: () => console.log('New HR project') },
-    { icon: DollarSign, label: 'New undocumented revenue', action: () => console.log('New undocumented revenue') },
+  type MenuItem = 
+    | { icon: React.ComponentType<{ className?: string }>; label: string; action: () => void; divider?: false }
+    | { divider: true };
+
+  const menuItems: MenuItem[] = [
+    { icon: Briefcase, label: 'New job ad', action: () => console.log('New job ad'), divider: false },
+    { icon: Receipt, label: 'New bill', action: () => console.log('New bill'), divider: false },
+    { icon: UserCheck, label: 'New candidate', action: () => console.log('New candidate'), divider: false },
+    { icon: Users, label: 'New coworker', action: () => console.log('New coworker'), divider: false },
+    { icon: FileCheck, label: 'New document', action: () => console.log('New document'), divider: false },
+    { icon: DollarSign, label: 'New expense', action: () => console.log('New expense'), divider: false },
+    { icon: ShoppingBag, label: 'New offer', action: () => console.log('New offer'), divider: false },
+    { icon: Package, label: 'New product/service', action: () => console.log('New product/service'), divider: false },
+    { icon: Briefcase, label: 'New HR project', action: () => console.log('New HR project'), divider: false },
+    { icon: DollarSign, label: 'New undocumented revenue', action: () => console.log('New undocumented revenue'), divider: false },
     { divider: true },
-    { icon: Settings, label: 'Buttons configuration', action: () => console.log('Buttons configuration') }
+    { icon: Settings, label: 'Buttons configuration', action: () => console.log('Buttons configuration'), divider: false }
   ];
 
   return (
@@ -51,7 +55,7 @@ const AllActionsDropdown = () => {
         className="flex items-center space-x-2 px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors text-sm border border-blue-500/30"
       >
         <span>All Actions</span>
-        <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && createPortal(
@@ -74,7 +78,9 @@ const AllActionsDropdown = () => {
                 <button
                   key={index}
                   onClick={() => {
-                    item.action();
+                    if (item.action) {
+                      item.action();
+                    }
                     setIsOpen(false);
                   }}
                   className="px-2 py-2 flex items-center space-x-2 hover:bg-gray-800/50 transition-colors text-left rounded-lg text-gray-300 hover:text-white"

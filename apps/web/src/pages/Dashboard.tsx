@@ -9,7 +9,7 @@ import {
   CheckCircle,
   BarChart3,
   Users,
-  X
+  X,
 } from 'lucide-react';
 import type { User as UserType } from '../lib/api';
 import DashboardHeader from '../components/ui/DashboardHeader';
