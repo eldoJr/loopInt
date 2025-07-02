@@ -5,8 +5,25 @@ const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Get user from localStorage or context
-    const userData = localStorage.getItem('user');
+    // Check for OAuth user data in URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const userParam = urlParams.get('user');
+    
+    if (userParam) {
+      try {
+        const oauthUser = JSON.parse(decodeURIComponent(userParam));
+        setUser(oauthUser);
+        localStorage.setItem('user', JSON.stringify(oauthUser));
+        // Clean URL
+        window.history.replaceState({}, document.title, '/dashboard');
+        return;
+      } catch (error) {
+        console.error('Error parsing OAuth user data:', error);
+      }
+    }
+    
+    // Get user from localStorage or sessionStorage
+    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (userData) {
       setUser(JSON.parse(userData));
     }
