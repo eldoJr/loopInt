@@ -1,5 +1,6 @@
 import { Menu, Search, Bell } from 'lucide-react';
 import logoImg from '../../assets/img/logo/logo-b.svg';
+import UserProfileDropdown from './UserProfileDropdown';
 
 interface User {
   name?: string;
@@ -11,6 +12,7 @@ interface DashboardHeaderProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   setSidebarOpen: (open: boolean) => void;
+  onLogout: () => void;
 }
 
 const navItems = [
@@ -22,7 +24,7 @@ const navItems = [
   { name: 'Analytics' }
 ];
 
-const DashboardHeader = ({ user, activeTab, setActiveTab, setSidebarOpen }: DashboardHeaderProps) => {
+const DashboardHeader = ({ user, activeTab, setActiveTab, setSidebarOpen, onLogout }: DashboardHeaderProps) => {
   return (
     <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-800/50 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -55,18 +57,25 @@ const DashboardHeader = ({ user, activeTab, setActiveTab, setSidebarOpen }: Dash
           ))}
         </nav>
 
-        <div className="flex items-center space-x-3">
-          <button className="p-2 hover:bg-gray-800/50 rounded-lg text-gray-400 hover:text-white">
+        <div className="flex items-center space-x-2">
+          <button 
+            onClick={() => console.log('Search')}
+            className="p-2 hover:bg-gray-800/50 rounded-lg text-gray-400 hover:text-white transition-colors"
+            title="Search"
+          >
             <Search className="w-5 h-5" />
           </button>
-          <button className="p-2 hover:bg-gray-800/50 rounded-lg text-gray-400 hover:text-white">
+          <button 
+            onClick={() => console.log('Notifications')}
+            className="p-2 hover:bg-gray-800/50 rounded-lg text-gray-400 hover:text-white transition-colors relative"
+            title="Notifications"
+          >
             <Bell className="w-5 h-5" />
-          </button>
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            <span className="text-white text-sm font-medium">
-              {user?.name?.charAt(0) || 'U'}
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs flex items-center justify-center">
+              <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
             </span>
-          </div>
+          </button>
+          <UserProfileDropdown user={user} onLogout={onLogout} />
         </div>
       </div>
     </header>

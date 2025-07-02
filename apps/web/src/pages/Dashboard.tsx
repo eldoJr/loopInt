@@ -89,6 +89,7 @@ const Dashboard = () => {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           setSidebarOpen={setSidebarOpen}
+          onLogout={handleLogout}
         />
       )}
 
@@ -119,6 +120,32 @@ const Dashboard = () => {
                   {item}
                 </button>
               ))}
+              <div className="pt-4 border-t border-gray-800/50 space-y-2">
+                <button
+                  onClick={() => console.log('Short Notes')}
+                  className="w-full px-4 py-2 text-gray-300 hover:bg-gray-800/50 rounded-lg transition-colors text-left"
+                >
+                  Short Notes
+                </button>
+                <button
+                  onClick={() => console.log('History')}
+                  className="w-full px-4 py-2 text-gray-300 hover:bg-gray-800/50 rounded-lg transition-colors text-left"
+                >
+                  History
+                </button>
+                <button
+                  onClick={() => console.log('All Actions')}
+                  className="w-full px-4 py-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors text-left"
+                >
+                  All Actions
+                </button>
+                <button
+                  onClick={() => console.log('Settings')}
+                  className="w-full px-4 py-2 text-gray-300 hover:bg-gray-800/50 rounded-lg transition-colors text-left"
+                >
+                  Settings
+                </button>
+              </div>
             </nav>
             <div className="absolute bottom-4 left-4 right-4">
               <button
@@ -142,12 +169,40 @@ const Dashboard = () => {
               </h1>
               <p className="text-gray-400">Here's what's happening with your projects today.</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="hidden lg:block px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors border border-red-500/30"
-            >
-              Logout
-            </button>
+            <div className="flex items-center space-x-3">
+              <div className="hidden lg:flex items-center space-x-2">
+                <button
+                  onClick={() => console.log('Short Notes')}
+                  className="px-3 py-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors text-sm border border-gray-700/50"
+                >
+                  Short Notes
+                </button>
+                <button
+                  onClick={() => console.log('History')}
+                  className="px-3 py-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors text-sm border border-gray-700/50"
+                >
+                  History
+                </button>
+                <button
+                  onClick={() => console.log('All Actions')}
+                  className="px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors text-sm border border-blue-500/30"
+                >
+                  All Actions
+                </button>
+                <button
+                  onClick={() => console.log('Settings')}
+                  className="px-3 py-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors text-sm border border-gray-700/50"
+                >
+                  Settings
+                </button>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="hidden lg:block px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors border border-red-500/30"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
 
