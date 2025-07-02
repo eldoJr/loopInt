@@ -65,7 +65,7 @@ const Login = () => {
       >
         <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-white mb-2">Login to LoopInt</h1>
+            <h1 className="text-2xl font-bold text-white mb-2">Login to your acount</h1>
           </div>
 
           {error && (

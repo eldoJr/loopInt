@@ -79,7 +79,7 @@ const Register = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-7xl bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden shadow-2xl">
-        <div className="flex min-h-[600px]">
+        <div className="flex min-h-[480px]">
       {/* Left Column - Promotional */}
       <motion.div 
         className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-900 via-black to-gray-800 relative overflow-hidden"
@@ -155,7 +155,7 @@ const Register = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="max-w-sm mx-auto w-full">
+            <div className="max-w-xs mx-auto w-full">
           {/* Header */}
           <motion.div
             className="text-center mb-8"
@@ -164,8 +164,7 @@ const Register = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <img src={logoImg} alt="Loopint Logo" className="h-12 w-auto mx-auto mb-6" />
-            <h1 className="text-3xl font-bold text-white mb-2">Create Your Account</h1>
-            <p className="text-blue-400 font-semibold text-lg">Join & use for FREE.</p>
+            <h1 className="text-2xl font-bold text-white mb-2">Create Your Account</h1>
           </motion.div>
 
           {error && (
@@ -270,14 +269,14 @@ const Register = () => {
                 type="checkbox"
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
-                className="mt-1 mr-3 rounded border-gray-600 bg-gray-800 text-blue-500 focus:ring-blue-500"
+                className="mt-1 mr-3 rounded border-gray-600 bg-gray-800/50 text-blue-500 focus:ring-blue-500 focus:ring-offset-0"
                 required
               />
               <label className="text-sm text-gray-400">
                 I accept the{' '}
-                <a href="#" className="text-blue-400 hover:text-blue-300 underline">
+                <button className="text-blue-400 hover:text-blue-300 underline transition-colors duration-200">
                   terms of service
-                </a>
+                </button>
               </label>
             </div>
 
@@ -289,8 +288,6 @@ const Register = () => {
             >
               {isLoading ? 'Creating Account...' : 'Sign up'}
             </button>
-
-            <p className="text-center text-sm text-gray-400">No credit card required.</p>
 
             {/* Separator */}
             <div className="relative my-6">
@@ -331,9 +328,12 @@ const Register = () => {
             <div className="text-center">
               <p className="text-gray-400">
                 Already have an account?{' '}
-                <a href="/login" className="text-blue-400 hover:text-blue-300 font-medium">
+                <button 
+                  onClick={() => window.location.href = '/login'}
+                  className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200"
+                >
                   Login
-                </a>
+                </button>
               </p>
             </div>
             </motion.form>
