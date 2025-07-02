@@ -77,7 +77,9 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-7xl bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden shadow-2xl">
+        <div className="flex min-h-[600px]">
       {/* Left Column - Promotional */}
       <motion.div 
         className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-900 via-black to-gray-800 relative overflow-hidden"
@@ -146,14 +148,14 @@ const Register = () => {
         </div>
       </motion.div>
 
-      {/* Right Column - Form */}
-      <motion.div 
-        className="w-full lg:w-1/2 bg-gradient-to-br from-gray-900 via-black to-gray-900 flex flex-col justify-center px-8 py-12"
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className="max-w-md mx-auto w-full">
+          {/* Right Column - Form */}
+          <motion.div 
+            className="w-full lg:w-1/2 flex flex-col justify-center px-8 py-12"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="max-w-sm mx-auto w-full">
           {/* Header */}
           <motion.div
             className="text-center mb-8"
@@ -334,9 +336,11 @@ const Register = () => {
                 </a>
               </p>
             </div>
-          </motion.form>
+            </motion.form>
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
