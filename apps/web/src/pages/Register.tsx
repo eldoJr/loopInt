@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, User, Lock, Check, X } from 'lucide-react';
 import { createUser } from '../lib/api';
+import { loginWithGoogle, loginWithApple } from '../lib/socialAuth';
 import logoImg from '../assets/img/logo/logo-b.svg';
 
 const Register = () => {
@@ -303,6 +304,7 @@ const Register = () => {
             <div className="space-y-3">
               <button
                 type="button"
+                onClick={loginWithGoogle}
                 className="w-full flex items-center justify-center px-4 py-3 border border-gray-700/50 rounded-lg text-gray-300 hover:bg-gray-800/20 hover:border-gray-600/50 transition-all duration-300"
               >
                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -315,6 +317,7 @@ const Register = () => {
               </button>
               <button
                 type="button"
+                onClick={loginWithApple}
                 className="w-full flex items-center justify-center px-4 py-3 border border-gray-700/50 rounded-lg text-gray-300 hover:bg-gray-800/20 hover:border-gray-600/50 transition-all duration-300"
               >
                 <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">

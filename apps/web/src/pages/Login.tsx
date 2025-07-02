@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import LoginForm from '../components/forms/LoginForm';
 import { loginUser } from '../lib/api';
+import { loginWithGoogle, loginWithApple } from '../lib/socialAuth';
 import logoImg from '../assets/img/logo/logo-b.svg';
 
 const Login = () => {
@@ -38,11 +39,11 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    alert('Google login will be implemented soon.');
+    loginWithGoogle();
   };
 
   const handleAppleLogin = () => {
-    alert('Apple login will be implemented soon.');
+    loginWithApple();
   };
 
   return (
