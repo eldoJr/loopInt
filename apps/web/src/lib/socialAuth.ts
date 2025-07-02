@@ -1,7 +1,7 @@
 // Google OAuth
 export const loginWithGoogle = () => {
-  const clientId = 'YOUR_GOOGLE_CLIENT_ID';
-  const redirectUri = `${window.location.origin}/auth/google/callback`;
+  const clientId = '1075897717707-l6udtbgag9u2plju9gfu9kaljvq7ouki.apps.googleusercontent.com';
+  const redirectUri = 'http://localhost:3000/api/auth/google/callback';
   const scope = 'openid email profile';
   
   const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
