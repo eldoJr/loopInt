@@ -16,6 +16,7 @@ import DashboardHeader from '../components/ui/DashboardHeader';
 import QuickActionCard from '../components/ui/QuickActionCard';
 import DashboardCard from '../components/ui/DashboardCard';
 import TodoItem from '../components/ui/TodoItem';
+import AllActionsDropdown from '../components/ui/AllActionsDropdown';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
@@ -183,12 +184,7 @@ const Dashboard = () => {
                 >
                   History
                 </button>
-                <button
-                  onClick={() => console.log('All Actions')}
-                  className="px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors text-sm border border-blue-500/30"
-                >
-                  All Actions
-                </button>
+                <AllActionsDropdown />
                 <button
                   onClick={() => console.log('Settings')}
                   className="px-3 py-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors text-sm border border-gray-700/50"
