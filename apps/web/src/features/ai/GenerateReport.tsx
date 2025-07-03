@@ -19,9 +19,8 @@ const GenerateReport = ({ onNavigateBack }: GenerateReportProps) => {
   }, []);
 
   const breadcrumbItems = [
-    { label: 'Reports', onClick: onNavigateBack },
-    { label: 'LoopInt' },
-    { label: 'Analytics', onClick: onNavigateBack },
+    { label: 'LoopInt', onClick: onNavigateBack },
+    { label: 'Analytics'},
     { label: 'Generate Report' }
   ];
 
