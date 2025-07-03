@@ -25,6 +25,11 @@ import AddTask from '../features/tasks/AddTask';
 import NewClient from '../features/clients/NewClient';
 import TeamMember from '../features/auth/TeamMember';
 import GenerateReport from '../features/ai/GenerateReport';
+import Projects from '../features/projects/Projects';
+import Tasks from '../features/tasks/Tasks';
+import CalendarView from '../features/calendar/Calendar';
+import Team from '../features/team/Team';
+import Analytics from '../features/analytics/Analytics';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
@@ -312,17 +317,29 @@ const Dashboard = () => {
       );
     }
 
+    const backToMain = () => navigateToSection('Dashboard');
+
     switch (currentView) {
+      case 'Projects':
+        return <Projects onNavigateBack={backToMain} />;
+      case 'Tasks':
+        return <Tasks onNavigateBack={backToMain} />;
+      case 'Calendar':
+        return <CalendarView onNavigateBack={backToMain} />;
+      case 'Team':
+        return <Team onNavigateBack={backToMain} />;
+      case 'Analytics':
+        return <Analytics onNavigateBack={backToMain} />;
       case 'New Project':
-        return <NewProject onNavigateBack={() => navigateToSection('Dashboard')} />;
+        return <NewProject onNavigateBack={backToMain} />;
       case 'Add Task':
-        return <AddTask onNavigateBack={() => navigateToSection('Dashboard')} />;
+        return <AddTask onNavigateBack={backToMain} />;
       case 'New Client':
-        return <NewClient onNavigateBack={() => navigateToSection('Dashboard')} />;
+        return <NewClient onNavigateBack={backToMain} />;
       case 'Team Member':
-        return <TeamMember onNavigateBack={() => navigateToSection('Dashboard')} />;
+        return <TeamMember onNavigateBack={backToMain} />;
       case 'Generate Report':
-        return <GenerateReport onNavigateBack={() => navigateToSection('Dashboard')} />;
+        return <GenerateReport onNavigateBack={backToMain} />;
       default:
         return renderDashboardContent();
     }
@@ -338,6 +355,8 @@ const Dashboard = () => {
           setActiveTab={setActiveTab}
           setSidebarOpen={setSidebarOpen}
           onLogout={handleLogout}
+          currentView={currentView}
+          onNavigate={navigateToSection}
         />
       )}
 
@@ -356,7 +375,7 @@ const Dashboard = () => {
                 <button
                   key={item}
                   onClick={() => {
-                    setActiveTab(item);
+                    navigateToSection(item);
                     setSidebarOpen(false);
                   }}
                   className={`w-full px-4 py-2 rounded-lg flex items-center transition-colors ${
@@ -408,7 +427,7 @@ const Dashboard = () => {
       )}
 
       {/* Dynamic Content Area */}
-      <div className="p-6">
+      <div className="pt-20 p-6">
         <div className="transition-all duration-300 ease-in-out">
           {renderCurrentView()}
         </div>
