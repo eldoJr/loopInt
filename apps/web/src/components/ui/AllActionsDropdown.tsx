@@ -14,7 +14,11 @@ import {
   Settings
 } from 'lucide-react';
 
-const AllActionsDropdown = () => {
+interface AllActionsDropdownProps {
+  onNavigate?: (section: string) => void;
+}
+
+const AllActionsDropdown = ({ onNavigate }: AllActionsDropdownProps = {}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const portalRef = useRef<HTMLDivElement>(null);
