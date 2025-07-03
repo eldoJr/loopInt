@@ -6,7 +6,6 @@ import {
   User, 
   Building, 
   Settings, 
-  BookOpen, 
   Globe, 
   RotateCcw, 
   Maximize, 
@@ -26,9 +25,10 @@ interface UserType {
 interface UserProfileDropdownProps {
   user: UserType;
   onLogout: () => void;
+  onNavigate?: (section: string) => void;
 }
 
-const UserProfileDropdown = ({ user, onLogout }: UserProfileDropdownProps) => {
+const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const portalRef = useRef<HTMLDivElement>(null);
@@ -61,19 +61,18 @@ const UserProfileDropdown = ({ user, onLogout }: UserProfileDropdownProps) => {
   };
   
   const menuItems: MenuItem[] = [
-      { icon: User, label: 'Personal data', action: () => console.log('Personal data') },
-      { icon: Building, label: 'Organization data', action: () => console.log('Organization data') },
-      { icon: Settings, label: 'Account settings', action: () => console.log('Account settings') },
-      { icon: BookOpen, label: 'My ebooks', action: () => console.log('My ebooks') },
-      { icon: Globe, label: 'Language (English)', action: () => console.log('Language'), hasFlag: true },
-      { icon: RotateCcw, label: 'Toggle menu orientation', action: () => console.log('Toggle orientation') },
-      { icon: Maximize, label: 'Resize my view', action: () => console.log('Resize view') },
+      { icon: User, label: 'Personal data', action: () => onNavigate?.('Personal Data') },
+      { icon: Building, label: 'Organization data', action: () => onNavigate?.('Organization Data') },
+      { icon: Settings, label: 'Account settings', action: () => onNavigate?.('Account Settings') },
+      { icon: Globe, label: 'Language (English)', action: () => onNavigate?.('Language'), hasFlag: true },
+      { icon: RotateCcw, label: 'Toggle menu orientation', action: () => onNavigate?.('Menu Orientation') },
+      { icon: Maximize, label: 'Resize my view', action: () => onNavigate?.('View Resize') },
       { divider: true },
-      { icon: Plus, label: 'I need a new feature', action: () => console.log('New feature') },
-      { icon: Bug, label: 'Report a bug', action: () => console.log('Report bug') },
-      { icon: HelpCircle, label: 'Help Center', action: () => console.log('Help Center') },
+      { icon: Plus, label: 'I need a new feature', action: () => onNavigate?.('New Feature') },
+      { icon: Bug, label: 'Report a bug', action: () => onNavigate?.('Report Bug') },
+      { icon: HelpCircle, label: 'Help Center', action: () => onNavigate?.('Help Center') },
       { divider: true },
-      { icon: UserPlus, label: 'New account option', action: () => console.log('New account') },
+      { icon: UserPlus, label: 'New account option', action: () => onNavigate?.('New Account') },
       { icon: LogOut, label: 'Log out', action: onLogout, danger: true }
     ];
 

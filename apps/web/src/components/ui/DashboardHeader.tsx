@@ -103,7 +103,7 @@ const DashboardHeader = ({ user, setActiveTab, setSidebarOpen, onLogout, current
             </span>
           </button>
           
-          <UserProfileDropdown user={user} onLogout={onLogout} />
+          <UserProfileDropdown user={user} onLogout={onLogout} onNavigate={onNavigate} />
         </div>
       </div>
     </header>

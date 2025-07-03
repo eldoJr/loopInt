@@ -31,6 +31,16 @@ import CalendarView from '../features/calendar/Calendar';
 import Team from '../features/team/Team';
 import Analytics from '../features/analytics/Analytics';
 import Clients from '../features/clients/Clients';
+import PersonalData from '../features/profile/PersonalData';
+import OrganizationData from '../features/profile/OrganizationData';
+import AccountSettings from '../features/profile/AccountSettings';
+import HelpCenter from '../features/support/HelpCenter';
+import Language from '../features/settings/Language';
+import MenuOrientation from '../features/settings/MenuOrientation';
+import ViewResize from '../features/settings/ViewResize';
+import NewFeature from '../features/support/NewFeature';
+import ReportBug from '../features/support/ReportBug';
+import NewAccount from '../features/auth/NewAccount';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
@@ -343,6 +353,26 @@ const Dashboard = () => {
         return <GenerateReport onNavigateBack={backToMain} onNavigateToAnalytics={() => navigateToSection('Analytics')} />;
       case 'Clients':
         return <Clients onNavigateBack={backToMain} />;
+      case 'Personal Data':
+        return <PersonalData onNavigateBack={backToMain} />;
+      case 'Organization Data':
+        return <OrganizationData onNavigateBack={backToMain} />;
+      case 'Account Settings':
+        return <AccountSettings onNavigateBack={backToMain} />;
+      case 'Help Center':
+        return <HelpCenter onNavigateBack={backToMain} />;
+      case 'Language':
+        return <Language onNavigateBack={backToMain} />;
+      case 'Menu Orientation':
+        return <MenuOrientation onNavigateBack={backToMain} />;
+      case 'View Resize':
+        return <ViewResize onNavigateBack={backToMain} />;
+      case 'New Feature':
+        return <NewFeature onNavigateBack={backToMain} />;
+      case 'Report Bug':
+        return <ReportBug onNavigateBack={backToMain} />;
+      case 'New Account':
+        return <NewAccount onNavigateBack={backToMain} />;
       default:
         return renderDashboardContent();
     }
