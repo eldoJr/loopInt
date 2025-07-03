@@ -56,6 +56,9 @@ import NewOffer from '../features/clients/NewOffer';
 import NewProduct from '../features/clients/NewProduct';
 import HRProject from '../features/hr/HRProject';
 import UndocumentedRevenue from '../features/finance/UndocumentedRevenue';
+import Todo from '../features/tasks/Todo';
+import History from '../features/support/History';
+import ButtonsConfiguration from '../features/settings/ButtonsConfiguration';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
@@ -144,21 +147,8 @@ const Dashboard = () => {
           </div>
           <div className="flex items-center space-x-3">
             <div className="hidden lg:flex items-center space-x-2">
-              <button
-                onClick={() => console.log('Short Notes')}
-                className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
-                title="Short Notes"
-              >
-                <StickyNote className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => console.log('History')}
-                className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
-                title="History"
-              >
-                <History className="w-4 h-4" />
-              </button>
-              <AllActionsDropdown />
+
+              <AllActionsDropdown onNavigate={navigateToSection} />
               <button
                 onClick={() => console.log('Settings')}
                 className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
@@ -418,6 +408,12 @@ const Dashboard = () => {
         return <HRProject onNavigateBack={backToMain} />;
       case 'Undocumented Revenue':
         return <UndocumentedRevenue onNavigateBack={backToMain} />;
+      case 'To-do':
+        return <Todo onNavigateBack={backToMain} />;
+      case 'History':
+        return <History onNavigateBack={backToMain} />;
+      case 'Buttons Configuration':
+        return <ButtonsConfiguration onNavigateBack={backToMain} />;
       default:
         return renderDashboardContent();
     }

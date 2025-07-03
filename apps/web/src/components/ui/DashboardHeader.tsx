@@ -1,4 +1,4 @@
-import { Menu, Search, Bell } from 'lucide-react';
+import { Menu, Search, Bell, StickyNote, History } from 'lucide-react';
 import logoImg from '../../assets/img/logo/logo-b.svg';
 import UserProfileDropdown from './UserProfileDropdown';
 import AddDropdown from './AddDropdown';
@@ -90,6 +90,22 @@ const DashboardHeader = ({ user, setActiveTab, setSidebarOpen, onLogout, current
             title="Search"
           >
             <Search className="w-5 h-5" />
+          </button>
+          
+          <button 
+            onClick={() => onNavigate?.('To-do')}
+            className="p-2 hover:bg-gray-800/50 rounded-lg text-gray-400 hover:text-white transition-colors"
+            title="To-do"
+          >
+            <StickyNote className="w-5 h-5" />
+          </button>
+          
+          <button 
+            onClick={() => onNavigate?.('History')}
+            className="p-2 hover:bg-gray-800/50 rounded-lg text-gray-400 hover:text-white transition-colors"
+            title="History"
+          >
+            <History className="w-5 h-5" />
           </button>
           
           <button 

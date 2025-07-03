@@ -41,18 +41,18 @@ const AllActionsDropdown = () => {
     | { divider: true };
 
   const menuItems: MenuItem[] = [
-    { icon: Briefcase, label: 'New job ad', action: () => console.log('New job ad'), divider: false },
-    { icon: Receipt, label: 'New bill', action: () => console.log('New bill'), divider: false },
-    { icon: UserCheck, label: 'New candidate', action: () => console.log('New candidate'), divider: false },
-    { icon: Users, label: 'New coworker', action: () => console.log('New coworker'), divider: false },
-    { icon: FileCheck, label: 'New document', action: () => console.log('New document'), divider: false },
-    { icon: DollarSign, label: 'New expense', action: () => console.log('New expense'), divider: false },
-    { icon: ShoppingBag, label: 'New offer', action: () => console.log('New offer'), divider: false },
-    { icon: Package, label: 'New product/service', action: () => console.log('New product/service'), divider: false },
-    { icon: Briefcase, label: 'New HR project', action: () => console.log('New HR project'), divider: false },
-    { icon: DollarSign, label: 'New undocumented revenue', action: () => console.log('New undocumented revenue'), divider: false },
+    { icon: Briefcase, label: 'New job ad', action: () => onNavigate?.('Job Ad'), divider: false },
+    { icon: Receipt, label: 'New bill', action: () => onNavigate?.('New Bill'), divider: false },
+    { icon: UserCheck, label: 'New candidate', action: () => onNavigate?.('New Candidate'), divider: false },
+    { icon: Users, label: 'New coworker', action: () => onNavigate?.('New Coworker'), divider: false },
+    { icon: FileCheck, label: 'New document', action: () => onNavigate?.('New Document'), divider: false },
+    { icon: DollarSign, label: 'New expense', action: () => onNavigate?.('New Expense'), divider: false },
+    { icon: ShoppingBag, label: 'New offer', action: () => onNavigate?.('New Offer'), divider: false },
+    { icon: Package, label: 'New product/service', action: () => onNavigate?.('New Product'), divider: false },
+    { icon: Briefcase, label: 'New HR project', action: () => onNavigate?.('HR Project'), divider: false },
+    { icon: DollarSign, label: 'New undocumented revenue', action: () => onNavigate?.('Undocumented Revenue'), divider: false },
     { divider: true },
-    { icon: Settings, label: 'Buttons configuration', action: () => console.log('Buttons configuration'), divider: false }
+    { icon: Settings, label: 'Buttons configuration', action: () => onNavigate?.('Buttons Configuration'), divider: false }
   ];
 
   return (
