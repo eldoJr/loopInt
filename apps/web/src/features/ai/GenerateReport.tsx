@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
-interface AddTaskProps {
+interface GenerateReportProps {
   onNavigateBack?: () => void;
 }
 
-const AddTask = ({ onNavigateBack }: AddTaskProps) => {
+const GenerateReport = ({ onNavigateBack }: GenerateReportProps) => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
 
@@ -19,10 +19,10 @@ const AddTask = ({ onNavigateBack }: AddTaskProps) => {
   }, []);
 
   const breadcrumbItems = [
-    { label: 'Tasks', onClick: onNavigateBack },
+    { label: 'Reports', onClick: onNavigateBack },
     { label: 'LoopInt' },
-    { label: 'Tasks', onClick: onNavigateBack },
-    { label: 'Add Task' }
+    { label: 'Analytics', onClick: onNavigateBack },
+    { label: 'Generate Report' }
   ];
 
   return (
@@ -36,8 +36,8 @@ const AddTask = ({ onNavigateBack }: AddTaskProps) => {
           showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}>
           <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Add New Task</h2>
-            <p className="text-gray-400">Task creation form ready for implementation.</p>
+            <h2 className="text-xl font-bold text-white mb-4">Generate Report</h2>
+            <p className="text-gray-400">AI-powered report generation ready for implementation.</p>
           </div>
         </div>
       )}
@@ -45,4 +45,4 @@ const AddTask = ({ onNavigateBack }: AddTaskProps) => {
   );
 };
 
-export default AddTask;
+export default GenerateReport;

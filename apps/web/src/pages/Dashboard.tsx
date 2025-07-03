@@ -23,12 +23,16 @@ import AllActionsDropdown from '../components/ui/AllActionsDropdown';
 import NewProject from '../features/projects/NewProject';
 import AddTask from '../features/tasks/AddTask';
 import NewClient from '../features/clients/NewClient';
+import TeamMember from '../features/auth/TeamMember';
+import GenerateReport from '../features/ai/GenerateReport';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showFinishedTodos, setShowFinishedTodos] = useState(false);
+  const [currentView, setCurrentView] = useState('Dashboard');
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [todos, setTodos] = useState([
     { id: 1, text: 'Set up project workspace', starred: true, date: '01/07 2025', completed: false },
     { id: 2, text: 'Review team proposals', starred: true, date: '01/07 2025', completed: false },
@@ -64,32 +68,21 @@ const Dashboard = () => {
     window.location.href = '/';
   };
 
-  const [activeQuickAction, setActiveQuickAction] = useState('Dashboard');
-  
-  const quickActions = [
-    { title: 'New Project', icon: FolderOpen, action: () => setActiveQuickAction('New Project') },
-    { title: 'Add Task', icon: CheckCircle, action: () => setActiveQuickAction('Add Task') },
-    { title: 'New Client', icon: Building, action: () => setActiveQuickAction('New Client') },
-    { title: 'Team Member', icon: User, action: () => setActiveQuickAction('Team Member') },
-    { title: 'Generate Report', icon: FileText, action: () => setActiveQuickAction('Generate Report') }
-  ];
-
-  const renderActiveComponent = () => {
-    switch (activeQuickAction) {
-      case 'New Project':
-        return <NewProject />;
-      case 'Add Task':
-        return <AddTask />;
-      case 'New Client':
-        return <NewClient />;
-      case 'Team Member':
-        return <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6"><h2 className="text-xl font-bold text-white mb-4">Add Team Member</h2><p className="text-gray-400">Team Member component ready for implementation.</p></div>;
-      case 'Generate Report':
-        return <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6"><h2 className="text-xl font-bold text-white mb-4">Generate Report</h2><p className="text-gray-400">Generate Report component ready for implementation.</p></div>;
-      default:
-        return null;
-    }
+  const navigateToSection = (section: string) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentView(section);
+      setIsTransitioning(false);
+    }, 300);
   };
+
+  const quickActions = [
+    { title: 'New Project', icon: FolderOpen, action: () => navigateToSection('New Project') },
+    { title: 'Add Task', icon: CheckCircle, action: () => navigateToSection('Add Task') },
+    { title: 'New Client', icon: Building, action: () => navigateToSection('New Client') },
+    { title: 'Team Member', icon: User, action: () => navigateToSection('Team Member') },
+    { title: 'Generate Report', icon: FileText, action: () => navigateToSection('Generate Report') }
+  ];
 
   const toggleTodo = (id: number) => {
     setTodos(todos.map(todo => 
@@ -107,8 +100,237 @@ const Dashboard = () => {
     { name: 'API Integration', status: 'Completed', color: 'bg-green-500/20 text-green-400 border-green-500/30' }
   ];
 
+  const renderDashboardContent = () => (
+    <>
+      {/* Welcome Section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-2">
+              Hi, {user?.name || 'User'}!
+            </h1>
+            <p className="text-gray-400">Here's what's happening with your projects today.</p>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="hidden lg:flex items-center space-x-2">
+              <button
+                onClick={() => console.log('Short Notes')}
+                className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
+                title="Short Notes"
+              >
+                <StickyNote className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => console.log('History')}
+                className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
+                title="History"
+              >
+                <History className="w-4 h-4" />
+              </button>
+              <AllActionsDropdown />
+              <button
+                onClick={() => console.log('Settings')}
+                className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
+                title="Settings"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        {quickActions.map((action, index) => (
+          <QuickActionCard
+            key={index}
+            title={action.title}
+            icon={action.icon}
+            onClick={action.action}
+            isActive={currentView === action.title}
+          />
+        ))}
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Active Projects</p>
+              <p className="text-3xl font-bold text-blue-400">12</p>
+            </div>
+            <FolderOpen className="w-8 h-8 text-blue-400" />
+          </div>
+        </div>
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Completed Tasks</p>
+              <p className="text-3xl font-bold text-green-400">48</p>
+            </div>
+            <CheckCircle className="w-8 h-8 text-green-400" />
+          </div>
+        </div>
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Team Members</p>
+              <p className="text-3xl font-bold text-purple-400">8</p>
+            </div>
+            <Users className="w-8 h-8 text-purple-400" />
+          </div>
+        </div>
+        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm">Revenue</p>
+              <p className="text-3xl font-bold text-emerald-400">$24K</p>
+            </div>
+            <BarChart3 className="w-8 h-8 text-emerald-400" />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Column */}
+        <div className="space-y-6">
+          {/* Tasks */}
+          <DashboardCard
+            title="My Tasks"
+            icon={CheckCircle}
+            onAdd={() => console.log('Add task')}
+            headerActions={
+              <button
+                onClick={() => setShowFinishedTodos(!showFinishedTodos)}
+                className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
+              >
+                {showFinishedTodos ? 'hide completed' : 'show completed'}
+              </button>
+            }
+          >
+            <div className="space-y-2">
+              {todos
+                .filter(todo => showFinishedTodos || !todo.completed)
+                .map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    {...todo}
+                    onToggle={toggleTodo}
+                    onDelete={deleteTodo}
+                  />
+                ))}
+            </div>
+          </DashboardCard>
+
+          {/* Recent Activity */}
+          <DashboardCard title="Recent Activity" icon={Clock}>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3 text-sm">
+                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                <span className="text-gray-300">Project "E-commerce Platform" updated</span>
+                <span className="text-gray-500">2h ago</span>
+              </div>
+              <div className="flex items-center space-x-3 text-sm">
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                <span className="text-gray-300">Task "API Integration" completed</span>
+                <span className="text-gray-500">4h ago</span>
+              </div>
+              <div className="flex items-center space-x-3 text-sm">
+                <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                <span className="text-gray-300">New team member added</span>
+                <span className="text-gray-500">1d ago</span>
+              </div>
+            </div>
+          </DashboardCard>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-6">
+          {/* Projects */}
+          <DashboardCard
+            title="Active Projects"
+            icon={FolderOpen}
+            onAdd={() => console.log('Add project')}
+          >
+            <div className="space-y-4">
+              {projects.map((project, index) => (
+                <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
+                    <span className="text-gray-300 font-medium">{project.name}</span>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs border ${project.color}`}>
+                    {project.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </DashboardCard>
+
+          {/* Calendar */}
+          <DashboardCard
+            title="Upcoming Events"
+            icon={Calendar}
+            onAdd={() => console.log('Add event')}
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors">
+                <div>
+                  <p className="text-gray-300 font-medium">Team Meeting</p>
+                  <p className="text-gray-500 text-sm">Project review and planning</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-blue-400 text-sm">Today</p>
+                  <p className="text-gray-500 text-xs">2:00 PM</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors">
+                <div>
+                  <p className="text-gray-300 font-medium">Client Presentation</p>
+                  <p className="text-gray-500 text-sm">Final project showcase</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-purple-400 text-sm">Tomorrow</p>
+                  <p className="text-gray-500 text-xs">10:00 AM</p>
+                </div>
+              </div>
+            </div>
+          </DashboardCard>
+        </div>
+      </div>
+    </>
+  );
+
+  const renderCurrentView = () => {
+    if (isTransitioning) {
+      return (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-gray-700 rounded-full animate-spin border-t-blue-500"></div>
+        </div>
+      );
+    }
+
+    switch (currentView) {
+      case 'New Project':
+        return <NewProject onNavigateBack={() => navigateToSection('Dashboard')} />;
+      case 'Add Task':
+        return <AddTask onNavigateBack={() => navigateToSection('Dashboard')} />;
+      case 'New Client':
+        return <NewClient onNavigateBack={() => navigateToSection('Dashboard')} />;
+      case 'Team Member':
+        return <TeamMember onNavigateBack={() => navigateToSection('Dashboard')} />;
+      case 'Generate Report':
+        return <GenerateReport onNavigateBack={() => navigateToSection('Dashboard')} />;
+      default:
+        return renderDashboardContent();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+      {/* Persistent Header */}
       {user && (
         <DashboardHeader 
           user={user}
@@ -185,211 +407,10 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Dynamic Content Area */}
       <div className="p-6">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-2">
-                Hi, {user?.name || 'User'}!
-              </h1>
-              <p className="text-gray-400">Here's what's happening with your projects today.</p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="hidden lg:flex items-center space-x-2">
-                <button
-                  onClick={() => console.log('Short Notes')}
-                  className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
-                  title="Short Notes"
-                >
-                  <StickyNote className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => console.log('History')}
-                  className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
-                  title="History"
-                >
-                  <History className="w-4 h-4" />
-                </button>
-                <AllActionsDropdown />
-                <button
-                  onClick={() => console.log('Settings')}
-                  className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
-                  title="Settings"
-                >
-                  <Settings className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-          {quickActions.map((action, index) => (
-            <QuickActionCard
-              key={index}
-              title={action.title}
-              icon={action.icon}
-              onClick={action.action}
-              isActive={activeQuickAction === action.title}
-            />
-          ))}
-        </div>
-
-        {/* Active Component */}
-        {activeQuickAction !== 'Dashboard' && (
-          <div className="mb-8">
-            {renderActiveComponent()}
-          </div>
-        )}
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Active Projects</p>
-                <p className="text-3xl font-bold text-blue-400">12</p>
-              </div>
-              <FolderOpen className="w-8 h-8 text-blue-400" />
-            </div>
-          </div>
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Completed Tasks</p>
-                <p className="text-3xl font-bold text-green-400">48</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-400" />
-            </div>
-          </div>
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Team Members</p>
-                <p className="text-3xl font-bold text-purple-400">8</p>
-              </div>
-              <Users className="w-8 h-8 text-purple-400" />
-            </div>
-          </div>
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm">Revenue</p>
-                <p className="text-3xl font-bold text-emerald-400">$24K</p>
-              </div>
-              <BarChart3 className="w-8 h-8 text-emerald-400" />
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column */}
-          <div className="space-y-6">
-            {/* Tasks */}
-            <DashboardCard
-              title="My Tasks"
-              icon={CheckCircle}
-              onAdd={() => console.log('Add task')}
-              headerActions={
-                <button
-                  onClick={() => setShowFinishedTodos(!showFinishedTodos)}
-                  className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
-                >
-                  {showFinishedTodos ? 'hide completed' : 'show completed'}
-                </button>
-              }
-            >
-              <div className="space-y-2">
-                {todos
-                  .filter(todo => showFinishedTodos || !todo.completed)
-                  .map((todo) => (
-                    <TodoItem
-                      key={todo.id}
-                      {...todo}
-                      onToggle={toggleTodo}
-                      onDelete={deleteTodo}
-                    />
-                  ))}
-              </div>
-            </DashboardCard>
-
-            {/* Recent Activity */}
-            <DashboardCard title="Recent Activity" icon={Clock}>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3 text-sm">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                  <span className="text-gray-300">Project "E-commerce Platform" updated</span>
-                  <span className="text-gray-500">2h ago</span>
-                </div>
-                <div className="flex items-center space-x-3 text-sm">
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span className="text-gray-300">Task "API Integration" completed</span>
-                  <span className="text-gray-500">4h ago</span>
-                </div>
-                <div className="flex items-center space-x-3 text-sm">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                  <span className="text-gray-300">New team member added</span>
-                  <span className="text-gray-500">1d ago</span>
-                </div>
-              </div>
-            </DashboardCard>
-          </div>
-
-          {/* Right Column */}
-          <div className="space-y-6">
-            {/* Projects */}
-            <DashboardCard
-              title="Active Projects"
-              icon={FolderOpen}
-              onAdd={() => console.log('Add project')}
-            >
-              <div className="space-y-4">
-                {projects.map((project, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                      <span className="text-gray-300 font-medium">{project.name}</span>
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs border ${project.color}`}>
-                      {project.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </DashboardCard>
-
-            {/* Calendar */}
-            <DashboardCard
-              title="Upcoming Events"
-              icon={Calendar}
-              onAdd={() => console.log('Add event')}
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors">
-                  <div>
-                    <p className="text-gray-300 font-medium">Team Meeting</p>
-                    <p className="text-gray-500 text-sm">Project review and planning</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-blue-400 text-sm">Today</p>
-                    <p className="text-gray-500 text-xs">2:00 PM</p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors">
-                  <div>
-                    <p className="text-gray-300 font-medium">Client Presentation</p>
-                    <p className="text-gray-500 text-sm">Final project showcase</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-purple-400 text-sm">Tomorrow</p>
-                    <p className="text-gray-500 text-xs">10:00 AM</p>
-                  </div>
-                </div>
-              </div>
-            </DashboardCard>
-          </div>
+        <div className="transition-all duration-300 ease-in-out">
+          {renderCurrentView()}
         </div>
       </div>
     </div>
