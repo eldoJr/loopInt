@@ -19,8 +19,7 @@ const AddTask = ({ onNavigateBack }: AddTaskProps) => {
   }, []);
 
   const breadcrumbItems = [
-    { label: 'Tasks', onClick: onNavigateBack },
-    { label: 'LoopInt' },
+    { label: 'LoopInt'},
     { label: 'Tasks', onClick: onNavigateBack },
     { label: 'Add Task' }
   ];

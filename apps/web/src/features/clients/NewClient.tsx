@@ -19,8 +19,7 @@ const NewClient = ({ onNavigateBack }: NewClientProps) => {
   }, []);
 
   const breadcrumbItems = [
-    { label: 'Clients', onClick: onNavigateBack },
-    { label: 'LoopInt' },
+    { label: 'LoopInt',onClick: onNavigateBack  },
     { label: 'CRM', onClick: onNavigateBack },
     { label: 'New Client' }
   ];
