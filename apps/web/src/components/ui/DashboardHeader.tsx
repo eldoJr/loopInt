@@ -14,6 +14,8 @@ interface DashboardHeaderProps {
   setActiveTab: (tab: string) => void;
   setSidebarOpen: (open: boolean) => void;
   onLogout: () => void;
+  currentView?: string;
+  onNavigate?: (section: string) => void;
 }
 
 const navItems = [
@@ -25,7 +27,7 @@ const navItems = [
   { name: 'Analytics' }
 ];
 
-const DashboardHeader = ({ user, activeTab, setActiveTab, setSidebarOpen, onLogout }: DashboardHeaderProps) => {
+const DashboardHeader = ({ user, activeTab, setActiveTab, setSidebarOpen, onLogout, currentView = 'Dashboard', onNavigate }: DashboardHeaderProps) => {
   return (
     <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-800/50 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -44,19 +46,30 @@ const DashboardHeader = ({ user, activeTab, setActiveTab, setSidebarOpen, onLogo
         </div>
 
         <nav className="hidden lg:flex items-center space-x-1">
-          {navItems.map((item) => (
-            <button
-              key={item.name}
-              onClick={() => setActiveTab(item.name)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                activeTab === item.name 
-                  ? 'bg-blue-500 text-white' 
-                  : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
-              }`}
-            >
-              {item.name}
-            </button>
-          ))}
+          {currentView !== 'Dashboard' ? (
+            <div className="px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg border-2 border-blue-500">
+              <span className="text-sm font-medium">{currentView}</span>
+            </div>
+          ) : (
+            navItems.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => {
+                  setActiveTab(item.name);
+                  if (onNavigate) {
+                    onNavigate(item.name === 'Dashboard' ? 'Dashboard' : item.name);
+                  }
+                }}
+                className={`px-4 py-2 rounded-lg border-2 ${
+                  activeTab === item.name 
+                    ? 'bg-blue-500/10 text-blue-400 border-blue-500' 
+                    : 'bg-gray-800/30 text-gray-400 hover:bg-gray-800/50 hover:text-gray-300 border-gray-700/30'
+                }`}
+              >
+                {item.name}
+              </button>
+            ))
+          )}
         </nav>
 
         <div className="flex items-center space-x-2">
