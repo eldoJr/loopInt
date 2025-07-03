@@ -4,9 +4,10 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 interface NewProjectProps {
   onNavigateBack?: () => void;
+  onNavigateToProjects?: () => void;
 }
 
-const NewProject = ({ onNavigateBack }: NewProjectProps) => {
+const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
 
@@ -20,7 +21,7 @@ const NewProject = ({ onNavigateBack }: NewProjectProps) => {
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Projects',},
+    { label: 'Projects', onClick: onNavigateToProjects },
     { label: 'New Project' }
   ];
 

@@ -30,6 +30,7 @@ import Tasks from '../features/tasks/Tasks';
 import CalendarView from '../features/calendar/Calendar';
 import Team from '../features/team/Team';
 import Analytics from '../features/analytics/Analytics';
+import Clients from '../features/clients/Clients';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
@@ -331,15 +332,17 @@ const Dashboard = () => {
       case 'Analytics':
         return <Analytics onNavigateBack={backToMain} />;
       case 'New Project':
-        return <NewProject onNavigateBack={backToMain} />;
+        return <NewProject onNavigateBack={backToMain} onNavigateToProjects={() => navigateToSection('Projects')} />;
       case 'Add Task':
-        return <AddTask onNavigateBack={backToMain} />;
+        return <AddTask onNavigateBack={backToMain} onNavigateToTasks={() => navigateToSection('Tasks')} />;
       case 'New Client':
-        return <NewClient onNavigateBack={backToMain} />;
+        return <NewClient onNavigateBack={backToMain} onNavigateToClients={() => navigateToSection('Clients')} />;
       case 'Team Member':
-        return <TeamMember onNavigateBack={backToMain} />;
+        return <TeamMember onNavigateBack={backToMain} onNavigateToTeam={() => navigateToSection('Team')} />;
       case 'Generate Report':
-        return <GenerateReport onNavigateBack={backToMain} />;
+        return <GenerateReport onNavigateBack={backToMain} onNavigateToAnalytics={() => navigateToSection('Analytics')} />;
+      case 'Clients':
+        return <Clients onNavigateBack={backToMain} />;
       default:
         return renderDashboardContent();
     }

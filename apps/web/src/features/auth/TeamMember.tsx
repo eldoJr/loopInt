@@ -4,9 +4,10 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 interface TeamMemberProps {
   onNavigateBack?: () => void;
+  onNavigateToTeam?: () => void;
 }
 
-const TeamMember = ({ onNavigateBack }: TeamMemberProps) => {
+const TeamMember = ({ onNavigateBack, onNavigateToTeam }: TeamMemberProps) => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
 
@@ -20,7 +21,7 @@ const TeamMember = ({ onNavigateBack }: TeamMemberProps) => {
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Members', onClick: onNavigateBack },
+    { label: 'Team', onClick: onNavigateToTeam },
     { label: 'Add Member' }
   ];
 

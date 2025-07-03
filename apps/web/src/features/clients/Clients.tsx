@@ -2,27 +2,25 @@ import { useState, useEffect } from 'react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
-interface GenerateReportProps {
+interface ClientsProps {
   onNavigateBack?: () => void;
-  onNavigateToAnalytics?: () => void;
 }
 
-const GenerateReport = ({ onNavigateBack, onNavigateToAnalytics }: GenerateReportProps) => {
+const Clients = ({ onNavigateBack }: ClientsProps) => {
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-      setTimeout(() => setShowForm(true), 200);
+      setTimeout(() => setShowContent(true), 200);
     }, 800);
     return () => clearTimeout(timer);
   }, []);
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Analytics', onClick: onNavigateToAnalytics },
-    { label: 'Generate Report' }
+    { label: 'Clients' }
   ];
 
   return (
@@ -33,11 +31,11 @@ const GenerateReport = ({ onNavigateBack, onNavigateToAnalytics }: GenerateRepor
         <LoadingSpinner />
       ) : (
         <div className={`transition-all duration-500 ${
-          showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}>
           <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Generate Report</h2>
-            <p className="text-gray-400">AI-powered report generation ready for implementation.</p>
+            <h2 className="text-xl font-bold text-white mb-4">Clients</h2>
+            <p className="text-gray-400">Clients section ready for implementation.</p>
           </div>
         </div>
       )}
@@ -45,4 +43,4 @@ const GenerateReport = ({ onNavigateBack, onNavigateToAnalytics }: GenerateRepor
   );
 };
 
-export default GenerateReport;
+export default Clients;

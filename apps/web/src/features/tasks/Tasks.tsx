@@ -24,7 +24,7 @@ const Tasks = ({ onNavigateBack }: TasksProps) => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Breadcrumb items={breadcrumbItems} />
       
       {loading ? (

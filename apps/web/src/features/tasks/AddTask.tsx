@@ -4,9 +4,10 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 interface AddTaskProps {
   onNavigateBack?: () => void;
+  onNavigateToTasks?: () => void;
 }
 
-const AddTask = ({ onNavigateBack }: AddTaskProps) => {
+const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
 
@@ -20,7 +21,7 @@ const AddTask = ({ onNavigateBack }: AddTaskProps) => {
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Tasks', onClick: onNavigateBack },
+    { label: 'Tasks', onClick: onNavigateToTasks },
     { label: 'Add Task' }
   ];
 
