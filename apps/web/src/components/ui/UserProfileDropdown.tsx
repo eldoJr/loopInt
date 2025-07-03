@@ -31,10 +31,15 @@ interface UserProfileDropdownProps {
 const UserProfileDropdown = ({ user, onLogout }: UserProfileDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const portalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        dropdownRef.current && !dropdownRef.current.contains(target) &&
+        portalRef.current && !portalRef.current.contains(target)
+      ) {
         setIsOpen(false);
       }
     };
@@ -88,6 +93,7 @@ const UserProfileDropdown = ({ user, onLogout }: UserProfileDropdownProps) => {
 
       {isOpen && createPortal(
         <motion.div
+          ref={portalRef}
           initial={{ opacity: 0, scale: 0.95, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
@@ -119,11 +125,18 @@ const UserProfileDropdown = ({ user, onLogout }: UserProfileDropdownProps) => {
                 return (
                   <button
                     key={`menu-item-${index}`}
-                    onClick={() => {
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       if (item.action) {
                         item.action();
                       }
-                      setIsOpen(false);
+                      // Small delay to ensure action executes before closing
+                      setTimeout(() => setIsOpen(false), 10);
                     }}
                     className={`w-full px-4 py-3 flex items-center space-x-3 hover:bg-gray-800/50 transition-colors text-left ${
                       item.danger ? 'text-red-400 hover:bg-red-500/10' : 'text-gray-300 hover:text-white'
