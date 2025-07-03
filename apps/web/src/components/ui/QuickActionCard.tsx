@@ -4,13 +4,18 @@ interface QuickActionCardProps {
   title: string;
   icon: LucideIcon;
   onClick: () => void;
+  isActive?: boolean;
 }
 
-const QuickActionCard = ({ title, icon: Icon, onClick }: QuickActionCardProps) => {
+const QuickActionCard = ({ title, icon: Icon, onClick, isActive = false }: QuickActionCardProps) => {
   return (
     <button
       onClick={onClick}
-      className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl p-6 flex flex-col items-center justify-center space-y-3 transition-all duration-300 transform hover:scale-105 min-h-[120px]"
+      className={`rounded-xl p-6 flex flex-col items-center justify-center space-y-3 min-h-[120px] border-2 ${
+        isActive 
+          ? 'bg-blue-500/10 text-blue-400 border-blue-500 hover:bg-blue-500/20' 
+          : 'bg-gray-800/30 hover:bg-gray-800/50 text-gray-300 hover:text-white border-gray-700/30'
+      }`}
     >
       <Icon className="w-8 h-8" />
       <span className="text-sm font-medium text-center">{title}</span>

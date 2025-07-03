@@ -20,6 +20,9 @@ import QuickActionCard from '../components/ui/QuickActionCard';
 import DashboardCard from '../components/ui/DashboardCard';
 import TodoItem from '../components/ui/TodoItem';
 import AllActionsDropdown from '../components/ui/AllActionsDropdown';
+import NewProject from '../features/projects/NewProject';
+import AddTask from '../features/tasks/AddTask';
+import NewClient from '../features/clients/NewClient';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
@@ -61,13 +64,32 @@ const Dashboard = () => {
     window.location.href = '/';
   };
 
+  const [activeQuickAction, setActiveQuickAction] = useState('Dashboard');
+  
   const quickActions = [
-    { title: 'New Project', icon: FolderOpen, action: () => console.log('New Project') },
-    { title: 'Add Task', icon: CheckCircle, action: () => console.log('Add Task') },
-    { title: 'New Client', icon: Building, action: () => console.log('New Client') },
-    { title: 'Team Member', icon: User, action: () => console.log('Team Member') },
-    { title: 'Generate Report', icon: FileText, action: () => console.log('Generate Report') }
+    { title: 'New Project', icon: FolderOpen, action: () => setActiveQuickAction('New Project') },
+    { title: 'Add Task', icon: CheckCircle, action: () => setActiveQuickAction('Add Task') },
+    { title: 'New Client', icon: Building, action: () => setActiveQuickAction('New Client') },
+    { title: 'Team Member', icon: User, action: () => setActiveQuickAction('Team Member') },
+    { title: 'Generate Report', icon: FileText, action: () => setActiveQuickAction('Generate Report') }
   ];
+
+  const renderActiveComponent = () => {
+    switch (activeQuickAction) {
+      case 'New Project':
+        return <NewProject />;
+      case 'Add Task':
+        return <AddTask />;
+      case 'New Client':
+        return <NewClient />;
+      case 'Team Member':
+        return <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6"><h2 className="text-xl font-bold text-white mb-4">Add Team Member</h2><p className="text-gray-400">Team Member component ready for implementation.</p></div>;
+      case 'Generate Report':
+        return <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6"><h2 className="text-xl font-bold text-white mb-4">Generate Report</h2><p className="text-gray-400">Generate Report component ready for implementation.</p></div>;
+      default:
+        return null;
+    }
+  };
 
   const toggleTodo = (id: number) => {
     setTodos(todos.map(todo => 
@@ -177,14 +199,14 @@ const Dashboard = () => {
               <div className="hidden lg:flex items-center space-x-2">
                 <button
                   onClick={() => console.log('Short Notes')}
-                  className="p-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors border border-gray-700/50"
+                  className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
                   title="Short Notes"
                 >
                   <StickyNote className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => console.log('History')}
-                  className="p-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors border border-gray-700/50"
+                  className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
                   title="History"
                 >
                   <History className="w-4 h-4" />
@@ -192,7 +214,7 @@ const Dashboard = () => {
                 <AllActionsDropdown />
                 <button
                   onClick={() => console.log('Settings')}
-                  className="p-2 bg-gray-800/50 text-gray-300 rounded-lg hover:bg-gray-700/50 hover:text-white transition-colors border border-gray-700/50"
+                  className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
                   title="Settings"
                 >
                   <Settings className="w-4 h-4" />
@@ -210,9 +232,17 @@ const Dashboard = () => {
               title={action.title}
               icon={action.icon}
               onClick={action.action}
+              isActive={activeQuickAction === action.title}
             />
           ))}
         </div>
+
+        {/* Active Component */}
+        {activeQuickAction !== 'Dashboard' && (
+          <div className="mb-8">
+            {renderActiveComponent()}
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
