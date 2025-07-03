@@ -41,6 +41,21 @@ import ViewResize from '../features/settings/ViewResize';
 import NewFeature from '../features/support/NewFeature';
 import ReportBug from '../features/support/ReportBug';
 import NewAccount from '../features/auth/NewAccount';
+import InviteUser from '../features/auth/InviteUser';
+import TaxInvoice from '../features/finance/TaxInvoice';
+import NewIssue from '../features/support/NewIssue';
+import NewCompany from '../features/clients/NewCompany';
+import NewContact from '../features/clients/NewContact';
+import JobAd from '../features/hr/JobAd';
+import NewBill from '../features/finance/NewBill';
+import NewCandidate from '../features/hr/NewCandidate';
+import NewCoworker from '../features/team/NewCoworker';
+import NewDocument from '../features/documents/NewDocument';
+import NewExpense from '../features/finance/NewExpense';
+import NewOffer from '../features/clients/NewOffer';
+import NewProduct from '../features/clients/NewProduct';
+import HRProject from '../features/hr/HRProject';
+import UndocumentedRevenue from '../features/finance/UndocumentedRevenue';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
@@ -373,6 +388,36 @@ const Dashboard = () => {
         return <ReportBug onNavigateBack={backToMain} />;
       case 'New Account':
         return <NewAccount onNavigateBack={backToMain} />;
+      case 'Invite User':
+        return <InviteUser onNavigateBack={backToMain} />;
+      case 'Tax Invoice':
+        return <TaxInvoice onNavigateBack={backToMain} />;
+      case 'New Issue':
+        return <NewIssue onNavigateBack={backToMain} />;
+      case 'New Company':
+        return <NewCompany onNavigateBack={backToMain} />;
+      case 'New Contact':
+        return <NewContact onNavigateBack={backToMain} />;
+      case 'Job Ad':
+        return <JobAd onNavigateBack={backToMain} />;
+      case 'New Bill':
+        return <NewBill onNavigateBack={backToMain} />;
+      case 'New Candidate':
+        return <NewCandidate onNavigateBack={backToMain} />;
+      case 'New Coworker':
+        return <NewCoworker onNavigateBack={backToMain} />;
+      case 'New Document':
+        return <NewDocument onNavigateBack={backToMain} />;
+      case 'New Expense':
+        return <NewExpense onNavigateBack={backToMain} />;
+      case 'New Offer':
+        return <NewOffer onNavigateBack={backToMain} />;
+      case 'New Product':
+        return <NewProduct onNavigateBack={backToMain} />;
+      case 'HR Project':
+        return <HRProject onNavigateBack={backToMain} />;
+      case 'Undocumented Revenue':
+        return <UndocumentedRevenue onNavigateBack={backToMain} />;
       default:
         return renderDashboardContent();
     }

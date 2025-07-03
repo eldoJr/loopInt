@@ -46,7 +46,7 @@ const DashboardHeader = ({ user, setActiveTab, setSidebarOpen, onLogout, current
             >
               <img src={logoImg} alt="Loopint" className="h-8 w-auto" />
             </button>
-            <AddDropdown />
+            <AddDropdown onNavigate={onNavigate} />
           </div>
           
           <button 

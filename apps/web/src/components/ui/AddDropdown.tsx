@@ -20,7 +20,11 @@ import {
   TrendingUp
 } from 'lucide-react';
 
-const AddDropdown = () => {
+interface AddDropdownProps {
+  onNavigate?: (section: string) => void;
+}
+
+const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const portalRef = useRef<HTMLDivElement>(null);
@@ -43,22 +47,22 @@ const AddDropdown = () => {
   }, [isOpen]);
 
   const menuItems = [
-    { icon: UserPlus, label: 'Invite user', action: () => console.log('Invite user') },
-    { icon: FileText, label: 'New tax invoice', action: () => console.log('New tax invoice') },
-    { icon: AlertCircle, label: 'New issue', action: () => console.log('New issue') },
-    { icon: Building, label: 'New company', action: () => console.log('New company') },
-    { icon: User, label: 'New contact person', action: () => console.log('New contact person') },
-    { icon: FolderOpen, label: 'New project', action: () => console.log('New project') },
-    { icon: Briefcase, label: 'New job ad', action: () => console.log('New job ad') },
-    { icon: Receipt, label: 'New bill', action: () => console.log('New bill') },
-    { icon: UserCheck, label: 'New candidate', action: () => console.log('New candidate') },
-    { icon: Users, label: 'New coworker', action: () => console.log('New coworker') },
-    { icon: FileCheck, label: 'New document', action: () => console.log('New document') },
-    { icon: DollarSign, label: 'New expense', action: () => console.log('New expense') },
-    { icon: ShoppingBag, label: 'New offer', action: () => console.log('New offer') },
-    { icon: Package, label: 'New product/service', action: () => console.log('New product/service') },
-    { icon: Briefcase, label: 'New HR project', action: () => console.log('New HR project') },
-    { icon: TrendingUp, label: 'New undocumented revenue', action: () => console.log('New undocumented revenue') }
+    { icon: UserPlus, label: 'Invite user', action: () => onNavigate?.('Invite User') },
+    { icon: FileText, label: 'New tax invoice', action: () => onNavigate?.('Tax Invoice') },
+    { icon: AlertCircle, label: 'New issue', action: () => onNavigate?.('New Issue') },
+    { icon: Building, label: 'New company', action: () => onNavigate?.('New Company') },
+    { icon: User, label: 'New contact person', action: () => onNavigate?.('New Contact') },
+    { icon: FolderOpen, label: 'New project', action: () => onNavigate?.('New Project') },
+    { icon: Briefcase, label: 'New job ad', action: () => onNavigate?.('Job Ad') },
+    { icon: Receipt, label: 'New bill', action: () => onNavigate?.('New Bill') },
+    { icon: UserCheck, label: 'New candidate', action: () => onNavigate?.('New Candidate') },
+    { icon: Users, label: 'New coworker', action: () => onNavigate?.('New Coworker') },
+    { icon: FileCheck, label: 'New document', action: () => onNavigate?.('New Document') },
+    { icon: DollarSign, label: 'New expense', action: () => onNavigate?.('New Expense') },
+    { icon: ShoppingBag, label: 'New offer', action: () => onNavigate?.('New Offer') },
+    { icon: Package, label: 'New product/service', action: () => onNavigate?.('New Product') },
+    { icon: Briefcase, label: 'New HR project', action: () => onNavigate?.('HR Project') },
+    { icon: TrendingUp, label: 'New undocumented revenue', action: () => onNavigate?.('Undocumented Revenue') }
   ];
 
   return (
