@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import FloatingChatIcon from './components/ui/FloatingChatIcon';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -30,7 +31,15 @@ function App() {
     }
   };
 
-  return renderPage();
+  return (
+    <>
+      {renderPage()}
+      <FloatingChatIcon 
+        hasNotification={true} 
+        onChatOpen={() => console.log('Chat opened')} 
+      />
+    </>
+  );
 }
 
 export default App;

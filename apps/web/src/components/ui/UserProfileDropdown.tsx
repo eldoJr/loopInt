@@ -39,9 +39,11 @@ const UserProfileDropdown = ({ user, onLogout }: UserProfileDropdownProps) => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
   
   type MenuItem = {
@@ -111,11 +113,12 @@ const UserProfileDropdown = ({ user, onLogout }: UserProfileDropdownProps) => {
             <div className="py-2">
               {menuItems.map((item, index) => {
                 if (item.divider) {
-                  return <div key={index} className="my-2 border-t border-gray-800/50" />;
+                  return <div key={`divider-${index}`} className="my-2 border-t border-gray-800/50" />;
                 }
 
                 return (
                   <button
+                    key={`menu-item-${index}`}
                     onClick={() => {
                       if (item.action) {
                         item.action();
