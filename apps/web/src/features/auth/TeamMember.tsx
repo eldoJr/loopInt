@@ -19,8 +19,7 @@ const TeamMember = ({ onNavigateBack }: TeamMemberProps) => {
   }, []);
 
   const breadcrumbItems = [
-    { label: 'Team', onClick: onNavigateBack },
-    { label: 'LoopInt' },
+    { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Members', onClick: onNavigateBack },
     { label: 'Add Member' }
   ];
