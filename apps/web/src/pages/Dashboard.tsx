@@ -54,7 +54,6 @@ import NewOffer from '../features/clients/NewOffer';
 import NewProduct from '../features/clients/NewProduct';
 import HRProject from '../features/hr/HRProject';
 import UndocumentedRevenue from '../features/finance/UndocumentedRevenue';
-import Todo from '../features/tasks/Todo';
 import Historic from '../features/support/History';
 import ButtonsConfiguration from '../features/settings/ButtonsConfiguration';
 import CustomizationAlert from '../components/ui/CustomizationAlert';
@@ -408,8 +407,6 @@ const Dashboard = () => {
         return <HRProject onNavigateBack={backToMain} />;
       case 'Undocumented Revenue':
         return <UndocumentedRevenue onNavigateBack={backToMain} />;
-      case 'To-do':
-        return <Todo onNavigateBack={backToMain} />;
       case 'History':
         return <Historic onNavigateBack={backToMain} />;
       case 'Buttons Configuration':
