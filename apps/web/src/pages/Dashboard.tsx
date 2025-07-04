@@ -10,7 +10,8 @@ import {
   BarChart3,
   Users,
   X,
-  Settings
+  Settings,
+  ExternalLink
 } from 'lucide-react';
 import type { User as UserType } from '../lib/api';
 import DashboardHeader from '../components/ui/DashboardHeader';
@@ -275,14 +276,25 @@ const Dashboard = () => {
           <DashboardCard
             title="My Tasks"
             icon={CheckCircle}
-            onAdd={() => console.log('Add task')}
+            onAdd={() => navigateToSection('Add Task')}
             headerActions={
-              <button
-                onClick={() => setShowFinishedTodos(!showFinishedTodos)}
-                className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
-              >
-                {showFinishedTodos ? 'hide completed' : 'show completed'}
-              </button>
+              <div className="flex items-center space-x-4">
+                <label className="flex items-center space-x-2 text-sm text-gray-400 hover:text-gray-300 transition-colors cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showFinishedTodos}
+                    onChange={(e) => setShowFinishedTodos(e.target.checked)}
+                    className="w-4 h-4 bg-gray-800 border border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                  />
+                  <span>Show completed</span>
+                </label>
+                <button
+                  onClick={() => navigateToSection('Tasks')}
+                  className="flex items-center space-x-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors text-sm"
+                >
+                  <ExternalLink className="bg-blue-400 w-4 h-4" />
+                </button>
+              </div>
             }
           >
             <div className="space-y-2">
