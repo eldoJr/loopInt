@@ -72,22 +72,38 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
+      // Clean the form data before sending - exclude project_id and assigned_to for now
+      const cleanedData = {
+        title: formData.title,
+        description: formData.description || null,
+        status: formData.status,
+        priority: formData.priority,
+        due_date: formData.due_date || null
+      };
+      
+      console.log('Sending update request:', cleanedData);
+      
       const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(cleanedData),
       });
       
       if (response.ok) {
         onTaskUpdated();
         onClose();
       } else {
-        alert('Failed to update task. Please try again.');
+        const errorText = await response.text();
+        console.error('Server error:', errorText);
+        alert(`Failed to update task: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       console.error('Error updating task:', error);
       alert('Network error. Please check if the server is running.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -260,10 +276,15 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center space-x-2"
+              disabled={loading}
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center space-x-2"
             >
-              <Save className="w-4 h-4" />
-              <span>Update Task</span>
+              {loading ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span>{loading ? 'Updating...' : 'Update Task'}</span>
             </button>
           </div>
         </form>
