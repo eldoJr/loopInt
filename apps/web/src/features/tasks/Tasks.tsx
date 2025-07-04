@@ -58,13 +58,22 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
 
   const fetchTasks = async () => {
     try {
+      // Get current user to filter tasks
+      const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+      const currentUser = userData ? JSON.parse(userData) : null;
+      
       const response = await fetch('http://localhost:3000/tasks');
       if (response.ok) {
         const fetchedTasks: ApiTask[] = await response.json();
         console.log('Fetched tasks:', fetchedTasks);
+        console.log('Current user:', currentUser);
         
-        // Convert API tasks to component format and categorize by date
-        const convertedTasks = fetchedTasks.map((task, index) => ({
+        // Filter tasks for current user and convert to component format
+        const userTasks = currentUser ? 
+          fetchedTasks.filter(task => task.assigned_to === currentUser.id) : 
+          fetchedTasks;
+        
+        const convertedTasks = userTasks.map((task, index) => ({
           id: index + 1,
           title: task.title,
           description: task.description,
@@ -73,6 +82,8 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
           time: task.due_date,
           uuid: task.id
         }));
+        
+        console.log('Filtered user tasks:', convertedTasks);
         
         // Categorize tasks by due date
         const categorizedTasks = {
