@@ -10,8 +10,6 @@ import {
   BarChart3,
   Users,
   X,
-  StickyNote,
-  History,
   Settings
 } from 'lucide-react';
 import type { User as UserType } from '../lib/api';
@@ -57,8 +55,9 @@ import NewProduct from '../features/clients/NewProduct';
 import HRProject from '../features/hr/HRProject';
 import UndocumentedRevenue from '../features/finance/UndocumentedRevenue';
 import Todo from '../features/tasks/Todo';
-import History from '../features/support/History';
+import Historic from '../features/support/History';
 import ButtonsConfiguration from '../features/settings/ButtonsConfiguration';
+import CustomizationAlert from '../components/ui/CustomizationAlert';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
@@ -67,6 +66,7 @@ const Dashboard = () => {
   const [showFinishedTodos, setShowFinishedTodos] = useState(false);
   const [currentView, setCurrentView] = useState('Dashboard');
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showCustomizationAlert, setShowCustomizationAlert] = useState(false);
   const [todos, setTodos] = useState([
     { id: 1, text: 'Set up project workspace', starred: true, date: '01/07 2025', completed: false },
     { id: 2, text: 'Review team proposals', starred: true, date: '01/07 2025', completed: false },
@@ -150,7 +150,7 @@ const Dashboard = () => {
 
               <AllActionsDropdown onNavigate={navigateToSection} />
               <button
-                onClick={() => console.log('Settings')}
+                onClick={() => setShowCustomizationAlert(true)}
                 className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
                 title="Settings"
               >
@@ -411,7 +411,7 @@ const Dashboard = () => {
       case 'To-do':
         return <Todo onNavigateBack={backToMain} />;
       case 'History':
-        return <History onNavigateBack={backToMain} />;
+        return <Historic onNavigateBack={backToMain} />;
       case 'Buttons Configuration':
         return <ButtonsConfiguration onNavigateBack={backToMain} />;
       default:
@@ -506,6 +506,16 @@ const Dashboard = () => {
           {renderCurrentView()}
         </div>
       </div>
+
+      <CustomizationAlert
+        isOpen={showCustomizationAlert}
+        onClose={() => setShowCustomizationAlert(false)}
+        onGotIt={() => {
+          setShowCustomizationAlert(false);
+          // TODO: Implement customization mode
+        }}
+        onNotNow={() => setShowCustomizationAlert(false)}
+      />
     </div>
   );
 };
