@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, User, Flag, FileText, Save, X, Clock } from 'lucide-react';
+import { Calendar, User, Flag, FileText, Save, X, Clock, CalendarDays, Timer, Target, CalendarCheck } from 'lucide-react';
 import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek } from 'date-fns';
 
 interface EditTaskModalProps {
@@ -22,10 +22,10 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
   });
 
   const quickDateOptions = [
-    { label: 'Today', value: format(new Date(), 'yyyy-MM-dd'), icon: '📅' },
-    { label: 'Tomorrow', value: format(addDays(new Date(), 1), 'yyyy-MM-dd'), icon: '⏰' },
-    { label: 'This Weekend', value: format(addDays(startOfWeek(new Date()), 6), 'yyyy-MM-dd'), icon: '🎯' },
-    { label: 'Next Week', value: format(addWeeks(new Date(), 1), 'yyyy-MM-dd'), icon: '📆' }
+    { label: 'Today', value: format(new Date(), 'yyyy-MM-dd'), icon: CalendarDays },
+    { label: 'Tomorrow', value: format(addDays(new Date(), 1), 'yyyy-MM-dd'), icon: Timer },
+    { label: 'This Weekend', value: format(addDays(startOfWeek(new Date()), 6), 'yyyy-MM-dd'), icon: Target },
+    { label: 'Next Week', value: format(addWeeks(new Date(), 1), 'yyyy-MM-dd'), icon: CalendarCheck }
   ];
 
   const getDateLabel = (dateStr: string) => {
@@ -215,7 +215,7 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
                         : 'bg-gray-800/50 text-gray-400 border border-gray-700/30 hover:bg-gray-700/50 hover:text-gray-300'
                     }`}
                   >
-                    <span>{option.icon}</span>
+                    <option.icon size={14} />
                     <span>{option.label}</span>
                   </button>
                 ))}
