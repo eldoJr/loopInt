@@ -1,18 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Calendar, User, Flag, FileText, Save, X, Clock } from 'lucide-react';
 import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek } from 'date-fns';
-import Breadcrumb from '../../components/ui/Breadcrumb';
-import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
-interface EditTaskProps {
+interface EditTaskModalProps {
   taskId: string;
-  onNavigateBack?: () => void;
-  onNavigateToTasks?: () => void;
+  isOpen: boolean;
+  onClose: () => void;
+  onTaskUpdated: () => void;
 }
 
-const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) => {
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModalProps) => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -40,33 +38,32 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
   };
 
   useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/tasks/${taskId}`);
-        if (response.ok) {
-          const task = await response.json();
-          setFormData({
-            title: task.title || '',
-            description: task.description || '',
-            status: task.status || 'todo',
-            priority: task.priority || 'medium',
-            due_date: task.due_date || '',
-            project_id: task.project_id || '',
-            assigned_to: task.assigned_to || ''
-          });
+    if (isOpen && taskId) {
+      const fetchTask = async () => {
+        setLoading(true);
+        try {
+          const response = await fetch(`http://localhost:3000/tasks/${taskId}`);
+          if (response.ok) {
+            const task = await response.json();
+            setFormData({
+              title: task.title || '',
+              description: task.description || '',
+              status: task.status || 'todo',
+              priority: task.priority || 'medium',
+              due_date: task.due_date || '',
+              project_id: task.project_id || '',
+              assigned_to: task.assigned_to || ''
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching task:', error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error fetching task:', error);
-      }
-    };
-
-    const timer = setTimeout(() => {
-      setLoading(false);
-      setTimeout(() => setShowForm(true), 200);
+      };
       fetchTask();
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [taskId]);
+    }
+  }, [isOpen, taskId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,8 +75,8 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
       });
       
       if (response.ok) {
-        alert('Task updated successfully!');
-        onNavigateToTasks?.();
+        onTaskUpdated();
+        onClose();
       } else {
         alert('Failed to update task. Please try again.');
       }
@@ -93,39 +90,29 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const breadcrumbItems = [
-    { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Tasks', onClick: onNavigateToTasks },
-    { label: 'Edit Task' }
-  ];
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <Breadcrumb items={breadcrumbItems} />
-        <LoadingSpinner />
-      </div>
-    );
-  }
+  if (!isOpen) return null;
 
   return (
-    <div className={`space-y-6 transition-all duration-500 ${
-      showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-    }`}>
-      <Breadcrumb items={breadcrumbItems} />
-      
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-500/20 rounded-lg">
-              <FileText className="w-5 h-5 text-blue-400" />
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-gray-900 border border-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-500/20 rounded-lg">
+                <FileText className="w-5 h-5 text-blue-400" />
+              </div>
+              <h2 className="text-xl font-bold text-white">Edit Task</h2>
             </div>
-            <h2 className="text-xl font-bold text-white">Edit Task</h2>
+            <button onClick={onClose} className="p-2 text-gray-400 hover:text-white transition-colors">
+              <X className="w-5 h-5" />
+            </button>
           </div>
-          <button onClick={onNavigateToTasks} className="p-2 text-gray-400 hover:text-white transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -258,7 +245,7 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
           <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-700/50">
             <button
               type="button"
-              onClick={onNavigateToTasks}
+              onClick={onClose}
               className="px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-lg transition-colors"
             >
               Cancel
@@ -272,9 +259,11 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
             </button>
           </div>
         </form>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default EditTask;
+export default EditTaskModal;

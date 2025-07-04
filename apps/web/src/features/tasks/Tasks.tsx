@@ -3,6 +3,7 @@ import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, 
 import { format, addDays, startOfWeek, endOfWeek, isToday, isTomorrow, isThisWeek, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import EditTaskModal from './EditTask';
 
 interface TasksProps {
   onNavigateBack?: () => void;
@@ -41,6 +42,8 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
   const [filter, setFilter] = useState('all');
   const [view, setView] = useState<'Day' | '3 days' | 'Week' | 'Month'>('Week');
   const [taskMenuOpen, setTaskMenuOpen] = useState<number | null>(null);
+  const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null);
+  const [editingTask, setEditingTask] = useState<string | null>(null);
 
   interface ApiTask {
     id: string;
@@ -131,16 +134,30 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
     }));
   };
 
-  const toggleTask = (sectionKey: SectionKey, taskId: number) => {
-    setTasks(prev => ({
-      ...prev,
-      [sectionKey]: prev[sectionKey].map(task =>
-        task.id === taskId ? { 
-          ...task, 
-          status: task.status === 'done' ? 'todo' : 'done'
-        } : task
-      )
-    }));
+  const toggleTask = async (sectionKey: SectionKey, taskId: number) => {
+    const task = tasks[sectionKey].find(t => t.id === taskId);
+    if (!task?.uuid) return;
+
+    const newStatus = task.status === 'done' ? 'todo' : 'done';
+    
+    try {
+      const response = await fetch(`http://localhost:3000/tasks/${task.uuid}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      
+      if (response.ok) {
+        setTasks(prev => ({
+          ...prev,
+          [sectionKey]: prev[sectionKey].map(t =>
+            t.id === taskId ? { ...t, status: newStatus } : t
+          )
+        }));
+      }
+    } catch (error) {
+      console.error('Error updating task status:', error);
+    }
   };
 
   const getPriorityColor = (priority: string) => {
@@ -215,18 +232,26 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
     }
   };
 
-  const duplicateTask = (task: Task, sectionKey: SectionKey) => {
-    const newTask = {
-      ...task,
-      id: Math.max(...Object.values(tasks).flat().map(t => t.id)) + 1,
-      title: `${task.title} (Copy)`,
-      uuid: undefined
-    };
-    
-    setTasks(prev => ({
-      ...prev,
-      [sectionKey]: [...prev[sectionKey], newTask]
-    }));
+  const duplicateTask = async (task: Task) => {
+    try {
+      const response = await fetch('http://localhost:3000/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: `${task.title} (Copy)`,
+          description: task.description,
+          status: 'todo',
+          priority: task.priority,
+          due_date: task.time
+        })
+      });
+      
+      if (response.ok) {
+        fetchTasks();
+      }
+    } catch (error) {
+      console.error('Error duplicating task:', error);
+    }
     setTaskMenuOpen(null);
   };
 
@@ -452,6 +477,8 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  const rect = e.currentTarget.getBoundingClientRect();
+                                  setMenuPosition({ x: rect.right - 140, y: rect.bottom + 4 });
                                   setTaskMenuOpen(taskMenuOpen === task.id ? null : task.id);
                                 }}
                                 className="text-gray-400 hover:text-gray-300"
@@ -459,35 +486,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
                                 <MoreHorizontal size={16} />
                               </button>
                               
-                              {taskMenuOpen === task.id && (
-                                <div className="absolute right-0 top-8 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 min-w-[120px]">
-                                  <button
-                                    onClick={() => {
-                                      // Edit functionality - you can implement navigation to edit form
-                                      console.log('Edit task:', task);
-                                      setTaskMenuOpen(null);
-                                    }}
-                                    className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
-                                  >
-                                    <Edit size={14} />
-                                    <span>Edit</span>
-                                  </button>
-                                  <button
-                                    onClick={() => duplicateTask(task, key)}
-                                    className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
-                                  >
-                                    <Copy size={14} />
-                                    <span>Duplicate</span>
-                                  </button>
-                                  <button
-                                    onClick={() => task.uuid && deleteTask(task.uuid, key, task.id)}
-                                    className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-gray-700 flex items-center space-x-2"
-                                  >
-                                    <Trash2 size={14} />
-                                    <span>Delete</span>
-                                  </button>
-                                </div>
-                              )}
+
                             </div>
                           </div>
                         </div>
@@ -500,6 +499,69 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
           );
         })}
       </div>
+
+      {/* Task Menu Dropdown */}
+      {taskMenuOpen && menuPosition && (
+        <div className="fixed inset-0 z-50" onClick={() => { setTaskMenuOpen(null); setMenuPosition(null); }}>
+          <div 
+            className="fixed bg-gray-800 border border-gray-700 rounded-lg shadow-xl min-w-[140px]" 
+            style={{ left: `${menuPosition.x}px`, top: `${menuPosition.y}px` }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => {
+                const task = Object.values(tasks).flat().find(t => t.id === taskMenuOpen);
+                if (task?.uuid) {
+                  setEditingTask(task.uuid);
+                }
+                setTaskMenuOpen(null);
+                setMenuPosition(null);
+              }}
+              className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center space-x-2 first:rounded-t-lg"
+            >
+              <Edit size={14} />
+              <span>Edit</span>
+            </button>
+            <button
+              onClick={() => {
+                const task = Object.values(tasks).flat().find(t => t.id === taskMenuOpen);
+                if (task) duplicateTask(task);
+                setMenuPosition(null);
+              }}
+              className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
+            >
+              <Copy size={14} />
+              <span>Duplicate</span>
+            </button>
+            <button
+              onClick={() => {
+                const task = Object.values(tasks).flat().find(t => t.id === taskMenuOpen);
+                const section = Object.entries(tasks).find(([, sectionTasks]) => 
+                  sectionTasks.some(t => t.id === taskMenuOpen)
+                )?.[0] as SectionKey;
+                if (task?.uuid && section) {
+                  deleteTask(task.uuid, section, task.id);
+                }
+                setMenuPosition(null);
+              }}
+              className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-gray-700 flex items-center space-x-2 last:rounded-b-lg"
+            >
+              <Trash2 size={14} />
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Task Modal */}
+      {editingTask && (
+        <EditTaskModal
+          taskId={editingTask}
+          isOpen={!!editingTask}
+          onClose={() => setEditingTask(null)}
+          onTaskUpdated={fetchTasks}
+        />
+      )}
     </div>
   );
 };
