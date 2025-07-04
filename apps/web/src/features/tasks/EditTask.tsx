@@ -28,8 +28,8 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
     priority: 'medium',
     due_date: '',
     project_id: '',
-    user_id: currentUser.id,
-    user_name: currentUser.name
+    user_id: currentUser?.id || '',
+    user_name: currentUser?.name || ''
   });
 
   const quickDateOptions = [

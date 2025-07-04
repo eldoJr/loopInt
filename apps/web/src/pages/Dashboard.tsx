@@ -83,7 +83,13 @@ const Dashboard = () => {
         const response = await fetch('http://localhost:3000/tasks');
         if (response.ok) {
           const tasks = await response.json();
-          const formattedTodos: Todo[] = tasks.map((task: { id: string; title: string; priority: string; due_date?: string; status: string }) => ({
+          
+          // Filter tasks for current user
+          const userTasks = user ? 
+            tasks.filter((task: { assigned_to: string }) => task.assigned_to === user.id) : 
+            tasks;
+          
+          const formattedTodos: Todo[] = userTasks.map((task: { id: string; title: string; priority: string; due_date?: string; status: string }) => ({
             id: task.id,
             text: task.title,
             starred: task.priority === 'high',
@@ -98,7 +104,7 @@ const Dashboard = () => {
     };
     
     fetchTasks();
-  }, [currentView]);
+  }, [currentView, user?.id]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);

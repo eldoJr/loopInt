@@ -65,13 +65,19 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
       const response = await fetch('http://localhost:3000/tasks');
       if (response.ok) {
         const fetchedTasks: ApiTask[] = await response.json();
-        console.log('Fetched tasks:', fetchedTasks);
+        console.log('Fetched tasks from API:', fetchedTasks);
         console.log('Current user:', currentUser);
+        console.log('Looking for tasks assigned to:', currentUser?.id);
         
         // Filter tasks for current user and convert to component format
         const userTasks = currentUser ? 
-          fetchedTasks.filter(task => task.assigned_to === currentUser.id) : 
+          fetchedTasks.filter(task => {
+            console.log('Comparing task.assigned_to:', task.assigned_to, 'with user.id:', currentUser.id);
+            return task.assigned_to === currentUser.id;
+          }) : 
           fetchedTasks;
+        
+        console.log('User tasks after filtering:', userTasks);
         
         const convertedTasks = userTasks.map((task, index) => ({
           id: index + 1,
@@ -83,7 +89,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
           uuid: task.id
         }));
         
-        console.log('Filtered user tasks:', convertedTasks);
+        console.log('Final converted tasks:', convertedTasks);
         
         // Categorize tasks by due date
         const categorizedTasks = {
