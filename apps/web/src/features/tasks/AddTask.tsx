@@ -17,7 +17,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
     description: '',
     status: 'todo',
     priority: 'medium',
-    due_date: format(addDays(new Date(), 1), 'yyyy-MM-dd'), // Default to tomorrow
+    due_date: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
     project_id: '',
     assigned_to: ''
   });
@@ -31,11 +31,16 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
 
   const getDateLabel = (dateStr: string) => {
     if (!dateStr) return '';
-    const date = new Date(dateStr);
-    if (isToday(date)) return 'Today';
-    if (isTomorrow(date)) return 'Tomorrow';
-    if (isThisWeek(date)) return 'This Week';
-    return format(date, 'MMM dd, yyyy');
+    try {
+      const date = new Date(dateStr + 'T00:00:00');
+      if (isToday(date)) return 'Today';
+      if (isTomorrow(date)) return 'Tomorrow';
+      if (isThisWeek(date)) return 'This Week';
+      return format(date, 'MMM dd, yyyy');
+    } catch (error) {
+      console.error('Error parsing date:', dateStr, error);
+      return dateStr;
+    }
   };
 
   useEffect(() => {

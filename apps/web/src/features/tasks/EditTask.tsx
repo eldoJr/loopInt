@@ -30,11 +30,16 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
 
   const getDateLabel = (dateStr: string) => {
     if (!dateStr) return '';
-    const date = new Date(dateStr);
-    if (isToday(date)) return 'Today';
-    if (isTomorrow(date)) return 'Tomorrow';
-    if (isThisWeek(date)) return 'This Week';
-    return format(date, 'MMM dd, yyyy');
+    try {
+      const date = new Date(dateStr + 'T00:00:00');
+      if (isToday(date)) return 'Today';
+      if (isTomorrow(date)) return 'Tomorrow';
+      if (isThisWeek(date)) return 'This Week';
+      return format(date, 'MMM dd, yyyy');
+    } catch (error) {
+      console.error('Error parsing date:', dateStr, error);
+      return dateStr;
+    }
   };
 
   useEffect(() => {
@@ -50,7 +55,7 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
               description: task.description || '',
               status: task.status || 'todo',
               priority: task.priority || 'medium',
-              due_date: task.due_date || '',
+              due_date: task.due_date ? task.due_date.split('T')[0] : '',
               project_id: task.project_id || '',
               assigned_to: task.assigned_to || ''
             });
@@ -94,7 +99,7 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 border border-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
@@ -103,7 +108,10 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
               </div>
               <h2 className="text-xl font-bold text-white">Edit Task</h2>
             </div>
-            <button onClick={onClose} className="p-2 text-gray-400 hover:text-white transition-colors">
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 hover:text-white transition-colors"
+            >
               <X className="w-5 h-5" />
             </button>
           </div>
