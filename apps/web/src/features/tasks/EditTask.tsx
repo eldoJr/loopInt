@@ -11,6 +11,16 @@ interface EditTaskModalProps {
 
 const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModalProps) => {
   const [loading, setLoading] = useState(false);
+  
+  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string; } | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (userData) {
+      setCurrentUser(JSON.parse(userData));
+    }
+  }, []);
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -18,7 +28,8 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
     priority: 'medium',
     due_date: '',
     project_id: '',
-    assigned_to: ''
+    user_id: currentUser.id,
+    user_name: currentUser.name
   });
 
   const quickDateOptions = [
@@ -242,27 +253,22 @@ const EditTaskModal = ({ taskId, isOpen, onClose, onTaskUpdated }: EditTaskModal
                 className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
               >
                 <option value="">Select Project</option>
-                <option value="1">E-commerce Platform</option>
-                <option value="2">Mobile App Redesign</option>
-                <option value="3">API Integration</option>
+                <option value="proj-1">E-commerce Platform</option>
+                <option value="proj-2">Mobile App Redesign</option>
+                <option value="proj-3">API Integration</option>
+                <option value="proj-4">New Project</option>
+                <option value="proj-5">HR Project</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                <User className="w-4 h-4 inline mr-1" />Assign To
+                <User className="w-4 h-4 inline mr-1" />Assigned To
               </label>
-              <select
-                name="assigned_to"
-                value={formData.assigned_to}
-                onChange={handleChange}
-                className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-              >
-                <option value="">Assign to someone</option>
-                <option value="1">John Doe</option>
-                <option value="2">Jane Smith</option>
-                <option value="3">Mike Johnson</option>
-              </select>
+              <div className="w-full bg-gray-800/30 border border-gray-700/50 rounded-lg px-4 py-3 text-gray-300 flex items-center space-x-2">
+                <User className="w-4 h-4 text-blue-400" />
+                <span>{currentUser?.name || 'User'} (You)</span>
+              </div>
             </div>
           </div>
 

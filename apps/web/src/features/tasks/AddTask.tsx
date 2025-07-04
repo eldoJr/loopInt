@@ -12,6 +12,16 @@ interface AddTaskProps {
 const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  
+  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string; } | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (userData) {
+      setCurrentUser(JSON.parse(userData));
+    }
+  }, []);
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -19,8 +29,19 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
     priority: 'medium',
     due_date: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
     project_id: '',
-    assigned_to: ''
+    user_id: currentUser?.id || '',
+    user_name: currentUser?.name || ''
   });
+
+  useEffect(() => {
+    if (currentUser) {
+      setFormData(prev => ({
+        ...prev,
+        user_id: currentUser.id,
+        user_name: currentUser.name
+      }));
+    }
+  }, [currentUser]);
 
   const quickDateOptions = [
     { label: 'Today', value: format(new Date(), 'yyyy-MM-dd'), icon: CalendarDays },
@@ -54,13 +75,23 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log('Submitting task:', formData);
+      const taskData = {
+        title: formData.title,
+        description: formData.description,
+        status: formData.status,
+        priority: formData.priority,
+        due_date: formData.due_date || null,
+        user_id: formData.user_id,
+        user_name: formData.user_name
+      };
+      
+      console.log('Submitting task:', taskData);
       const response = await fetch('http://localhost:3000/tasks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(taskData),
       });
       
       if (response.ok) {
@@ -244,9 +275,11 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                 className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
               >
                 <option value="">Select Project</option>
-                <option value="1">E-commerce Platform</option>
-                <option value="2">Mobile App Redesign</option>
-                <option value="3">API Integration</option>
+                <option value="proj-1">E-commerce Platform</option>
+                <option value="proj-2">Mobile App Redesign</option>
+                <option value="proj-3">API Integration</option>
+                <option value="proj-4">New Project</option>
+                <option value="proj-5">HR Project</option>
               </select>
             </div>
 
@@ -254,19 +287,12 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 <User className="w-4 h-4 inline mr-1" />
-                Assign To
+                Assigned To
               </label>
-              <select
-                name="assigned_to"
-                value={formData.assigned_to}
-                onChange={handleChange}
-                className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-              >
-                <option value="">Assign to someone</option>
-                <option value="1">John Doe</option>
-                <option value="2">Jane Smith</option>
-                <option value="3">Mike Johnson</option>
-              </select>
+              <div className="w-full bg-gray-800/30 border border-gray-700/50 rounded-lg px-4 py-3 text-gray-300 flex items-center space-x-2">
+                <User className="w-4 h-4 text-blue-400" />
+                <span>{currentUser?.name || 'User'} (You)</span>
+              </div>
             </div>
           </div>
 
