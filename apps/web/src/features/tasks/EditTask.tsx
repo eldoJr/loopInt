@@ -4,12 +4,13 @@ import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
-interface AddTaskProps {
+interface EditTaskProps {
+  taskId: string;
   onNavigateBack?: () => void;
   onNavigateToTasks?: () => void;
 }
 
-const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
+const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,7 +18,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
     description: '',
     status: 'todo',
     priority: 'medium',
-    due_date: format(addDays(new Date(), 1), 'yyyy-MM-dd'), // Default to tomorrow
+    due_date: '',
     project_id: '',
     assigned_to: ''
   });
@@ -39,52 +40,63 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   };
 
   useEffect(() => {
+    const fetchTask = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/tasks/${taskId}`);
+        if (response.ok) {
+          const task = await response.json();
+          setFormData({
+            title: task.title || '',
+            description: task.description || '',
+            status: task.status || 'todo',
+            priority: task.priority || 'medium',
+            due_date: task.due_date || '',
+            project_id: task.project_id || '',
+            assigned_to: task.assigned_to || ''
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching task:', error);
+      }
+    };
+
     const timer = setTimeout(() => {
       setLoading(false);
       setTimeout(() => setShowForm(true), 200);
+      fetchTask();
     }, 800);
     return () => clearTimeout(timer);
-  }, []);
+  }, [taskId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log('Submitting task:', formData);
-      const response = await fetch('http://localhost:3000/tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
       
       if (response.ok) {
-        const result = await response.json();
-        console.log('Task created successfully:', result);
-        alert('Task created successfully!');
+        alert('Task updated successfully!');
         onNavigateToTasks?.();
       } else {
-        const errorText = await response.text();
-        console.error('Failed to create task:', errorText);
-        alert('Failed to create task. Please try again.');
+        alert('Failed to update task. Please try again.');
       }
     } catch (error) {
-      console.error('Error creating task:', error);
+      console.error('Error updating task:', error);
       alert('Network error. Please check if the server is running.');
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Tasks', onClick: onNavigateToTasks },
-    { label: 'Add Task' }
+    { label: 'Edit Task' }
   ];
 
   if (loading) {
@@ -108,23 +120,17 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             <div className="p-2 bg-blue-500/20 rounded-lg">
               <FileText className="w-5 h-5 text-blue-400" />
             </div>
-            <h2 className="text-xl font-bold text-white">Add New Task</h2>
+            <h2 className="text-xl font-bold text-white">Edit Task</h2>
           </div>
-          <button
-            onClick={onNavigateToTasks}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
-          >
+          <button onClick={onNavigateToTasks} className="p-2 text-gray-400 hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Title */}
             <div className="lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Task Title *
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Task Title *</label>
               <input
                 type="text"
                 name="title"
@@ -136,11 +142,8 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               />
             </div>
 
-            {/* Description */}
             <div className="lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Description
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
               <textarea
                 name="description"
                 value={formData.description}
@@ -151,11 +154,8 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               />
             </div>
 
-            {/* Status */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Status
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
               <select
                 name="status"
                 value={formData.status}
@@ -168,11 +168,9 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               </select>
             </div>
 
-            {/* Priority */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                <Flag className="w-4 h-4 inline mr-1" />
-                Priority
+                <Flag className="w-4 h-4 inline mr-1" />Priority
               </label>
               <select
                 name="priority"
@@ -186,7 +184,6 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               </select>
             </div>
 
-            {/* Due Date */}
             <div className="lg:col-span-2">
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 <Calendar className="w-4 h-4 inline mr-1" />
@@ -195,7 +192,6 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                 )}
               </label>
               
-              {/* Quick Date Selection */}
               <div className="flex flex-wrap gap-2 mb-3">
                 {quickDateOptions.map((option) => (
                   <button
@@ -214,7 +210,6 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                 ))}
               </div>
               
-              {/* Date Input */}
               <div className="relative">
                 <input
                   type="date"
@@ -227,11 +222,8 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               </div>
             </div>
 
-            {/* Project */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Project
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Project</label>
               <select
                 name="project_id"
                 value={formData.project_id}
@@ -245,11 +237,9 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               </select>
             </div>
 
-            {/* Assigned To */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                <User className="w-4 h-4 inline mr-1" />
-                Assign To
+                <User className="w-4 h-4 inline mr-1" />Assign To
               </label>
               <select
                 name="assigned_to"
@@ -265,7 +255,6 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             </div>
           </div>
 
-          {/* Form Actions */}
           <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-700/50">
             <button
               type="button"
@@ -279,7 +268,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center space-x-2"
             >
               <Save className="w-4 h-4" />
-              <span>Create Task</span>
+              <span>Update Task</span>
             </button>
           </div>
         </form>
@@ -288,4 +277,4 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   );
 };
 
-export default AddTask;
+export default EditTask;

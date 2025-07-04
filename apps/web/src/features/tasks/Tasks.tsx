@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, MoreHorizontal } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, MoreHorizontal, Edit, Trash2, Copy } from 'lucide-react';
+import { format, addDays, startOfWeek, endOfWeek, isToday, isTomorrow, isThisWeek, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -38,6 +39,8 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
   });
 
   const [filter, setFilter] = useState('all');
+  const [view, setView] = useState<'Day' | '3 days' | 'Week' | 'Month'>('Week');
+  const [taskMenuOpen, setTaskMenuOpen] = useState<number | null>(null);
 
   interface ApiTask {
     id: string;
@@ -59,24 +62,45 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
         const fetchedTasks: ApiTask[] = await response.json();
         console.log('Fetched tasks:', fetchedTasks);
         
-        // Convert API tasks to component format and categorize
+        // Convert API tasks to component format and categorize by date
         const convertedTasks = fetchedTasks.map((task, index) => ({
-          id: index + 1, // Use index as ID for component
+          id: index + 1,
           title: task.title,
           description: task.description,
           status: task.status,
           priority: task.priority,
           time: task.due_date,
-          uuid: task.id // Keep original UUID for API calls
+          uuid: task.id
         }));
         
-        // For now, put all tasks in 'today' section
-        setTasks({
-          today: convertedTasks,
-          tomorrow: [],
-          thisWeek: [],
-          later: []
+        // Categorize tasks by due date
+        const categorizedTasks = {
+          today: [] as Task[],
+          tomorrow: [] as Task[],
+          thisWeek: [] as Task[],
+          later: [] as Task[]
+        };
+        
+        convertedTasks.forEach(task => {
+          if (!task.time) {
+            categorizedTasks.later.push(task);
+            return;
+          }
+          
+          const dueDate = parseISO(task.time);
+          
+          if (isToday(dueDate)) {
+            categorizedTasks.today.push(task);
+          } else if (isTomorrow(dueDate)) {
+            categorizedTasks.tomorrow.push(task);
+          } else if (isThisWeek(dueDate)) {
+            categorizedTasks.thisWeek.push(task);
+          } else {
+            categorizedTasks.later.push(task);
+          }
         });
+        
+        setTasks(categorizedTasks);
       } else {
         console.error('Failed to fetch tasks');
       }
@@ -92,6 +116,12 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
       fetchTasks();
     }, 800);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = () => setTaskMenuOpen(null);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const toggleSection = (section: SectionKey) => {
@@ -128,21 +158,103 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
     return { completed, total };
   };
 
-  const filteredTasks = (sectionTasks: Task[]) => {
-    switch (filter) {
-      case 'completed': return sectionTasks.filter(task => task.status === 'done');
-      case 'pending': return sectionTasks.filter(task => task.status !== 'done');
-      case 'high': return sectionTasks.filter(task => task.priority === 'high');
-      default: return sectionTasks;
+  const getViewDateRange = () => {
+    const today = new Date();
+    switch (view) {
+      case 'Day':
+        return { start: startOfDay(today), end: endOfDay(today) };
+      case '3 days':
+        return { start: startOfDay(today), end: endOfDay(addDays(today, 2)) };
+      case 'Week':
+        return { start: startOfWeek(today), end: endOfWeek(today) };
+      case 'Month':
+        return { start: startOfDay(today), end: endOfDay(addDays(today, 30)) };
+      default:
+        return { start: startOfDay(today), end: endOfDay(addDays(today, 7)) };
     }
   };
 
-  const sections: { key: SectionKey; title: string; date: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
-    { key: 'today', title: 'Today', date: '07/04/2025', icon: Calendar },
-    { key: 'tomorrow', title: 'Tomorrow', date: '07/05/2025', icon: Calendar },
-    { key: 'thisWeek', title: 'This Week', date: '07/07 - 07/13', icon: Calendar },
-    { key: 'later', title: 'Later', date: 'Future tasks', icon: Clock }
-  ];
+  const filteredTasks = (sectionTasks: Task[]) => {
+    let filtered = sectionTasks;
+    
+    // Apply status filter
+    switch (filter) {
+      case 'completed': filtered = filtered.filter(task => task.status === 'done'); break;
+      case 'pending': filtered = filtered.filter(task => task.status !== 'done'); break;
+      case 'high': filtered = filtered.filter(task => task.priority === 'high'); break;
+    }
+    
+    // Apply view filter
+    if (view !== 'Week') {
+      const { start, end } = getViewDateRange();
+      filtered = filtered.filter(task => {
+        if (!task.time) return view === 'Month';
+        const taskDate = parseISO(task.time);
+        return isWithinInterval(taskDate, { start, end });
+      });
+    }
+    
+    return filtered;
+  };
+
+  const deleteTask = async (taskUuid: string, sectionKey: SectionKey, taskId: number) => {
+    try {
+      const response = await fetch(`http://localhost:3000/tasks/${taskUuid}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        setTasks(prev => ({
+          ...prev,
+          [sectionKey]: prev[sectionKey].filter(task => task.id !== taskId)
+        }));
+        setTaskMenuOpen(null);
+      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
+  };
+
+  const duplicateTask = (task: Task, sectionKey: SectionKey) => {
+    const newTask = {
+      ...task,
+      id: Math.max(...Object.values(tasks).flat().map(t => t.id)) + 1,
+      title: `${task.title} (Copy)`,
+      uuid: undefined
+    };
+    
+    setTasks(prev => ({
+      ...prev,
+      [sectionKey]: [...prev[sectionKey], newTask]
+    }));
+    setTaskMenuOpen(null);
+  };
+
+  const getSections = () => {
+    const today = new Date();
+    switch (view) {
+      case 'Day':
+        return [{ key: 'today' as SectionKey, title: 'Today', date: format(today, 'MMM dd, yyyy'), icon: Calendar }];
+      case '3 days':
+        return [
+          { key: 'today' as SectionKey, title: 'Today', date: format(today, 'MMM dd'), icon: Calendar },
+          { key: 'tomorrow' as SectionKey, title: 'Tomorrow', date: format(addDays(today, 1), 'MMM dd'), icon: Calendar },
+          { key: 'thisWeek' as SectionKey, title: format(addDays(today, 2), 'EEEE'), date: format(addDays(today, 2), 'MMM dd'), icon: Calendar }
+        ];
+      case 'Month':
+        return [
+          { key: 'today' as SectionKey, title: 'This Month', date: format(today, 'MMMM yyyy'), icon: Calendar },
+          { key: 'later' as SectionKey, title: 'Later', date: 'Future tasks', icon: Clock }
+        ];
+      default: // Week
+        return [
+          { key: 'today' as SectionKey, title: 'Today', date: format(today, 'MMM dd, yyyy'), icon: Calendar },
+          { key: 'tomorrow' as SectionKey, title: 'Tomorrow', date: format(addDays(today, 1), 'MMM dd, yyyy'), icon: Calendar },
+          { key: 'thisWeek' as SectionKey, title: 'This Week', date: `${format(startOfWeek(today), 'MMM dd')} - ${format(endOfWeek(today), 'MMM dd')}`, icon: Calendar },
+          { key: 'later' as SectionKey, title: 'Later', date: 'Future tasks', icon: Clock }
+        ];
+    }
+  };
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
@@ -170,7 +282,6 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <h1 className="text-2xl font-semibold text-white">Tasks</h1>
-              <span className="text-sm text-gray-400">Workspace • Tasks</span>
             </div>
             <div className="flex items-center space-x-2">
               <button 
@@ -214,16 +325,17 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
             <div className="flex items-center space-x-4 text-sm text-gray-400">
               <span>View:</span>
               <div className="flex space-x-1">
-                {['Day', '3 days', 'Week', 'Month'].map((view) => (
+                {(['Day', '3 days', 'Week', 'Month'] as const).map((viewType) => (
                   <button
-                    key={view}
+                    key={viewType}
+                    onClick={() => setView(viewType)}
                     className={`px-3 py-1 rounded text-sm transition-colors ${
-                      view === 'Week' 
+                      view === viewType 
                         ? 'bg-blue-600/20 text-blue-400' 
                         : 'hover:bg-gray-700/50 text-gray-400'
                     }`}
                   >
-                    {view}
+                    {viewType}
                   </button>
                 ))}
               </div>
@@ -234,7 +346,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
 
       {/* Task Sections */}
       <div className="space-y-4">
-        {sections.map(({ key, title, date, icon: Icon }) => {
+        {getSections().map(({ key, title, date, icon: Icon }) => {
           const sectionTasks = filteredTasks(tasks[key]);
           const { completed, total } = getTaskCount(tasks[key]);
           
@@ -336,9 +448,47 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
                             }`}>
                               {task.priority}
                             </span>
-                            <button className="text-gray-400 hover:text-gray-300">
-                              <MoreHorizontal size={16} />
-                            </button>
+                            <div className="relative">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setTaskMenuOpen(taskMenuOpen === task.id ? null : task.id);
+                                }}
+                                className="text-gray-400 hover:text-gray-300"
+                              >
+                                <MoreHorizontal size={16} />
+                              </button>
+                              
+                              {taskMenuOpen === task.id && (
+                                <div className="absolute right-0 top-8 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10 min-w-[120px]">
+                                  <button
+                                    onClick={() => {
+                                      // Edit functionality - you can implement navigation to edit form
+                                      console.log('Edit task:', task);
+                                      setTaskMenuOpen(null);
+                                    }}
+                                    className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
+                                  >
+                                    <Edit size={14} />
+                                    <span>Edit</span>
+                                  </button>
+                                  <button
+                                    onClick={() => duplicateTask(task, key)}
+                                    className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
+                                  >
+                                    <Copy size={14} />
+                                    <span>Duplicate</span>
+                                  </button>
+                                  <button
+                                    onClick={() => task.uuid && deleteTask(task.uuid, key, task.id)}
+                                    className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-gray-700 flex items-center space-x-2"
+                                  >
+                                    <Trash2 size={14} />
+                                    <span>Delete</span>
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ))}
