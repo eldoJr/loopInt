@@ -338,7 +338,7 @@ const Dashboard = () => {
       case 'Projects':
         return <Projects onNavigateBack={backToMain} />;
       case 'Tasks':
-        return <Tasks onNavigateBack={backToMain} />;
+        return <Tasks onNavigateBack={backToMain} onNavigateToAddTask={() => navigateToSection('Add Task')} />;
       case 'Calendar':
         return <CalendarView onNavigateBack={backToMain} />;
       case 'Team':
@@ -348,7 +348,7 @@ const Dashboard = () => {
       case 'New Project':
         return <NewProject onNavigateBack={backToMain} onNavigateToProjects={() => navigateToSection('Projects')} />;
       case 'Add Task':
-        return <AddTask onNavigateBack={backToMain} onNavigateToTasks={() => navigateToSection('Tasks')} />;
+        return <AddTask onNavigateBack={() => navigateToSection('Tasks')} onNavigateToTasks={() => navigateToSection('Tasks')} />;
       case 'New Client':
         return <NewClient onNavigateBack={backToMain} onNavigateToClients={() => navigateToSection('Clients')} />;
       case 'Team Member':
