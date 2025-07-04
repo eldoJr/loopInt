@@ -66,12 +66,38 @@ const Dashboard = () => {
   const [currentView, setCurrentView] = useState('Dashboard');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showCustomizationAlert, setShowCustomizationAlert] = useState(false);
-  const [todos, setTodos] = useState([
-    { id: 1, text: 'Set up project workspace', starred: true, date: '01/07 2025', completed: false },
-    { id: 2, text: 'Review team proposals', starred: true, date: '01/07 2025', completed: false },
-    { id: 3, text: 'Update client database', starred: false, date: '01/08 2025', completed: true },
-    { id: 4, text: 'Prepare monthly report', starred: false, date: '01/09 2025', completed: true }
-  ]);
+  interface Todo {
+    id: string;
+    text: string;
+    starred: boolean;
+    date: string;
+    completed: boolean;
+  }
+  
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/tasks');
+        if (response.ok) {
+          const tasks = await response.json();
+          const formattedTodos: Todo[] = tasks.map((task: { id: string; title: string; priority: string; due_date?: string; status: string }) => ({
+            id: task.id,
+            text: task.title,
+            starred: task.priority === 'high',
+            date: task.due_date ? new Date(task.due_date).toLocaleDateString() : new Date().toLocaleDateString(),
+            completed: task.status === 'done'
+          }));
+          setTodos(formattedTodos);
+        }
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+    
+    fetchTasks();
+  }, [currentView]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -117,14 +143,43 @@ const Dashboard = () => {
     { title: 'Generate Report', icon: FileText, action: () => navigateToSection('Generate Report') }
   ];
 
-  const toggleTodo = (id: number) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+  const toggleTodo = async (id: string) => {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+    
+    try {
+      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: todo.completed ? 'todo' : 'done'
+        }),
+      });
+      
+      if (response.ok) {
+        setTodos(todos.map(todo => 
+          todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        ));
+      }
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   };
 
-  const deleteTodo = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+  const deleteTodo = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        setTodos(todos.filter(todo => todo.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
   };
 
   const projects = [

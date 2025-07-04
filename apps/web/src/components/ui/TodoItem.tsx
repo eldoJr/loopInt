@@ -1,13 +1,13 @@
 import { CheckCircle, Star, X } from 'lucide-react';
 
 interface TodoItemProps {
-  id: number;
+  id: string;
   text: string;
   starred: boolean;
   date: string;
   completed: boolean;
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
 const TodoItem = ({ id, text, starred, date, completed, onToggle, onDelete }: TodoItemProps) => {
