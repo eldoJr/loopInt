@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Save, Sparkles, Bold, Italic, Underline, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Link, Code, Check, Calendar, DollarSign, Tag, ChevronDown } from 'lucide-react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Save, Sparkles, Bold, Italic, Underline, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Link, Code, Check, Calendar, DollarSign, Tag, ChevronDown, AlertCircle, Star } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -18,8 +18,10 @@ const tagOptions = [
 
 const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) => {
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
@@ -47,6 +49,14 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
   });
 
   const [descriptionLength, setDescriptionLength] = useState(0);
+  const maxDescriptionLength = 2000;
+
+  const isFormValid = useMemo(() => {
+    return formData.name.trim().length > 0 && 
+           formData.start_date && 
+           formData.deadline && 
+           new Date(formData.start_date) <= new Date(formData.deadline);
+  }, [formData.name, formData.start_date, formData.deadline]);
 
   useEffect(() => {
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -63,8 +73,50 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
     return () => clearTimeout(timer);
   }, []);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (isFormValid) {
+          const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+          handleSubmit(fakeEvent);
+        }
+      }
+      if (e.key === 'Escape') {
+        onNavigateToProjects?.();
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isFormValid, onNavigateToProjects]);
+
+  const validateForm = useCallback(() => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.name.trim()) newErrors.name = 'Project name is required';
+    if (!formData.start_date) newErrors.start_date = 'Start date is required';
+    if (!formData.deadline) newErrors.deadline = 'Deadline is required';
+    if (formData.start_date && formData.deadline && new Date(formData.start_date) > new Date(formData.deadline)) {
+      newErrors.deadline = 'Deadline must be after start date';
+    }
+    if (formData.budget && parseFloat(formData.budget) < 0) {
+      newErrors.budget = 'Budget must be positive';
+    }
+    if (formData.description.length > maxDescriptionLength) {
+      newErrors.description = `Description must be under ${maxDescriptionLength} characters`;
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [formData, maxDescriptionLength]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    
+    setSaving(true);
     try {
       const projectData = {
         ...formData,
@@ -84,33 +136,43 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
       if (response.ok) {
         setIsSaved(true);
         setTimeout(() => onNavigateToProjects?.(), 1000);
+      } else {
+        throw new Error('Failed to create project');
       }
     } catch (error) {
       console.error('Error creating project:', error);
+      setErrors({ submit: 'Failed to create project. Please try again.' });
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
     if (name === 'description') {
       setDescriptionLength(value.length);
     }
-  };
+    
+    // Clear field-specific errors
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  }, [errors]);
 
   const handleToggleFavorite = () => {
     setFormData(prev => ({ ...prev, is_favorite: !prev.is_favorite }));
   };
 
-  const handleTagSelect = (tag: string) => {
+  const handleTagSelect = useCallback((tag: string) => {
     setFormData(prev => ({
       ...prev,
       tags: prev.tags.includes(tag) 
         ? prev.tags.filter(t => t !== tag)
         : [...prev.tags, tag]
     }));
-  };
+  }, []);
 
   const handleTextStyle = (style: keyof typeof textStyles) => {
     setTextStyles(prev => ({ ...prev, [style]: !prev[style] }));
@@ -160,62 +222,76 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               >
                 Cancel
               </button>
-              <button 
-                type="button"
-                className="px-4 py-2 bg-orange-600/20 text-orange-400 rounded-lg hover:bg-orange-600/30 transition-colors border border-orange-500/30"
-              >
-                Edit
-              </button>
+
               <button 
                 onClick={handleSubmit}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={!isFormValid || saving}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                  isFormValid && !saving
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                }`}
               >
                 <Save size={16} />
-                <span>Save</span>
+                <span>{saving ? 'Saving...' : 'Save'}</span>
               </button>
             </div>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
-          <div className="grid grid-cols-12 gap-6 max-w-3xl mx-auto">
-            <div className="col-span-12 flex items-center gap-4">
-              <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+          <div className="space-y-6 max-w-4xl mx-auto ml-64">
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Project Name *
               </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="flex-1 bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-                placeholder="Enter project name"
-              />
+              <div className="col-span-9">
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                    errors.name 
+                      ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50' 
+                      : 'border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50'
+                  }`}
+                  placeholder="Enter project name"
+                />
+                {errors.name && (
+                  <div className="flex items-center mt-1 text-red-400 text-sm">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {errors.name}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="col-span-12 flex items-center gap-4">
-              <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Project Signature
               </label>
-              <input
-                type="text"
-                value={currentUser?.name || ''}
-                readOnly
-                className="flex-1 bg-gray-800/20 border border-gray-700/50 rounded-lg px-4 py-3 text-gray-400 cursor-not-allowed"
-              />
+              <div className="col-span-9">
+                <input
+                  type="text"
+                  value={currentUser?.name || ''}
+                  readOnly
+                  className="w-full bg-gray-800/20 border border-gray-700/50 rounded-lg px-4 py-3 text-gray-400 cursor-not-allowed"
+                />
+              </div>
             </div>
 
-            <div className="col-span-12 grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
-                  Status
-                </label>
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                Status
+              </label>
+              <div className="col-span-4">
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="flex-1 bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
                   <option value="planning">Planning</option>
                   <option value="active">Active</option>
@@ -224,15 +300,15 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   <option value="cancelled">Cancelled</option>
                 </select>
               </div>
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
-                  Priority
-                </label>
+              <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                Priority
+              </label>
+              <div className="col-span-4">
                 <select
                   name="priority"
                   value={formData.priority}
                   onChange={handleChange}
-                  className="flex-1 bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
@@ -242,12 +318,12 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               </div>
             </div>
 
-            <div className="col-span-12 grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
-                  Start Date
-                </label>
-                <div className="relative flex-1">
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                Start Date
+              </label>
+              <div className="col-span-4">
+                <div className="relative">
                   <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
                   <input
                     type="date"
@@ -258,11 +334,11 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   />
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
-                  Deadline
-                </label>
-                <div className="relative flex-1">
+              <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                Deadline
+              </label>
+              <div className="col-span-4">
+                <div className="relative">
                   <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
                   <input
                     type="date"
@@ -275,30 +351,32 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               </div>
             </div>
 
-            <div className="col-span-12 flex items-center gap-4">
-              <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Budget
               </label>
-              <div className="relative flex-1">
-                <DollarSign className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
-                <input
-                  type="number"
-                  name="budget"
-                  value={formData.budget}
-                  onChange={handleChange}
-                  placeholder="0.00"
-                  step="0.01"
-                  min="0"
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                />
+              <div className="col-span-9">
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                  <input
+                    type="number"
+                    name="budget"
+                    value={formData.budget}
+                    onChange={handleChange}
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="col-span-12 flex items-center gap-4">
-              <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Progress: {formData.progress}%
               </label>
-              <div className="flex-1">
+              <div className="col-span-9">
                 <Slider
                   value={[formData.progress]}
                   onValueChange={(value: number[]) => setFormData(prev => ({ ...prev, progress: value[0] }))}
@@ -309,86 +387,92 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               </div>
             </div>
 
-            <div className="col-span-12 flex items-center gap-4">
-              <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
-                Team ID (optional)
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                Team ID
               </label>
-              <input
-                type="text"
-                name="team_id"
-                value={formData.team_id}
-                onChange={handleChange}
-                placeholder="Enter team ID"
-                className="flex-1 bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-              />
-            </div>
-
-            <div className="col-span-12 flex items-center gap-4">
-              <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
-                Client ID (optional)
-              </label>
-              <input
-                type="text"
-                name="client_id"
-                value={formData.client_id}
-                onChange={handleChange}
-                placeholder="Enter client ID"
-                className="flex-1 bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-              />
-            </div>
-
-            <div className="col-span-12 flex items-center gap-4">
-              <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
-                Tags
-              </label>
-              <div className="relative flex-1">
-                <button
-                  type="button"
-                  onClick={() => setShowTagDropdown(!showTagDropdown)}
-                  className="w-full flex items-center justify-between bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                >
-                  <div className="flex items-center space-x-2">
-                    <Tag className="h-4 w-4 text-gray-400" />
-                    <span>
-                      {formData.tags.length > 0 
-                        ? formData.tags.join(', ') 
-                        : 'Select tags...'}
-                    </span>
-                  </div>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${showTagDropdown ? 'rotate-180' : ''}`} />
-                </button>
-                
-                {showTagDropdown && (
-                  <div className="absolute z-10 mt-1 w-full bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
-                    <div className="p-2 grid grid-cols-2 gap-2">
-                      {tagOptions.map((tag) => (
-                        <button
-                          key={tag}
-                          type="button"
-                          onClick={() => handleTagSelect(tag)}
-                          className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md transition-colors ${
-                            formData.tags.includes(tag)
-                              ? 'bg-blue-600/20 text-blue-400'
-                              : 'text-gray-300 hover:bg-gray-700'
-                          }`}
-                        >
-                          <span>{tag}</span>
-                          {formData.tags.includes(tag) && (
-                            <Check className="h-4 w-4" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+              <div className="col-span-9">
+                <input
+                  type="text"
+                  name="team_id"
+                  value={formData.team_id}
+                  onChange={handleChange}
+                  placeholder="Enter team ID (optional)"
+                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                />
               </div>
             </div>
 
-            <div className="col-span-12 flex items-center gap-4">
-              <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                Client ID
+              </label>
+              <div className="col-span-9">
+                <input
+                  type="text"
+                  name="client_id"
+                  value={formData.client_id}
+                  onChange={handleChange}
+                  placeholder="Enter client ID (optional)"
+                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                Tags
+              </label>
+              <div className="col-span-9">
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowTagDropdown(!showTagDropdown)}
+                    className="w-full flex items-center justify-between bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Tag className="h-4 w-4 text-gray-400" />
+                      <span>
+                        {formData.tags.length > 0 
+                          ? formData.tags.join(', ') 
+                          : 'Select tags...'}
+                      </span>
+                    </div>
+                    <ChevronDown className={`h-4 w-4 transition-transform ${showTagDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {showTagDropdown && (
+                    <div className="absolute z-10 mt-1 w-full bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
+                      <div className="p-2 grid grid-cols-2 gap-2">
+                        {tagOptions.map((tag) => (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() => handleTagSelect(tag)}
+                            className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md transition-colors ${
+                              formData.tags.includes(tag)
+                                ? 'bg-blue-600/20 text-blue-400'
+                                : 'text-gray-300 hover:bg-gray-700'
+                            }`}
+                          >
+                            <span>{tag}</span>
+                            {formData.tags.includes(tag) && (
+                              <Check className="h-4 w-4" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Color
               </label>
-              <div className="flex space-x-2 flex-1">
+              <div className="col-span-9 flex space-x-2">
                 {colorOptions.map((color) => (
                   <button
                     key={color}
@@ -403,135 +487,166 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               </div>
             </div>
 
-            <div className="col-span-12">
-              <button
-                type="button"
-                onClick={handleToggleFavorite}
-                className={`flex items-center space-x-2 px-4 py-3 w-full rounded-lg transition-colors ${
-                  formData.is_favorite 
-                    ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                    : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700/50'
-                }`}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill={formData.is_favorite ? "currentColor" : "none"}
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="w-5 h-5"
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                Favorite
+              </label>
+              <div className="col-span-9">
+                <button
+                  type="button"
+                  onClick={handleToggleFavorite}
+                  className={`flex items-center space-x-2 px-4 py-3 w-full rounded-lg transition-colors ${
+                    formData.is_favorite 
+                      ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                      : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700/50'
+                  }`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-                  />
-                </svg>
-                <span>Mark as Favorite</span>
-              </button>
+                  <Star className={`w-5 h-5 ${formData.is_favorite ? 'fill-current' : ''}`} />
+                  <span>{formData.is_favorite ? 'Remove from Favorites' : 'Mark as Favorite'}</span>
+                </button>
+              </div>
             </div>
 
-            <div className="col-span-12 flex gap-4">
-              <label className="text-sm font-medium text-gray-300 whitespace-nowrap self-start mt-2">
+            <div className="grid grid-cols-12 gap-4 items-start">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
                 Description
               </label>
-              <div className="flex-1">
-                <div className="flex items-center space-x-1 p-2 bg-gray-800/30 border border-gray-700/50 rounded-t-lg">
-                  <Toggle
-                    pressed={textStyles.bold}
-                    onPressedChange={() => handleTextStyle('bold')}
-                    aria-label="Bold"
-                  >
-                    <Bold className="h-4 w-4" />
-                  </Toggle>
-                  <Toggle
-                    pressed={textStyles.italic}
-                    onPressedChange={() => handleTextStyle('italic')}
-                    aria-label="Italic"
-                  >
-                    <Italic className="h-4 w-4" />
-                  </Toggle>
-                  <Toggle
-                    pressed={textStyles.underline}
-                    onPressedChange={() => handleTextStyle('underline')}
-                    aria-label="Underline"
-                  >
-                    <Underline className="h-4 w-4" />
-                  </Toggle>
-                  <Toggle
-                    pressed={textStyles.strikethrough}
-                    onPressedChange={() => handleTextStyle('strikethrough')}
-                    aria-label="Strikethrough"
-                  >
-                    <Strikethrough className="h-4 w-4" />
-                  </Toggle>
+              <div className="col-span-9">
+                  <div className="flex items-center space-x-1 p-2 bg-gray-800/30 border border-gray-700/50 rounded-t-lg">
+                    <Toggle
+                      pressed={textStyles.bold}
+                      onPressedChange={() => handleTextStyle('bold')}
+                      aria-label="Bold"
+                    >
+                      <Bold className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textStyles.italic}
+                      onPressedChange={() => handleTextStyle('italic')}
+                      aria-label="Italic"
+                    >
+                      <Italic className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textStyles.underline}
+                      onPressedChange={() => handleTextStyle('underline')}
+                      aria-label="Underline"
+                    >
+                      <Underline className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textStyles.strikethrough}
+                      onPressedChange={() => handleTextStyle('strikethrough')}
+                      aria-label="Strikethrough"
+                    >
+                      <Strikethrough className="h-4 w-4" />
+                    </Toggle>
+                    
+                    <div className="h-6 w-px bg-gray-600 mx-1" />
+                    
+                    <Toggle
+                      pressed={textAlign === 'left'}
+                      onPressedChange={() => handleTextAlign('left')}
+                      aria-label="Align left"
+                    >
+                      <AlignLeft className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textAlign === 'center'}
+                      onPressedChange={() => handleTextAlign('center')}
+                      aria-label="Align center"
+                    >
+                      <AlignCenter className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textAlign === 'right'}
+                      onPressedChange={() => handleTextAlign('right')}
+                      aria-label="Align right"
+                    >
+                      <AlignRight className="h-4 w-4" />
+                    </Toggle>
+                    
+                    <div className="h-6 w-px bg-gray-600 mx-1" />
+                    
+                    <Toggle aria-label="List">
+                      <List className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle aria-label="Ordered list">
+                      <ListOrdered className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle aria-label="Link">
+                      <Link className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle aria-label="Code">
+                      <Code className="h-4 w-4" />
+                    </Toggle>
+                  </div>
                   
-                  <div className="h-6 w-px bg-gray-600 mx-1" />
-                  
-                  <Toggle
-                    pressed={textAlign === 'left'}
-                    onPressedChange={() => handleTextAlign('left')}
-                    aria-label="Align left"
-                  >
-                    <AlignLeft className="h-4 w-4" />
-                  </Toggle>
-                  <Toggle
-                    pressed={textAlign === 'center'}
-                    onPressedChange={() => handleTextAlign('center')}
-                    aria-label="Align center"
-                  >
-                    <AlignCenter className="h-4 w-4" />
-                  </Toggle>
-                  <Toggle
-                    pressed={textAlign === 'right'}
-                    onPressedChange={() => handleTextAlign('right')}
-                    aria-label="Align right"
-                  >
-                    <AlignRight className="h-4 w-4" />
-                  </Toggle>
-                  
-                  <div className="h-6 w-px bg-gray-600 mx-1" />
-                  
-                  <Toggle aria-label="List">
-                    <List className="h-4 w-4" />
-                  </Toggle>
-                  <Toggle aria-label="Ordered list">
-                    <ListOrdered className="h-4 w-4" />
-                  </Toggle>
-                  <Toggle aria-label="Link">
-                    <Link className="h-4 w-4" />
-                  </Toggle>
-                  <Toggle aria-label="Code">
-                    <Code className="h-4 w-4" />
-                  </Toggle>
-                </div>
-                
-                <div className="relative">
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={8}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-b-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none"
-                    placeholder="Enter project description..."
-                  />
-                  
-                  <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-4">
-                    <span className="text-xs text-gray-400">
-                      {descriptionLength} characters
-                    </span>
-                    {isSaved && (
-                      <div className="flex items-center space-x-1 text-green-400">
-                        <Check size={14} />
-                        <span className="text-xs">Saved</span>
+                  <div className="relative">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      rows={8}
+                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-b-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none"
+                      placeholder="Enter project description..."
+                    />
+                    
+                    <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-4">
+                      <span className={`text-xs ${
+                        descriptionLength > maxDescriptionLength * 0.9 
+                          ? 'text-red-400' 
+                          : 'text-gray-400'
+                      }`}>
+                        {descriptionLength}/{maxDescriptionLength} characters
+                      </span>
+                      <div className="flex items-center space-x-2">
+                        {isSaved && (
+                          <div className="flex items-center space-x-1 text-green-400">
+                            <Check size={14} />
+                            <span className="text-xs">Saved</span>
+                          </div>
+                        )}
+                        {errors.description && (
+                          <div className="flex items-center space-x-1 text-red-400">
+                            <AlertCircle size={14} />
+                            <span className="text-xs">{errors.description}</span>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
-              </div>
             </div>
           </div>
         </form>
+        
+        {errors.submit && (
+          <div className="mx-6 mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <div className="flex items-center space-x-2 text-red-400">
+              <AlertCircle className="w-5 h-5" />
+              <span>{errors.submit}</span>
+            </div>
+          </div>
+        )}
+        
+        <div className="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
+          <div className="flex items-center justify-between text-sm text-gray-400">
+            <div className="flex items-center space-x-4">
+              <span>Press Ctrl+S to save</span>
+              <span>•</span>
+              <span>Press Esc to cancel</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              {isSaved && (
+                <div className="flex items-center space-x-1 text-green-400">
+                  <Check size={14} />
+                  <span>Saved</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
