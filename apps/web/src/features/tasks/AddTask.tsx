@@ -206,7 +206,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  className="w-auto bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                 >
                   <option value="todo">To Do</option>
                   <option value="in_progress">In Progress</option>
@@ -215,7 +215,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               </div>
             </div>
             <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Priority
               </label>
               <div className="col-span-4">
@@ -262,7 +262,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                       name="due_date"
                       value={formData.due_date}
                       onChange={handleChange}
-                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                      className="w-auto bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                     />
                   </div>
                   {formData.due_date && (
