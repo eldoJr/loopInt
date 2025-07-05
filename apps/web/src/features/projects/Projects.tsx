@@ -6,6 +6,7 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 interface ProjectsProps {
   onNavigateBack?: () => void;
   onNavigateToNewProject?: () => void;
+  onNavigateToEditProject?: (projectId: string) => void;
 }
 
 interface Project {
@@ -28,7 +29,7 @@ interface Project {
   updated_at: string;
 }
 
-const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => {
+const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProject }: ProjectsProps) => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
@@ -137,7 +138,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
 
   const handleEdit = (projectId: string) => {
     console.log('Edit project:', projectId);
-    // TODO: Navigate to edit project page
+    onNavigateToEditProject?.(projectId);
   };
 
   const handleCopy = async (project: Project) => {
@@ -184,8 +185,11 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
 
   const filteredProjects = projects.filter(project => {
     const matchesName = !filters.name || project.name.toLowerCase().includes(filters.name.toLowerCase());
-    const matchesDates = !filters.dates || (project.deadline && project.deadline.includes(filters.dates));
-    const matchesTags = !filters.tags || project.tags.some(tag => tag.toLowerCase().includes(filters.tags.toLowerCase()));
+    const matchesDates = !filters.dates || (
+      (project.deadline && new Date(project.deadline).toLocaleDateString().includes(filters.dates)) ||
+      (project.start_date && new Date(project.start_date).toLocaleDateString().includes(filters.dates))
+    );
+    const matchesTags = !filters.tags || (project.tags && project.tags.some(tag => tag.toLowerCase().includes(filters.tags.toLowerCase())));
     const matchesFavorites = !showFavorites || project.is_favorite;
     return matchesName && matchesDates && matchesTags && matchesFavorites;
   });

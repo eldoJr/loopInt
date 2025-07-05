@@ -20,6 +20,7 @@ import DashboardCard from '../components/ui/DashboardCard';
 import TodoItem from '../components/ui/TodoItem';
 import AllActionsDropdown from '../components/ui/AllActionsDropdown';
 import NewProject from '../features/projects/NewProject';
+import EditProject from '../features/projects/EditProject';
 import AddTask from '../features/tasks/AddTask';
 import NewClient from '../features/clients/NewClient';
 import TeamMember from '../features/auth/TeamMember';
@@ -409,7 +410,13 @@ const Dashboard = () => {
 
     switch (currentView) {
       case 'Projects':
-        return <Projects onNavigateBack={backToMain} onNavigateToNewProject={() => navigateToSection('New Project')} />;
+        return <Projects 
+          onNavigateBack={backToMain} 
+          onNavigateToNewProject={() => navigateToSection('New Project')}
+          onNavigateToEditProject={(projectId) => {
+            setCurrentView(`Edit Project ${projectId}`);
+          }}
+        />;
       case 'Tasks':
         return <Tasks onNavigateBack={backToMain} onNavigateToAddTask={() => navigateToSection('Add Task')} />;
       case 'Calendar':
@@ -485,6 +492,14 @@ const Dashboard = () => {
       case 'Buttons Configuration':
         return <ButtonsConfiguration onNavigateBack={backToMain} />;
       default:
+        if (currentView.startsWith('Edit Project ')) {
+          const projectId = currentView.replace('Edit Project ', '');
+          return <EditProject 
+            projectId={projectId}
+            onNavigateBack={() => navigateToSection('Projects')} 
+            onNavigateToProjects={() => navigateToSection('Projects')} 
+          />;
+        }
         return renderDashboardContent();
     }
   };
