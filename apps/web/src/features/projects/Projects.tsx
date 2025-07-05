@@ -42,21 +42,18 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
       const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
       const currentUser = userData ? JSON.parse(userData) : null;
       
-      const response = await fetch('http://localhost:3000/projects');
+      if (!currentUser) {
+        console.log('No user found, skipping project fetch');
+        return;
+      }
+      
+      const response = await fetch(`http://localhost:3000/projects/user/${currentUser.id}`);
       if (response.ok) {
-        const fetchedProjects = await response.json();
-        console.log('Fetched projects from API:', fetchedProjects);
-        console.log('Current user:', currentUser);
-        
-        const userProjects = currentUser ? 
-          fetchedProjects.filter((project: Project) => {
-            console.log('Comparing project.created_by:', project.created_by, 'with user.id:', currentUser.id);
-            return project.created_by === currentUser.id;
-          }) : 
-          fetchedProjects;
-        
-        console.log('User projects after filtering:', userProjects);
+        const userProjects = await response.json();
+        console.log('Fetched user projects from API:', userProjects);
         setProjects(userProjects);
+      } else {
+        console.error('Failed to fetch projects:', response.statusText);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);

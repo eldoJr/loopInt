@@ -119,12 +119,20 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
     setSaving(true);
     try {
       const projectData = {
-        ...formData,
-        budget: formData.budget ? parseFloat(formData.budget) : null,
+        name: formData.name,
+        description: formData.description,
+        status: formData.status,
+        priority: formData.priority,
+        start_date: formData.start_date,
+        deadline: formData.deadline,
         progress: Number(formData.progress),
-        created_by: currentUser?.id,
+        budget: formData.budget ? parseFloat(formData.budget) : null,
         team_id: formData.team_id || null,
-        client_id: formData.client_id || null
+        client_id: formData.client_id || null,
+        created_by: currentUser?.id,
+        is_favorite: formData.is_favorite,
+        tags: formData.tags,
+        color: formData.color
       };
       
       const response = await fetch('http://localhost:3000/projects', {
