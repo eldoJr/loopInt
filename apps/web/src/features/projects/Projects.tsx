@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Star, Search, X, Filter, MoreHorizontal, Edit, Share, Trash2, Calendar } from 'lucide-react';
+import { Plus, Star, Search, X, Filter, Edit, Copy, Trash2, Calendar } from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -33,7 +33,14 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
   const [showContent, setShowContent] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [filters, setFilters] = useState({ name: '', dates: '', tags: '' });
-  const [openActionMenu, setOpenActionMenu] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (userData) {
+      setCurrentUser(JSON.parse(userData));
+    }
+  }, []);
 
   const [projects, setProjects] = useState<Project[]>([]);
 
@@ -126,6 +133,53 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
 
   const resetAllFilters = () => {
     setFilters({ name: '', dates: '', tags: '' });
+  };
+
+  const handleEdit = (projectId: string) => {
+    console.log('Edit project:', projectId);
+    // TODO: Navigate to edit project page
+  };
+
+  const handleCopy = async (project: Project) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, created_at, updated_at, ...projectData } = project;
+      const projectCopy = {
+        ...projectData,
+        name: `${project.name} (Copy)`,
+        created_by: currentUser?.id
+      };
+      
+      const response = await fetch('http://localhost:3000/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(projectCopy)
+      });
+      
+      if (response.ok) {
+        fetchProjects();
+        console.log('Project copied successfully');
+      }
+    } catch (error) {
+      console.error('Error copying project:', error);
+    }
+  };
+
+  const handleDelete = async (projectId: string) => {
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      try {
+        const response = await fetch(`http://localhost:3000/projects/${projectId}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          fetchProjects();
+          console.log('Project deleted successfully');
+        }
+      } catch (error) {
+        console.error('Error deleting project:', error);
+      }
+    }
   };
 
   const filteredProjects = projects.filter(project => {
@@ -297,13 +351,12 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
             <thead className="bg-gray-800/50 border-b border-gray-700/50">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Project Name</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Created By</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Progress</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Status</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Priority</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Deadline</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Budget</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Actions</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Created By</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700/50">
@@ -313,18 +366,43 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
                     <div className="flex items-center space-x-3">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: project.color }}></div>
                       <div>
-                        <div className="flex items-center space-x-2">
-                          <p className="font-medium text-white">{project.name}</p>
-                          <button
-                            onClick={() => toggleFavorite(project.id)}
-                            className={`transition-colors ${
-                              project.is_favorite 
-                                ? 'text-yellow-400 hover:text-yellow-300' 
-                                : 'text-gray-500 hover:text-yellow-400'
-                            }`}
-                          >
-                            <Star size={16} className={project.is_favorite ? 'fill-current' : ''} />
-                          </button>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <p className="font-medium text-white">{project.name}</p>
+                            <button
+                              onClick={() => toggleFavorite(project.id)}
+                              className={`transition-colors ${
+                                project.is_favorite 
+                                  ? 'text-yellow-400 hover:text-yellow-300' 
+                                  : 'text-gray-500 hover:text-yellow-400'
+                              }`}
+                            >
+                              <Star size={16} className={project.is_favorite ? 'fill-current' : ''} />
+                            </button>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => handleEdit(project.id)}
+                              className="text-gray-400 hover:text-blue-400 transition-colors p-1 rounded hover:bg-gray-700/50"
+                              title="Edit project"
+                            >
+                              <Edit size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleCopy(project)}
+                              className="text-gray-400 hover:text-green-400 transition-colors p-1 rounded hover:bg-gray-700/50"
+                              title="Copy project"
+                            >
+                              <Copy size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(project.id)}
+                              className="text-gray-400 hover:text-red-400 transition-colors p-1 rounded hover:bg-gray-700/50"
+                              title="Delete project"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </div>
                         <p className="text-sm text-gray-400">{project.description || 'No description'}</p>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -336,9 +414,6 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
                         </div>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-gray-300">{project.created_by || 'Unknown'}</span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="w-full">
@@ -373,30 +448,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
                     {project.budget ? `$${project.budget.toLocaleString()}` : 'No budget'}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="relative">
-                      <button
-                        onClick={() => setOpenActionMenu(openActionMenu === project.id ? null : project.id)}
-                        className="text-gray-400 hover:text-gray-300 p-1 rounded hover:bg-gray-700/50"
-                      >
-                        <MoreHorizontal size={16} />
-                      </button>
-                      {openActionMenu === project.id && (
-                        <div className="absolute right-0 top-8 w-32 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10">
-                          <button className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                            <Edit size={14} />
-                            <span>Edit</span>
-                          </button>
-                          <button className="w-full px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center space-x-2">
-                            <Share size={14} />
-                            <span>Share</span>
-                          </button>
-                          <button className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-gray-700 flex items-center space-x-2">
-                            <Trash2 size={14} />
-                            <span>Delete</span>
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <span className="text-gray-300">{currentUser?.name || 'Unknown'}</span>
                   </td>
                 </tr>
               ))}
