@@ -240,7 +240,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-6 max-w-4xl mx-auto ml-64">
+          <div className="space-y-6 max-w-4xl mx-auto ml-72">
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Project Name *
@@ -300,7 +300,9 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   <option value="cancelled">Cancelled</option>
                 </select>
               </div>
-              <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+            </div>
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Priority
               </label>
               <div className="col-span-4">
@@ -366,7 +368,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                     placeholder="0.00"
                     step="0.01"
                     min="0"
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-48 bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                   />
                 </div>
               </div>
@@ -398,7 +400,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   value={formData.team_id}
                   onChange={handleChange}
                   placeholder="Enter team ID (optional)"
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="w-64 bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
               </div>
             </div>
@@ -414,7 +416,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   value={formData.client_id}
                   onChange={handleChange}
                   placeholder="Enter client ID (optional)"
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="w-64 bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
               </div>
             </div>
@@ -428,7 +430,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   <button
                     type="button"
                     onClick={() => setShowTagDropdown(!showTagDropdown)}
-                    className="w-full flex items-center justify-between bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-auto flex items-center justify-between bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                   >
                     <div className="flex items-center space-x-2">
                       <Tag className="h-4 w-4 text-gray-400" />
@@ -442,7 +444,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   </button>
                   
                   {showTagDropdown && (
-                    <div className="absolute z-10 mt-1 w-full bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
+                    <div className="absolute z-10 mt-1 w-auto bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
                       <div className="p-2 grid grid-cols-2 gap-2">
                         {tagOptions.map((tag) => (
                           <button
