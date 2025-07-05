@@ -213,6 +213,8 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                   <option value="done">Done</option>
                 </select>
               </div>
+            </div>
+            <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
                 Priority
               </label>
@@ -229,7 +231,6 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                 </select>
               </div>
             </div>
-            <div className="grid grid-cols-12 gap-4 items-center"></div>
 
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
