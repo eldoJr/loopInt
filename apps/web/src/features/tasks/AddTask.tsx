@@ -179,7 +179,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-6 max-w-4xl mx-auto -ml-2.5">
+          <div className="space-y-6 max-w-4xl mx-auto ml-72">
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Task Title *
