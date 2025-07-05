@@ -3,14 +3,15 @@ import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, 
 import { format, addDays, startOfWeek, endOfWeek, isToday, isTomorrow, isThisWeek, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import EditTaskModal from './EditTask';
+
 
 interface TasksProps {
   onNavigateBack?: () => void;
   onNavigateToAddTask?: () => void;
+  onNavigateToEditTask?: (taskId: string) => void;
 }
 
-const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
+const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: TasksProps) => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   type SectionKey = 'today' | 'tomorrow' | 'thisWeek' | 'later';
@@ -41,7 +42,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
 
   const [filter, setFilter] = useState('all');
   const [view, setView] = useState<'Day' | '3 days' | 'Week' | 'Month'>('Week');
-  const [editingTask, setEditingTask] = useState<string | null>(null);
+
 
   interface ApiTask {
     id: string;
@@ -472,7 +473,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   if (task.uuid) {
-                                    setEditingTask(task.uuid);
+                                    onNavigateToEditTask?.(task.uuid);
                                   }
                                 }}
                                 className="text-gray-400 hover:text-blue-400 p-1 rounded hover:bg-gray-700/50"
@@ -508,15 +509,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask }: TasksProps) => {
 
 
 
-      {/* Edit Task Modal */}
-      {editingTask && (
-        <EditTaskModal
-          taskId={editingTask}
-          isOpen={!!editingTask}
-          onClose={() => setEditingTask(null)}
-          onTaskUpdated={fetchTasks}
-        />
-      )}
+
     </div>
   );
 };

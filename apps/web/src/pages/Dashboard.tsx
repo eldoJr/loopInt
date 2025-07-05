@@ -22,6 +22,7 @@ import AllActionsDropdown from '../components/ui/AllActionsDropdown';
 import NewProject from '../features/projects/NewProject';
 import EditProject from '../features/projects/EditProject';
 import AddTask from '../features/tasks/AddTask';
+import EditTask from '../features/tasks/EditTask';
 import NewClient from '../features/clients/NewClient';
 import TeamMember from '../features/auth/TeamMember';
 import GenerateReport from '../features/ai/GenerateReport';
@@ -418,7 +419,13 @@ const Dashboard = () => {
           }}
         />;
       case 'Tasks':
-        return <Tasks onNavigateBack={backToMain} onNavigateToAddTask={() => navigateToSection('Add Task')} />;
+        return <Tasks 
+          onNavigateBack={backToMain} 
+          onNavigateToAddTask={() => navigateToSection('Add Task')}
+          onNavigateToEditTask={(taskId) => {
+            setCurrentView(`Edit Task ${taskId}`);
+          }}
+        />;
       case 'Calendar':
         return <CalendarView onNavigateBack={backToMain} />;
       case 'Team':
@@ -498,6 +505,14 @@ const Dashboard = () => {
             projectId={projectId}
             onNavigateBack={() => navigateToSection('Projects')} 
             onNavigateToProjects={() => navigateToSection('Projects')} 
+          />;
+        }
+        if (currentView.startsWith('Edit Task ')) {
+          const taskId = currentView.replace('Edit Task ', '');
+          return <EditTask 
+            taskId={taskId}
+            onNavigateBack={() => navigateToSection('Tasks')} 
+            onNavigateToTasks={() => navigateToSection('Tasks')} 
           />;
         }
         return renderDashboardContent();
