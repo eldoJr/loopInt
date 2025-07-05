@@ -366,43 +366,18 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
                     <div className="flex items-center space-x-3">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: project.color }}></div>
                       <div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <p className="font-medium text-white">{project.name}</p>
-                            <button
-                              onClick={() => toggleFavorite(project.id)}
-                              className={`transition-colors ${
-                                project.is_favorite 
-                                  ? 'text-yellow-400 hover:text-yellow-300' 
-                                  : 'text-gray-500 hover:text-yellow-400'
-                              }`}
-                            >
-                              <Star size={16} className={project.is_favorite ? 'fill-current' : ''} />
-                            </button>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <button
-                              onClick={() => handleEdit(project.id)}
-                              className="text-gray-400 hover:text-blue-400 transition-colors p-1 rounded hover:bg-gray-700/50"
-                              title="Edit project"
-                            >
-                              <Edit size={14} />
-                            </button>
-                            <button
-                              onClick={() => handleCopy(project)}
-                              className="text-gray-400 hover:text-green-400 transition-colors p-1 rounded hover:bg-gray-700/50"
-                              title="Copy project"
-                            >
-                              <Copy size={14} />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(project.id)}
-                              className="text-gray-400 hover:text-red-400 transition-colors p-1 rounded hover:bg-gray-700/50"
-                              title="Delete project"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
+                        <div className="flex items-center space-x-2">
+                          <p className="font-medium text-white">{project.name}</p>
+                          <button
+                            onClick={() => toggleFavorite(project.id)}
+                            className={`transition-colors ${
+                              project.is_favorite 
+                                ? 'text-yellow-400 hover:text-yellow-300' 
+                                : 'text-gray-500 hover:text-yellow-400'
+                            }`}
+                          >
+                            <Star size={16} className={project.is_favorite ? 'fill-current' : ''} />
+                          </button>
                         </div>
                         <p className="text-sm text-gray-400">{project.description || 'No description'}</p>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -448,7 +423,32 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
                     {project.budget ? `$${project.budget.toLocaleString()}` : 'No budget'}
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-gray-300">{currentUser?.name || 'Unknown'}</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">{currentUser?.name || 'Unknown'}</span>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleEdit(project.id)}
+                          className="text-gray-400 hover:text-blue-400 transition-colors p-1 rounded hover:bg-gray-700/50"
+                          title="Edit project"
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleCopy(project)}
+                          className="text-gray-400 hover:text-green-400 transition-colors p-1 rounded hover:bg-gray-700/50"
+                          title="Copy project"
+                        >
+                          <Copy size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(project.id)}
+                          className="text-gray-400 hover:text-red-400 transition-colors p-1 rounded hover:bg-gray-700/50"
+                          title="Delete project"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ))}
