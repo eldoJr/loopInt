@@ -176,7 +176,11 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
                 Refresh
               </button>
               <button 
-                onClick={() => onNavigateToNewProject?.()}
+                onClick={() => {
+                  console.log('New project button clicked');
+                  console.log('onNavigateToNewProject function:', onNavigateToNewProject);
+                  onNavigateToNewProject?.();
+                }}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
               >
                 <Plus size={16} />

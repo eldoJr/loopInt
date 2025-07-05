@@ -345,7 +345,7 @@ const Dashboard = () => {
           <DashboardCard
             title="Active Projects"
             icon={FolderOpen}
-            onAdd={() => console.log('Add project')}
+            onAdd={() => navigateToSection('New Project')}
           >
             <div className="space-y-4">
               {projects.map((project, index) => (
@@ -409,7 +409,7 @@ const Dashboard = () => {
 
     switch (currentView) {
       case 'Projects':
-        return <Projects onNavigateBack={backToMain} />;
+        return <Projects onNavigateBack={backToMain} onNavigateToNewProject={() => navigateToSection('New Project')} />;
       case 'Tasks':
         return <Tasks onNavigateBack={backToMain} onNavigateToAddTask={() => navigateToSection('Add Task')} />;
       case 'Calendar':
