@@ -296,7 +296,8 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
           <table className="w-full">
             <thead className="bg-gray-800/50 border-b border-gray-700/50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Project</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Project Name</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Created By</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Progress</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Status</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Priority</th>
@@ -335,6 +336,9 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
                         </div>
                       </div>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-gray-300">{project.created_by || 'Unknown'}</span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="w-full">
