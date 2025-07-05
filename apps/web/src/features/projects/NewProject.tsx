@@ -119,26 +119,28 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
     setSaving(true);
     try {
       const projectData = {
-        name: formData.name,
-        description: formData.description,
+        name: formData.name.trim(),
+        description: formData.description.trim() || undefined,
         status: formData.status,
         priority: formData.priority,
-        start_date: formData.start_date,
-        deadline: formData.deadline,
+        start_date: formData.start_date || undefined,
+        deadline: formData.deadline || undefined,
         progress: Number(formData.progress),
-        budget: formData.budget ? parseFloat(formData.budget) : null,
-        team_id: formData.team_id || null,
-        client_id: formData.client_id || null,
+        budget: formData.budget?.trim() ? parseFloat(formData.budget) : undefined,
+        team_id: formData.team_id.trim() || undefined,
+        client_id: formData.client_id.trim() || undefined,
         created_by: currentUser?.id,
         is_favorite: formData.is_favorite,
-        tags: formData.tags,
+        tags: formData.tags.length > 0 ? formData.tags : undefined,
         color: formData.color
       };
       
       const response = await fetch('http://localhost:3000/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(projectData),
+        body: JSON.stringify(Object.fromEntries(
+          Object.entries(projectData).filter(([_, value]) => value !== undefined)
+        )),
       });
       
       if (response.ok) {

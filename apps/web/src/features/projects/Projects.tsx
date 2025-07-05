@@ -47,16 +47,23 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject }: ProjectsProps) => 
         return;
       }
       
-      const response = await fetch(`http://localhost:3000/projects/user/${currentUser.id}`);
+      const response = await fetch('http://localhost:3000/projects');
       if (response.ok) {
-        const userProjects = await response.json();
-        console.log('Fetched user projects from API:', userProjects);
+        const fetchedProjects = await response.json();
+        console.log('Fetched projects from API:', fetchedProjects);
+        
+        const userProjects = fetchedProjects.filter((project: Project) => {
+          return project.created_by === currentUser.id;
+        });
+        
+        console.log('User projects after filtering:', userProjects);
         setProjects(userProjects);
       } else {
         console.error('Failed to fetch projects:', response.statusText);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
+      console.log('Backend server may not be running. Please start the API server.');
     }
   };
 
