@@ -11,13 +11,11 @@ import {
   Users,
   X,
   Settings,
-  ExternalLink
 } from 'lucide-react';
 import type { User as UserType } from '../lib/api';
 import DashboardHeader from '../components/ui/DashboardHeader';
 import QuickActionCard from '../components/ui/QuickActionCard';
 import DashboardCard from '../components/ui/DashboardCard';
-import TodoItem from '../components/ui/TodoItem';
 import AllActionsDropdown from '../components/ui/AllActionsDropdown';
 import NewProject from '../features/projects/NewProject';
 import EditProject from '../features/projects/EditProject';
@@ -78,6 +76,27 @@ const Dashboard = () => {
   }
   
   const [todos, setTodos] = useState<Todo[]>([]);
+  interface Project {
+    id: string;
+    name: string;
+    description?: string;
+    status: string;
+    color: string;
+    created_by: string;
+  }
+  
+  interface Task {
+    id: string;
+    title: string;
+    description?: string;
+    status: string;
+    priority: string;
+    due_date?: string;
+    assigned_to?: string;
+  }
+  
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [activeProjectsCount, setActiveProjectsCount] = useState(0);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -88,10 +107,10 @@ const Dashboard = () => {
           
           // Filter tasks for current user
           const userTasks = user ? 
-            tasks.filter((task: { assigned_to: string }) => task.assigned_to === user.id) : 
+            tasks.filter((task: Task) => task.assigned_to === user.id) : 
             tasks;
           
-          const formattedTodos: Todo[] = userTasks.map((task: { id: string; title: string; priority: string; due_date?: string; status: string }) => ({
+          const formattedTodos: Todo[] = userTasks.map((task: Task) => ({
             id: task.id,
             text: task.title,
             starred: task.priority === 'high',
@@ -177,25 +196,45 @@ const Dashboard = () => {
     }
   };
 
-  const deleteTodo = async (id: string) => {
+
+  const fetchProjects = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
-        method: 'DELETE',
-      });
-      
+      const response = await fetch('http://localhost:3000/projects');
       if (response.ok) {
-        setTodos(todos.filter(todo => todo.id !== id));
+        const allProjects = await response.json();
+        
+        // Filter projects for current user
+        const userProjects = user ? 
+          allProjects.filter((project: Project) => project.created_by === user.id) : 
+          [];
+        
+        // Only show active projects (not completed or cancelled)
+        const activeProjects = userProjects.filter((project: Project) => 
+          ['planning', 'active', 'on-hold'].includes(project.status)
+        );
+        
+        setProjects(activeProjects);
+        setActiveProjectsCount(activeProjects.length);
       }
     } catch (error) {
-      console.error('Error deleting task:', error);
+      console.error('Error fetching projects:', error);
     }
   };
 
-  const projects = [
-    { name: 'E-commerce Platform', status: 'In Progress', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
-    { name: 'Mobile App Redesign', status: 'Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-    { name: 'API Integration', status: 'Completed', color: 'bg-green-500/20 text-green-400 border-green-500/30' }
-  ];
+  useEffect(() => {
+    if (user) {
+      fetchProjects();
+    }
+  }, [user, currentView]);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'planning': return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+      case 'on-hold': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
 
   const renderDashboardContent = () => (
     <>
@@ -243,7 +282,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-400 text-sm">Active Projects</p>
-              <p className="text-3xl font-bold text-blue-400">12</p>
+              <p className="text-3xl font-bold text-blue-400">{activeProjectsCount}</p>
             </div>
             <FolderOpen className="w-8 h-8 text-blue-400" />
           </div>
@@ -296,26 +335,65 @@ const Dashboard = () => {
                   />
                   <span>Show completed</span>
                 </label>
-                <button
-                  onClick={() => navigateToSection('Tasks')}
-                  className="flex items-center space-x-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors text-sm"
-                >
-                  <ExternalLink className="bg-blue-400 w-4 h-4" />
-                </button>
               </div>
             }
           >
             <div className="space-y-2">
-              {todos
-                .filter(todo => showFinishedTodos || !todo.completed)
-                .map((todo) => (
-                  <TodoItem
-                    key={todo.id}
-                    {...todo}
-                    onToggle={toggleTodo}
-                    onDelete={deleteTodo}
-                  />
-                ))}
+              {todos.length > 0 ? (
+                todos
+                  .filter(todo => showFinishedTodos || !todo.completed)
+                  .map((todo) => (
+                    <div key={todo.id} className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors cursor-pointer" onClick={() => navigateToSection('Tasks')}>
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleTodo(todo.id);
+                          }}
+                          className={`w-4 h-4 rounded border-2 transition-colors ${
+                            todo.completed 
+                              ? 'bg-green-500 border-green-500' 
+                              : 'border-gray-600 hover:border-gray-500'
+                          }`}
+                        >
+                          {todo.completed && (
+                            <CheckCircle className="w-3 h-3 text-white" />
+                          )}
+                        </button>
+                        <div>
+                          <span className={`text-gray-300 font-medium ${
+                            todo.completed ? 'line-through opacity-60' : ''
+                          }`}>
+                            {todo.text}
+                          </span>
+                          <p className="text-gray-500 text-xs mt-1">{todo.date}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {todo.starred && (
+                          <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                        )}
+                        <span className={`px-2 py-1 rounded text-xs ${
+                          todo.completed 
+                            ? 'bg-green-500/20 text-green-400' 
+                            : 'bg-blue-500/20 text-blue-400'
+                        }`}>
+                          {todo.completed ? 'Done' : 'Active'}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No tasks assigned</p>
+                  <button 
+                    onClick={() => navigateToSection('Add Task')}
+                    className="mt-2 text-blue-400 hover:text-blue-300 text-sm"
+                  >
+                    Create your first task
+                  </button>
+                </div>
+              )}
             </div>
           </DashboardCard>
 
@@ -350,17 +428,34 @@ const Dashboard = () => {
             onAdd={() => navigateToSection('New Project')}
           >
             <div className="space-y-4">
-              {projects.map((project, index) => (
-                <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                    <span className="text-gray-300 font-medium">{project.name}</span>
+              {projects.length > 0 ? (
+                projects.map((project) => (
+                  <div key={project.id} className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors cursor-pointer" onClick={() => navigateToSection('Projects')}>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: project.color }}></div>
+                      <div>
+                        <span className="text-gray-300 font-medium">{project.name}</span>
+                        {project.description && (
+                          <p className="text-gray-500 text-xs mt-1">{project.description.substring(0, 50)}{project.description.length > 50 ? '...' : ''}</p>
+                        )}
+                      </div>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-xs border ${getStatusColor(project.status)}`}>
+                      {project.status}
+                    </span>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs border ${project.color}`}>
-                    {project.status}
-                  </span>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No active projects</p>
+                  <button 
+                    onClick={() => navigateToSection('New Project')}
+                    className="mt-2 text-blue-400 hover:text-blue-300 text-sm"
+                  >
+                    Create your first project
+                  </button>
                 </div>
-              ))}
+              )}
             </div>
           </DashboardCard>
 
