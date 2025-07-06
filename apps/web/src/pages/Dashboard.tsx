@@ -16,6 +16,9 @@ import type { User as UserType } from '../lib/api';
 import DashboardHeader from '../components/ui/DashboardHeader';
 import QuickActionCard from '../components/ui/QuickActionCard';
 import DashboardCard from '../components/ui/DashboardCard';
+import DashboardListItem from '../components/ui/DashboardListItem';
+import DashboardStatCard from '../components/ui/DashboardStatCard';
+import DashboardEmptyState from '../components/ui/DashboardEmptyState';
 import AllActionsDropdown from '../components/ui/AllActionsDropdown';
 import NewProject from '../features/projects/NewProject';
 import EditProject from '../features/projects/EditProject';
@@ -227,15 +230,6 @@ const Dashboard = () => {
     }
   }, [user, currentView]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'planning': return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
-      case 'on-hold': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-    }
-  };
-
   const renderDashboardContent = () => (
     <>
       {/* Welcome Section */}
@@ -278,42 +272,34 @@ const Dashboard = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Active Projects</p>
-              <p className="text-3xl font-bold text-blue-400">{activeProjectsCount}</p>
-            </div>
-            <FolderOpen className="w-8 h-8 text-blue-400" />
-          </div>
-        </div>
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Completed Tasks</p>
-              <p className="text-3xl font-bold text-green-400">48</p>
-            </div>
-            <CheckCircle className="w-8 h-8 text-green-400" />
-          </div>
-        </div>
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Team Members</p>
-              <p className="text-3xl font-bold text-purple-400">8</p>
-            </div>
-            <Users className="w-8 h-8 text-purple-400" />
-          </div>
-        </div>
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-400 text-sm">Revenue</p>
-              <p className="text-3xl font-bold text-emerald-400">$24K</p>
-            </div>
-            <BarChart3 className="w-8 h-8 text-emerald-400" />
-          </div>
-        </div>
+        <DashboardStatCard
+          title="Active Projects"
+          value={activeProjectsCount}
+          icon={FolderOpen}
+          color="text-blue-400"
+          onClick={() => navigateToSection('Projects')}
+        />
+        <DashboardStatCard
+          title="Completed Tasks"
+          value={48}
+          icon={CheckCircle}
+          color="text-green-400"
+          onClick={() => navigateToSection('Tasks')}
+        />
+        <DashboardStatCard
+          title="Team Members"
+          value={8}
+          icon={Users}
+          color="text-purple-400"
+          onClick={() => navigateToSection('Team')}
+        />
+        <DashboardStatCard
+          title="Revenue"
+          value="$24K"
+          icon={BarChart3}
+          color="text-emerald-400"
+          onClick={() => navigateToSection('Analytics')}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -343,8 +329,14 @@ const Dashboard = () => {
                 todos
                   .filter(todo => showFinishedTodos || !todo.completed)
                   .map((todo) => (
-                    <div key={todo.id} className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors cursor-pointer" onClick={() => navigateToSection('Tasks')}>
-                      <div className="flex items-center space-x-3">
+                    <DashboardListItem
+                      key={todo.id}
+                      title={todo.text}
+                      subtitle={todo.date}
+                      status={todo.completed ? 'done' : 'active'}
+                      completed={todo.completed}
+                      onClick={() => navigateToSection('Tasks')}
+                      icon={
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -360,39 +352,20 @@ const Dashboard = () => {
                             <CheckCircle className="w-3 h-3 text-white" />
                           )}
                         </button>
-                        <div>
-                          <span className={`text-gray-300 font-medium ${
-                            todo.completed ? 'line-through opacity-60' : ''
-                          }`}>
-                            {todo.text}
-                          </span>
-                          <p className="text-gray-500 text-xs mt-1">{todo.date}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        {todo.starred && (
+                      }
+                      actions={
+                        todo.starred && (
                           <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                        )}
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          todo.completed 
-                            ? 'bg-green-500/20 text-green-400' 
-                            : 'bg-blue-500/20 text-blue-400'
-                        }`}>
-                          {todo.completed ? 'Done' : 'Active'}
-                        </span>
-                      </div>
-                    </div>
+                        )
+                      }
+                    />
                   ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p>No tasks assigned</p>
-                  <button 
-                    onClick={() => navigateToSection('Add Task')}
-                    className="mt-2 text-blue-400 hover:text-blue-300 text-sm"
-                  >
-                    Create your first task
-                  </button>
-                </div>
+                <DashboardEmptyState
+                  message="No tasks assigned"
+                  actionText="Create your first task"
+                  onAction={() => navigateToSection('Add Task')}
+                />
               )}
             </div>
           </DashboardCard>
@@ -430,31 +403,21 @@ const Dashboard = () => {
             <div className="space-y-4">
               {projects.length > 0 ? (
                 projects.map((project) => (
-                  <div key={project.id} className="flex items-center justify-between p-3 hover:bg-gray-800/30 rounded-lg transition-colors cursor-pointer" onClick={() => navigateToSection('Projects')}>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: project.color }}></div>
-                      <div>
-                        <span className="text-gray-300 font-medium">{project.name}</span>
-                        {project.description && (
-                          <p className="text-gray-500 text-xs mt-1">{project.description.substring(0, 50)}{project.description.length > 50 ? '...' : ''}</p>
-                        )}
-                      </div>
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs border ${getStatusColor(project.status)}`}>
-                      {project.status}
-                    </span>
-                  </div>
+                  <DashboardListItem
+                    key={project.id}
+                    title={project.name}
+                    subtitle={project.description}
+                    status={project.status}
+                    color={project.color}
+                    onClick={() => navigateToSection('Projects')}
+                  />
                 ))
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p>No active projects</p>
-                  <button 
-                    onClick={() => navigateToSection('New Project')}
-                    className="mt-2 text-blue-400 hover:text-blue-300 text-sm"
-                  >
-                    Create your first project
-                  </button>
-                </div>
+                <DashboardEmptyState
+                  message="No active projects"
+                  actionText="Create your first project"
+                  onAction={() => navigateToSection('New Project')}
+                />
               )}
             </div>
           </DashboardCard>
