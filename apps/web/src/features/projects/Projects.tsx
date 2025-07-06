@@ -355,6 +355,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
             <thead className="bg-gray-800/50 border-b border-gray-700/50">
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Project Name</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Tags</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Progress</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Status</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Priority</th>
@@ -384,14 +385,18 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
                           </button>
                         </div>
                         <p className="text-sm text-gray-400">{project.description || 'No description'}</p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {project.tags.map((tag) => (
-                            <span key={tag} className="px-2 py-1 bg-gray-700/50 text-gray-300 text-xs rounded">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
                       </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-2">
+                      {project.tags.length > 0 ? project.tags.map((tag) => (
+                        <span key={tag} className="px-2 py-1 bg-gray-700/50 text-gray-300 text-xs rounded border border-gray-600/30">
+                          {tag}
+                        </span>
+                      )) : (
+                        <span className="text-gray-500 text-xs">No tags</span>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4">

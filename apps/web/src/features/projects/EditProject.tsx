@@ -152,26 +152,24 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
     try {
       const projectData = {
         name: formData.name.trim(),
-        description: formData.description.trim() || undefined,
+        description: formData.description.trim(),
         status: formData.status,
         priority: formData.priority,
-        start_date: formData.start_date || undefined,
-        deadline: formData.deadline || undefined,
+        start_date: formData.start_date,
+        deadline: formData.deadline,
         progress: Number(formData.progress),
-        budget: formData.budget?.trim() ? parseFloat(formData.budget) : undefined,
-        team_id: formData.team_id.trim() || undefined,
-        client_id: formData.client_id.trim() || undefined,
+        budget: formData.budget?.trim() ? parseFloat(formData.budget) : null,
+        team_id: formData.team_id.trim() || null,
+        client_id: formData.client_id.trim() || null,
         is_favorite: formData.is_favorite,
-        tags: formData.tags.length > 0 ? formData.tags : undefined,
+        tags: formData.tags,
         color: formData.color
       };
       
       const response = await fetch(`http://localhost:3000/projects/${projectId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(
-          Object.entries(projectData).filter(([value]) => value !== undefined)
-        )),
+        body: JSON.stringify(projectData),
       });
       
       if (response.ok) {
@@ -468,17 +466,23 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
                   <button
                     type="button"
                     onClick={() => setShowTagDropdown(!showTagDropdown)}
-                    className="w-full flex items-center justify-between bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full flex items-center justify-between bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 min-h-[48px]"
                   >
-                    <div className="flex items-center space-x-2">
-                      <Tag className="h-4 w-4 text-gray-400" />
-                      <span>
-                        {formData.tags.length > 0 
-                          ? formData.tags.join(', ') 
-                          : 'Select tags...'}
-                      </span>
+                    <div className="flex items-center space-x-2 flex-1">
+                      <Tag className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <div className="flex flex-wrap gap-1 flex-1">
+                        {formData.tags.length > 0 ? (
+                          formData.tags.map((tag) => (
+                            <span key={tag} className="px-2 py-1 bg-blue-600/20 text-blue-400 text-xs rounded border border-blue-500/30">
+                              {tag}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-gray-400">Select tags...</span>
+                        )}
+                      </div>
                     </div>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${showTagDropdown ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`h-4 w-4 transition-transform flex-shrink-0 ${showTagDropdown ? 'rotate-180' : ''}`} />
                   </button>
                   
                   {showTagDropdown && (
