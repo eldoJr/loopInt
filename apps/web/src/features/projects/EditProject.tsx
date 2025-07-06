@@ -166,6 +166,9 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
         color: formData.color
       };
       
+      console.log('Sending project data:', projectData);
+      console.log('Form data before sending:', formData);
+      
       const response = await fetch(`http://localhost:3000/projects/${projectId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

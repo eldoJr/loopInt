@@ -120,27 +120,25 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
     try {
       const projectData = {
         name: formData.name.trim(),
-        description: formData.description.trim() || undefined,
+        description: formData.description.trim(),
         status: formData.status,
         priority: formData.priority,
-        start_date: formData.start_date || undefined,
-        deadline: formData.deadline || undefined,
+        start_date: formData.start_date,
+        deadline: formData.deadline,
         progress: Number(formData.progress),
-        budget: formData.budget?.trim() ? parseFloat(formData.budget) : undefined,
-        team_id: formData.team_id.trim() || undefined,
-        client_id: formData.client_id.trim() || undefined,
+        budget: formData.budget?.trim() ? parseFloat(formData.budget) : null,
+        team_id: formData.team_id.trim() || null,
+        client_id: formData.client_id.trim() || null,
         created_by: currentUser?.id,
         is_favorite: formData.is_favorite,
-        tags: formData.tags.length > 0 ? formData.tags : undefined,
+        tags: formData.tags,
         color: formData.color
       };
       
       const response = await fetch('http://localhost:3000/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(
-          Object.entries(projectData).filter(([_, value]) => value !== undefined)
-        )),
+        body: JSON.stringify(projectData),
       });
       
       if (response.ok) {
@@ -250,7 +248,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-6 max-w-4xl mx-auto ml-72">
+          <div className="space-y-6 max-w-4xl mx-auto ml-auto">
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Project Name *
