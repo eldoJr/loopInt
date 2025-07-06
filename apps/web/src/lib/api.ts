@@ -8,7 +8,7 @@ export interface User {
   updated_at: Date;
 }
 
-const API_BASE = 'http://localhost:3000/api';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
 
 export const createUser = async (email: string, password: string, name: string): Promise<User> => {
   const response = await fetch(`${API_BASE}/register`, {
