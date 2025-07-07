@@ -104,7 +104,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch('http://localhost:3000/tasks');
+        const response = await fetch('https://loopint-api-production.up.railway.app/tasks');
         if (response.ok) {
           const tasks = await response.json();
           
@@ -179,7 +179,7 @@ const Dashboard = () => {
     if (!todo) return;
     
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
+      const response = await fetch(`https://loopint-api-production.up.railway.app/tasks/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ const Dashboard = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('http://localhost:3000/projects');
+      const response = await fetch('https://loopint-api-production.up.railway.app/projects');
       if (response.ok) {
         const allProjects = await response.json();
         

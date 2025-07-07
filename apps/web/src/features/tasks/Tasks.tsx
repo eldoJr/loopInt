@@ -63,7 +63,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
       const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
       const currentUser = userData ? JSON.parse(userData) : null;
       
-      const response = await fetch('http://localhost:3000/tasks');
+      const response = await fetch('https://loopint-api-production.up.railway.app/tasks');
       if (response.ok) {
         const fetchedTasks: ApiTask[] = await response.json();
         console.log('Fetched tasks from API:', fetchedTasks);
@@ -158,7 +158,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
     const newStatus = task.status === 'done' ? 'todo' : 'done';
     
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${task.uuid}`, {
+      const response = await fetch(`https://loopint-api-production.up.railway.app/tasks/${task.uuid}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -233,7 +233,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
 
   const deleteTask = async (taskUuid: string, sectionKey: SectionKey, taskId: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${taskUuid}`, {
+      const response = await fetch(`https://loopint-api-production.up.railway.app/tasks/${taskUuid}`, {
         method: 'DELETE'
       });
       

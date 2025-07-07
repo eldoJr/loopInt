@@ -104,7 +104,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
       };
       
       console.log('Submitting task:', taskData);
-      const response = await fetch('http://localhost:3000/tasks', {
+      const response = await fetch('https://loopint-api-production.up.railway.app/tasks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

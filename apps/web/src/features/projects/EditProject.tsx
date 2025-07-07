@@ -69,7 +69,7 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/projects/${projectId}`);
+        const response = await fetch(`https://loopint-api-production.up.railway.app/projects/${projectId}`);
         if (response.ok) {
           const project = await response.json();
           setFormData({
@@ -169,7 +169,7 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
       console.log('Sending project data:', projectData);
       console.log('Form data before sending:', formData);
       
-      const response = await fetch(`http://localhost:3000/projects/${projectId}`, {
+      const response = await fetch(`https://loopint-api-production.up.railway.app/projects/${projectId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(projectData),

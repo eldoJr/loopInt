@@ -55,7 +55,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
         return;
       }
       
-      const response = await fetch('http://localhost:3000/projects');
+      const response = await fetch('https://loopint-api-production.up.railway.app/projects');
       if (response.ok) {
         const fetchedProjects = await response.json();
         console.log('Fetched projects from API:', fetchedProjects);
@@ -112,7 +112,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
     if (!project) return;
 
     try {
-      const response = await fetch(`http://localhost:3000/projects/${id}`, {
+      const response = await fetch(`https://loopint-api-production.up.railway.app/projects/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_favorite: !project.is_favorite })
@@ -151,7 +151,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
         created_by: currentUser?.id
       };
       
-      const response = await fetch('http://localhost:3000/projects', {
+      const response = await fetch('https://loopint-api-production.up.railway.app/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(projectCopy)
@@ -169,7 +169,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
   const handleDelete = async (projectId: string) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       try {
-        const response = await fetch(`http://localhost:3000/projects/${projectId}`, {
+        const response = await fetch(`https://loopint-api-production.up.railway.app/projects/${projectId}`, {
           method: 'DELETE'
         });
         
