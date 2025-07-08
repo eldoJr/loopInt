@@ -18,5 +18,8 @@
   "devDependencies": {
     "turbo": "^1.10.0",
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "recharts": "^3.0.2"
   }
 }
