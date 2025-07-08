@@ -96,7 +96,7 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
           position: member.position || 'No position',
           company: member.company || 'No company',
           email: member.email || '',
-          phone: member.phone_numbers?.[0] || member.phoneNumbers?.[0] || '',
+          phone: Array.isArray(member.phone_numbers) ? member.phone_numbers[0] || '' : member.phoneNumbers?.[0] || member.phone_numbers || 'No phone',
           skype: member.skype,
           linkedin: member.linkedin,
           photo: member.photo_url || member.photoUrl,
@@ -300,7 +300,7 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
                         <img 
                           src={member.photo.startsWith('/uploads') ? `http://localhost:3000${member.photo}` : member.photo} 
                           alt={`${member.firstName} ${member.lastName}`} 
-                          className="w-full h-full rounded-full object-cover" 
+                          className="w-full h-full rounded-full object-cover"
                         />
                       ) : (
                         <User className="w-6 h-6 text-gray-400" />
@@ -336,7 +336,7 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
                   </div>
                   <div className="flex items-center space-x-2 text-sm text-gray-300">
                     <Phone className="w-4 h-4 text-gray-400" />
-                    <span>{member.phone}</span>
+                    <span>{member.phone || 'No phone'}</span>
                   </div>
                 </div>
                 
