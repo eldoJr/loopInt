@@ -52,6 +52,7 @@ import JobAd from '../features/hr/JobAd';
 import NewBill from '../features/finance/NewBill';
 import NewCandidate from '../features/hr/NewCandidate';
 import NewCoworker from '../features/team/NewCoworker';
+import EditCoworker from '../features/team/EditCoworker';
 import NewDocument from '../features/documents/NewDocument';
 import NewExpense from '../features/finance/NewExpense';
 import NewOffer from '../features/clients/NewOffer';
@@ -225,15 +226,23 @@ const Dashboard = () => {
     }
   };
 
+  interface TeamMemberType {
+    id: string;
+    name: string;
+    created_by?: string;
+    createdBy?: string;
+    // Add other fields as needed
+  }
+
   const fetchTeamMembers = async () => {
     try {
       const response = await fetch('http://localhost:3000/team');
       if (response.ok) {
-        const allMembers = await response.json();
+        const allMembers: TeamMemberType[] = await response.json();
         
         // Filter team members for current user
         const userMembers = user ? 
-          allMembers.filter((member: any) => member.created_by === user.id || member.createdBy === user.id) : 
+          allMembers.filter((member: TeamMemberType) => member.created_by === user.id || member.createdBy === user.id) : 
           allMembers;
         
         setTeamMembersCount(userMembers.length);
@@ -602,10 +611,10 @@ const Dashboard = () => {
         }
         if (currentView.startsWith('Edit Member ')) {
           const memberId = currentView.replace('Edit Member ', '');
-          return <NewCoworker 
+          return <EditCoworker 
+            memberId={memberId}
             onNavigateBack={() => navigateToSection('Team')} 
             onNavigateToTeam={() => navigateToSection('Team')}
-            memberId={memberId}
           />;
         }
         return renderDashboardContent();

@@ -13,6 +13,7 @@ interface FormData {
   photo: File | null;
   firstName: string;
   lastName: string;
+  email: string;
   isIndividual: boolean;
   company: string;
   source: string;
@@ -43,6 +44,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
     photo: null,
     firstName: '',
     lastName: '',
+    email: '',
     isIndividual: false,
     company: '',
     source: '',
@@ -151,6 +153,10 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
     
     if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
     if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      newErrors.email = 'Please enter a valid email address';
+    }
     if (formData.positionDescription.length > 300) {
       newErrors.positionDescription = 'Position description must be under 300 characters';
     }
@@ -174,13 +180,13 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
       const teamMemberData = {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
         photoUrl: formData.photo ? null : null, // Handle file upload separately
         isIndividual: formData.isIndividual,
         company: formData.company === 'Choose company' ? null : formData.company,
         source: formData.source === 'Contact source' ? null : formData.source,
         position: formData.position === 'Contact person position' ? null : formData.position,
         positionDescription: formData.positionDescription.trim() || null,
-        email: null, // Not in current form
         phoneNumbers: formData.phoneNumbers.filter(phone => phone.trim()),
         skype: formData.skype.trim() || null,
         linkedin: formData.linkedin.trim() || null,
@@ -358,6 +364,32 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     <div className="flex items-center mt-1 text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
                       {errors.lastName}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Email Field */}
+              <div className="grid grid-cols-12 gap-4 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                  Email *
+                </label>
+                <div className="col-span-9">
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                      errors.email 
+                        ? 'border-red-500/50 focus:ring-red-500/50' 
+                        : 'border-gray-700/50 focus:ring-blue-500/50'
+                    }`}
+                    placeholder="Enter email address"
+                  />
+                  {errors.email && (
+                    <div className="flex items-center mt-1 text-red-400 text-sm">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      {errors.email}
                     </div>
                   )}
                 </div>

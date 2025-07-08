@@ -46,6 +46,14 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
 
   const fetchTeamMembers = async () => {
     try {
+      const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+      const currentUser = userData ? JSON.parse(userData) : null;
+      
+      if (!currentUser) {
+        console.log('No user found, skipping team fetch');
+        return;
+      }
+      
       const response = await fetch('http://localhost:3000/team');
       if (response.ok) {
         const allMembers = await response.json();
@@ -76,7 +84,9 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
           state?: string;
         }
 
-        const userMembers = (allMembers as RawTeamMember[]);
+        const userMembers = (allMembers as RawTeamMember[]).filter(
+          (member) => member.created_by === currentUser.id
+        );
 
         // Transform API data to match component interface
         const transformedMembers: TeamMember[] = userMembers.map((member) => ({
@@ -134,7 +144,6 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
   };
 
   const handleEdit = (memberId: string) => {
-    console.log('Edit member:', memberId);
     onNavigateToEditMember?.(memberId);
   };
 
@@ -319,7 +328,7 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
                   </div>
                   <div className="flex items-center space-x-2 text-sm text-gray-300">
                     <Mail className="w-4 h-4 text-gray-400" />
-                    <span className="truncate">{member.email}</span>
+                    <span className="truncate">{member.email || 'No email'}</span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm text-gray-300">
                     <Phone className="w-4 h-4 text-gray-400" />
