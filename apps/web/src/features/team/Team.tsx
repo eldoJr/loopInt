@@ -46,53 +46,61 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
 
   const fetchTeamMembers = async () => {
     try {
-      // Mock data - replace with actual API call
-      const mockMembers: TeamMember[] = [
-        {
-          id: '1',
-          firstName: 'John',
-          lastName: 'Doe',
-          position: 'Senior Developer',
-          company: 'TechCorp',
-          email: 'john.doe@techcorp.com',
-          phone: '+1 (555) 123-4567',
-          skype: 'john.doe.dev',
-          linkedin: 'https://linkedin.com/in/johndoe',
-          isIndividual: false,
-          status: 'active',
-          joinDate: '2024-01-15',
-          location: 'New York, NY'
-        },
-        {
-          id: '2',
-          firstName: 'Sarah',
-          lastName: 'Wilson',
-          position: 'UI/UX Designer',
-          company: 'Individual',
-          email: 'sarah.wilson@freelance.com',
-          phone: '+1 (555) 987-6543',
-          linkedin: 'https://linkedin.com/in/sarahwilson',
-          isIndividual: true,
-          status: 'active',
-          joinDate: '2024-02-20',
-          location: 'San Francisco, CA'
-        },
-        {
-          id: '3',
-          firstName: 'Mike',
-          lastName: 'Johnson',
-          position: 'Project Manager',
-          company: 'ProjectPro',
-          email: 'mike.johnson@projectpro.com',
-          phone: '+1 (555) 456-7890',
-          isIndividual: false,
-          status: 'pending',
-          joinDate: '2024-03-01',
-          location: 'Chicago, IL'
+      const response = await fetch('http://localhost:3000/team');
+      if (response.ok) {
+        const allMembers = await response.json();
+        
+        // Filter team members for current user
+        interface RawTeamMember {
+          id: string;
+          first_name?: string;
+          last_name?: string;
+          position?: string;
+          company?: string;
+          email?: string;
+          phone_numbers?: string[];
+          phoneNumbers?: string[];
+          skype?: string;
+          linkedin?: string;
+          photo_url?: string;
+          photoUrl?: string;
+          is_individual?: boolean;
+          isIndividual?: boolean;
+          status?: string;
+          join_date?: string;
+          joinDate?: string;
+          created_at?: string;
+          created_by?: string;
+          createdBy?: string;
+          city?: string;
+          state?: string;
         }
-      ];
-      setTeamMembers(mockMembers);
-      setFilteredMembers(mockMembers);
+
+        const userMembers = (allMembers as RawTeamMember[]);
+
+        // Transform API data to match component interface
+        const transformedMembers: TeamMember[] = userMembers.map((member) => ({
+          id: member.id,
+          firstName: member.first_name || '',
+          lastName: member.last_name || '',
+          position: member.position || 'No position',
+          company: member.company || 'No company',
+          email: member.email || '',
+          phone: member.phone_numbers?.[0] || member.phoneNumbers?.[0] || '',
+          skype: member.skype,
+          linkedin: member.linkedin,
+          photo: member.photo_url || member.photoUrl,
+          isIndividual: member.is_individual || member.isIndividual || false,
+          status: (member.status as 'active' | 'inactive' | 'pending') || 'active',
+          joinDate: member.join_date || member.joinDate || member.created_at || '',
+          location: [member.city, member.state].filter(Boolean).join(', ') || 'No location'
+        }));
+        
+        setTeamMembers(transformedMembers);
+        setFilteredMembers(transformedMembers);
+      } else {
+        console.error('Failed to fetch team members:', response.statusText);
+      }
     } catch (error) {
       console.error('Error fetching team members:', error);
     }
@@ -133,8 +141,16 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
   const handleDelete = async (memberId: string) => {
     if (window.confirm('Are you sure you want to remove this team member?')) {
       try {
-        setTeamMembers(prev => prev.filter(member => member.id !== memberId));
-        console.log('Member deleted:', memberId);
+        const response = await fetch(`http://localhost:3000/team/${memberId}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          setTeamMembers(prev => prev.filter(member => member.id !== memberId));
+          console.log('Member deleted successfully');
+        } else {
+          console.error('Failed to delete member:', response.statusText);
+        }
       } catch (error) {
         console.error('Error deleting member:', error);
       }
@@ -270,7 +286,7 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
               <div key={member.id} className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-6 hover:bg-gray-800/50 transition-colors">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-gray-700/50 rounded-full flex items-center justify-center">
+                    <div className="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center">
                       {member.photo ? (
                         <img src={member.photo} alt={`${member.firstName} ${member.lastName}`} className="w-full h-full rounded-full object-cover" />
                       ) : (

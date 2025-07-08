@@ -168,13 +168,50 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
     
     setSaving(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log('Coworker data:', formData);
-      onNavigateToTeam?.();
+      const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+      const currentUser = userData ? JSON.parse(userData) : null;
+      
+      const teamMemberData = {
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        photoUrl: formData.photo ? null : null, // Handle file upload separately
+        isIndividual: formData.isIndividual,
+        company: formData.company === 'Choose company' ? null : formData.company,
+        source: formData.source === 'Contact source' ? null : formData.source,
+        position: formData.position === 'Contact person position' ? null : formData.position,
+        positionDescription: formData.positionDescription.trim() || null,
+        email: null, // Not in current form
+        phoneNumbers: formData.phoneNumbers.filter(phone => phone.trim()),
+        skype: formData.skype.trim() || null,
+        linkedin: formData.linkedin.trim() || null,
+        additionalLinks: formData.additionalLinks.filter(link => link.url.trim()),
+        addressLine1: formData.addressLine1.trim() || null,
+        addressLine2: formData.addressLine2?.trim() || null,
+        zipCode: formData.zipCode.trim() || null,
+        city: formData.city.trim() || null,
+        state: formData.state.trim() || null,
+        country: formData.country.trim() || null,
+        description: formData.description.trim() || null,
+        status: 'active',
+        createdBy: currentUser?.id
+      };
+      
+      const response = await fetch('http://localhost:3000/team', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(teamMemberData)
+      });
+      
+      if (response.ok) {
+        console.log('Team member created successfully');
+        onNavigateToTeam?.();
+      } else {
+        const errorData = await response.text();
+        throw new Error(errorData || 'Failed to create team member');
+      }
     } catch (error) {
-      console.error('Error saving coworker:', error);
-      setErrors({ submit: 'Failed to save coworker. Please try again.' });
+      console.error('Error saving team member:', error);
+      setErrors({ submit: 'Failed to save team member. Please try again.' });
     } finally {
       setSaving(false);
     }

@@ -100,6 +100,7 @@ const Dashboard = () => {
   
   const [projects, setProjects] = useState<Project[]>([]);
   const [activeProjectsCount, setActiveProjectsCount] = useState(0);
+  const [teamMembersCount, setTeamMembersCount] = useState(0);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -224,9 +225,28 @@ const Dashboard = () => {
     }
   };
 
+  const fetchTeamMembers = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/team');
+      if (response.ok) {
+        const allMembers = await response.json();
+        
+        // Filter team members for current user
+        const userMembers = user ? 
+          allMembers.filter((member: any) => member.created_by === user.id || member.createdBy === user.id) : 
+          allMembers;
+        
+        setTeamMembersCount(userMembers.length);
+      }
+    } catch (error) {
+      console.error('Error fetching team members:', error);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       fetchProjects();
+      fetchTeamMembers();
     }
   }, [user, currentView]);
 
@@ -288,7 +308,7 @@ const Dashboard = () => {
         />
         <DashboardStatCard
           title="Team Members"
-          value={8}
+          value={teamMembersCount}
           icon={Users}
           color="text-purple-400"
           onClick={() => navigateToSection('Team')}
