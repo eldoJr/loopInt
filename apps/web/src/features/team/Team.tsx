@@ -297,7 +297,11 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
                   <div className="flex items-center space-x-3">
                     <div className="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center overflow-hidden">
                       {member.photo ? (
-                        <img src={member.photo} alt={`${member.firstName} ${member.lastName}`} className="w-full h-full rounded-full object-cover" />
+                        <img 
+                          src={member.photo.startsWith('/uploads') ? `http://localhost:3000${member.photo}` : member.photo} 
+                          alt={`${member.firstName} ${member.lastName}`} 
+                          className="w-full h-full rounded-full object-cover" 
+                        />
                       ) : (
                         <User className="w-6 h-6 text-gray-400" />
                       )}

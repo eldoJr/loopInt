@@ -99,7 +99,10 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
           });
 
           if (member.photo_url) {
-            setPhotoPreview(member.photo_url);
+            const photoUrl = member.photo_url.startsWith('/uploads') 
+              ? `http://localhost:3000${member.photo_url}` 
+              : member.photo_url;
+            setPhotoPreview(photoUrl);
           }
         }
       } catch (error) {
@@ -212,32 +215,37 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
     
     setSaving(true);
     try {
-      const teamMemberData = {
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        email: formData.email.trim(),
-        isIndividual: formData.isIndividual,
-        company: formData.company === 'Choose company' ? null : formData.company,
-        source: formData.source === 'Contact source' ? null : formData.source,
-        position: formData.position === 'Contact person position' ? null : formData.position,
-        positionDescription: formData.positionDescription.trim() || null,
-        phoneNumbers: formData.phoneNumbers.filter(phone => phone.trim()),
-        skype: formData.skype.trim() || null,
-        linkedin: formData.linkedin.trim() || null,
-        additionalLinks: formData.additionalLinks.filter(link => link.url.trim()),
-        addressLine1: formData.addressLine1.trim() || null,
-        addressLine2: formData.addressLine2?.trim() || null,
-        zipCode: formData.zipCode.trim() || null,
-        city: formData.city.trim() || null,
-        state: formData.state.trim() || null,
-        country: formData.country.trim() || null,
-        description: formData.description.trim() || null
-      };
+      const formDataToSend = new FormData();
+      
+      // Add photo file if exists
+      if (formData.photo) {
+        formDataToSend.append('photo', formData.photo);
+      }
+      
+      // Add all other fields
+      formDataToSend.append('firstName', formData.firstName.trim());
+      formDataToSend.append('lastName', formData.lastName.trim());
+      formDataToSend.append('email', formData.email.trim());
+      formDataToSend.append('isIndividual', formData.isIndividual.toString());
+      if (formData.company !== 'Choose company') formDataToSend.append('company', formData.company);
+      if (formData.source !== 'Contact source') formDataToSend.append('source', formData.source);
+      if (formData.position !== 'Contact person position') formDataToSend.append('position', formData.position);
+      if (formData.positionDescription.trim()) formDataToSend.append('positionDescription', formData.positionDescription.trim());
+      formDataToSend.append('phoneNumbers', JSON.stringify(formData.phoneNumbers.filter(phone => phone.trim())));
+      if (formData.skype.trim()) formDataToSend.append('skype', formData.skype.trim());
+      if (formData.linkedin.trim()) formDataToSend.append('linkedin', formData.linkedin.trim());
+      formDataToSend.append('additionalLinks', JSON.stringify(formData.additionalLinks.filter(link => link.url.trim())));
+      if (formData.addressLine1.trim()) formDataToSend.append('addressLine1', formData.addressLine1.trim());
+      if (formData.addressLine2?.trim()) formDataToSend.append('addressLine2', formData.addressLine2.trim());
+      if (formData.zipCode.trim()) formDataToSend.append('zipCode', formData.zipCode.trim());
+      if (formData.city.trim()) formDataToSend.append('city', formData.city.trim());
+      if (formData.state.trim()) formDataToSend.append('state', formData.state.trim());
+      if (formData.country.trim()) formDataToSend.append('country', formData.country.trim());
+      if (formData.description.trim()) formDataToSend.append('description', formData.description.trim());
       
       const response = await fetch(`http://localhost:3000/team/${memberId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(teamMemberData)
+        body: formDataToSend
       });
       
       if (response.ok) {
