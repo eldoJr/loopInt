@@ -48,7 +48,7 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        const response = await fetch(`https://loopint-api-production.up.railway.app/tasks/${taskId}`);
+        const response = await fetch(`http://localhost:3000/tasks/${taskId}`);
         if (response.ok) {
           const task = await response.json();
           setFormData({
@@ -129,7 +129,7 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
       };
       
       console.log('Updating task:', taskData);
-      const response = await fetch(`https://loopint-api-production.up.railway.app/tasks/${taskId}`, {
+      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

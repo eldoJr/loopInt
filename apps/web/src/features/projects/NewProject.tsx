@@ -135,7 +135,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
         color: formData.color
       };
       
-      const response = await fetch('https://loopint-api-production.up.railway.app/projects', {
+      const response = await fetch('http://localhost:3000/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(projectData),

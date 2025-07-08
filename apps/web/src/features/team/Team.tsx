@@ -1,310 +1,369 @@
 import { useState, useEffect } from 'react';
+import { Plus, Search, X, Filter, Edit, Trash2, Mail, Phone, MessageSquare, Linkedin, User, Building, MapPin } from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  avatar: string;
-  status: 'active' | 'away' | 'busy';
-  lastActive: string;
-  tasksCompleted: number;
-}
+import DashboardEmptyState from '../../components/ui/DashboardEmptyState';
 
 interface TeamProps {
   onNavigateBack?: () => void;
+  onNavigateToNewCoworker?: () => void;
+  onNavigateToEditMember?: (memberId: string) => void;
 }
 
-const Team = ({ onNavigateBack }: TeamProps) => {
+interface TeamMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  position: string;
+  company: string;
+  email: string;
+  phone: string;
+  skype?: string;
+  linkedin?: string;
+  photo?: string;
+  isIndividual: boolean;
+  status: 'active' | 'inactive' | 'pending';
+  joinDate: string;
+  location: string;
+}
+
+const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember }: TeamProps) => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [filteredMembers, setFilteredMembers] = useState<TeamMember[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
       setTimeout(() => setShowContent(true), 200);
+      fetchTeamMembers();
     }, 800);
     return () => clearTimeout(timer);
   }, []);
 
-  // Mock team data - replace with real API calls
-  const teamMembers: TeamMember[] = [
-    {
-      id: '1',
-      name: 'Alex Johnson',
-      role: 'Developer',
-      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-      status: 'active',
-      lastActive: '2 minutes ago',
-      tasksCompleted: 42
-    },
-    {
-      id: '2',
-      name: 'Maria Garcia',
-      role: 'Designer',
-      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-      status: 'busy',
-      lastActive: '15 minutes ago',
-      tasksCompleted: 28
-    },
-    {
-      id: '3',
-      name: 'Sam Wilson',
-      role: 'Developer',
-      avatar: 'https://randomuser.me/api/portraits/men/75.jpg',
-      status: 'away',
-      lastActive: '1 hour ago',
-      tasksCompleted: 36
-    },
-    {
-      id: '4',
-      name: 'Priya Patel',
-      role: 'QA Engineer',
-      avatar: 'https://randomuser.me/api/portraits/women/63.jpg',
-      status: 'active',
-      lastActive: '5 minutes ago',
-      tasksCompleted: 19
-    },
-    {
-      id: '5',
-      name: 'James Zhang',
-      role: 'Product Manager',
-      avatar: 'https://randomuser.me/api/portraits/men/81.jpg',
-      status: 'active',
-      lastActive: 'Just now',
-      tasksCompleted: 53
-    },
-    {
-      id: '6',
-      name: 'Emma Williams',
-      role: 'DevOps',
-      avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
-      status: 'busy',
-      lastActive: '30 minutes ago',
-      tasksCompleted: 31
+  const fetchTeamMembers = async () => {
+    try {
+      // Mock data - replace with actual API call
+      const mockMembers: TeamMember[] = [
+        {
+          id: '1',
+          firstName: 'John',
+          lastName: 'Doe',
+          position: 'Senior Developer',
+          company: 'TechCorp',
+          email: 'john.doe@techcorp.com',
+          phone: '+1 (555) 123-4567',
+          skype: 'john.doe.dev',
+          linkedin: 'https://linkedin.com/in/johndoe',
+          isIndividual: false,
+          status: 'active',
+          joinDate: '2024-01-15',
+          location: 'New York, NY'
+        },
+        {
+          id: '2',
+          firstName: 'Sarah',
+          lastName: 'Wilson',
+          position: 'UI/UX Designer',
+          company: 'Individual',
+          email: 'sarah.wilson@freelance.com',
+          phone: '+1 (555) 987-6543',
+          linkedin: 'https://linkedin.com/in/sarahwilson',
+          isIndividual: true,
+          status: 'active',
+          joinDate: '2024-02-20',
+          location: 'San Francisco, CA'
+        },
+        {
+          id: '3',
+          firstName: 'Mike',
+          lastName: 'Johnson',
+          position: 'Project Manager',
+          company: 'ProjectPro',
+          email: 'mike.johnson@projectpro.com',
+          phone: '+1 (555) 456-7890',
+          isIndividual: false,
+          status: 'pending',
+          joinDate: '2024-03-01',
+          location: 'Chicago, IL'
+        }
+      ];
+      setTeamMembers(mockMembers);
+      setFilteredMembers(mockMembers);
+    } catch (error) {
+      console.error('Error fetching team members:', error);
     }
-  ];
+  };
+
+  useEffect(() => {
+    let filtered = teamMembers;
+    
+    if (searchTerm) {
+      filtered = filtered.filter(member => 
+        `${member.firstName} ${member.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        member.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        member.company.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(member => member.status === statusFilter);
+    }
+    
+    setFilteredMembers(filtered);
+  }, [searchTerm, statusFilter, teamMembers]);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'inactive': return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+      case 'pending': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
+  const handleEdit = (memberId: string) => {
+    console.log('Edit member:', memberId);
+    onNavigateToEditMember?.(memberId);
+  };
+
+  const handleDelete = async (memberId: string) => {
+    if (window.confirm('Are you sure you want to remove this team member?')) {
+      try {
+        setTeamMembers(prev => prev.filter(member => member.id !== memberId));
+        console.log('Member deleted:', memberId);
+      } catch (error) {
+        console.error('Error deleting member:', error);
+      }
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+  };
+
+  const resetFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+  };
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Team' }
   ];
 
-  const roles = ['all', ...Array.from(new Set(teamMembers.map(member => member.role)))];
-
-  const filteredMembers = teamMembers.filter(member => {
-    const matchesFilter = activeFilter === 'all' || member.role === activeFilter;
-    const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         member.role.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-emerald-500';
-      case 'away': return 'bg-amber-500';
-      case 'busy': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Breadcrumb items={breadcrumbItems} />
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 transition-all duration-500 ${
+      showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+    }`}>
       <Breadcrumb items={breadcrumbItems} />
       
-      {loading ? (
-        <LoadingSpinner />
-      ) : (
-        <div className={`transition-all duration-500 ${
-          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-white">Team Members</h2>
-                <p className="text-gray-400">Manage and collaborate with your team</p>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search team..."
-                    className="bg-gray-800/50 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent w-full"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <svg
-                    className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-                
-                <select
-                  className="bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  value={activeFilter}
-                  onChange={(e) => setActiveFilter(e.target.value)}
-                >
-                  {roles.map((role) => (
-                    <option key={role} value={role}>
-                      {role.charAt(0).toUpperCase() + role.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {filteredMembers.length === 0 ? (
-              <div className="text-center py-12">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                  />
-                </svg>
-                <h3 className="mt-2 text-lg font-medium text-white">No team members found</h3>
-                <p className="mt-1 text-gray-400">Try adjusting your search or filter criteria</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredMembers.map((member) => (
-                  <div
-                    key={member.id}
-                    className="bg-gray-800/30 hover:bg-gray-800/50 border border-gray-700 rounded-lg p-4 transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/10"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="relative">
-                        <img
-                          className="h-12 w-12 rounded-full object-cover"
-                          src={member.avatar}
-                          alt={member.name}
-                        />
-                        <span
-                          className={`absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-gray-800 ${getStatusColor(
-                            member.status
-                          )}`}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-lg font-medium text-white truncate">
-                            {member.name}
-                          </h3>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-900 text-purple-100">
-                            {member.role}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Last active: {member.lastActive}
-                        </p>
-                        <div className="mt-3 flex items-center">
-                          <div className="flex-1">
-                            <div className="flex items-center text-sm text-gray-400">
-                              <svg
-                                className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-500"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              {member.tasksCompleted} tasks
-                            </div>
-                          </div>
-                          <div className="flex space-x-2">
-                            <button className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-700">
-                              <svg
-                                className="h-5 w-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                                />
-                              </svg>
-                            </button>
-                            <button className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-700">
-                              <svg
-                                className="h-5 w-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="mt-6 flex justify-between items-center">
-              <p className="text-sm text-gray-400">
-                Showing {filteredMembers.length} of {teamMembers.length} members
-              </p>
-              <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                <svg
-                  className="-ml-1 mr-2 h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-                Add Member
+      {/* Header */}
+      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
+        <div className="px-6 py-4 border-b border-gray-700/50">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-semibold text-white">Team Members</h1>
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={() => fetchTeamMembers()}
+                className="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+              >
+                Refresh
+              </button>
+              <button 
+                onClick={onNavigateToNewCoworker}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+              >
+                <Plus size={16} />
+                <span>New Team Member</span>
               </button>
             </div>
           </div>
         </div>
-      )}
+        
+        {/* Filters */}
+        <div className="px-6 py-4 bg-gray-800/30 border-b border-gray-700/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="relative group">
+                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+                <input
+                  type="text"
+                  placeholder="Search team members..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-64 pl-10 pr-10 py-2.5 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-gray-700/70 transition-all"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-400 transition-colors"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+              
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500/50"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
+                <div className="group relative">
+                  <button className="p-2.5 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 hover:text-white transition-all duration-200 border border-gray-600/30 hover:border-gray-500/50">
+                    <Filter size={16} />
+                  </button>
+                  <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                    Advanced filters
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                  </div>
+                </div>
+                
+                <div className="group relative">
+                  <button 
+                    onClick={resetFilters}
+                    className="p-2.5 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 border border-red-500/30 hover:border-red-400/50"
+                  >
+                    <X size={16} />
+                  </button>
+                  <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                    Reset filters
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-sm text-gray-400">
+                <span className="font-medium text-white">{filteredMembers.length}</span> of {teamMembers.length} members
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Team Members Grid */}
+      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl overflow-hidden">
+        {filteredMembers.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+            {filteredMembers.map((member) => (
+              <div key={member.id} className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-6 hover:bg-gray-800/50 transition-colors">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gray-700/50 rounded-full flex items-center justify-center">
+                      {member.photo ? (
+                        <img src={member.photo} alt={`${member.firstName} ${member.lastName}`} className="w-full h-full rounded-full object-cover" />
+                      ) : (
+                        <User className="w-6 h-6 text-gray-400" />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">{member.firstName} {member.lastName}</h3>
+                      <p className="text-sm text-gray-400">{member.position}</p>
+                    </div>
+                  </div>
+                  <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(member.status)}`}>
+                    {member.status}
+                  </span>
+                </div>
+                
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <Building className="w-4 h-4 text-gray-400" />
+                    <span>{member.company}</span>
+                    {member.isIndividual && (
+                      <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded">
+                        Individual
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <span>{member.location}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <Mail className="w-4 h-4 text-gray-400" />
+                    <span className="truncate">{member.email}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                    <Phone className="w-4 h-4 text-gray-400" />
+                    <span>{member.phone}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    {member.skype && (
+                      <button className="p-1.5 bg-blue-500/20 text-blue-400 rounded hover:bg-blue-500/30 transition-colors">
+                        <MessageSquare className="w-4 h-4" />
+                      </button>
+                    )}
+                    {member.linkedin && (
+                      <button className="p-1.5 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors">
+                        <Linkedin className="w-4 h-4" />
+                      </button>
+                    )}
+                    <button className="p-1.5 bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 transition-colors">
+                      <Mail className="w-4 h-4" />
+                    </button>
+                  </div>
+                  
+                  <div className="flex items-center space-x-1">
+                    <button
+                      onClick={() => handleEdit(member.id)}
+                      className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors"
+                      title="Edit member"
+                    >
+                      <Edit size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(member.id)}
+                      className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                      title="Remove member"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="mt-3 pt-3 border-t border-gray-700/50">
+                  <p className="text-xs text-gray-500">
+                    Joined {new Date(member.joinDate).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-12">
+            <DashboardEmptyState
+              message={searchTerm || statusFilter !== 'all' ? 'No team members match your filters' : 'No team members yet'}
+              actionText={!searchTerm && statusFilter === 'all' ? 'Add your first team member' : undefined}
+              onAction={!searchTerm && statusFilter === 'all' ? onNavigateToNewCoworker : undefined}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

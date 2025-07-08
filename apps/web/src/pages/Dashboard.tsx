@@ -104,7 +104,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch('https://loopint-api-production.up.railway.app/tasks');
+        const response = await fetch('http://localhost:3000/tasks');
         if (response.ok) {
           const tasks = await response.json();
           
@@ -179,7 +179,7 @@ const Dashboard = () => {
     if (!todo) return;
     
     try {
-      const response = await fetch(`https://loopint-api-production.up.railway.app/tasks/${id}`, {
+      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ const Dashboard = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('https://loopint-api-production.up.railway.app/projects');
+      const response = await fetch('http://localhost:3000/projects');
       if (response.ok) {
         const allProjects = await response.json();
         
@@ -487,7 +487,11 @@ const Dashboard = () => {
       case 'Calendar':
         return <CalendarView onNavigateBack={backToMain} />;
       case 'Team':
-        return <Team onNavigateBack={backToMain} />;
+        return <Team 
+          onNavigateBack={backToMain} 
+          onNavigateToNewCoworker={() => navigateToSection('New Coworker')}
+          onNavigateToEditMember={(memberId) => setCurrentView(`Edit Member ${memberId}`)}
+        />;
       case 'Analytics':
         return <Analytics onNavigateBack={backToMain} />;
       case 'New Project':
@@ -539,7 +543,10 @@ const Dashboard = () => {
       case 'New Candidate':
         return <NewCandidate onNavigateBack={backToMain} />;
       case 'New Coworker':
-        return <NewCoworker onNavigateBack={backToMain} />;
+        return <NewCoworker 
+          onNavigateBack={backToMain} 
+          onNavigateToTeam={() => navigateToSection('Team')}
+        />;
       case 'New Document':
         return <NewDocument onNavigateBack={backToMain} />;
       case 'New Expense':
@@ -571,6 +578,14 @@ const Dashboard = () => {
             taskId={taskId}
             onNavigateBack={() => navigateToSection('Tasks')} 
             onNavigateToTasks={() => navigateToSection('Tasks')} 
+          />;
+        }
+        if (currentView.startsWith('Edit Member ')) {
+          const memberId = currentView.replace('Edit Member ', '');
+          return <NewCoworker 
+            onNavigateBack={() => navigateToSection('Team')} 
+            onNavigateToTeam={() => navigateToSection('Team')}
+            memberId={memberId}
           />;
         }
         return renderDashboardContent();

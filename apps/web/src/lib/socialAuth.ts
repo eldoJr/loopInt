@@ -1,7 +1,7 @@
 // Google OAuth
 export const loginWithGoogle = () => {
   const clientId = '1075897717707-l6udtbgag9u2plju9gfu9kaljvq7ouki.apps.googleusercontent.com';
-  const redirectUri = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/auth/google/callback` : 'https://loopint-api-production.up.railway.app/api/auth/google/callback';
+  const redirectUri = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/auth/google/callback` : 'http://localhost:3000/api/auth/google/callback';
   const scope = 'openid email profile';
   
   const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
