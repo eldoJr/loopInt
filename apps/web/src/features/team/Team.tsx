@@ -286,7 +286,7 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
               <div key={member.id} className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-6 hover:bg-gray-800/50 transition-colors">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center">
+                    <div className="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center overflow-hidden">
                       {member.photo ? (
                         <img src={member.photo} alt={`${member.firstName} ${member.lastName}`} className="w-full h-full rounded-full object-cover" />
                       ) : (
