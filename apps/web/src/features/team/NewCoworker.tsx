@@ -64,7 +64,6 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
   });
 
   const companies = ['Choose company', 'Company A', 'Company B', 'Company C'];
-  const sources = ['Contact source', 'LinkedIn', 'Referral', 'Website', 'Event'];
   const positions = ['Contact person position', 'Manager', 'Developer', 'Designer', 'Analyst'];
 
   useEffect(() => {
@@ -449,24 +448,10 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                   <select
                     value={formData.company}
                     onChange={(e) => handleInputChange('company', e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-auto bg-gray-800/50 border border-gray-700/50 rounded-lg px-2 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                   >
                     {companies.map(company => (
                       <option key={company} value={company}>{company}</option>
-                    ))}
-                  </select>
-                </div>
-                <label className="col-span-2 text-sm font-medium text-gray-300 text-right">
-                  Source
-                </label>
-                <div className="col-span-2">
-                  <select
-                    value={formData.source}
-                    onChange={(e) => handleInputChange('source', e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                  >
-                    {sources.map(source => (
-                      <option key={source} value={source}>{source}</option>
                     ))}
                   </select>
                 </div>
@@ -477,7 +462,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                   <select
                     value={formData.position}
                     onChange={(e) => handleInputChange('position', e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-auto bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                   >
                     {positions.map(position => (
                       <option key={position} value={position}>{position}</option>
