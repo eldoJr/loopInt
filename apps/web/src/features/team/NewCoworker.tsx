@@ -75,6 +75,23 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
     return () => clearTimeout(timer);
   }, []);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+        handleSubmit(fakeEvent);
+      }
+      if (e.key === 'Escape') {
+        onNavigateToTeam?.();
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onNavigateToTeam]);
+
   const handleInputChange = useCallback((field: keyof FormData, value: string | boolean | File | null | string[] | { type: string; url: string }[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -807,6 +824,16 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
             </div>
           </div>
         )}
+        
+        <div className="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
+          <div className="flex items-center justify-between text-sm text-gray-400">
+            <div className="flex items-center space-x-4">
+              <span>Press Ctrl+S to save</span>
+              <span>•</span>
+              <span>Press Esc to cancel</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

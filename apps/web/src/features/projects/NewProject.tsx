@@ -498,7 +498,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                     key={color}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, color }))}
-                    className={`w-8 h-8 rounded-full border-2 transition-all ${
+                    className={`w-5 h-5 rounded-full border-2 transition-all ${
                       formData.color === color ? 'border-white scale-110' : 'border-gray-600 hover:border-gray-400'
                     }`}
                     style={{ backgroundColor: color }}
