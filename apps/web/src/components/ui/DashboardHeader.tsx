@@ -24,7 +24,8 @@ const navItems = [
   { name: 'Tasks' },
   { name: 'Calendar' },
   { name: 'Team' },
-  { name: 'Analytics' }
+  { name: 'Analytics' },
+  { name: 'Reports' }
 ];
 
 const DashboardHeader = ({ user, setActiveTab, setSidebarOpen, onLogout, currentView = 'Dashboard', onNavigate }: DashboardHeaderProps) => {

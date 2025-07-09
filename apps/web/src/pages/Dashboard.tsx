@@ -62,6 +62,10 @@ import UndocumentedRevenue from '../features/finance/UndocumentedRevenue';
 import Historic from '../features/support/History';
 import ButtonsConfiguration from '../features/settings/ButtonsConfiguration';
 import CustomizationAlert from '../components/ui/CustomizationAlert';
+import Reports from '../features/reports/Reports';
+import NewReport from '../features/reports/NewReport';
+import EditReport from '../features/reports/EditReport';
+import ViewReport from '../features/reports/ViewReport';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
@@ -523,6 +527,18 @@ const Dashboard = () => {
         />;
       case 'Analytics':
         return <Analytics onNavigateBack={backToMain} />;
+      case 'Reports':
+        return <Reports 
+          onNavigateBack={backToMain}
+          onNavigateToNewReport={() => navigateToSection('New Report')}
+          onNavigateToEditReport={(reportId) => setCurrentView(`Edit Report ${reportId}`)}
+          onNavigateToViewReport={(reportId) => setCurrentView(`View Report ${reportId}`)}
+        />;
+      case 'New Report':
+        return <NewReport 
+          onNavigateBack={backToMain}
+          onNavigateToReports={() => navigateToSection('Reports')}
+        />;
       case 'New Project':
         return <NewProject onNavigateBack={backToMain} onNavigateToProjects={() => navigateToSection('Projects')} />;
       case 'Add Task':
@@ -617,6 +633,23 @@ const Dashboard = () => {
             onNavigateToTeam={() => navigateToSection('Team')}
           />;
         }
+        if (currentView.startsWith('Edit Report ')) {
+          const reportId = currentView.replace('Edit Report ', '');
+          return <EditReport 
+            reportId={reportId}
+            onNavigateBack={() => navigateToSection('Reports')}
+            onNavigateToReports={() => navigateToSection('Reports')}
+          />;
+        }
+        if (currentView.startsWith('View Report ')) {
+          const reportId = currentView.replace('View Report ', '');
+          return <ViewReport 
+            reportId={reportId}
+            onNavigateBack={() => navigateToSection('Reports')}
+            onNavigateToReports={() => navigateToSection('Reports')}
+            onNavigateToEdit={(id) => setCurrentView(`Edit Report ${id}`)}
+          />;
+        }
         return renderDashboardContent();
     }
   };
@@ -647,7 +680,7 @@ const Dashboard = () => {
               </button>
             </div>
             <nav className="space-y-2">
-              {['Dashboard', 'Projects', 'Tasks', 'Calendar', 'Team', 'Analytics'].map((item) => (
+              {['Dashboard', 'Projects', 'Tasks', 'Calendar', 'Team', 'Analytics', 'Reports'].map((item) => (
                 <button
                   key={item}
                   onClick={() => {
