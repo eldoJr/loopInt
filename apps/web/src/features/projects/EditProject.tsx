@@ -281,7 +281,12 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-6 max-w-4xl mx-auto -ml-2.5">
+          <div className="space-y-8 max-w-4xl mx-auto">
+            {/* Section 1 - Basic Information */}
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+                Basic Information
+              </h2>
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Project Name *
@@ -323,41 +328,48 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
-                Status
-              </label>
-              <div className="col-span-4">
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                >
-                  <option value="planning">Planning</option>
-                  <option value="active">Active</option>
-                  <option value="on-hold">On Hold</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </div>
-              <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
-                Priority
-              </label>
-              <div className="col-span-4">
-                <select
-                  name="priority"
-                  value={formData.priority}
-                  onChange={handleChange}
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                  <option value="urgent">Urgent</option>
-                </select>
+              <div className="grid grid-cols-12 gap-4 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                  Status
+                </label>
+                <div className="col-span-4">
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  >
+                    <option value="planning">Planning</option>
+                    <option value="active">Active</option>
+                    <option value="on-hold">On Hold</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                  Priority
+                </label>
+                <div className="col-span-4">
+                  <select
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleChange}
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
               </div>
             </div>
+
+            {/* Section 2 - Project Details */}
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+                Project Details
+              </h2>
 
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
@@ -428,37 +440,41 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
-                Team ID
-              </label>
-              <div className="col-span-9">
-                <input
-                  type="text"
-                  name="team_id"
-                  value={formData.team_id}
-                  onChange={handleChange}
-                  placeholder="Enter team ID (optional)"
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                />
+              <div className="grid grid-cols-12 gap-4 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                  Team ID
+                </label>
+                <div className="col-span-4">
+                  <input
+                    type="text"
+                    name="team_id"
+                    value={formData.team_id}
+                    onChange={handleChange}
+                    placeholder="Enter team ID (optional)"
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  />
+                </div>
+                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                  Client ID
+                </label>
+                <div className="col-span-4">
+                  <input
+                    type="text"
+                    name="client_id"
+                    value={formData.client_id}
+                    onChange={handleChange}
+                    placeholder="Enter client ID (optional)"
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
-                Client ID
-              </label>
-              <div className="col-span-9">
-                <input
-                  type="text"
-                  name="client_id"
-                  value={formData.client_id}
-                  onChange={handleChange}
-                  placeholder="Enter client ID (optional)"
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                />
-              </div>
-            </div>
+            {/* Section 3 - Configuration */}
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+                Configuration
+              </h2>
 
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
@@ -664,6 +680,7 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
                     </div>
                   </div>
                 </div>
+            </div>
             </div>
           </div>
         </form>

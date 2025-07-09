@@ -248,7 +248,12 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-6 max-w-4xl mx-auto ml-auto">
+          <div className="space-y-8 max-w-4xl mx-auto">
+            {/* Section 1 - Basic Information */}
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+                Basic Information
+              </h2>
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
                 Project Name *
@@ -290,43 +295,48 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
-                Status
-              </label>
-              <div className="col-span-4">
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                >
-                  <option value="planning">Planning</option>
-                  <option value="active">Active</option>
-                  <option value="on-hold">On Hold</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
+              <div className="grid grid-cols-12 gap-4 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                  Status
+                </label>
+                <div className="col-span-4">
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  >
+                    <option value="planning">Planning</option>
+                    <option value="active">Active</option>
+                    <option value="on-hold">On Hold</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                  Priority
+                </label>
+                <div className="col-span-4">
+                  <select
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleChange}
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
-                Priority
-              </label>
-              <div className="col-span-4">
-                <select
-                  name="priority"
-                  value={formData.priority}
-                  onChange={handleChange}
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                  <option value="urgent">Urgent</option>
-                </select>
-              </div>
-            </div>
+
+            {/* Section 2 - Project Details */}
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+                Project Details
+              </h2>
 
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
@@ -628,6 +638,8 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   </div>
                 </div>
             </div>
+          </div>    
+        
           </div>
         </form>
         

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Calendar, User, FileText, Save, CalendarDays, Timer, Target, CalendarCheck, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Calendar, User, Save, CalendarDays, Timer, Target, CalendarCheck, Check } from 'lucide-react';
 import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek } from 'date-fns';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -204,56 +204,62 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-6 max-w-4xl mx-auto -ml-2.5">
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
-                Task Title *
-              </label>
-              <div className="col-span-9">
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-                  placeholder="Enter task title"
-                />
+          <div className="space-y-8 max-w-4xl mx-auto">
+            {/* Section 1 - Basic Information */}
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+                Task Information
+              </h2>
+              
+              <div className="grid grid-cols-12 gap-4 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                  Task Title *
+                </label>
+                <div className="col-span-9">
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    placeholder="Enter task title"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
-                Status
-              </label>
-              <div className="col-span-4">
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-                >
-                  <option value="todo">To Do</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="done">Done</option>
-                </select>
+              <div className="grid grid-cols-12 gap-4 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                  Status
+                </label>
+                <div className="col-span-4">
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  >
+                    <option value="todo">To Do</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="done">Done</option>
+                  </select>
+                </div>
+                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                  Priority
+                </label>
+                <div className="col-span-4">
+                  <select
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleChange}
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
               </div>
-              <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
-                Priority
-              </label>
-              <div className="col-span-4">
-                <select
-                  name="priority"
-                  value={formData.priority}
-                  onChange={handleChange}
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-            </div>
 
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
@@ -295,49 +301,57 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
-                Project
-              </label>
-              <div className="col-span-4">
-                <select
-                  name="project_id"
-                  value={formData.project_id}
-                  onChange={handleChange}
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-                >
-                  <option value="">Select Project</option>
-                  <option value="proj-1">E-commerce Platform</option>
-                  <option value="proj-2">Mobile App Redesign</option>
-                  <option value="proj-3">API Integration</option>
-                  <option value="proj-4">New Project</option>
-                  <option value="proj-5">HR Project</option>
-                </select>
-              </div>
-              <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
-                Assigned To
-              </label>
-              <div className="col-span-4">
-                <div className="w-full bg-gray-800/30 border border-gray-700/50 rounded-lg px-4 py-3 text-gray-300 flex items-center space-x-2">
-                  <User className="w-4 h-4 text-blue-400" />
-                  <span>{currentUser?.name || 'User'} (You)</span>
+              <div className="grid grid-cols-12 gap-4 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                  Project
+                </label>
+                <div className="col-span-4">
+                  <select
+                    name="project_id"
+                    value={formData.project_id}
+                    onChange={handleChange}
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  >
+                    <option value="">Select Project</option>
+                    <option value="proj-1">E-commerce Platform</option>
+                    <option value="proj-2">Mobile App Redesign</option>
+                    <option value="proj-3">API Integration</option>
+                    <option value="proj-4">New Project</option>
+                    <option value="proj-5">HR Project</option>
+                  </select>
+                </div>
+                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                  Assigned To
+                </label>
+                <div className="col-span-4">
+                  <div className="w-full bg-gray-800/30 border border-gray-700/50 rounded-lg px-4 py-3 text-gray-300 flex items-center space-x-2">
+                    <User className="w-4 h-4 text-blue-400" />
+                    <span>{currentUser?.name || 'User'} (You)</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-start">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
-                Description
-              </label>
-              <div className="col-span-9">
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows={4}
-                  className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none"
-                  placeholder="Enter task description"
-                />
+            {/* Section 2 - Schedule and Details */}
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+                Schedule and Details
+              </h2>
+
+              <div className="grid grid-cols-12 gap-4 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
+                  Description
+                </label>
+                <div className="col-span-9">
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none"
+                    placeholder="Enter task description"
+                  />
+                </div>
               </div>
             </div>
           </div>
