@@ -30,31 +30,47 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
     { id: 'deadline', label: 'Deadline', icon: Target, color: 'bg-red-500' }
   ];
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     if (!subject.trim()) {
       alert('Please enter a subject');
       return;
     }
     
-    const issueData = {
-      type: selectedType,
-      subject: subject.trim(),
-      description: description.trim(),
-      project,
-      calendar,
-      priority,
-      status,
-      startDate,
-      endDate,
-      startTime: wholeDay ? null : startTime,
-      endTime: wholeDay ? null : endTime,
-      wholeDay,
-      tags,
-      reminders
-    };
     
-    console.log('Saving issue:', issueData);
-    onClose();
+    try {
+      const response = await fetch('http://localhost:3000/calendar/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: subject.trim(),
+          description: description.trim(),
+          eventType: selectedType,
+          startDate: wholeDay ? startDate.toISOString().split('T')[0] + 'T00:00:00.000Z' : new Date(`${startDate.toISOString().split('T')[0]}T${startTime}:00.000Z`).toISOString(),
+          endDate: wholeDay ? endDate.toISOString().split('T')[0] + 'T23:59:59.999Z' : new Date(`${endDate.toISOString().split('T')[0]}T${endTime}:00.000Z`).toISOString(),
+          allDay: wholeDay,
+          calendarName: calendar,
+          priority,
+          status,
+          tags,
+          reminders,
+          createdBy: '00000000-0000-0000-0000-000000000001'
+        })
+      });
+      
+      if (response.ok) {
+        console.log('Issue created successfully');
+        onClose();
+      } else {
+        const errorData = await response.json().catch(() => ({ message: 'Failed to create issue' }));
+        console.error('Error creating issue:', errorData.message);
+        alert('Failed to create issue: ' + errorData.message);
+      }
+    } catch (error) {
+      console.error('Error creating issue:', error);
+      alert('Failed to create issue. Please try again.');
+    }
   }, [selectedType, subject, description, project, calendar, priority, status, startDate, endDate, startTime, endTime, wholeDay, tags, reminders, onClose]);
 
   const addTag = () => {
@@ -273,12 +289,7 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
                   <input
                     type="date"
                     value={startDate.toISOString().split('T')[0]}
-                    onChange={(e) => {
-                      const newDate = new Date(e.target.value);
-                      if (!isNaN(newDate.getTime())) {
-                        setStartDate(newDate);
-                      }
-                    }}
+                    onChange={(e) => setStartDate(new Date(e.target.value))}
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm"
                   />
                   {!wholeDay && (
@@ -295,12 +306,7 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
                   <input
                     type="date"
                     value={endDate.toISOString().split('T')[0]}
-                    onChange={(e) => {
-                      const newDate = new Date(e.target.value);
-                      if (!isNaN(newDate.getTime())) {
-                        setEndDate(newDate);
-                      }
-                    }}
+                    onChange={(e) => setEndDate(new Date(e.target.value))}
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm"
                   />
                   {!wholeDay && (

@@ -216,8 +216,15 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
         console.log('Team member created successfully');
         onNavigateToTeam?.();
       } else {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Failed to create team member');
+        let errorMessage = 'Failed to create team member';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          const errorText = await response.text();
+          errorMessage = errorText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error('Error saving team member:', error);
