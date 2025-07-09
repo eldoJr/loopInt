@@ -8,10 +8,11 @@ export interface User {
   updated_at: Date;
 }
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = `${API_BASE}/api`;
 
 export const createUser = async (email: string, password: string, name: string): Promise<User> => {
-  const response = await fetch(`${API_BASE}/register`, {
+  const response = await fetch(`${API_URL}/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, name })
@@ -26,7 +27,7 @@ export const createUser = async (email: string, password: string, name: string):
 };
 
 export const loginUser = async (email: string, password: string): Promise<User | null> => {
-  const response = await fetch(`${API_BASE}/login`, {
+  const response = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })

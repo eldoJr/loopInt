@@ -1,40 +1,98 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database
   postgres:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: loopint-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: loopint
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres123
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres:/docker-entrypoint-initdb.d
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - loopint-network
 
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: loopint-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - loopint-network
+
+  # Nginx (for production)
+  nginx:
+    image: nginx:alpine
+    container_name: loopint-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api
+      - web
+    networks:
+      - loopint-network
+    profiles:
+      - production
+
+  # API Backend
   api:
     build:
       context: .
-      dockerfile: apps/api/Dockerfile
+      dockerfile: ./docker/api.Dockerfile
     container_name: loopint-api
+    restart: unless-stopped
     ports:
-      - "3001:3001"
+      - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/loopint
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:loopIntpass@loopintdb.covgegce8sb0.us-east-1.rds.amazonaws.com:5432/loopintdb
+      - REDIS_URL=redis://redis:6379
     depends_on:
-      - postgres
+      - redis
+    volumes:
+      - ./apps/api:/app
+      - /app/node_modules
+    networks:
+      - loopint-network
+    profiles:
+      - development
 
+  # Web Frontend
   web:
     build:
       context: .
-      dockerfile: apps/web/Dockerfile
+      dockerfile: ./docker/web.Dockerfile
     container_name: loopint-web
+    restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3000
     depends_on:
       - api
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    networks:
+      - loopint-network
+    profiles:
+      - development
 
 volumes:
   postgres_data:
+
+networks:
+  loopint-network:
+    driver: bridge
