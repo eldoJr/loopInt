@@ -4,7 +4,6 @@ import { TrendingUp, Users, CheckCircle, Clock, Target, Activity, Calendar, Zap,
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import DashboardStatCard from '../../components/ui/DashboardStatCard';
-import Button from '../../components/ui/Button';
 
 interface AnalyticsProps {
   onNavigateBack?: () => void;
@@ -174,21 +173,21 @@ const Analytics = ({ onNavigateBack }: AnalyticsProps) => {
                 <option value="team">Team Performance</option>
               </select>
             </div>
-            <div className="flex items-center gap-2">
-              <Button 
+            <div className="flex items-center gap-3">
+              <button 
                 onClick={() => {
                   setIsRefreshing(true);
                   setTimeout(() => setIsRefreshing(false), 1000);
                 }}
-                className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 text-sm"
+                className="flex items-center gap-2 px-4 py-2.5 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700/50 hover:border-gray-600/50 text-gray-300 hover:text-white rounded-lg transition-all duration-200 text-sm font-medium backdrop-blur-sm"
               >
-                <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                 Refresh
-              </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 text-sm">
-                <Download className="w-4 h-4 mr-2" />
+              </button>
+              <button className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-blue-500/25">
+                <Download className="w-4 h-4" />
                 Export
-              </Button>
+              </button>
             </div>
           </div>
 
