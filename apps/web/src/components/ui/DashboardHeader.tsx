@@ -35,11 +35,16 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
           <button 
             onClick={() => setSidebarOpen(!sidebarOpen)}
             onMouseEnter={() => {
-              setSidebarHovered?.(true);
-              setIsMouseOverButton?.(true);
+              if (!sidebarOpen) {
+                setSidebarHovered?.(true);
+                setIsMouseOverButton?.(true);
+              }
             }}
             onMouseLeave={() => {
               setIsMouseOverButton?.(false);
+              if (!sidebarOpen) {
+                setSidebarHovered?.(false);
+              }
             }}
             className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-all duration-200 hover:scale-110"
             title={sidebarOpen ? 'Close Menu' : 'Open Menu'}
