@@ -1,5 +1,5 @@
 # Dependencies
-.node_modules/
+node_modules/
 .pnp
 .pnp.js
 
@@ -40,6 +40,5 @@ Thumbs.db
 
 # Turbo
 .turbo/
-node_modules
 
 /generated/prisma
