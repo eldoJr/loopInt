@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Save, Calendar, Target, Users, TrendingUp, FileText, Clock, Repeat, AlertCircle, Check, ChevronDown, Tag } from 'lucide-react';
-import { format, addDays } from 'date-fns';
+import { Save, Target, Users, TrendingUp, FileText, AlertCircle, Check, ChevronDown, Tag } from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -169,7 +168,6 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
     }));
   };
 
-  const selectedReportType = reportTypes.find(type => type.value === formData.type);
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },

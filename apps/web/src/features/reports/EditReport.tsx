@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Save, Calendar, Target, Users, TrendingUp, FileText, AlertCircle, Check, ChevronDown, Tag, ArrowLeft } from 'lucide-react';
+import { Save, Target, Users, TrendingUp, FileText, AlertCircle, Check, ChevronDown, Tag, ArrowLeft } from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
