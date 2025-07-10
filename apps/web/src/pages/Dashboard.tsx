@@ -683,7 +683,7 @@ const Dashboard = () => {
       />
 
       {/* Dynamic Content Area */}
-      <div className={`pt-20 p-6 transition-all duration-300 ease-in-out ${
+      <div className={`pt-14 p-6 transition-all duration-300 ease-in-out ${
         sidebarOpen ? 'ml-72' : 'ml-0'
       }`}>
         <div>

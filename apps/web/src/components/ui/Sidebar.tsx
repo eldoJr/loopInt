@@ -43,7 +43,7 @@ const Sidebar = ({ isOpen, onClose, currentView, onNavigate, isHovered, setIsHov
 
   return (
     <div 
-      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out shadow-2xl ${
+      className={`fixed left-0 top-14 h-[calc(100vh-3.5rem)] bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out shadow-2xl ${
         isOpen ? 'w-72 z-30' : shouldShow ? 'w-72 z-40' : 'w-0 z-40'
       } overflow-hidden`}
       onMouseEnter={() => setIsHovered?.(true)}
@@ -68,7 +68,7 @@ const Sidebar = ({ isOpen, onClose, currentView, onNavigate, isHovered, setIsHov
                     onMouseLeave={() => setHoveredItem(null)}
                     onClick={() => {
                       onNavigate(item.name);
-                      onClose();
+                      if (!isOpen) onClose();
                     }}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive
@@ -130,17 +130,17 @@ const Sidebar = ({ isOpen, onClose, currentView, onNavigate, isHovered, setIsHov
                 <span className="text-sm text-gray-700 dark:text-gray-300">Goals</span>
               </div>
               <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
-                   onClick={() => { onNavigate('Clients'); onClose(); }}>
+                   onClick={() => { onNavigate('Clients'); if (!isOpen) onClose(); }}>
                 <Building className="w-4 h-4 text-gray-400" />
                 <span className="text-sm text-gray-700 dark:text-gray-300">Clients</span>
               </div>
               <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
-                   onClick={() => { onNavigate('Help Center'); onClose(); }}>
+                   onClick={() => { onNavigate('Help Center'); if (!isOpen) onClose(); }}>
                 <MessageSquare className="w-4 h-4 text-gray-400" />
                 <span className="text-sm text-gray-700 dark:text-gray-300">Help Center</span>
               </div>
               <div className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer"
-                   onClick={() => { onNavigate('Account Settings'); onClose(); }}>
+                   onClick={() => { onNavigate('Account Settings'); if (!isOpen) onClose(); }}>
                 <Settings className="w-4 h-4 text-gray-400" />
                 <span className="text-sm text-gray-700 dark:text-gray-300">Customize sidebar</span>
               </div>
@@ -153,7 +153,7 @@ const Sidebar = ({ isOpen, onClose, currentView, onNavigate, isHovered, setIsHov
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
           <button 
-            onClick={() => { onNavigate('Report Bug'); onClose(); }}
+            onClick={() => { onNavigate('Report Bug'); if (!isOpen) onClose(); }}
             className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left"
           >
             <MessageSquare className="w-4 h-4 text-gray-400" />
