@@ -9,7 +9,6 @@ import {
   CheckCircle,
   BarChart3,
   Users,
-  X,
   Settings,
 } from 'lucide-react';
 import type { User as UserType } from '../lib/api';
@@ -62,6 +61,7 @@ import UndocumentedRevenue from '../features/finance/UndocumentedRevenue';
 import Historic from '../features/support/History';
 import ButtonsConfiguration from '../features/settings/ButtonsConfiguration';
 import CustomizationAlert from '../components/ui/CustomizationAlert';
+import Sidebar from '../components/ui/Sidebar';
 import Reports from '../features/reports/Reports';
 import NewReport from '../features/reports/NewReport';
 import EditReport from '../features/reports/EditReport';
@@ -69,7 +69,6 @@ import ViewReport from '../features/reports/ViewReport';
 
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
-  const [activeTab, setActiveTab] = useState('Dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showFinishedTodos, setShowFinishedTodos] = useState(false);
   const [currentView, setCurrentView] = useState('Dashboard');
@@ -548,7 +547,7 @@ const Dashboard = () => {
       case 'Team Member':
         return <TeamMember onNavigateBack={backToMain} onNavigateToTeam={() => navigateToSection('Team')} />;
       case 'Generate Report':
-        return <GenerateReport onNavigateBack={backToMain} onNavigateToAnalytics={() => navigateToSection('Analytics')} />;
+        return <GenerateReport />;
       case 'Clients':
         return <Clients onNavigateBack={backToMain} />;
       case 'Personal Data':
@@ -660,80 +659,19 @@ const Dashboard = () => {
       {user && (
         <DashboardHeader 
           user={user}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
           setSidebarOpen={setSidebarOpen}
           onLogout={handleLogout}
-          currentView={currentView}
           onNavigate={navigateToSection}
         />
       )}
 
-      {/* Mobile Sidebar */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 lg:hidden">
-          <div className="fixed left-0 top-0 h-full w-64 bg-gray-900/95 backdrop-blur-sm border-r border-gray-800/50 p-4">
-            <div className="flex items-center justify-between mb-6">
-              <span className="font-semibold text-white">Menu</span>
-              <button onClick={() => setSidebarOpen(false)} className="text-gray-400 hover:text-white">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            <nav className="space-y-2">
-              {['Dashboard', 'Projects', 'Tasks', 'Calendar', 'Team', 'Analytics', 'Reports'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => {
-                    navigateToSection(item);
-                    setSidebarOpen(false);
-                  }}
-                  className={`w-full px-4 py-2 rounded-lg flex items-center transition-colors ${
-                    activeTab === item 
-                      ? 'bg-blue-500 text-white' 
-                      : 'text-gray-300 hover:bg-gray-800/50'
-                  }`}
-                >
-                  {item}
-                </button>
-              ))}
-              <div className="pt-4 border-t border-gray-800/50 space-y-2">
-                <button
-                  onClick={() => console.log('Short Notes')}
-                  className="w-full px-4 py-2 text-gray-300 hover:bg-gray-800/50 rounded-lg transition-colors text-left"
-                >
-                  Short Notes
-                </button>
-                <button
-                  onClick={() => console.log('History')}
-                  className="w-full px-4 py-2 text-gray-300 hover:bg-gray-800/50 rounded-lg transition-colors text-left"
-                >
-                  History
-                </button>
-                <button
-                  onClick={() => console.log('All Actions')}
-                  className="w-full px-4 py-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors text-left"
-                >
-                  All Actions
-                </button>
-                <button
-                  onClick={() => console.log('Settings')}
-                  className="w-full px-4 py-2 text-gray-300 hover:bg-gray-800/50 rounded-lg transition-colors text-left"
-                >
-                  Settings
-                </button>
-              </div>
-            </nav>
-            <div className="absolute bottom-4 left-4 right-4">
-              <button
-                onClick={handleLogout}
-                className="w-full px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors border border-red-500/30"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        currentView={currentView}
+        onNavigate={navigateToSection}
+      />
 
       {/* Dynamic Content Area */}
       <div className="pt-20 p-6">
