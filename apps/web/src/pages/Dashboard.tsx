@@ -25,7 +25,7 @@ import AddTask from '../features/tasks/AddTask';
 import EditTask from '../features/tasks/EditTask';
 import NewClient from '../features/clients/NewClient';
 import TeamMember from '../features/auth/TeamMember';
-import GenerateReport from '../features/ai/GenerateReport';
+import { GenerateReport } from '../features/ai/GenerateReport';
 import Projects from '../features/projects/Projects';
 import Tasks from '../features/tasks/Tasks';
 import CalendarView from '../features/calendar/Calendar';

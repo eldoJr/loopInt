@@ -1,4 +1,4 @@
-import { Menu, Search, Sun, Moon } from 'lucide-react';
+import { SidebarOpen, Search, Sun, Moon } from 'lucide-react';
 import logoImg from '../../assets/img/logo/logo-b.svg';
 import UserProfileDropdown from './UserProfileDropdown';
 import AddDropdown from './AddDropdown';
@@ -34,7 +34,7 @@ const DashboardHeader = ({ user, setSidebarOpen, onLogout, onNavigate }: Dashboa
             className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-colors"
             title="Menu"
           >
-            <Menu className="w-4 h-4" />
+            <SidebarOpen className="w-4 h-4" />
           </button>
           
           <button 
