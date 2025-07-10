@@ -263,4 +263,16 @@ const AIGenerateReport = ({ onApplyToForm }: AIGenerateReportProps) => {
   );
 };
 
+// Standalone component for direct use
+const GenerateReport = () => {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-6">
+      <div className="max-w-4xl mx-auto">
+        <AIGenerateReport />
+      </div>
+    </div>
+  );
+};
+
 export default AIGenerateReport;
+export { GenerateReport };

@@ -19,7 +19,7 @@ const navItems = [
 ];
 
 const Sidebar = ({ isOpen, onClose, currentView, onNavigate }: SidebarProps) => {
-  const { theme } = useTheme();
+  useTheme();
 
   if (!isOpen) return null;
 
