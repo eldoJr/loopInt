@@ -70,6 +70,8 @@ import ViewReport from '../features/reports/ViewReport';
 const Dashboard = () => {
   const [user, setUser] = useState<UserType | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarHovered, setSidebarHovered] = useState(false);
+  const [isMouseOverButton, setIsMouseOverButton] = useState(false);
   const [showFinishedTodos, setShowFinishedTodos] = useState(false);
   const [currentView, setCurrentView] = useState('Dashboard');
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -662,6 +664,8 @@ const Dashboard = () => {
           setSidebarOpen={setSidebarOpen}
           onLogout={handleLogout}
           onNavigate={navigateToSection}
+          setSidebarHovered={setSidebarHovered}
+          setIsMouseOverButton={setIsMouseOverButton}
         />
       )}
 
@@ -671,6 +675,10 @@ const Dashboard = () => {
         onClose={() => setSidebarOpen(false)}
         currentView={currentView}
         onNavigate={navigateToSection}
+        isHovered={sidebarHovered}
+        setIsHovered={setSidebarHovered}
+        isMouseOverButton={isMouseOverButton}
+        setIsMouseOverButton={setIsMouseOverButton}
       />
 
       {/* Dynamic Content Area */}
