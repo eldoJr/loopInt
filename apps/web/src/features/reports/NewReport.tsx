@@ -211,14 +211,21 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setShowAIPanel(!showAIPanel)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                className={`group flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 ${
                   showAIPanel
-                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/25'
-                    : 'bg-purple-600/20 text-purple-400 border border-purple-500/30 hover:bg-purple-600/30'
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40'
+                    : 'bg-purple-600/20 text-purple-400 border border-purple-500/30 hover:bg-purple-600/30 hover:border-purple-400/50 hover:text-purple-300'
                 }`}
               >
-                {showAIPanel ? <X size={16} /> : <Sparkles size={16} />}
-                <span>{showAIPanel ? 'Close AI' : 'AI Assistant'}</span>
+                <div className={`transition-transform duration-300 ${
+                  showAIPanel ? 'rotate-180' : 'group-hover:rotate-12'
+                }`}>
+                  {showAIPanel ? <X size={16} /> : <Sparkles size={16} />}
+                </div>
+                <span className="font-medium">{showAIPanel ? 'Close AI' : 'AI Assistant'}</span>
+                {!showAIPanel && (
+                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse opacity-75" />
+                )}
               </button>
               <button 
                 onClick={onNavigateToReports}
@@ -229,24 +236,31 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
               <button 
                 onClick={handleSubmit}
                 disabled={!isFormValid() || saving}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 transform ${
                   isFormValid() && !saving
-                    ? 'bg-blue-600 text-white hover:bg-blue-700'
-                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-blue-500/25 hover:scale-105 active:scale-95'
+                    : 'bg-gray-600 text-gray-400 cursor-not-allowed opacity-60'
                 }`}
               >
-                <Save size={16} />
-                <span>{saving ? 'Creating...' : 'Create Report'}</span>
+                <div className={saving ? 'animate-spin' : ''}>
+                  <Save size={16} />
+                </div>
+                <span className="font-medium">{saving ? 'Creating...' : 'Create Report'}</span>
+                {saving && (
+                  <div className="flex space-x-1">
+                    <div className="w-1 h-1 bg-white rounded-full animate-bounce" />
+                    <div className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                    <div className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                  </div>
+                )}
               </button>
             </div>
           </div>
         </div>
 
         <div className="relative overflow-hidden">
-          <div className={`flex transition-transform duration-500 ease-in-out ${
-            showAIPanel ? '-translate-x-1/2' : 'translate-x-0'
-          }`} style={{ width: showAIPanel ? '200%' : '100%' }}>
-            <div className={`${showAIPanel ? 'w-1/2' : 'w-full'} flex-shrink-0 p-6`}>
+          <div className={`flex transition-all duration-500 ease-in-out`}>
+            <div className={`${showAIPanel ? 'w-1/2' : 'w-full'} flex-shrink-0 p-6 transition-all duration-500`}>
               <form onSubmit={handleSubmit}>
                 <div className={`space-y-8 ${!showAIPanel ? 'max-w-4xl mx-auto' : ''}`}>
             {/* Basic Information */}
@@ -266,10 +280,10 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
                     value={formData.title}
                     onChange={handleChange}
                     required
-                    className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-gray-800/70 ${
                       errors.title 
-                        ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50' 
-                        : 'border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50'
+                        ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50 animate-pulse' 
+                        : 'border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-gray-800/80'
                     }`}
                     placeholder="Enter report title"
                   />
@@ -367,7 +381,7 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
                             : 'Select tags...'}
                         </span>
                       </div>
-                      <ChevronDown className={`h-4 w-4 transition-transform ${showTagDropdown ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${showTagDropdown ? 'rotate-180' : ''}`} />
                     </button>
                     
                     {showTagDropdown && (
@@ -415,8 +429,9 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
                     placeholder="Describe what this report will contain..."
                   />
                   <div className="flex items-center justify-between mt-1">
-                    <span className={`text-xs ${
-                      formData.description.length > 450 ? 'text-red-400' : 'text-gray-400'
+                    <span className={`text-xs transition-colors duration-200 ${
+                      formData.description.length > 450 ? 'text-red-400 animate-pulse' : 
+                      formData.description.length > 400 ? 'text-yellow-400' : 'text-gray-400'
                     }`}>
                       {formData.description.length}/500 characters
                     </span>
@@ -499,11 +514,9 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
                 </div>
               </form>
             </div>
-            {showAIPanel && (
-              <div className="w-1/2 flex-shrink-0 p-6 border-l border-gray-700/50">
-                <AIGenerateReport onApplyToForm={handleAIApply} />
-              </div>
-            )}
+            <div className={`${showAIPanel ? 'w-1/2 opacity-100' : 'w-0 opacity-0'} flex-shrink-0 p-6 border-l border-gray-700/50 transition-all duration-500 overflow-hidden bg-gradient-to-br from-purple-900/10 to-blue-900/10`}>
+              <AIGenerateReport onApplyToForm={handleAIApply} />
+            </div>
           </div>
         </div>
         
