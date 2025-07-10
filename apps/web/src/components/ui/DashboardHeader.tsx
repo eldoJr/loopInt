@@ -1,4 +1,4 @@
-import { Menu, Search, Sun, Moon } from 'lucide-react';
+import { SidebarOpen, SidebarClose, Search, Sun, Moon } from 'lucide-react';
 import logoImg from '../../assets/img/logo/logo-b.svg';
 import UserProfileDropdown from './UserProfileDropdown';
 import AddDropdown from './AddDropdown';
@@ -14,6 +14,7 @@ interface User {
 
 interface DashboardHeaderProps {
   user: User;
+  sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   onLogout: () => void;
   onNavigate?: (section: string) => void;
@@ -23,7 +24,7 @@ interface DashboardHeaderProps {
 
 
 
-const DashboardHeader = ({ user, setSidebarOpen, onLogout, onNavigate, setSidebarHovered, setIsMouseOverButton }: DashboardHeaderProps) => {
+const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNavigate, setSidebarHovered, setIsMouseOverButton }: DashboardHeaderProps) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -32,7 +33,7 @@ const DashboardHeader = ({ user, setSidebarOpen, onLogout, onNavigate, setSideba
         {/* Left Side */}
         <div className="flex items-center space-x-3">
           <button 
-            onClick={() => setSidebarOpen(true)}
+            onClick={() => setSidebarOpen(!sidebarOpen)}
             onMouseEnter={() => {
               setSidebarHovered?.(true);
               setIsMouseOverButton?.(true);
@@ -41,9 +42,9 @@ const DashboardHeader = ({ user, setSidebarOpen, onLogout, onNavigate, setSideba
               setIsMouseOverButton?.(false);
             }}
             className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-all duration-200 hover:scale-110"
-            title="Menu"
+            title={sidebarOpen ? 'Close Menu' : 'Open Menu'}
           >
-            <Menu className="w-4 h-4" />
+            {sidebarOpen ? <SidebarClose className="w-4 h-4" /> : <SidebarOpen className="w-4 h-4" />}
           </button>
           
           <button 

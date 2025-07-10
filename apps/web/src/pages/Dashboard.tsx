@@ -661,6 +661,7 @@ const Dashboard = () => {
       {user && (
         <DashboardHeader 
           user={user}
+          sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
           onLogout={handleLogout}
           onNavigate={navigateToSection}
