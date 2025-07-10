@@ -245,10 +245,10 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
         <div className="relative overflow-hidden">
           <div className={`flex transition-transform duration-500 ease-in-out ${
             showAIPanel ? '-translate-x-1/2' : 'translate-x-0'
-          }`}>
-            <div className="w-full flex-shrink-0 p-6">
+          }`} style={{ width: showAIPanel ? '200%' : '100%' }}>
+            <div className="w-1/2 flex-shrink-0 p-6">
               <form onSubmit={handleSubmit}>
-                <div className="space-y-8 max-w-4xl mx-auto">
+                <div className="space-y-8">
             {/* Basic Information */}
             <div className="space-y-6">
               <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
@@ -499,7 +499,7 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
                 </div>
               </form>
             </div>
-            <div className="w-full flex-shrink-0 p-6 border-l border-gray-700/50">
+            <div className="w-1/2 flex-shrink-0 p-6 border-l border-gray-700/50">
               <AIGenerateReport onApplyToForm={handleAIApply} />
             </div>
           </div>
