@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Calendar, User, Save, CalendarDays, Timer, Target, CalendarCheck, Check } from 'lucide-react';
+import { Calendar, User, Save, CalendarDays, Timer, Target, CalendarCheck, Check, Sparkles, X } from 'lucide-react';
 import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek } from 'date-fns';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import AIGenerateTask from '../ai/GenerateTask';
 
 interface AddTaskProps {
   onNavigateBack?: () => void;
@@ -13,6 +14,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [showAIPanel, setShowAIPanel] = useState(false);
   
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string; } | null>(null);
 
@@ -135,6 +137,18 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
     });
   };
 
+  const handleAIApply = (aiData: { title?: string; description?: string; priority?: string; status?: string; due_date?: string }) => {
+    setFormData(prev => ({
+      ...prev,
+      title: aiData.title || prev.title,
+      description: aiData.description || prev.description,
+      priority: aiData.priority || prev.priority,
+      status: aiData.status || prev.status,
+      due_date: aiData.due_date || prev.due_date
+    }));
+    setShowAIPanel(false);
+  };
+
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Tasks', onClick: onNavigateToTasks },
@@ -161,25 +175,46 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold text-white">Add New Task</h1>
             <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowAIPanel(!showAIPanel)}
+                className={`group flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 ${
+                  showAIPanel
+                    ? 'bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-lg shadow-green-500/25 hover:shadow-green-500/40'
+                    : 'bg-green-600/20 text-green-400 border border-green-500/30 hover:bg-green-600/30 hover:border-green-400/50 hover:text-green-300'
+                }`}
+              >
+                <div className={`transition-transform duration-300 ${
+                  showAIPanel ? 'rotate-180' : 'group-hover:rotate-12'
+                }`}>
+                  {showAIPanel ? <X size={16} /> : <Sparkles size={16} />}
+                </div>
+                <span className="font-medium">{showAIPanel ? 'Close AI' : 'AI Assistant'}</span>
+                {!showAIPanel && (
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse opacity-75" />
+                )}
+              </button>
               <button 
                 onClick={onNavigateToTasks}
-                className="px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-colors"
+                className="px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-all duration-200 hover:text-white transform hover:scale-105 active:scale-95"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSubmit}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25 transform hover:scale-105 active:scale-95"
               >
                 <Save size={16} />
-                <span>Create Task</span>
+                <span className="font-medium">Create Task</span>
               </button>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-8 max-w-4xl mx-auto">
+        <div className="relative overflow-hidden">
+          <div className={`flex transition-all duration-500 ease-in-out`}>
+            <div className={`${showAIPanel ? 'w-1/2' : 'w-full'} flex-shrink-0 p-6 transition-all duration-500`}>
+              <form onSubmit={handleSubmit}>
+                <div className={`space-y-8 ${!showAIPanel ? 'max-w-4xl mx-auto' : ''}`}>
             {/* Section 1 - Basic Information */}
             <div className="space-y-6">
               <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
@@ -329,9 +364,14 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                 </div>
               </div>
             </div>
+                </div>
+              </form>
+            </div>
+            <div className={`${showAIPanel ? 'w-1/2 opacity-100' : 'w-0 opacity-0'} flex-shrink-0 p-6 border-l border-gray-700/50 transition-all duration-500 overflow-hidden bg-gradient-to-br from-green-900/10 to-blue-900/10`}>
+              <AIGenerateTask onApplyToForm={handleAIApply} />
+            </div>
           </div>
-
-        </form>
+        </div>
         
         <div className="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
           <div className="flex items-center justify-between text-sm text-gray-400">
