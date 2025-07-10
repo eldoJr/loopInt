@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Save, Target, Users, TrendingUp, FileText, AlertCircle, Check, ChevronDown, Tag } from 'lucide-react';
+import { Save, Target, Users, TrendingUp, FileText, AlertCircle, Check, ChevronDown, Tag, Sparkles, X } from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import AIGenerateReport from '../ai/GenerateReport';
 
 interface NewReportProps {
   onNavigateBack?: () => void;
@@ -37,6 +38,7 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
+  const [showAIPanel, setShowAIPanel] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -168,6 +170,18 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
     }));
   };
 
+  const handleAIApply = (aiData: { title?: string; type?: string; description?: string; tags?: string[]; settings?: Record<string, boolean | string> }) => {
+    setFormData(prev => ({
+      ...prev,
+      title: aiData.title || prev.title,
+      type: aiData.type || prev.type,
+      description: aiData.description || prev.description,
+      tags: aiData.tags || prev.tags,
+      settings: { ...prev.settings, ...aiData.settings }
+    }));
+    setShowAIPanel(false);
+  };
+
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
@@ -195,6 +209,17 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold text-white">Create New Report</h1>
             <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowAIPanel(!showAIPanel)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+                  showAIPanel
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/25'
+                    : 'bg-purple-600/20 text-purple-400 border border-purple-500/30 hover:bg-purple-600/30'
+                }`}
+              >
+                {showAIPanel ? <X size={16} /> : <Sparkles size={16} />}
+                <span>{showAIPanel ? 'Close AI' : 'AI Assistant'}</span>
+              </button>
               <button 
                 onClick={onNavigateToReports}
                 className="px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-colors"
@@ -217,8 +242,13 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-8 max-w-4xl mx-auto">
+        <div className="relative overflow-hidden">
+          <div className={`flex transition-transform duration-500 ease-in-out ${
+            showAIPanel ? '-translate-x-1/2' : 'translate-x-0'
+          }`}>
+            <div className="w-full flex-shrink-0 p-6">
+              <form onSubmit={handleSubmit}>
+                <div className="space-y-8 max-w-4xl mx-auto">
             {/* Basic Information */}
             <div className="space-y-6">
               <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
@@ -466,8 +496,14 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
                 </div>
               </div>
             </div>
+                </div>
+              </form>
+            </div>
+            <div className="w-full flex-shrink-0 p-6 border-l border-gray-700/50">
+              <AIGenerateReport onApplyToForm={handleAIApply} />
+            </div>
           </div>
-        </form>
+        </div>
         
         {errors.submit && (
           <div className="mx-6 mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
