@@ -42,14 +42,13 @@ const Sidebar = ({ isOpen, onClose, currentView, onNavigate, isHovered, setIsHov
   const shouldShow = isOpen || isHovered || isMouseOverButton;
 
   return (
-    <>
-      <div 
-        className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-40 transform transition-all duration-300 ease-in-out shadow-2xl ${
-          shouldShow ? 'translate-x-0' : '-translate-x-full'
-        }`}
-        onMouseEnter={() => setIsHovered?.(true)}
-        onMouseLeave={() => setIsHovered?.(false)}
-      >
+    <div 
+      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-40 transition-all duration-300 ease-in-out shadow-2xl ${
+        shouldShow ? 'w-72' : 'w-0'
+      } overflow-hidden`}
+      onMouseEnter={() => setIsHovered?.(true)}
+      onMouseLeave={() => setIsHovered?.(false)}
+    >
 
         
         <div className="flex-1 overflow-y-auto pb-16">
@@ -161,8 +160,7 @@ const Sidebar = ({ isOpen, onClose, currentView, onNavigate, isHovered, setIsHov
             <span className="text-sm text-gray-500 dark:text-gray-400">Give feedback on LoopInt</span>
           </button>
         </div>
-      </div>
-    </>
+    </div>
   );
 };
 
