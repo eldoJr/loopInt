@@ -43,8 +43,8 @@ const Sidebar = ({ isOpen, onClose, currentView, onNavigate, isHovered, setIsHov
 
   return (
     <div 
-      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-40 transition-all duration-300 ease-in-out shadow-2xl ${
-        shouldShow ? 'w-72' : 'w-0'
+      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out shadow-2xl ${
+        isOpen ? 'w-72 z-30' : shouldShow ? 'w-72 z-40' : 'w-0 z-40'
       } overflow-hidden`}
       onMouseEnter={() => setIsHovered?.(true)}
       onMouseLeave={() => setIsHovered?.(false)}
