@@ -246,9 +246,9 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
           <div className={`flex transition-transform duration-500 ease-in-out ${
             showAIPanel ? '-translate-x-1/2' : 'translate-x-0'
           }`} style={{ width: showAIPanel ? '200%' : '100%' }}>
-            <div className="w-1/2 flex-shrink-0 p-6">
+            <div className={`${showAIPanel ? 'w-1/2' : 'w-full'} flex-shrink-0 p-6`}>
               <form onSubmit={handleSubmit}>
-                <div className="space-y-8">
+                <div className={`space-y-8 ${!showAIPanel ? 'max-w-4xl mx-auto' : ''}`}>
             {/* Basic Information */}
             <div className="space-y-6">
               <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
@@ -499,9 +499,11 @@ const NewReport = ({ onNavigateBack, onNavigateToReports }: NewReportProps) => {
                 </div>
               </form>
             </div>
-            <div className="w-1/2 flex-shrink-0 p-6 border-l border-gray-700/50">
-              <AIGenerateReport onApplyToForm={handleAIApply} />
-            </div>
+            {showAIPanel && (
+              <div className="w-1/2 flex-shrink-0 p-6 border-l border-gray-700/50">
+                <AIGenerateReport onApplyToForm={handleAIApply} />
+              </div>
+            )}
           </div>
         </div>
         
