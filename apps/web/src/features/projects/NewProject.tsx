@@ -282,8 +282,8 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Project Signature
               </label>
               <div className="col-span-9">
@@ -291,13 +291,13 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   type="text"
                   value={currentUser?.name || ''}
                   readOnly
-                  className="w-full bg-gray-800/20 border border-gray-700/50 rounded-lg px-4 py-3 text-gray-400 cursor-not-allowed"
+                  className="w-full bg-gray-100 dark:bg-gray-800/20 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
                 />
               </div>
             </div>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Status
                 </label>
                 <div className="col-span-4">
@@ -305,7 +305,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                   >
                     <option value="planning">Planning</option>
                     <option value="active">Active</option>
@@ -314,7 +314,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Priority
                 </label>
                 <div className="col-span-4">
@@ -322,7 +322,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                     name="priority"
                     value={formData.priority}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -339,46 +339,46 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                 Project Details
               </h2>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Start Date
               </label>
               <div className="col-span-4">
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                  <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                   <input
                     type="date"
                     name="start_date"
                     value={formData.start_date}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                   />
                 </div>
               </div>
-              <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+              <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Deadline
               </label>
               <div className="col-span-4">
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                  <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                   <input
                     type="date"
                     name="deadline"
                     value={formData.deadline}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Budget
               </label>
               <div className="col-span-9">
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                  <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                   <input
                     type="number"
                     name="budget"
@@ -387,14 +387,14 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                     placeholder="0.00"
                     step="0.01"
                     min="0"
-                    className="w-48 bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-48 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Progress: {formData.progress}%
               </label>
               <div className="col-span-9">
@@ -408,8 +408,8 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Team ID
               </label>
               <div className="col-span-9">
@@ -419,13 +419,13 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   value={formData.team_id}
                   onChange={handleChange}
                   placeholder="Enter team ID (optional)"
-                  className="w-64 bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="w-64 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Client ID
               </label>
               <div className="col-span-9">
@@ -435,13 +435,13 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   value={formData.client_id}
                   onChange={handleChange}
                   placeholder="Enter client ID (optional)"
-                  className="w-64 bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="w-64 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Tags
               </label>
               <div className="col-span-9">
@@ -449,7 +449,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   <button
                     type="button"
                     onClick={() => setShowTagDropdown(!showTagDropdown)}
-                    className="w-auto flex items-center justify-between bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-auto flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                   >
                     <div className="flex items-center space-x-2">
                       <Tag className="h-4 w-4 text-gray-400" />
@@ -463,7 +463,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   </button>
                   
                   {showTagDropdown && (
-                    <div className="absolute z-10 mt-1 w-auto bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
+                    <div className="absolute z-10 mt-1 w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
                       <div className="p-2 grid grid-cols-2 gap-2">
                         {tagOptions.map((tag) => (
                           <button
@@ -472,8 +472,8 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                             onClick={() => handleTagSelect(tag)}
                             className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md transition-colors ${
                               formData.tags.includes(tag)
-                                ? 'bg-blue-600/20 text-blue-400'
-                                : 'text-gray-300 hover:bg-gray-700'
+                                ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400'
+                                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                             }`}
                           >
                             <span>{tag}</span>
@@ -489,8 +489,8 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Color
               </label>
               <div className="col-span-9 flex space-x-2">
@@ -500,7 +500,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, color }))}
                     className={`w-5 h-5 rounded-full border-2 transition-all ${
-                      formData.color === color ? 'border-white scale-110' : 'border-gray-600 hover:border-gray-400'
+                      formData.color === color ? 'border-gray-900 dark:border-white scale-110' : 'border-gray-300 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400'
                     }`}
                     style={{ backgroundColor: color }}
                   />
@@ -508,32 +508,32 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Favorite
               </label>
               <div className="col-span-9">
                 <button
                   type="button"
                   onClick={handleToggleFavorite}
-                  className={`flex items-center space-x-2 px-4 py-3 w-full rounded-lg transition-colors ${
+                  className={`flex items-center space-x-2 px-3 py-1.5 w-full rounded-lg transition-colors text-sm ${
                     formData.is_favorite 
-                      ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                      : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700/50'
+                      ? 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30'
+                      : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 border border-gray-300 dark:border-gray-700/50'
                   }`}
                 >
-                  <Star className={`w-5 h-5 ${formData.is_favorite ? 'fill-current' : ''}`} />
+                  <Star className={`w-4 h-4 ${formData.is_favorite ? 'fill-current' : ''}`} />
                   <span>{formData.is_favorite ? 'Remove from Favorites' : 'Mark as Favorite'}</span>
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-4 items-start">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
+            <div className="grid grid-cols-12 gap-3 items-start">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                 Description
               </label>
               <div className="col-span-9">
-                  <div className="flex items-center space-x-1 p-2 bg-gray-800/30 border border-gray-700/50 rounded-t-lg">
+                  <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
                     <Toggle
                       pressed={textStyles.bold}
                       onPressedChange={() => handleTextStyle('bold')}
@@ -563,7 +563,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                       <Strikethrough className="h-4 w-4" />
                     </Toggle>
                     
-                    <div className="h-6 w-px bg-gray-600 mx-1" />
+                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
                     
                     <Toggle
                       pressed={textAlign === 'left'}
@@ -587,7 +587,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                       <AlignRight className="h-4 w-4" />
                     </Toggle>
                     
-                    <div className="h-6 w-px bg-gray-600 mx-1" />
+                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
                     
                     <Toggle aria-label="List">
                       <List className="h-4 w-4" />
@@ -608,28 +608,28 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                       name="description"
                       value={formData.description}
                       onChange={handleChange}
-                      rows={8}
-                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-b-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none"
+                      rows={6}
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
                       placeholder="Enter project description..."
                     />
                     
-                    <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-4">
+                    <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-3">
                       <span className={`text-xs ${
                         descriptionLength > maxDescriptionLength * 0.9 
-                          ? 'text-red-400' 
-                          : 'text-gray-400'
+                          ? 'text-red-500 dark:text-red-400' 
+                          : 'text-gray-500 dark:text-gray-400'
                       }`}>
                         {descriptionLength}/{maxDescriptionLength} characters
                       </span>
                       <div className="flex items-center space-x-2">
                         {isSaved && (
-                          <div className="flex items-center space-x-1 text-green-400">
+                          <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
                             <Check size={14} />
                             <span className="text-xs">Saved</span>
                           </div>
                         )}
                         {errors.description && (
-                          <div className="flex items-center space-x-1 text-red-400">
+                          <div className="flex items-center space-x-1 text-red-500 dark:text-red-400">
                             <AlertCircle size={14} />
                             <span className="text-xs">{errors.description}</span>
                           </div>
@@ -653,8 +653,8 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
           </div>
         )}
         
-        <div className="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
-          <div className="flex items-center justify-between text-sm text-gray-400">
+        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
+          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">
               <span>Press Ctrl+S to save</span>
               <span>•</span>
@@ -662,7 +662,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
             </div>
             <div className="flex items-center space-x-2">
               {isSaved && (
-                <div className="flex items-center space-x-1 text-green-400">
+                <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
                   <Check size={14} />
                   <span>Saved</span>
                 </div>

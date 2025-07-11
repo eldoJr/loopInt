@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Star, Search, X, Filter, Edit, Copy, Trash2, Calendar } from 'lucide-react';
+import { format, isWithinInterval, parseISO } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -188,8 +189,10 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
   const filteredProjects = projects.filter(project => {
     const matchesName = !filters.name || project.name.toLowerCase().includes(filters.name.toLowerCase());
     const matchesDates = !filters.dates || (
-      (project.deadline && new Date(project.deadline).toLocaleDateString().includes(filters.dates)) ||
-      (project.start_date && new Date(project.start_date).toLocaleDateString().includes(filters.dates))
+      (project.deadline && format(new Date(project.deadline), 'yyyy-MM-dd').includes(filters.dates)) ||
+      (project.start_date && format(new Date(project.start_date), 'yyyy-MM-dd').includes(filters.dates)) ||
+      (project.deadline && format(new Date(project.deadline), 'dd/MM/yyyy').includes(filters.dates)) ||
+      (project.start_date && format(new Date(project.start_date), 'dd/MM/yyyy').includes(filters.dates))
     );
     const matchesTags = !filters.tags || (project.tags && project.tags.some(tag => tag.toLowerCase().includes(filters.tags.toLowerCase())));
     const matchesFavorites = !showFavorites || project.is_favorite;
