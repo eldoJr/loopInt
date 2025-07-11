@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useTheme } from '../context/ThemeContext';
 import { 
-  FileText, 
-  Clock, 
-  Building, 
-  User, 
+  Clock,
   FolderOpen, 
   Calendar,
   CheckCircle,
@@ -12,8 +10,8 @@ import {
   Settings,
 } from 'lucide-react';
 import type { User as UserType } from '../lib/api';
+import Breadcrumb from '../components/ui/Breadcrumb';
 import DashboardHeader from '../components/ui/DashboardHeader';
-import QuickActionCard from '../components/ui/QuickActionCard';
 import DashboardCard from '../components/ui/DashboardCard';
 import DashboardListItem from '../components/ui/DashboardListItem';
 import DashboardStatCard from '../components/ui/DashboardStatCard';
@@ -68,6 +66,7 @@ import EditReport from '../features/reports/EditReport';
 import ViewReport from '../features/reports/ViewReport';
 
 const Dashboard = () => {
+  useTheme();
   const [user, setUser] = useState<UserType | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
@@ -173,13 +172,6 @@ const Dashboard = () => {
     }, 300);
   };
 
-  const quickActions = [
-    { title: 'New Project', icon: FolderOpen, action: () => navigateToSection('New Project') },
-    { title: 'Add Task', icon: CheckCircle, action: () => navigateToSection('Add Task') },
-    { title: 'New Client', icon: Building, action: () => navigateToSection('New Client') },
-    { title: 'Team Member', icon: User, action: () => navigateToSection('Team Member') },
-    { title: 'Generate Report', icon: FileText, action: () => navigateToSection('Generate Report') }
-  ];
 
   const toggleTodo = async (id: string) => {
     const todo = todos.find(t => t.id === id);
@@ -257,6 +249,11 @@ const Dashboard = () => {
     }
   };
 
+  const breadcrumbItems = [
+    { label: 'LoopInt'},
+    { label: 'Dash', onClick: () => navigateToSection('Dashboard')},
+  ];
+
   useEffect(() => {
     if (user) {
       fetchProjects();
@@ -267,21 +264,18 @@ const Dashboard = () => {
   const renderDashboardContent = () => (
     <>
       {/* Welcome Section */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-2">
-              Hi, {user?.name || 'User'}!
-            </h1>
-            <p className="text-gray-400">Here's what's happening with your projects today.</p>
+            <Breadcrumb items={breadcrumbItems} />
+            <p className="text-gray-600 dark:text-gray-400 text-sm">Here's what's happening with your projects today.</p>
           </div>
           <div className="flex items-center space-x-3">
             <div className="hidden lg:flex items-center space-x-2">
-
               <AllActionsDropdown onNavigate={navigateToSection} />
               <button
                 onClick={() => setShowCustomizationAlert(true)}
-                className="p-2 bg-gray-800/30 text-gray-400 rounded-lg hover:bg-gray-800/50 hover:text-gray-300 border border-gray-700/30"
+                className="p-1.5 bg-gray-100 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-300 border border-gray-200 dark:border-gray-700/30 transition-colors"
                 title="Settings"
               >
                 <Settings className="w-4 h-4" />
@@ -291,34 +285,27 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-        {quickActions.map((action, index) => (
-          <QuickActionCard
-            key={index}
-            title={action.title}
-            icon={action.icon}
-            onClick={action.action}
-            isActive={currentView === action.title}
-          />
-        ))}
-      </div>
-
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <DashboardStatCard
           title="Active Projects"
           value={activeProjectsCount}
           icon={FolderOpen}
           color="text-blue-400"
           onClick={() => navigateToSection('Projects')}
+          trend={{ value: 12, direction: 'up', period: 'vs last month' }}
+          subtitle="In progress"
+          loading={!user}
         />
         <DashboardStatCard
           title="Completed Tasks"
-          value={48}
+          value={todos.filter(t => t.completed).length}
           icon={CheckCircle}
           color="text-green-400"
           onClick={() => navigateToSection('Tasks')}
+          trend={{ value: 8, direction: 'up', period: 'vs last week' }}
+          subtitle="This month"
+          loading={!user}
         />
         <DashboardStatCard
           title="Team Members"
@@ -326,6 +313,9 @@ const Dashboard = () => {
           icon={Users}
           color="text-purple-400"
           onClick={() => navigateToSection('Team')}
+          trend={{ value: 2, direction: 'up', period: 'new this month' }}
+          subtitle="Active members"
+          loading={!user}
         />
         <DashboardStatCard
           title="Revenue"
@@ -333,12 +323,15 @@ const Dashboard = () => {
           icon={BarChart3}
           color="text-emerald-400"
           onClick={() => navigateToSection('Analytics')}
+          trend={{ value: 15, direction: 'up', period: 'vs last month' }}
+          subtitle="This month"
+          loading={!user}
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Column */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Tasks */}
           <DashboardCard
             title="My Tasks"
@@ -397,8 +390,11 @@ const Dashboard = () => {
               ) : (
                 <DashboardEmptyState
                   message="No tasks assigned"
-                  actionText="Create your first task"
-                  onAction={() => navigateToSection('Add Task')}
+                  description="Start organizing your work by creating your first task. You can set priorities, due dates, and assign them to team members."
+                  actions={[
+                    { text: 'Create Task', onClick: () => navigateToSection('Add Task'), variant: 'primary' },
+                    { text: 'Import Tasks', onClick: () => console.log('Import'), variant: 'secondary' }
+                  ]}
                 />
               )}
             </div>
@@ -427,7 +423,7 @@ const Dashboard = () => {
         </div>
 
         {/* Right Column */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Projects */}
           <DashboardCard
             title="Active Projects"
@@ -449,8 +445,11 @@ const Dashboard = () => {
               ) : (
                 <DashboardEmptyState
                   message="No active projects"
-                  actionText="Create your first project"
-                  onAction={() => navigateToSection('New Project')}
+                  description="Projects help you organize tasks, collaborate with your team, and track progress towards your goals."
+                  actions={[
+                    { text: 'Create Project', onClick: () => navigateToSection('New Project'), variant: 'primary' },
+                    { text: 'Browse Templates', onClick: () => console.log('Templates'), variant: 'secondary' }
+                  ]}
                 />
               )}
             </div>
@@ -656,7 +655,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-black dark:to-gray-900">
       {/* Persistent Header */}
       {user && (
         <DashboardHeader 
@@ -684,7 +683,7 @@ const Dashboard = () => {
 
       {/* Dynamic Content Area */}
       <div 
-        className={`pt-14 p-6 transition-all duration-300 ease-in-out ${
+        className={`pt-14 p-4 transition-all duration-300 ease-in-out ${
           sidebarOpen ? 'ml-72' : 'ml-0'
         }`}
         onMouseEnter={() => {
