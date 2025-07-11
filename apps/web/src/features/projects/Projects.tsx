@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Star, Search, X, Filter, Edit, Copy, Trash2, Calendar } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -30,6 +31,7 @@ interface Project {
 }
 
 const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProject }: ProjectsProps) => {
+  useTheme();
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
@@ -215,198 +217,162 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
       <Breadcrumb items={breadcrumbItems} />
       
       {/* Header */}
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-700/50">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-white">Projects</h1>
-            <div className="flex items-center space-x-3">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Projects</h1>
+            <div className="flex items-center space-x-2">
               <button 
                 onClick={() => setShowFavorites(!showFavorites)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
                   showFavorites 
-                    ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' 
-                    : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50'
+                    ? 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border border-yellow-500/30' 
+                    : 'bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600/50'
                 }`}
               >
-                <Star size={16} className={showFavorites ? 'fill-current' : ''} />
-                <span>Show favorites</span>
+                <Star size={14} className={showFavorites ? 'fill-current' : ''} />
+                <span>Favorites</span>
               </button>
               <button 
                 onClick={fetchProjects}
-                className="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                className="bg-gray-500 dark:bg-gray-600 text-white px-3 py-1.5 rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors text-sm"
               >
                 Refresh
               </button>
               <button 
-                onClick={() => {
-                  console.log('New project button clicked');
-                  console.log('onNavigateToNewProject function:', onNavigateToNewProject);
-                  onNavigateToNewProject?.();
-                }}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                onClick={() => onNavigateToNewProject?.()}
+                className="bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2 text-sm"
               >
-                <Plus size={16} />
-                <span>New project</span>
+                <Plus size={14} />
+                <span>New</span>
               </button>
             </div>
           </div>
         </div>
         
         {/* Filters */}
-        <div className="px-6 py-4 bg-gray-800/30 border-b border-gray-700/30">
+        <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/30">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="relative group">
-                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+            <div className="flex items-center space-x-2">
+              <div className="relative">
+                <Search size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Project name"
+                  placeholder="Search projects"
                   value={filters.name}
                   onChange={(e) => setFilters(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-52 pl-10 pr-10 py-2.5 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-gray-700/70 transition-all"
+                  className="w-40 pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
                 />
                 {filters.name && (
                   <button
                     onClick={() => clearFilter('name')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-400 transition-colors"
+                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
                   >
-                    <X size={16} />
+                    <X size={12} />
                   </button>
                 )}
               </div>
               
-              <div className="relative group">
-                <Calendar size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+              <div className="relative">
+                <Calendar size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Project dates"
+                  placeholder="Dates"
                   value={filters.dates}
                   onChange={(e) => setFilters(prev => ({ ...prev, dates: e.target.value }))}
-                  className="w-52 pl-10 pr-10 py-2.5 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-gray-700/70 transition-all"
+                  className="w-32 pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
                 />
                 {filters.dates && (
                   <button
                     onClick={() => clearFilter('dates')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-400 transition-colors"
+                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
                   >
-                    <X size={16} />
+                    <X size={12} />
                   </button>
                 )}
               </div>
               
-              <div className="relative group">
-                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+              <div className="relative">
+                <Filter size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Tags"
                   value={filters.tags}
                   onChange={(e) => setFilters(prev => ({ ...prev, tags: e.target.value }))}
-                  className="w-52 pl-10 pr-10 py-2.5 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-gray-700/70 transition-all"
+                  className="w-28 pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
                 />
                 {filters.tags && (
                   <button
                     onClick={() => clearFilter('tags')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-400 transition-colors"
+                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
                   >
-                    <X size={16} />
+                    <X size={12} />
                   </button>
                 )}
               </div>
+              
+              <button 
+                onClick={resetAllFilters}
+                className="p-1.5 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors"
+                title="Clear all filters"
+              >
+                <X size={14} />
+              </button>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="group relative">
-                  <button className="p-2.5 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 hover:text-white transition-all duration-200 border border-gray-600/30 hover:border-gray-500/50">
-                    <Filter size={16} />
-                  </button>
-                  <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-                    Filter and sort
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-                  </div>
-                </div>
-                
-                <div className="group relative">
-                  <button 
-                    onClick={resetAllFilters}
-                    className="p-2.5 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 border border-red-500/30 hover:border-red-400/50"
-                  >
-                    <X size={16} />
-                  </button>
-                  <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-                    Reset all filters
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="text-sm text-gray-400">
-                <span className="font-medium text-white">{filteredProjects.length}</span> of {projects.length} projects
-              </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              <span className="font-medium text-gray-900 dark:text-white">{filteredProjects.length}</span> of {projects.length}
             </div>
           </div>
         </div>
       </div>
 
       {/* Projects Table */}
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-800/50 border-b border-gray-700/50">
+            <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700/50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Project Name</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Tags</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Progress</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Status</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Priority</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Deadline</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Budget</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Created By</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Project</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Progress</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Priority</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Deadline</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700/50">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
               {filteredProjects.map((project) => (
-                <tr key={project.id} className="hover:bg-gray-800/30 transition-colors">
-                  <td className="px-6 py-4">
+                <tr key={project.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                  <td className="px-4 py-3">
                     <div className="flex items-center space-x-3">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: project.color }}></div>
-                      <div>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: project.color }}></div>
+                      <div className="min-w-0 flex-1">
                         <div className="flex items-center space-x-2">
-                          <p className="font-medium text-white">{project.name}</p>
+                          <p className="font-medium text-gray-900 dark:text-white text-sm truncate">{project.name}</p>
                           <button
                             onClick={() => toggleFavorite(project.id)}
-                            className={`transition-colors ${
+                            className={`transition-colors flex-shrink-0 ${
                               project.is_favorite 
-                                ? 'text-yellow-400 hover:text-yellow-300' 
-                                : 'text-gray-500 hover:text-yellow-400'
+                                ? 'text-yellow-500 hover:text-yellow-400' 
+                                : 'text-gray-400 hover:text-yellow-500'
                             }`}
                           >
-                            <Star size={16} className={project.is_favorite ? 'fill-current' : ''} />
+                            <Star size={12} className={project.is_favorite ? 'fill-current' : ''} />
                           </button>
                         </div>
-                        <p className="text-sm text-gray-400">{project.description || 'No description'}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{project.description || 'No description'}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-2">
-                      {project.tags.length > 0 ? project.tags.map((tag) => (
-                        <span key={tag} className="px-2 py-1 bg-gray-700/50 text-gray-300 text-xs rounded border border-gray-600/30">
-                          {tag}
-                        </span>
-                      )) : (
-                        <span className="text-gray-500 text-xs">No tags</span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="w-full">
-                      <div className="flex items-center justify-between text-sm mb-1">
-                        <span className="text-gray-300">{project.progress}%</span>
+                  <td className="px-4 py-3">
+                    <div className="w-full max-w-20">
+                      <div className="flex items-center justify-between text-xs mb-1">
+                        <span className="text-gray-600 dark:text-gray-300">{project.progress}%</span>
                       </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                         <div 
-                          className="h-2 rounded-full transition-all" 
+                          className="h-1.5 rounded-full transition-all" 
                           style={{ 
                             width: `${project.progress}%`,
                             backgroundColor: project.color
@@ -415,48 +381,42 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(project.status)}`}>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(project.status)}`}>
                       {project.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(project.priority)}`}>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(project.priority)}`}>
                       {project.priority}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-300">
-                    {project.deadline ? new Date(project.deadline).toLocaleDateString() : 'No deadline'}
+                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300 text-sm">
+                    {project.deadline ? new Date(project.deadline).toLocaleDateString() : '-'}
                   </td>
-                  <td className="px-6 py-4 text-gray-300">
-                    {project.budget ? `$${project.budget.toLocaleString()}` : 'No budget'}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">{currentUser?.name || 'Unknown'}</span>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => handleEdit(project.id)}
-                          className="text-gray-400 hover:text-blue-400 transition-colors p-1 rounded hover:bg-gray-700/50"
-                          title="Edit project"
-                        >
-                          <Edit size={14} />
-                        </button>
-                        <button
-                          onClick={() => handleCopy(project)}
-                          className="text-gray-400 hover:text-green-400 transition-colors p-1 rounded hover:bg-gray-700/50"
-                          title="Copy project"
-                        >
-                          <Copy size={14} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(project.id)}
-                          className="text-gray-400 hover:text-red-400 transition-colors p-1 rounded hover:bg-gray-700/50"
-                          title="Delete project"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center space-x-1">
+                      <button
+                        onClick={() => handleEdit(project.id)}
+                        className="text-gray-400 hover:text-blue-500 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                        title="Edit"
+                      >
+                        <Edit size={12} />
+                      </button>
+                      <button
+                        onClick={() => handleCopy(project)}
+                        className="text-gray-400 hover:text-green-500 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                        title="Copy"
+                      >
+                        <Copy size={12} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(project.id)}
+                        className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                        title="Delete"
+                      >
+                        <Trash2 size={12} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -466,8 +426,8 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
         </div>
         
         {filteredProjects.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
-            <p>No projects found matching your filters.</p>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <p className="text-sm">No projects found matching your filters.</p>
           </div>
         )}
       </div>
