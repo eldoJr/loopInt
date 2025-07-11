@@ -23,6 +23,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
+    document.documentElement.style.transition = 'background-color 0.7s ease, color 0.3s ease';
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
