@@ -410,33 +410,37 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Team ID
+                Team
               </label>
               <div className="col-span-9">
-                <input
-                  type="text"
-                  name="team_id"
-                  value={formData.team_id}
-                  onChange={handleChange}
-                  placeholder="Enter team ID (optional)"
-                  className="w-64 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                />
+                <div className="relative">
+                  <select
+                    name="team_id"
+                    value={formData.team_id}
+                    onChange={handleChange}
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                  >
+                    <option value="">Select a team...</option>
+                  </select>
+                </div>
               </div>
             </div>
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Client ID
+                Client
               </label>
               <div className="col-span-9">
-                <input
-                  type="text"
-                  name="client_id"
-                  value={formData.client_id}
-                  onChange={handleChange}
-                  placeholder="Enter client ID (optional)"
-                  className="w-64 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                />
+                <div className="relative">
+                  <select
+                    name="client_id"
+                    value={formData.client_id}
+                    onChange={handleChange}
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                  >
+                    <option value="">Select a client...</option>
+                  </select>
+                </div>
               </div>
             </div>
 
