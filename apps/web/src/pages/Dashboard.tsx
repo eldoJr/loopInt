@@ -8,12 +8,9 @@ import {
   BarChart3,
   Users,
   Settings,
-  AlertTriangle,
   Heart,
   MapPin,
   Star,
-  Phone,
-  Mail,
 } from 'lucide-react';
 import type { User as UserType } from '../lib/api';
 import Breadcrumb from '../components/ui/Breadcrumb';
@@ -113,24 +110,9 @@ const Dashboard = () => {
   const [activeProjectsCount, setActiveProjectsCount] = useState(0);
   const [teamMembersCount, setTeamMembersCount] = useState(0);
   
-  // Mock data for new cards
-  const [issues] = useState([
-    { id: '1', title: 'API timeout errors', priority: 'high', status: 'open', created: '2h ago' },
-    { id: '2', title: 'UI responsiveness on mobile', priority: 'medium', status: 'in-progress', created: '1d ago' },
-    { id: '3', title: 'Database connection pool', priority: 'low', status: 'open', created: '3d ago' }
-  ]);
+
   
-  const [favoriteContacts] = useState([
-    { id: '1', name: 'Sarah Johnson', role: 'Project Manager', company: 'TechCorp', phone: '+1 234-567-8901', email: 'sarah@techcorp.com' },
-    { id: '2', name: 'Mike Chen', role: 'Lead Developer', company: 'DevStudio', phone: '+1 234-567-8902', email: 'mike@devstudio.com' },
-    { id: '3', name: 'Emma Wilson', role: 'Designer', company: 'Creative Co', phone: '+1 234-567-8903', email: 'emma@creative.co' }
-  ]);
-  
-  const [checkIns] = useState([
-    { id: '1', location: 'Office - Downtown', time: '9:00 AM', date: 'Today', type: 'check-in' },
-    { id: '2', location: 'Client Meeting - TechCorp', time: '2:30 PM', date: 'Yesterday', type: 'check-out' },
-    { id: '3', location: 'Home Office', time: '8:45 AM', date: 'Yesterday', type: 'check-in' }
-  ]);
+
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -354,33 +336,31 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Column */}
         <div className="space-y-4">
-          {/* Tasks */}
+          {/* My Tasks */}
           <DashboardCard
             title="My Tasks"
             icon={CheckCircle}
             onAdd={() => navigateToSection('Add Task')}
             headerActions={
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center space-x-2 text-sm text-gray-400 hover:text-gray-300 transition-colors cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={showFinishedTodos}
-                    onChange={(e) => setShowFinishedTodos(e.target.checked)}
-                    className="w-4 h-4 bg-gray-800 border border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
-                  />
-                  <span>Show completed</span>
-                </label>
-              </div>
+              <label className="flex items-center space-x-2 text-sm text-gray-400 hover:text-gray-300 transition-colors cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showFinishedTodos}
+                  onChange={(e) => setShowFinishedTodos(e.target.checked)}
+                  className="w-4 h-4 bg-gray-800 border border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                />
+                <span>Show completed</span>
+              </label>
             }
           >
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+            <div className="space-y-2">
               {todos.length > 0 ? (
                 todos
                   .filter(todo => showFinishedTodos || !todo.completed)
-                  .slice(0, 5)
+                  .slice(0, 2)
                   .map((todo) => (
                     <DashboardListItem
                       key={todo.id}
@@ -416,81 +396,24 @@ const Dashboard = () => {
               ) : (
                 <DashboardEmptyState
                   message="No tasks assigned"
-                  description="Start organizing your work by creating your first task."
+                  description="Create your first task."
                   actions={[
                     { text: 'Create Task', onClick: () => navigateToSection('Add Task'), variant: 'primary' }
                   ]}
                 />
               )}
-              {todos.filter(todo => showFinishedTodos || !todo.completed).length > 5 && (
-                <div className="text-center pt-2">
-                  <button 
-                    onClick={() => navigateToSection('Tasks')}
-                    className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
-                  >
-                    View all {todos.filter(todo => showFinishedTodos || !todo.completed).length} tasks
-                  </button>
-                </div>
-              )}
             </div>
           </DashboardCard>
 
-          {/* Issues */}
-          <DashboardCard
-            title="Issues"
-            icon={AlertTriangle}
-            onAdd={() => navigateToSection('New Issue')}
-          >
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {issues.length > 0 ? (
-                issues.slice(0, 4).map((issue) => (
-                  <DashboardListItem
-                    key={issue.id}
-                    title={issue.title}
-                    subtitle={`Created ${issue.created}`}
-                    status={issue.status}
-                    onClick={() => console.log('Navigate to issue', issue.id)}
-                    icon={
-                      <div className={`w-3 h-3 rounded-full ${
-                        issue.priority === 'high' ? 'bg-red-500' :
-                        issue.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
-                      }`}></div>
-                    }
-                    actions={
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        issue.priority === 'high' ? 'bg-red-500/20 text-red-400' :
-                        issue.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-green-500/20 text-green-400'
-                      }`}>
-                        {issue.priority}
-                      </span>
-                    }
-                  />
-                ))
-              ) : (
-                <DashboardEmptyState
-                  message="No open issues"
-                  description="Great! No issues to resolve right now."
-                  actions={[
-                    { text: 'Report Issue', onClick: () => navigateToSection('New Issue'), variant: 'primary' }
-                  ]}
-                />
-              )}
-            </div>
-          </DashboardCard>
-        </div>
-
-        {/* Middle Column */}
-        <div className="space-y-4">
-          {/* Projects */}
+          {/* Active Projects */}
           <DashboardCard
             title="Active Projects"
             icon={FolderOpen}
             onAdd={() => navigateToSection('New Project')}
           >
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+            <div className="space-y-2">
               {projects.length > 0 ? (
-                projects.slice(0, 4).map((project) => (
+                projects.slice(0, 2).map((project) => (
                   <DashboardListItem
                     key={project.id}
                     title={project.name}
@@ -503,21 +426,11 @@ const Dashboard = () => {
               ) : (
                 <DashboardEmptyState
                   message="No active projects"
-                  description="Projects help you organize tasks and collaborate with your team."
+                  description="Create your first project."
                   actions={[
                     { text: 'Create Project', onClick: () => navigateToSection('New Project'), variant: 'primary' }
                   ]}
                 />
-              )}
-              {projects.length > 4 && (
-                <div className="text-center pt-2">
-                  <button 
-                    onClick={() => navigateToSection('Projects')}
-                    className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
-                  >
-                    View all {projects.length} projects
-                  </button>
-                </div>
               )}
             </div>
           </DashboardCard>
@@ -528,50 +441,25 @@ const Dashboard = () => {
             icon={Heart}
             onAdd={() => navigateToSection('New Contact')}
           >
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {favoriteContacts.length > 0 ? (
-                favoriteContacts.slice(0, 4).map((contact) => (
-                  <DashboardListItem
-                    key={contact.id}
-                    title={contact.name}
-                    subtitle={`${contact.role} at ${contact.company}`}
-                    onClick={() => console.log('Contact', contact.id)}
-                    icon={<Heart className="w-3 h-3 text-red-400 fill-current" />}
-                    actions={
-                      <div className="flex items-center space-x-1">
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(`tel:${contact.phone}`);
-                          }}
-                          className="p-1 hover:bg-gray-700 rounded transition-colors"
-                          title="Call"
-                        >
-                          <Phone className="w-3 h-3 text-gray-400" />
-                        </button>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(`mailto:${contact.email}`);
-                          }}
-                          className="p-1 hover:bg-gray-700 rounded transition-colors"
-                          title="Email"
-                        >
-                          <Mail className="w-3 h-3 text-gray-400" />
-                        </button>
-                      </div>
-                    }
-                  />
-                ))
-              ) : (
-                <DashboardEmptyState
-                  message="No favorite contacts"
-                  description="Add your most important contacts for quick access."
-                  actions={[
-                    { text: 'Add Contact', onClick: () => navigateToSection('New Contact'), variant: 'primary' }
-                  ]}
-                />
-              )}
+            <div className="space-y-2">
+              <DashboardEmptyState
+                message="No favorite contacts"
+                description="Add your important contacts."
+                actions={[
+                  { text: 'Add Contact', onClick: () => navigateToSection('New Contact'), variant: 'primary' }
+                ]}
+              />
+            </div>
+          </DashboardCard>
+
+          {/* Recent Activity */}
+          <DashboardCard title="Recent Activity" icon={Clock}>
+            <div className="space-y-2">
+              <DashboardEmptyState
+                message="No recent activity"
+                description="Activity will appear here."
+                actions={[]}
+              />
             </div>
           </DashboardCard>
         </div>
@@ -584,102 +472,30 @@ const Dashboard = () => {
             icon={MapPin}
             onAdd={() => console.log('New check-in')}
           >
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {checkIns.length > 0 ? (
-                checkIns.slice(0, 4).map((checkIn) => (
-                  <DashboardListItem
-                    key={checkIn.id}
-                    title={checkIn.location}
-                    subtitle={`${checkIn.date} at ${checkIn.time}`}
-                    onClick={() => console.log('Check-in details', checkIn.id)}
-                    icon={
-                      <div className={`w-3 h-3 rounded-full ${
-                        checkIn.type === 'check-in' ? 'bg-green-500' : 'bg-red-500'
-                      }`}></div>
-                    }
-                    actions={
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        checkIn.type === 'check-in' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                      }`}>
-                        {checkIn.type}
-                      </span>
-                    }
-                  />
-                ))
-              ) : (
-                <DashboardEmptyState
-                  message="No check-ins yet"
-                  description="Start tracking your location check-ins."
-                  actions={[
-                    { text: 'Check In Now', onClick: () => console.log('Check in'), variant: 'primary' }
-                  ]}
-                />
-              )}
+            <div className="space-y-2">
+              <DashboardEmptyState
+                message="No check-ins yet"
+                description="Start tracking locations."
+                actions={[
+                  { text: 'Check In Now', onClick: () => console.log('Check in'), variant: 'primary' }
+                ]}
+              />
             </div>
           </DashboardCard>
 
-          {/* Calendar - Improved */}
+          {/* Upcoming Events */}
           <DashboardCard
             title="Upcoming Events"
             icon={Calendar}
             onAdd={() => navigateToSection('Calendar')}
           >
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              <DashboardListItem
-                title="Team Meeting"
-                subtitle="Project review and planning"
-                onClick={() => navigateToSection('Calendar')}
-                icon={<div className="w-3 h-3 bg-blue-500 rounded-full"></div>}
-                actions={
-                  <div className="text-right">
-                    <p className="text-blue-400 text-xs">Today</p>
-                    <p className="text-gray-500 text-xs">2:00 PM</p>
-                  </div>
-                }
-              />
-              <DashboardListItem
-                title="Client Presentation"
-                subtitle="Q4 Results Review"
-                onClick={() => navigateToSection('Calendar')}
-                icon={<div className="w-3 h-3 bg-purple-500 rounded-full"></div>}
-                actions={
-                  <div className="text-right">
-                    <p className="text-purple-400 text-xs">Tomorrow</p>
-                    <p className="text-gray-500 text-xs">10:00 AM</p>
-                  </div>
-                }
-              />
-              <div className="text-center pt-2">
-                <button 
-                  onClick={() => navigateToSection('Calendar')}
-                  className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
-                >
-                  View full calendar
-                </button>
-              </div>
-            </div>
-          </DashboardCard>
-
-          {/* Recent Activity - Improved */}
-          <DashboardCard title="Recent Activity" icon={Clock}>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              <DashboardListItem
-                title='Project "E-commerce Platform" updated'
-                subtitle="Status changed to In Progress"
-                icon={<div className="w-2 h-2 bg-blue-400 rounded-full"></div>}
-                actions={<span className="text-gray-500 text-xs">2h ago</span>}
-              />
-              <DashboardListItem
-                title='Task "API Integration" completed'
-                subtitle="Marked as done by John Doe"
-                icon={<div className="w-2 h-2 bg-green-400 rounded-full"></div>}
-                actions={<span className="text-gray-500 text-xs">4h ago</span>}
-              />
-              <DashboardListItem
-                title="New team member added"
-                subtitle="Sarah joined the development team"
-                icon={<div className="w-2 h-2 bg-purple-400 rounded-full"></div>}
-                actions={<span className="text-gray-500 text-xs">1d ago</span>}
+            <div className="space-y-2">
+              <DashboardEmptyState
+                message="No upcoming events"
+                description="Schedule your first event."
+                actions={[
+                  { text: 'Add Event', onClick: () => navigateToSection('Calendar'), variant: 'primary' }
+                ]}
               />
             </div>
           </DashboardCard>
