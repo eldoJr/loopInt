@@ -11,6 +11,7 @@ import {
   Heart,
   MapPin,
   Star,
+  AlertTriangle
 } from 'lucide-react';
 import type { User as UserType } from '../lib/api';
 import Breadcrumb from '../components/ui/Breadcrumb';
@@ -400,15 +401,26 @@ const Dashboard = () => {
             </div>
           </DashboardCard>
 
+          {/* Issues */}
+          <DashboardCard
+            title="Issues"
+            icon={AlertTriangle}
+          >
+            <div className="space-y-2">
+              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+                No data to display
+              </div>
+            </div>
+          </DashboardCard>
+
           {/* Favorite Contacts */}
           <DashboardCard
             title="Favorite Contacts"
             icon={Heart}
-            onAdd={() => navigateToSection('New Contact')}
           >
             <div className="space-y-2">
               <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
-                Here you will see a list of all favorite contacts that you frequently communicate with. Click on a contact to view details.
+                A list of all your favorite coworkers will appear here. Mark a particular coworker as a favorite if you want it to appear in this section.
               </div>
             </div>
           </DashboardCard>
@@ -472,7 +484,7 @@ const Dashboard = () => {
           >
             <div className="space-y-2">
               <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
-                Here you will see a list of all upcoming events and meetings. Click on an event to view details or join the meeting.
+                This is where all the latest notifications for your scheduled meetings will appear. You can also add them directly from your desktop using the top right plus button.
               </div>
             </div>
           </DashboardCard>

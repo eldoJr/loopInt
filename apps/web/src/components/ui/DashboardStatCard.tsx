@@ -34,13 +34,14 @@ const DashboardStatCard = ({
 
   if (loading) {
     return (
-      <div className="bg-white/90 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-800/50 rounded-lg p-4 animate-pulse">
+      <div className="bg-white dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700/50 rounded-xl p-5 shadow-sm animate-pulse">
         <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-            <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-12"></div>
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-20"></div>
+            <div className="h-8 bg-gray-300 dark:bg-gray-600 rounded w-16"></div>
+            <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-24"></div>
           </div>
-          <div className="w-6 h-6 bg-gray-300 dark:bg-gray-700 rounded"></div>
+          <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-xl"></div>
         </div>
       </div>
     );
@@ -48,43 +49,43 @@ const DashboardStatCard = ({
 
   return (
     <motion.div 
-      className={`bg-white/90 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-800/50 rounded-lg p-4 group ${
-        onClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 hover:border-gray-300/50 dark:hover:border-gray-700/50 hover:scale-[1.02] transition-all duration-200' : ''
+      className={`bg-white dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700/50 rounded-xl p-5 shadow-sm hover:shadow-md dark:shadow-gray-900/20 group ${
+        onClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/90 hover:border-gray-300 dark:hover:border-gray-600/70 hover:scale-[1.02] transition-all duration-300' : ''
       }`}
       onClick={onClick}
-      whileHover={{ y: -1 }}
+      whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-center justify-between mb-2">
         <div className="flex-1">
-          <p className="text-gray-600 dark:text-gray-400 text-xs font-medium">{title}</p>
-          <div className="flex items-baseline space-x-2">
-            <p className={`text-2xl font-bold text-gray-900 dark:${color} group-hover:scale-105 transition-transform`}>
+          <p className="text-gray-600 dark:text-gray-300 text-sm font-medium tracking-wide">{title}</p>
+          <div className="flex items-baseline space-x-3 mt-1">
+            <p className={`text-3xl font-bold text-gray-900 dark:text-white group-hover:scale-105 transition-transform duration-200`}>
               {value}
             </p>
             {trend && (
-              <div className={`flex items-center space-x-1 text-xs ${
-                trend.direction === 'up' ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'
+              <div className={`flex items-center space-x-1 text-sm font-medium ${
+                trend.direction === 'up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
               }`}>
                 {trend.direction === 'up' ? (
-                  <TrendingUp className="w-3 h-3" />
+                  <TrendingUp className="w-4 h-4" />
                 ) : (
-                  <TrendingDown className="w-3 h-3" />
+                  <TrendingDown className="w-4 h-4" />
                 )}
-                <span>{trend.value}%</span>
+                <span>+{trend.value}%</span>
               </div>
             )}
           </div>
           {subtitle && (
-            <p className="text-gray-500 dark:text-gray-500 text-xs mt-1">{subtitle}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 font-medium">{subtitle}</p>
           )}
         </div>
-        <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-800/30 group-hover:bg-gray-200 dark:group-hover:bg-gray-700/30 transition-colors`}>
-          <Icon className={`w-5 h-5 text-gray-700 dark:${color}`} />
+        <div className={`p-3 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 group-hover:from-orange-100 group-hover:to-orange-200 dark:group-hover:from-orange-800/40 dark:group-hover:to-orange-700/40 transition-all duration-300 shadow-sm border border-orange-200/50 dark:border-orange-700/30`}>
+          <Icon className={`w-6 h-6 ${color} group-hover:scale-110 transition-transform duration-200`} />
         </div>
       </div>
       {trend?.period && (
-        <p className="text-gray-500 dark:text-gray-500 text-xs">{trend.period}</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{trend.period}</p>
       )}
     </motion.div>
   );
