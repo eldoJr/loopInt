@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Save, Sparkles, Bold, Italic, Underline, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Link, Code, Check, Calendar, DollarSign, Tag, ChevronDown, AlertCircle, Star } from 'lucide-react';
 import { format, addDays } from 'date-fns';
+import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Slider } from '../../components/ui/Slider';
@@ -17,6 +18,7 @@ const tagOptions = [
 ];
 
 const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) => {
+  useTheme();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -215,47 +217,46 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
     }`}>
       <Breadcrumb items={breadcrumbItems} />
       
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-700/50">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-white">New Project</h1>
-            <div className="flex items-center space-x-3">
-              <button className="flex items-center space-x-2 px-4 py-2 bg-purple-600/20 text-purple-400 rounded-lg hover:bg-purple-600/30 transition-colors border border-purple-500/30">
-                <Sparkles size={16} />
-                <span>AI Task Generator</span>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">New Project</h1>
+            <div className="flex items-center space-x-2">
+              <button className="flex items-center space-x-2 px-3 py-1.5 bg-purple-100 dark:bg-purple-600/20 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-600/30 transition-colors border border-purple-200 dark:border-purple-500/30 text-sm">
+                <Sparkles size={14} />
+                <span>AI</span>
               </button>
               <button 
                 onClick={onNavigateToProjects}
-                className="px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-colors"
+                className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
               </button>
-
               <button 
                 onClick={handleSubmit}
                 disabled={!isFormValid || saving}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
                   isFormValid && !saving
-                    ? 'bg-blue-600 text-white hover:bg-blue-700'
-                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    ? 'bg-blue-500 text-white hover:bg-blue-600'
+                    : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                 }`}
               >
-                <Save size={16} />
+                <Save size={14} />
                 <span>{saving ? 'Saving...' : 'Save'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-8 max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit} className="p-4">
+          <div className="space-y-6 max-w-3xl mx-auto">
             {/* Section 1 - Basic Information */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Basic Information
               </h2>
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Project Name *
               </label>
               <div className="col-span-9">
@@ -265,15 +266,15 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                  className={`w-full bg-white dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                     errors.name 
-                      ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50' 
-                      : 'border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50'
+                      ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50' 
+                      : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50'
                   }`}
                   placeholder="Enter project name"
                 />
                 {errors.name && (
-                  <div className="flex items-center mt-1 text-red-400 text-sm">
+                  <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                     <AlertCircle className="w-4 h-4 mr-1" />
                     {errors.name}
                   </div>
