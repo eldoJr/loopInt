@@ -61,7 +61,7 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-colors"
+        className="p-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
         title="Add"
       >
         <Plus className="w-4 h-4" />
