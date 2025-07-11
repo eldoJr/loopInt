@@ -369,7 +369,7 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
 
             {/* Section 2 - Project Details */}
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Project Details
               </h2>
 
