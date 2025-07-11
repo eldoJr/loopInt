@@ -50,7 +50,7 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
             className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-all duration-200 hover:scale-110"
             title={sidebarOpen ? 'Close Menu' : 'Open Menu'}
           >
-            {sidebarOpen ? <SidebarClose className="w-4 h-4" /> : <SidebarOpen className="w-4 h-4" />}
+            {sidebarOpen ? <SidebarClose className="w-6 h-6" /> : <SidebarOpen className="w-6 h-6" />}
           </button>
           
           <button 
