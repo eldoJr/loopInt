@@ -18,7 +18,6 @@ import DashboardHeader from '../components/ui/DashboardHeader';
 import DashboardCard from '../components/ui/DashboardCard';
 import DashboardListItem from '../components/ui/DashboardListItem';
 import DashboardStatCard from '../components/ui/DashboardStatCard';
-import DashboardEmptyState from '../components/ui/DashboardEmptyState';
 import AllActionsDropdown from '../components/ui/AllActionsDropdown';
 import NewProject from '../features/projects/NewProject';
 import EditProject from '../features/projects/EditProject';
@@ -394,17 +393,38 @@ const Dashboard = () => {
                     />
                   ))
               ) : (
-                <DashboardEmptyState
-                  message="No tasks assigned"
-                  description="Create your first task."
-                  actions={[
-                    { text: 'Create Task', onClick: () => navigateToSection('Add Task'), variant: 'primary' }
-                  ]}
-                />
+                <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+                  Here you will see a list of all tasks assigned to you. Click on a task to view details or mark as complete.
+                </div>
               )}
             </div>
           </DashboardCard>
 
+          {/* Favorite Contacts */}
+          <DashboardCard
+            title="Favorite Contacts"
+            icon={Heart}
+            onAdd={() => navigateToSection('New Contact')}
+          >
+            <div className="space-y-2">
+              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+                Here you will see a list of all favorite contacts that you frequently communicate with. Click on a contact to view details.
+              </div>
+            </div>
+          </DashboardCard>
+
+          {/* Recent Activity */}
+          <DashboardCard title="Recent Activity" icon={Clock}>
+            <div className="space-y-2">
+              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+                Here you will see a list of all recent activities in your projects and tasks. Click on an activity to view details.
+              </div>
+            </div>
+          </DashboardCard>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-4">
           {/* Active Projects */}
           <DashboardCard
             title="Active Projects"
@@ -424,48 +444,13 @@ const Dashboard = () => {
                   />
                 ))
               ) : (
-                <DashboardEmptyState
-                  message="No active projects"
-                  description="Create your first project."
-                  actions={[
-                    { text: 'Create Project', onClick: () => navigateToSection('New Project'), variant: 'primary' }
-                  ]}
-                />
+                <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+                  Here you will see a list of all active projects that you are managing or participating in. Click on a project to view details.
+                </div>
               )}
             </div>
           </DashboardCard>
 
-          {/* Favorite Contacts */}
-          <DashboardCard
-            title="Favorite Contacts"
-            icon={Heart}
-            onAdd={() => navigateToSection('New Contact')}
-          >
-            <div className="space-y-2">
-              <DashboardEmptyState
-                message="No favorite contacts"
-                description="Add your important contacts."
-                actions={[
-                  { text: 'Add Contact', onClick: () => navigateToSection('New Contact'), variant: 'primary' }
-                ]}
-              />
-            </div>
-          </DashboardCard>
-
-          {/* Recent Activity */}
-          <DashboardCard title="Recent Activity" icon={Clock}>
-            <div className="space-y-2">
-              <DashboardEmptyState
-                message="No recent activity"
-                description="Activity will appear here."
-                actions={[]}
-              />
-            </div>
-          </DashboardCard>
-        </div>
-
-        {/* Right Column */}
-        <div className="space-y-4">
           {/* My Check-ins */}
           <DashboardCard
             title="My Check-ins"
@@ -473,13 +458,9 @@ const Dashboard = () => {
             onAdd={() => console.log('New check-in')}
           >
             <div className="space-y-2">
-              <DashboardEmptyState
-                message="No check-ins yet"
-                description="Start tracking locations."
-                actions={[
-                  { text: 'Check In Now', onClick: () => console.log('Check in'), variant: 'primary' }
-                ]}
-              />
+              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+                Here you will see a list of all active check-ins that you are the author of or need to reply to. Click on the name of the check-in to do so.
+              </div>
             </div>
           </DashboardCard>
 
@@ -490,13 +471,9 @@ const Dashboard = () => {
             onAdd={() => navigateToSection('Calendar')}
           >
             <div className="space-y-2">
-              <DashboardEmptyState
-                message="No upcoming events"
-                description="Schedule your first event."
-                actions={[
-                  { text: 'Add Event', onClick: () => navigateToSection('Calendar'), variant: 'primary' }
-                ]}
-              />
+              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+                Here you will see a list of all upcoming events and meetings. Click on an event to view details or join the meeting.
+              </div>
             </div>
           </DashboardCard>
         </div>
