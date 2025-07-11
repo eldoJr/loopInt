@@ -394,7 +394,7 @@ const Dashboard = () => {
                     />
                   ))
               ) : (
-                <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
                   Here you will see a list of all tasks assigned to you. Click on a task to view details or mark as complete.
                 </div>
               )}
@@ -407,7 +407,7 @@ const Dashboard = () => {
             icon={AlertTriangle}
           >
             <div className="space-y-2">
-              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
                 No data to display
               </div>
             </div>
@@ -419,7 +419,7 @@ const Dashboard = () => {
             icon={Heart}
           >
             <div className="space-y-2">
-              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
                 A list of all your favorite coworkers will appear here. Mark a particular coworker as a favorite if you want it to appear in this section.
               </div>
             </div>
@@ -428,7 +428,7 @@ const Dashboard = () => {
           {/* Recent Activity */}
           <DashboardCard title="Recent Activity" icon={Clock}>
             <div className="space-y-2">
-              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
                 Here you will see a list of all recent activities in your projects and tasks. Click on an activity to view details.
               </div>
             </div>
@@ -456,7 +456,7 @@ const Dashboard = () => {
                   />
                 ))
               ) : (
-                <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
                   Here you will see a list of all active projects that you are managing or participating in. Click on a project to view details.
                 </div>
               )}
@@ -470,7 +470,7 @@ const Dashboard = () => {
             onAdd={() => console.log('New check-in')}
           >
             <div className="space-y-2">
-              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
                 Here you will see a list of all active check-ins that you are the author of or need to reply to. Click on the name of the check-in to do so.
               </div>
             </div>
@@ -483,7 +483,7 @@ const Dashboard = () => {
             onAdd={() => navigateToSection('Calendar')}
           >
             <div className="space-y-2">
-              <div className="bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/30 rounded-lg p-3 text-sm text-orange-800 dark:text-orange-200">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
                 This is where all the latest notifications for your scheduled meetings will appear. You can also add them directly from your desktop using the top right plus button.
               </div>
             </div>
