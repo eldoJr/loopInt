@@ -1,5 +1,6 @@
 import { SidebarOpen, SidebarClose, Search, Sun, Moon } from 'lucide-react';
 import logoImg from '../../assets/img/logo/logo-b.svg';
+import logoImgWhite from '../../assets/img/logo/logo-w.svg';
 import UserProfileDropdown from './UserProfileDropdown';
 import AddDropdown from './AddDropdown';
 import NotificationsDropdown from './NotificationsDropdown';
@@ -56,7 +57,7 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
             onClick={() => onNavigate?.('Dashboard')}
             className="flex items-center hover:opacity-80 transition-opacity"
           >
-            <img src={logoImg} alt="Loopint" className="h-6 w-auto" />
+            <img src={theme === 'dark' ? logoImg : logoImgWhite} alt="Loopint" className="h-6 w-auto transition-opacity duration-300" />
           </button>
         </div>
 
