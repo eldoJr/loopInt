@@ -5,8 +5,6 @@ import {
   FolderOpen, 
   Calendar,
   CheckCircle,
-  BarChart3,
-  Users,
   Settings,
   Heart,
   MapPin,
@@ -293,12 +291,13 @@ const Dashboard = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
         <DashboardStatCard
           title="Active Projects"
           value={activeProjectsCount}
-          icon={FolderOpen}
-          color="text-blue-400"
+          iconSrc="/src/assets/icons/folders.png"
+          iconAlt="Projects"
+          hoverColor="hover:border-blue-300 dark:hover:border-blue-600/50 hover:shadow-blue-500/10"
           onClick={() => navigateToSection('Projects')}
           trend={{ value: 12, direction: 'up', period: 'vs last month' }}
           subtitle="In progress"
@@ -307,8 +306,9 @@ const Dashboard = () => {
         <DashboardStatCard
           title="Completed Tasks"
           value={todos.filter(t => t.completed).length}
-          icon={CheckCircle}
-          color="text-green-400"
+          iconSrc="/src/assets/icons/task-management.png"
+          iconAlt="Tasks"
+          hoverColor="hover:border-green-300 dark:hover:border-green-600/50 hover:shadow-green-500/10"
           onClick={() => navigateToSection('Tasks')}
           trend={{ value: 8, direction: 'up', period: 'vs last week' }}
           subtitle="This month"
@@ -317,8 +317,9 @@ const Dashboard = () => {
         <DashboardStatCard
           title="Team Members"
           value={teamMembersCount}
-          icon={Users}
-          color="text-purple-400"
+          iconSrc="/src/assets/icons/team-building.png"
+          iconAlt="Team"
+          hoverColor="hover:border-purple-300 dark:hover:border-purple-600/50 hover:shadow-purple-500/10"
           onClick={() => navigateToSection('Team')}
           trend={{ value: 2, direction: 'up', period: 'new this month' }}
           subtitle="Active members"
@@ -327,8 +328,9 @@ const Dashboard = () => {
         <DashboardStatCard
           title="Revenue"
           value="$24K"
-          icon={BarChart3}
-          color="text-emerald-400"
+          iconSrc="/src/assets/icons/increase.png"
+          iconAlt="Revenue"
+          hoverColor="hover:border-emerald-300 dark:hover:border-emerald-600/50 hover:shadow-emerald-500/10"
           onClick={() => navigateToSection('Analytics')}
           trend={{ value: 15, direction: 'up', period: 'vs last month' }}
           subtitle="This month"
