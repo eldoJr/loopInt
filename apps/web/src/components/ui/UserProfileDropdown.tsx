@@ -85,29 +85,29 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 w-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
           {/* User Info Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+          <div className="p-3 border-b border-gray-100 dark:border-gray-800">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-blue-100 dark:ring-blue-900/30">
-                <span className="text-white font-bold text-lg">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md ring-2 ring-blue-50 dark:ring-blue-900/20">
+                <span className="text-white font-bold text-sm">
                   {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-gray-900 dark:text-white font-semibold truncate">{user?.name || 'User'}</p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm truncate">{user?.email || 'user@example.com'}</p>
+                <p className="text-gray-900 dark:text-white font-semibold text-sm truncate">{user?.name || 'User'}</p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{user?.email || 'user@example.com'}</p>
               </div>
             </div>
           </div>
 
           {/* Menu Items */}
-          <div className="py-2">
+          <div className="py-1">
             {menuItems.map((item, index) => {
               if (item.divider) {
-                return <div key={`divider-${index}`} className="my-2 border-t border-gray-200 dark:border-gray-800" />;
+                return <div key={`divider-${index}`} className="my-1 border-t border-gray-100 dark:border-gray-800" />;
               }
 
               return (
-                <div key={`menu-item-${index}`} className="relative">
+                <div key={`menu-item-${index}`} className="relative px-1">
                   <button
                     onClick={() => {
                       if (item.action) {
@@ -117,25 +117,28 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
                         setIsOpen(false);
                       }
                     }}
-                    className={`w-full px-4 py-2.5 flex items-center space-x-3 transition-colors text-left rounded-md mx-1 ${
+                    className={`w-full px-3 py-2 flex items-center space-x-3 transition-all duration-200 text-left rounded-lg group ${
                       item.danger 
-                        ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20' 
+                        ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300' 
                         : showThemeMenu && item.hasSubmenu
                         ? 'text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
-                    {item.icon && <item.icon className="w-4 h-4 flex-shrink-0" />}
-                    <span className="text-sm font-medium">{item.label}</span>
+                    {item.icon && <item.icon className="w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-110" />}
+                    <span className="text-sm font-medium flex-1">{item.label}</span>
                     {item.hasSubmenu && (
-                      <ChevronRight className="w-4 h-4 ml-auto text-gray-400" />
+                      <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-hover:translate-x-0.5" />
                     )}
                   </button>
                   
                   {/* Theme Submenu */}
                   {item.hasSubmenu && showThemeMenu && (
-                    <div className="absolute right-full top-0 mr-1 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 backdrop-blur-sm ring-1 ring-black/5 dark:ring-white/10">
-                      <div className="p-3">
+                    <div className="absolute right-full top-0 mr-2 w-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 backdrop-blur-sm ring-1 ring-black/5 dark:ring-white/10 animate-in fade-in-0 zoom-in-95 slide-in-from-right-2 duration-200">
+                      <div className="p-2">
+                        <div className="mb-2 px-2">
+                          <h4 className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Choose Theme</h4>
+                        </div>
                         {themeOptions.map((option) => (
                           <button
                             key={option.key}
@@ -144,13 +147,13 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
                                 setTheme(option.key);
                               }
                             }}
-                            className="w-full px-4 py-3.5 flex items-center space-x-4 text-left transition-all duration-200 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-300 group"
+                            className="w-full px-3 py-2.5 flex items-center space-x-3 text-left transition-all duration-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-300 group"
                           >
-                            <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-all ${
-                              theme === option.key ? 'bg-blue-500 shadow-sm' : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-gray-400 dark:group-hover:bg-gray-500'
+                            <div className={`w-2 h-2 rounded-full flex-shrink-0 transition-all ${
+                              theme === option.key ? 'bg-blue-500 shadow-sm scale-110' : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-gray-400 dark:group-hover:bg-gray-500'
                             }`} />
-                            <img src={option.icon} alt={option.label} className="w-9 h-9 flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" />
-                            <span className="text-sm font-medium group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{option.label}</span>
+                            <img src={option.icon} alt={option.label} className="w-7 h-7 flex-shrink-0 opacity-80 group-hover:opacity-100 transition-all group-hover:scale-105" />
+                            <span className="text-sm font-medium group-hover:text-gray-900 dark:group-hover:text-white transition-colors whitespace-nowrap">{option.label}</span>
                           </button>
                         ))}
                       </div>

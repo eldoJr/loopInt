@@ -119,7 +119,7 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className="absolute top-full right-0 mt-2 w-[28rem] max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
           <div className="p-3 border-b border-gray-200 dark:border-gray-800">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white">Settings</h3>
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Manage your preferences and configurations</p>
