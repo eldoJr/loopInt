@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
+import type { LucideIcon } from 'lucide-react';
 
 interface Trend {
   value: number;
@@ -10,8 +11,9 @@ interface Trend {
 interface DashboardStatCardProps {
   title: string;
   value: string | number;
-  iconSrc: string;
-  iconAlt: string;
+  iconSrc?: string;
+  iconAlt?: string;
+  icon?: LucideIcon;
   color?: string;
   bgColor?: string;
   hoverColor?: string;
@@ -26,6 +28,8 @@ const DashboardStatCard = ({
   value,
   iconSrc,
   iconAlt,
+  icon: IconComponent,
+  color,
   onClick,
   trend,
   loading = false,
@@ -82,11 +86,15 @@ const DashboardStatCard = ({
             </p>
           </div>
           <div className="p-3 sm:p-4 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
-            <img 
-              src={iconSrc} 
-              alt={iconAlt} 
-              className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 opacity-90 group-hover:opacity-100" 
-            />
+            {IconComponent ? (
+              <IconComponent className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`} />
+            ) : (
+              <img 
+                src={iconSrc} 
+                alt={iconAlt} 
+                className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 opacity-90 group-hover:opacity-100" 
+              />
+            )}
           </div>
         </div>
         
