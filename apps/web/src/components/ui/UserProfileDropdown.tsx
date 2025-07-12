@@ -83,7 +83,7 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
       </button>
 
       {isOpen && (
-        <div className="fixed top-16 right-4 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50">
+        <div className="fixed top-16 right-0 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50">
           {/* User Info Header */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center space-x-3">
