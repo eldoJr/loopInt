@@ -42,7 +42,6 @@ const NotificationsDropdown = () => {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Notifications</h3>
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Only show unread</span>
                   <button
                     onClick={() => setShowUnreadOnly(!showUnreadOnly)}
                     className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
@@ -55,6 +54,7 @@ const NotificationsDropdown = () => {
                       }`}
                     />
                   </button>
+                  <span className="text-xs text-gray-700 dark:text-gray-300">Show unread</span>
                 </div>
                 <button className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 rounded-md transition-colors">
                   <ExternalLink className="w-4 h-4" />
@@ -121,7 +121,7 @@ const NotificationsDropdown = () => {
           {/* Footer */}
           <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
             <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              Press ↓ ↑ to move through notifications. esc to close
+              Press ↓ ↑ to move through notifications. Escape to close
             </p>
           </div>
         </div>
