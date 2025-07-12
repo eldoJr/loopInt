@@ -83,18 +83,18 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
           {/* User Info Header */}
-          <div className="p-3 border-b border-gray-100 dark:border-gray-800">
+          <div className="p-4 border-b border-gray-100 dark:border-gray-800">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md ring-2 ring-blue-50 dark:ring-blue-900/20">
-                <span className="text-white font-bold text-sm">
+              <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md ring-2 ring-blue-50 dark:ring-blue-900/20">
+                <span className="text-white font-bold text-base">
                   {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-gray-900 dark:text-white font-semibold text-sm truncate">{user?.name || 'User'}</p>
-                <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{user?.email || 'user@example.com'}</p>
+                <p className="text-gray-900 dark:text-white font-semibold text-base truncate">{user?.name || 'User'}</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm truncate">{user?.email || 'user@example.com'}</p>
               </div>
             </div>
           </div>
@@ -117,7 +117,7 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
                         setIsOpen(false);
                       }
                     }}
-                    className={`w-full px-3 py-2 flex items-center space-x-3 transition-all duration-200 text-left rounded-lg group ${
+                    className={`w-full px-4 py-2.5 flex items-center space-x-3 transition-all duration-200 text-left rounded-lg group ${
                       item.danger 
                         ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300' 
                         : showThemeMenu && item.hasSubmenu
@@ -125,10 +125,10 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
                         : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
-                    {item.icon && <item.icon className="w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-110" />}
-                    <span className="text-sm font-medium flex-1">{item.label}</span>
+                    {item.icon && <item.icon className="w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110" />}
+                    <span className="text-base font-medium flex-1">{item.label}</span>
                     {item.hasSubmenu && (
-                      <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-hover:translate-x-0.5" />
+                      <ChevronRight className="w-5 h-5 text-gray-400 transition-transform group-hover:translate-x-0.5" />
                     )}
                   </button>
                   
