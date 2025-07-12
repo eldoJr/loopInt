@@ -11,6 +11,10 @@ import {
   Star,
   AlertTriangle
 } from 'lucide-react';
+import foldersIcon from '../assets/icons/folders.png';
+import taskManagementIcon from '../assets/icons/task-management.png';
+import teamBuildingIcon from '../assets/icons/team-building.png';
+import increaseIcon from '../assets/icons/increase.png';
 import type { User as UserType } from '../lib/api';
 import Breadcrumb from '../components/ui/Breadcrumb';
 import DashboardHeader from '../components/ui/DashboardHeader';
@@ -295,9 +299,8 @@ const Dashboard = () => {
         <DashboardStatCard
           title="Active Projects"
           value={activeProjectsCount}
-          iconSrc="/src/assets/icons/folders.png"
+          iconSrc={foldersIcon}
           iconAlt="Projects"
-          hoverColor="hover:border-blue-300 dark:hover:border-blue-600/50 hover:shadow-blue-500/10"
           onClick={() => navigateToSection('Projects')}
           trend={{ value: 12, direction: 'up', period: 'vs last month' }}
           subtitle="In progress"
@@ -306,9 +309,8 @@ const Dashboard = () => {
         <DashboardStatCard
           title="Completed Tasks"
           value={todos.filter(t => t.completed).length}
-          iconSrc="/src/assets/icons/task-management.png"
+          iconSrc={taskManagementIcon}
           iconAlt="Tasks"
-          hoverColor="hover:border-green-300 dark:hover:border-green-600/50 hover:shadow-green-500/10"
           onClick={() => navigateToSection('Tasks')}
           trend={{ value: 8, direction: 'up', period: 'vs last week' }}
           subtitle="This month"
@@ -317,9 +319,8 @@ const Dashboard = () => {
         <DashboardStatCard
           title="Team Members"
           value={teamMembersCount}
-          iconSrc="/src/assets/icons/team-building.png"
+          iconSrc={teamBuildingIcon}
           iconAlt="Team"
-          hoverColor="hover:border-purple-300 dark:hover:border-purple-600/50 hover:shadow-purple-500/10"
           onClick={() => navigateToSection('Team')}
           trend={{ value: 2, direction: 'up', period: 'new this month' }}
           subtitle="Active members"
@@ -328,9 +329,8 @@ const Dashboard = () => {
         <DashboardStatCard
           title="Revenue"
           value="$24K"
-          iconSrc="/src/assets/icons/increase.png"
+          iconSrc={increaseIcon}
           iconAlt="Revenue"
-          hoverColor="hover:border-emerald-300 dark:hover:border-emerald-600/50 hover:shadow-emerald-500/10"
           onClick={() => navigateToSection('Analytics')}
           trend={{ value: 15, direction: 'up', period: 'vs last month' }}
           subtitle="This month"

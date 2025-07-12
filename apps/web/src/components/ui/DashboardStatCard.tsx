@@ -59,14 +59,7 @@ const DashboardStatCard = ({
       {/* Content */}
       <div className="relative z-10">
         {/* Header */}
-        <div className="flex items-start justify-between mb-4 sm:mb-6">
-          <div className="p-2.5 sm:p-3 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-xl sm:rounded-2xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300 group-hover:scale-105">
-            <img 
-              src={iconSrc} 
-              alt={iconAlt} 
-              className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 opacity-90 group-hover:opacity-100" 
-            />
-          </div>
+        <div className="flex items-start justify-end mb-4 sm:mb-6">
           {trend && (
             <div className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-bold ${
               trend.direction === 'up' 
@@ -78,29 +71,42 @@ const DashboardStatCard = ({
           )}
         </div>
         
-        {/* Value */}
-        <div className="mb-3 sm:mb-4">
-          <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-sm">
-            {value}
-          </p>
-          <p className="text-blue-100 font-semibold text-sm sm:text-base">
-            {title}
-          </p>
+        {/* Value and Icon */}
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <div>
+            <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-sm">
+              {value}
+            </p>
+            <p className="text-blue-100 font-semibold text-sm sm:text-base">
+              {title}
+            </p>
+          </div>
+          <div className="p-3 sm:p-4 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
+            <img 
+              src={iconSrc} 
+              alt={iconAlt} 
+              className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 opacity-90 group-hover:opacity-100" 
+            />
+          </div>
         </div>
         
         {/* Footer */}
-        <div className="flex items-center justify-between text-xs sm:text-sm">
+        <div className="flex items-center justify-start">
           {subtitle && (
-            <p className="text-blue-200 font-medium">
+            <p className="text-blue-200 font-medium text-xs sm:text-sm">
               {subtitle}
             </p>
           )}
-          {trend?.period && (
-            <p className="text-blue-300 font-medium">
+        </div>
+        
+        {/* Period */}
+        {trend?.period && (
+          <div className="mt-2">
+            <p className="text-blue-300 font-medium text-xs">
               {trend.period}
             </p>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       
       {/* Hover Effect */}
