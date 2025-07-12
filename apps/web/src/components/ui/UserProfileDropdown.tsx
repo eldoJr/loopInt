@@ -83,7 +83,7 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50">
+        <div className="fixed top-16 right-4 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50">
           {/* User Info Header */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center space-x-3">
@@ -152,7 +152,7 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
                             <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 transition-all ${
                               theme === option.key ? 'bg-blue-500 shadow-sm' : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-gray-400 dark:group-hover:bg-gray-500'
                             }`} />
-                            <img src={option.icon} alt={option.label} className="w-8 h-8 flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" />
+                            <img src={option.icon} alt={option.label} className="w-9 h-9 flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" />
                             <span className="text-sm font-medium group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{option.label}</span>
                           </button>
                         ))}
