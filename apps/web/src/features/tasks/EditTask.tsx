@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, User, Save, CalendarDays, Timer, Target, CalendarCheck, Check } from 'lucide-react';
 import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek } from 'date-fns';
+import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -11,6 +12,7 @@ interface EditTaskProps {
 }
 
 const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) => {
+  useTheme();
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -181,38 +183,38 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
     }`}>
       <Breadcrumb items={breadcrumbItems} />
       
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-700/50">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-white">Edit Task</h1>
-            <div className="flex items-center space-x-3">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Edit Task</h1>
+            <div className="flex items-center space-x-2">
               <button 
                 onClick={onNavigateToTasks}
-                className="px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-colors"
+                className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSubmit}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center space-x-2 px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
               >
-                <Save size={16} />
-                <span>Update Task</span>
+                <Save size={14} />
+                <span>Update</span>
               </button>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-8 max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit} className="p-4">
+          <div className="space-y-6 max-w-3xl mx-auto">
             {/* Section 1 - Basic Information */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Task Information
               </h2>
               
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Task Title *
                 </label>
                 <div className="col-span-9">
@@ -222,14 +224,14 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
                     value={formData.title}
                     onChange={handleChange}
                     required
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                     placeholder="Enter task title"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Status
                 </label>
                 <div className="col-span-4">
@@ -237,14 +239,14 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                   >
                     <option value="todo">To Do</option>
                     <option value="in_progress">In Progress</option>
                     <option value="done">Done</option>
                   </select>
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Priority
                 </label>
                 <div className="col-span-4">
@@ -252,7 +254,7 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
                     name="priority"
                     value={formData.priority}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -261,85 +263,83 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
                 </div>
               </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Due Date
               </label>
               <div className="col-span-9">
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-2">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-1">
                     {quickDateOptions.map((option) => (
                       <button
                         key={option.label}
                         type="button"
                         onClick={() => setFormData({ ...formData, due_date: option.value })}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center space-x-1 ${
+                        className={`px-2 py-1 rounded-lg text-xs font-medium transition-all flex items-center space-x-1 ${
                           formData.due_date === option.value
-                            ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                            : 'bg-gray-800/50 text-gray-400 border border-gray-700/30 hover:bg-gray-700/50 hover:text-gray-300'
+                            ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                            : 'bg-gray-100 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-700/50'
                         }`}
                       >
-                        <option.icon size={14} />
+                        <option.icon size={12} />
                         <span>{option.label}</span>
                       </button>
                     ))}
                   </div>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                    <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                     <input
                       type="date"
                       name="due_date"
                       value={formData.due_date}
                       onChange={handleChange}
-                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                     />
                   </div>
                   {formData.due_date && (
-                    <span className="text-blue-400 text-xs">({getDateLabel(formData.due_date)})</span>
+                    <span className="text-blue-500 dark:text-blue-400 text-xs">({getDateLabel(formData.due_date)})</span>
                   )}
                 </div>
               </div>
             </div>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Project
                 </label>
-                <div className="col-span-4">
+                <div className="col-span-9">
                   <select
                     name="project_id"
                     value={formData.project_id}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                   >
-                    <option value="">Select Project</option>
-                    <option value="proj-1">E-commerce Platform</option>
-                    <option value="proj-2">Mobile App Redesign</option>
-                    <option value="proj-3">API Integration</option>
-                    <option value="proj-4">New Project</option>
-                    <option value="proj-5">HR Project</option>
+                    <option value="">Select a project...</option>
                   </select>
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+              </div>
+
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Assigned To
                 </label>
-                <div className="col-span-4">
-                  <div className="w-full bg-gray-800/30 border border-gray-700/50 rounded-lg px-4 py-3 text-gray-300 flex items-center space-x-2">
-                    <User className="w-4 h-4 text-blue-400" />
+                <div className="col-span-9">
+                  <div className="w-full bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-600 dark:text-gray-300 flex items-center space-x-2 text-sm">
+                    <User className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                     <span>{currentUser?.name || 'User'} (You)</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Section 2 - Schedule and Details */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
-                Schedule and Details
+            {/* Section 2 - Details */}
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
+                Details
               </h2>
 
-              <div className="grid grid-cols-12 gap-4 items-start">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
+              <div className="grid grid-cols-12 gap-3 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Description
                 </label>
                 <div className="col-span-9">
@@ -347,8 +347,8 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    rows={4}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none"
+                    rows={3}
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
                     placeholder="Enter task description"
                   />
                 </div>
@@ -357,8 +357,8 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
           </div>
         </form>
         
-        <div className="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
-          <div className="flex items-center justify-between text-sm text-gray-400">
+        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
+          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">
               <span>Press Ctrl+S to save</span>
               <span>•</span>
@@ -366,7 +366,7 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
             </div>
             <div className="flex items-center space-x-2">
               {isSaved && (
-                <div className="flex items-center space-x-1 text-green-400">
+                <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
                   <Check size={14} />
                   <span>Saved</span>
                 </div>

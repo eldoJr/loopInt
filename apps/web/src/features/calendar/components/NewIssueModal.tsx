@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { X, Check, User, Calendar as CalendarIcon, Tag, FileText, Video, CheckSquare, Target } from 'lucide-react';
+import { useTheme } from '../../../context/ThemeContext';
 
 interface ModalProps {
   isOpen: boolean;
@@ -7,6 +8,7 @@ interface ModalProps {
 }
 
 const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
+  useTheme();
   const [selectedType, setSelectedType] = useState('event');
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
@@ -87,39 +89,39 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-900/95 backdrop-blur-sm border border-gray-800 rounded-xl shadow-xl max-w-5xl w-full mx-4 h-[75vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/20 dark:bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl max-w-4xl w-full mx-4 h-[70vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-800">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-              <FileText className="w-4 h-4 text-white" />
+        <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-800">
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 bg-purple-500 rounded-lg flex items-center justify-center">
+              <FileText className="w-3 h-3 text-white" />
             </div>
-            <h2 className="text-lg font-semibold text-white">Create New Issue</h2>
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">Create New Issue</h2>
           </div>
           <div className="flex items-center space-x-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-300 hover:text-white bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+              className="px-3 py-1.5 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm"
             >
               Cancel
             </button>
             <button 
               onClick={handleSave}
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center space-x-2 transition-colors"
+              className="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center space-x-1 transition-colors text-sm"
             >
-              <Check size={16} />
-              <span>Create Issue</span>
+              <Check size={14} />
+              <span>Create</span>
             </button>
           </div>
         </div>
 
         <div className="flex h-full">
           {/* Left Panel */}
-          <div className="w-1/2 p-4 border-r border-gray-800 overflow-y-auto">
+          <div className="w-1/2 p-3 border-r border-gray-200 dark:border-gray-800 overflow-y-auto">
             {/* Issue Type Selection */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2 text-gray-300">Issue Type</label>
+            <div className="mb-3">
+              <label className="block text-sm font-medium mb-2 text-gray-600 dark:text-gray-300">Issue Type</label>
               <div className="grid grid-cols-2 gap-2">
                 {issueTypes.map((type) => {
                   const IconComponent = type.icon;
@@ -127,14 +129,14 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
                     <button
                       key={type.id}
                       onClick={() => setSelectedType(type.id)}
-                      className={`p-3 rounded-lg border transition-all flex items-center space-x-2 ${
+                      className={`p-2 rounded-lg border transition-all flex items-center space-x-2 text-sm ${
                         selectedType === type.id
-                          ? 'border-blue-500 bg-blue-500/10'
-                          : 'border-gray-700 hover:border-gray-600 bg-gray-800/50'
+                          ? 'border-blue-500 bg-blue-100 dark:bg-blue-500/10'
+                          : 'border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600 bg-gray-50 dark:bg-gray-800/50'
                       }`}
                     >
-                      <IconComponent className="w-4 h-4 text-blue-400" />
-                      <span className="text-sm font-medium text-white">{type.label}</span>
+                      <IconComponent className="w-3 h-3 text-blue-500 dark:text-blue-400" />
+                      <span className="font-medium text-gray-900 dark:text-white">{type.label}</span>
                     </button>
                   );
                 })}
@@ -142,50 +144,47 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
             </div>
 
             {/* Subject */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2 text-gray-300">Subject *</label>
+            <div className="mb-3">
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Subject *</label>
               <input
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Enter subject or title"
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
               />
             </div>
 
             {/* Description */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2 text-gray-300">Description</label>
+            <div className="mb-3">
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Description</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add description or notes..."
                 rows={2}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white resize-none"
+                className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white resize-none text-sm"
               />
             </div>
 
             {/* Project & Calendar */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="grid grid-cols-2 gap-2 mb-3">
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-300">Project</label>
+                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Project</label>
                 <select 
                   value={project}
                   onChange={(e) => setProject(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                  className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                 >
-                  <option value="Choose">Choose Project</option>
-                  <option value="Project Alpha">Project Alpha</option>
-                  <option value="Project Beta">Project Beta</option>
-                  <option value="Project Gamma">Project Gamma</option>
+                  <option value="">No project available</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-300">Calendar</label>
+                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Calendar</label>
                 <select 
                   value={calendar}
                   onChange={(e) => setCalendar(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                  className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                 >
                   <option value="General">General</option>
                   <option value="Work">Work</option>
@@ -196,13 +195,13 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
             </div>
 
             {/* Priority & Status */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="grid grid-cols-2 gap-2 mb-3">
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-300">Priority</label>
+                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Priority</label>
                 <select 
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                  className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
@@ -211,11 +210,11 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-300">Status</label>
+                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Status</label>
                 <select 
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+                  className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                 >
                   <option value="new">New</option>
                   <option value="in-progress">In Progress</option>
@@ -226,35 +225,42 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
             </div>
 
             {/* Tags */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2 text-gray-300">Tags</label>
-              <div className="flex space-x-2 mb-2">
-                <input
-                  type="text"
-                  value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
-                  placeholder="Add tag"
-                  className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm"
-                  onKeyPress={(e) => e.key === 'Enter' && addTag()}
-                />
-                <button
-                  onClick={addTag}
-                  className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
-                >
-                  Add
-                </button>
-              </div>
+            <div className="mb-3">
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Tags</label>
+              <select 
+                value={newTag}
+                onChange={(e) => {
+                  const selectedTag = e.target.value;
+                  if (selectedTag && !tags.includes(selectedTag)) {
+                    setTags([...tags, selectedTag]);
+                    setNewTag('');
+                  }
+                }}
+                className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm mb-2"
+              >
+                <option value="">Select a tag...</option>
+                <option value="urgent">Urgent</option>
+                <option value="meeting">Meeting</option>
+                <option value="development">Development</option>
+                <option value="design">Design</option>
+                <option value="review">Review</option>
+                <option value="testing">Testing</option>
+                <option value="deployment">Deployment</option>
+                <option value="bug-fix">Bug Fix</option>
+                <option value="feature">Feature</option>
+                <option value="documentation">Documentation</option>
+              </select>
               <div className="flex flex-wrap gap-1">
                 {tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-2 py-1 bg-blue-500/20 text-blue-300 rounded text-xs"
+                    className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-300 rounded text-xs"
                   >
                     <Tag className="w-3 h-3 mr-1" />
                     {tag}
                     <button
                       onClick={() => removeTag(tag)}
-                      className="ml-1 text-blue-300 hover:text-blue-100"
+                      className="ml-1 text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"
                     >
                       <X size={10} />
                     </button>
@@ -265,56 +271,56 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
           </div>
 
           {/* Right Panel */}
-          <div className="w-1/2 p-4 overflow-y-auto">
+          <div className="w-1/2 p-3 overflow-y-auto">
             {/* Date & Time */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2 text-gray-300">Schedule</label>
+            <div className="mb-3">
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Schedule</label>
               
               {/* Whole Day Toggle */}
-              <div className="mb-3">
+              <div className="mb-2">
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={wholeDay}
                     onChange={(e) => setWholeDay(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-600 rounded focus:ring-blue-500 bg-gray-800"
+                    className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 bg-white dark:bg-gray-800"
                   />
-                  <span className="text-sm text-blue-400">All day event</span>
+                  <span className="text-sm text-blue-600 dark:text-blue-400">All day event</span>
                 </label>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-medium mb-1 text-gray-400">Start Date</label>
+                  <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">Start Date</label>
                   <input
                     type="date"
                     value={startDate.toISOString().split('T')[0]}
                     onChange={(e) => setStartDate(new Date(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm"
+                    className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                   />
                   {!wholeDay && (
                     <input
                       type="time"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
-                      className="w-full mt-2 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm"
+                      className="w-full mt-2 px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                     />
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs font-medium mb-1 text-gray-400">End Date</label>
+                  <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">End Date</label>
                   <input
                     type="date"
                     value={endDate.toISOString().split('T')[0]}
                     onChange={(e) => setEndDate(new Date(e.target.value))}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm"
+                    className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                   />
                   {!wholeDay && (
                     <input
                       type="time"
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
-                      className="w-full mt-2 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white text-sm"
+                      className="w-full mt-2 px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                     />
                   )}
                 </div>
@@ -322,9 +328,9 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
             </div>
 
             {/* Reminders */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2 text-gray-300">Reminders</label>
-              <div className="space-y-2">
+            <div className="mb-3">
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Reminders</label>
+              <div className="space-y-1">
                 {['15min', '1hour', '1day'].map((reminder) => (
                   <label key={reminder} className="flex items-center space-x-2">
                     <input
@@ -337,9 +343,9 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
                           setReminders(reminders.filter(r => r !== reminder));
                         }
                       }}
-                      className="w-4 h-4 text-blue-600 border-gray-600 rounded focus:ring-blue-500 bg-gray-800"
+                      className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 bg-white dark:bg-gray-800"
                     />
-                    <span className="text-sm text-gray-300">
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
                       {reminder === '15min' && '15 minutes before'}
                       {reminder === '1hour' && '1 hour before'}
                       {reminder === '1day' && '1 day before'}
@@ -350,19 +356,17 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
             </div>
 
             {/* Assigned User */}
-            <div className="mb-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <User className="w-4 h-4 text-blue-500" />
-                <span className="text-sm font-medium text-white">Assigned user</span>
+            <div className="mb-3">
+              <div className="flex items-center space-x-2 mb-1">
+                <User className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">Assigned User</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm">F</span>
-                </div>
-                <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-600">
-                  <span className="text-gray-300 text-sm">+</span>
-                </div>
-              </div>
+              <select 
+                className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
+              >
+                <option value="current">You (Current User)</option>
+                <option value="">Select a user...</option>
+              </select>
             </div>
           </div>
         </div>

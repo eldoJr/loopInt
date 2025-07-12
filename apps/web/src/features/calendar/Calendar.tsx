@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, Filter } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import CalendarViews from './components/CalendarViews';
@@ -28,6 +29,7 @@ interface ViewFilter {
 }
 
 const Calendar = ({ onNavigateBack }: CalendarProps) => {
+  useTheme();
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [currentDate, setCurrentDate] = useState<Date>(() => {
@@ -134,69 +136,69 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
         <div className={`transition-all duration-500 ${
           showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}>
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl overflow-hidden">
+          <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-800">
+            <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-800">
               <div className="flex items-center space-x-4">
-                <h1 className="text-xl font-semibold text-white">Calendar</h1>
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Calendar</h1>
               </div>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setShowNewIssueModal(true)}
-                  className="px-3 py-1.5 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 flex items-center space-x-1"
+                  className="px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 flex items-center space-x-1"
                 >
-                  <Plus size={16} />
-                  <span>New Issue</span>
+                  <Plus size={14} />
+                  <span>Issue</span>
                 </button>
                 <button
                   onClick={() => setShowScheduleModal(true)}
-                  className="px-3 py-1.5 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 flex items-center space-x-1"
+                  className="px-3 py-1.5 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 flex items-center space-x-1"
                 >
-                  <CalendarIcon size={16} />
-                  <span>Schedule meeting</span>
+                  <CalendarIcon size={14} />
+                  <span>Meeting</span>
                 </button>
               </div>
             </div>
 
             {/* Navigation */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-800">
-              <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-800">
+              <div className="flex items-center space-x-3">
                 <button
                   onClick={goToToday}
-                  className="px-3 py-2 text-sm text-gray-300 hover:text-white border border-gray-700 rounded-lg hover:bg-gray-800 transition-colors"
+                  className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >
                   Today
                 </button>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
                   <button
                     onClick={() => navigateMonth(-1)}
-                    className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                    className="p-1.5 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                   >
-                    <ChevronLeft size={20} />
+                    <ChevronLeft size={16} />
                   </button>
                   <button
                     onClick={() => navigateMonth(1)}
-                    className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                    className="p-1.5 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                   >
-                    <ChevronRight size={20} />
+                    <ChevronRight size={16} />
                   </button>
                 </div>
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-base font-semibold text-gray-900 dark:text-white">
                   {months[currentDate.getMonth()]} {currentDate.getFullYear()}
                 </h2>
               </div>
               
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 {/* View Options */}
-                <div className="flex items-center space-x-1 bg-gray-800/50 rounded-lg p-1">
+                <div className="flex items-center space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
                   {viewOptions.map((option) => (
                     <button
                       key={option.id}
                       onClick={() => setView(option.id)}
-                      className={`px-3 py-2 text-sm rounded-md transition-colors ${
+                      className={`px-2 py-1 text-xs rounded-md transition-colors ${
                         view === option.id
                           ? 'bg-blue-500 text-white shadow-sm'
-                          : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                          : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                       }`}
                       title={option.description}
                     >
@@ -209,33 +211,33 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
                 <div className="relative">
                   <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className={`px-3 py-2 text-sm rounded-lg border transition-colors flex items-center space-x-2 ${
+                    className={`px-2 py-1 text-xs rounded-lg border transition-colors flex items-center space-x-1 ${
                       showFilters
                         ? 'bg-blue-500 text-white border-blue-500'
-                        : 'text-gray-300 hover:text-white border-gray-700 hover:bg-gray-800'
+                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800'
                     }`}
                   >
-                    <Filter size={16} />
+                    <Filter size={12} />
                     <span>Filters</span>
                   </button>
                   
                   {showFilters && (
-                    <div className="absolute right-0 top-full mt-2 w-64 bg-gray-900 border border-gray-800 rounded-lg shadow-xl z-10">
-                      <div className="p-3 border-b border-gray-800">
-                        <h3 className="text-sm font-medium text-white">View Filters</h3>
+                    <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-10">
+                      <div className="p-2 border-b border-gray-200 dark:border-gray-800">
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">View Filters</h3>
                       </div>
                       <div className="p-2">
                         {viewFilters.map((filter) => (
-                          <label key={filter.id} className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-md cursor-pointer">
+                          <label key={filter.id} className="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer">
                             <input
                               type="checkbox"
                               checked={filter.active}
                               onChange={() => toggleFilter(filter.id)}
-                              className="w-4 h-4 text-blue-600 border-gray-600 rounded focus:ring-blue-500 bg-gray-800"
+                              className="w-3 h-3 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 bg-white dark:bg-gray-800"
                             />
                             <div>
-                              <div className="text-sm font-medium text-white">{filter.label}</div>
-                              <div className="text-xs text-gray-400">{filter.description}</div>
+                              <div className="text-sm font-medium text-gray-900 dark:text-white">{filter.label}</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">{filter.description}</div>
                             </div>
                           </label>
                         ))}

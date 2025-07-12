@@ -110,20 +110,20 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'published': return 'text-green-400 bg-green-500/10 border-green-500/20';
-      case 'draft': return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
-      case 'archived': return 'text-gray-400 bg-gray-500/10 border-gray-500/20';
-      default: return 'text-gray-400 bg-gray-500/10 border-gray-500/20';
+      case 'published': return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20';
+      case 'draft': return 'text-amber-600 dark:text-yellow-400 bg-amber-50 dark:bg-yellow-500/10 border-amber-200 dark:border-yellow-500/20';
+      case 'archived': return 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-500/10 border-gray-200 dark:border-gray-500/20';
+      default: return 'text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-500/10 border-gray-200 dark:border-gray-500/20';
     }
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-3 shadow-lg">
-          <p className="text-gray-300 text-sm">{label}</p>
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2 shadow-lg">
+          <p className="text-gray-700 dark:text-gray-300 text-xs font-medium">{label}</p>
           {payload.map((entry: any, index: number) => (
-            <p key={index} className="text-white text-sm" style={{ color: entry.color }}>
+            <p key={index} className="text-gray-900 dark:text-white text-xs" style={{ color: entry.color }}>
               {`${entry.dataKey}: ${entry.value}`}
             </p>
           ))}
@@ -176,20 +176,20 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
     }`}>
       <Breadcrumb items={breadcrumbItems} />
       
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg shadow-sm">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-700/50">
+        <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-semibold text-white">{report.title}</h1>
-                <div className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(report.status)}`}>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">{report.title}</h1>
+                <div className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(report.status)}`}>
                   {report.status}
                 </div>
               </div>
-              <p className="text-gray-400 mb-4">{report.description}</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-3">{report.description}</p>
               
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
                 <div className="flex items-center gap-1">
                   <User className="w-4 h-4" />
                   <span>Created by {report.created_by}</span>
@@ -210,11 +210,11 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
                 )}
               </div>
               
-              <div className="flex flex-wrap gap-2 mt-3">
+              <div className="flex flex-wrap gap-1.5 mt-2">
                 {report.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="flex items-center gap-1 px-2 py-1 bg-gray-700/50 text-gray-300 text-xs rounded-md"
+                    className="flex items-center gap-1 px-2 py-0.5 bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 text-xs rounded"
                   >
                     <Tag className="w-3 h-3" />
                     {tag}
@@ -226,7 +226,7 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
             <div className="flex items-center gap-2 ml-6">
               <button
                 onClick={() => onNavigateToEdit?.(report.id)}
-                className="flex items-center gap-2 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700/50 transition-all text-sm"
               >
                 <Edit className="w-4 h-4" />
                 Edit
@@ -235,25 +235,25 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
               <div className="relative">
                 <button
                   onClick={() => setShowShareMenu(!showShareMenu)}
-                  className="flex items-center gap-2 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700/50 transition-all text-sm"
                 >
                   <Share2 className="w-4 h-4" />
                   Share
                 </button>
                 
                 {showShareMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-10">
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
                     <div className="p-2">
                       <button
                         onClick={() => handleShare('copy')}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-md transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
                       >
-                        {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                        {copied ? <Check className="w-4 h-4 text-green-500 dark:text-green-400" /> : <Copy className="w-4 h-4" />}
                         {copied ? 'Copied!' : 'Copy Link'}
                       </button>
                       <button
                         onClick={() => handleShare('email')}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-md transition-colors"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
                       >
                         <Mail className="w-4 h-4" />
                         Send via Email
@@ -265,7 +265,7 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
               
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-2 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white hover:bg-gray-700/50 transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700/50 transition-all text-sm"
               >
                 <Printer className="w-4 h-4" />
                 Print
@@ -274,14 +274,14 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => handleExport('pdf')}
-                  className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium"
                 >
                   <Download className="w-4 h-4" />
                   PDF
                 </button>
                 <button
                   onClick={() => handleExport('excel')}
-                  className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium"
                 >
                   <Download className="w-4 h-4" />
                   Excel
@@ -292,16 +292,16 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
         </div>
 
         {/* Tabs */}
-        <div className="px-6 border-b border-gray-700/50">
-          <div className="flex space-x-8">
+        <div className="px-5 border-b border-gray-200 dark:border-gray-700/50">
+          <div className="flex space-x-6">
             {['overview', 'data', 'charts', 'settings'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors capitalize ${
                   activeTab === tab
-                    ? 'border-blue-500 text-blue-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
                 {tab}
@@ -311,35 +311,35 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-5">
           {activeTab === 'overview' && (
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Performance Overview</h3>
-                  <ResponsiveContainer width="100%" height={300}>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="bg-white dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700/50 rounded-lg p-4 shadow-sm">
+                  <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Performance Overview</h3>
+                  <ResponsiveContainer width="100%" height={240}>
                     <BarChart data={performanceData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="month" stroke="#9ca3af" />
-                      <YAxis stroke="#9ca3af" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-600" />
+                      <XAxis dataKey="month" stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
+                      <YAxis stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
                       <Tooltip content={<CustomTooltip />} />
-                      <Bar dataKey="tasks" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="projects" fill="#10b981" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="tasks" fill="#3b82f6" radius={[3, 3, 0, 0]} />
+                      <Bar dataKey="projects" fill="#10b981" radius={[3, 3, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
 
-                <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Status Distribution</h3>
-                  <ResponsiveContainer width="100%" height={300}>
+                <div className="bg-white dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700/50 rounded-lg p-4 shadow-sm">
+                  <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Status Distribution</h3>
+                  <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
                       <Pie
                         data={statusData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
+                        innerRadius={40}
+                        outerRadius={80}
+                        paddingAngle={3}
                         dataKey="value"
                       >
                         {statusData.map((entry, index) => (
@@ -349,11 +349,11 @@ const ViewReport = ({ reportId, onNavigateBack, onNavigateToReports, onNavigateT
                       <Tooltip content={<CustomTooltip />} />
                     </PieChart>
                   </ResponsiveContainer>
-                  <div className="flex flex-wrap gap-4 mt-4">
+                  <div className="flex flex-wrap gap-3 mt-3">
                     {statusData.map((item, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                        <span className="text-sm text-gray-300">{item.name}: {item.value}%</span>
+                      <div key={index} className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }}></div>
+                        <span className="text-xs text-gray-600 dark:text-gray-300">{item.name}: {item.value}%</span>
                       </div>
                     ))}
                   </div>

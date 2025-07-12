@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, User, Save, CalendarDays, Timer, Target, CalendarCheck, Check, Sparkles, X } from 'lucide-react';
 import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek } from 'date-fns';
+import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import AIGenerateTask from '../ai/GenerateTask';
@@ -11,6 +12,7 @@ interface AddTaskProps {
 }
 
 const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
+  useTheme();
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -170,59 +172,56 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
     }`}>
       <Breadcrumb items={breadcrumbItems} />
       
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-700/50">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-white">Add New Task</h1>
-            <div className="flex items-center space-x-3">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Add New Task</h1>
+            <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowAIPanel(!showAIPanel)}
-                className={`group flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 ${
+                className={`group flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-300 text-sm ${
                   showAIPanel
-                    ? 'bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-lg shadow-green-500/25 hover:shadow-green-500/40'
-                    : 'bg-green-600/20 text-green-400 border border-green-500/30 hover:bg-green-600/30 hover:border-green-400/50 hover:text-green-300'
+                    ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white shadow-lg'
+                    : 'bg-green-100 dark:bg-green-600/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-500/30 hover:bg-green-200 dark:hover:bg-green-600/30'
                 }`}
               >
                 <div className={`transition-transform duration-300 ${
                   showAIPanel ? 'rotate-180' : 'group-hover:rotate-12'
                 }`}>
-                  {showAIPanel ? <X size={16} /> : <Sparkles size={16} />}
+                  {showAIPanel ? <X size={14} /> : <Sparkles size={14} />}
                 </div>
-                <span className="font-medium">{showAIPanel ? 'Close AI' : 'AI Assistant'}</span>
-                {!showAIPanel && (
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse opacity-75" />
-                )}
+                <span className="font-medium">{showAIPanel ? 'Close AI' : 'AI'}</span>
               </button>
               <button 
                 onClick={onNavigateToTasks}
-                className="px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-all duration-200 hover:text-white transform hover:scale-105 active:scale-95"
+                className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSubmit}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25 transform hover:scale-105 active:scale-95"
+                className="flex items-center space-x-2 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm"
               >
-                <Save size={16} />
-                <span className="font-medium">Create Task</span>
+                <Save size={14} />
+                <span>Create</span>
               </button>
             </div>
           </div>
         </div>
 
-        <div className="relative overflow-hidden">
-          <div className={`flex transition-all duration-500 ease-in-out`}>
-            <div className={`${showAIPanel ? 'w-1/2' : 'w-full'} flex-shrink-0 p-6 transition-all duration-500`}>
+        <div className="relative">
+          <div className={`flex transition-all duration-500 ease-in-out ${!showAIPanel ? 'block' : ''}`}>
+            <div className={`${showAIPanel ? 'w-1/2' : 'w-full'} flex-shrink-0 p-4 transition-all duration-500`}>
               <form onSubmit={handleSubmit}>
-                <div className={`space-y-8 ${!showAIPanel ? 'max-w-4xl mx-auto' : ''}`}>
+                <div className={`space-y-6 ${!showAIPanel ? 'max-w-3xl mx-auto' : ''}`}>
             {/* Section 1 - Basic Information */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Task Information
               </h2>
               
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Task Title *
                 </label>
                 <div className="col-span-9">
@@ -232,14 +231,14 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     value={formData.title}
                     onChange={handleChange}
                     required
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                     placeholder="Enter task title"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Status
                 </label>
                 <div className="col-span-4">
@@ -247,14 +246,14 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                   >
                     <option value="todo">To Do</option>
                     <option value="in_progress">In Progress</option>
                     <option value="done">Done</option>
                   </select>
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Priority
                 </label>
                 <div className="col-span-4">
@@ -262,7 +261,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     name="priority"
                     value={formData.priority}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -271,71 +270,69 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                 </div>
               </div>
 
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+            <div className="grid grid-cols-12 gap-3 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Due Date
               </label>
               <div className="col-span-9">
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-2">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-1">
                     {quickDateOptions.map((option) => (
                       <button
                         key={option.label}
                         type="button"
                         onClick={() => setFormData({ ...formData, due_date: option.value })}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center space-x-1 ${
+                        className={`px-2 py-1 rounded-lg text-xs font-medium transition-all flex items-center space-x-1 ${
                           formData.due_date === option.value
-                            ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                            : 'bg-gray-800/50 text-gray-400 border border-gray-700/30 hover:bg-gray-700/50 hover:text-gray-300'
+                            ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                            : 'bg-gray-100 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-700/50'
                         }`}
                       >
-                        <option.icon size={14} />
+                        <option.icon size={12} />
                         <span>{option.label}</span>
                       </button>
                     ))}
                   </div>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                    <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                     <input
                       type="date"
                       name="due_date"
                       value={formData.due_date}
                       onChange={handleChange}
-                      className="w-auto bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                      className="w-auto bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                     />
                   </div>
                   {formData.due_date && (
-                    <span className="text-blue-400 text-xs">({getDateLabel(formData.due_date)})</span>
+                    <span className="text-blue-500 dark:text-blue-400 text-xs">({getDateLabel(formData.due_date)})</span>
                   )}
                 </div>
               </div>
             </div>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Project
                 </label>
-                <div className="col-span-4">
+                <div className="col-span-9">
                   <select
                     name="project_id"
                     value={formData.project_id}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                   >
-                    <option value="">Select Project</option>
-                    <option value="proj-1">E-commerce Platform</option>
-                    <option value="proj-2">Mobile App Redesign</option>
-                    <option value="proj-3">API Integration</option>
-                    <option value="proj-4">New Project</option>
-                    <option value="proj-5">HR Project</option>
+                    <option value="">Select a project...</option>
                   </select>
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+              </div>
+
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Assigned To
                 </label>
-                <div className="col-span-4">
-                  <div className="w-full bg-gray-800/30 border border-gray-700/50 rounded-lg px-4 py-3 text-gray-300 flex items-center space-x-2">
-                    <User className="w-4 h-4 text-blue-400" />
+                <div className="col-span-9">
+                  <div className="w-full bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-600 dark:text-gray-300 flex items-center space-x-2 text-sm">
+                    <User className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                     <span>{currentUser?.name || 'User'} (You)</span>
                   </div>
                 </div>
@@ -343,13 +340,13 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             </div>
 
             {/* Section 2 - Schedule and Details */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
-                Schedule and Details
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
+                Details
               </h2>
 
-              <div className="grid grid-cols-12 gap-4 items-start">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
+              <div className="grid grid-cols-12 gap-3 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Description
                 </label>
                 <div className="col-span-9">
@@ -357,8 +354,8 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    rows={4}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none"
+                    rows={3}
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
                     placeholder="Enter task description"
                   />
                 </div>
@@ -367,14 +364,16 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                 </div>
               </form>
             </div>
-            <div className={`${showAIPanel ? 'w-1/2 opacity-100' : 'w-0 opacity-0'} flex-shrink-0 p-6 border-l border-gray-700/50 transition-all duration-500 overflow-hidden bg-gradient-to-br from-green-900/10 to-blue-900/10`}>
-              <AIGenerateTask onApplyToForm={handleAIApply} />
-            </div>
+            {showAIPanel && (
+              <div className="w-1/2 flex-shrink-0 p-4 border-l border-gray-200 dark:border-gray-700/50 transition-all duration-500 bg-gradient-to-br from-green-50 dark:from-green-900/10 to-blue-50 dark:to-blue-900/10">
+                <AIGenerateTask onApplyToForm={handleAIApply} />
+              </div>
+            )}
           </div>
         </div>
         
-        <div className="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
-          <div className="flex items-center justify-between text-sm text-gray-400">
+        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
+          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">
               <span>Press Ctrl+S to save</span>
               <span>•</span>
@@ -382,7 +381,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             </div>
             <div className="flex items-center space-x-2">
               {isSaved && (
-                <div className="flex items-center space-x-1 text-green-400">
+                <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
                   <Check size={14} />
                   <span>Saved</span>
                 </div>

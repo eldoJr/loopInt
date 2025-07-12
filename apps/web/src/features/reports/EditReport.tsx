@@ -241,24 +241,27 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
     }`}>
       <Breadcrumb items={breadcrumbItems} />
       
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-700/50">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg shadow-sm">
+        <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-white">Edit Report</h1>
-            <div className="flex items-center space-x-3">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Edit Report</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">Update your report settings and content</p>
+            </div>
+            <div className="flex items-center space-x-2">
               <button 
                 onClick={onNavigateToReports}
-                className="px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-colors"
+                className="px-3 py-2 bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm font-medium"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSubmit}
                 disabled={!isFormValid() || saving}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${
                   isFormValid() && !saving
-                    ? 'bg-blue-600 text-white hover:bg-blue-700'
-                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm hover:shadow-md'
+                    : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                 }`}
               >
                 <Save size={16} />
@@ -268,16 +271,16 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-8 max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit} className="p-5">
+          <div className="space-y-6 max-w-4xl mx-auto">
             {/* Basic Information */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Basic Information
               </h2>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Report Title *
                 </label>
                 <div className="col-span-9">
@@ -287,15 +290,15 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                     value={formData.title}
                     onChange={handleChange}
                     required
-                    className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.title 
-                        ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50' 
-                        : 'border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50'
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/20 focus:border-blue-500'
                     }`}
                     placeholder="Enter report title"
                   />
                   {errors.title && (
-                    <div className="flex items-center mt-1 text-red-400 text-sm">
+                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
                       {errors.title}
                     </div>
@@ -303,12 +306,12 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Report Type *
                 </label>
                 <div className="col-span-9">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {reportTypes.map((type) => {
                       const IconComponent = type.icon;
                       return (
@@ -316,17 +319,17 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                           key={type.value}
                           type="button"
                           onClick={() => setFormData(prev => ({ ...prev, type: type.value }))}
-                          className={`p-4 rounded-lg border transition-all text-left ${
+                          className={`p-3 rounded-lg border transition-all text-left ${
                             formData.type === type.value
-                              ? 'bg-blue-500/10 border-blue-500/30 text-blue-400'
-                              : 'bg-gray-800/30 border-gray-700/50 text-gray-300 hover:bg-gray-700/30'
+                              ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/30 text-blue-700 dark:text-blue-400'
+                              : 'bg-white dark:bg-gray-800/30 border-gray-200 dark:border-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/30'
                           }`}
                         >
-                          <div className="flex items-center gap-3 mb-2">
-                            <IconComponent className="w-5 h-5" />
-                            <span className="font-medium">{type.label}</span>
+                          <div className="flex items-center gap-2 mb-1">
+                            <IconComponent className="w-4 h-4" />
+                            <span className="font-medium text-sm">{type.label}</span>
                           </div>
-                          <p className="text-xs text-gray-400">{type.description}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{type.description}</p>
                         </button>
                       );
                     })}
@@ -334,8 +337,8 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Status
                 </label>
                 <div className="col-span-4">
@@ -343,14 +346,14 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm"
                   >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                     <option value="archived">Archived</option>
                   </select>
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Schedule
                 </label>
                 <div className="col-span-4">
@@ -358,7 +361,7 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                     name="schedule"
                     value={formData.schedule}
                     onChange={handleChange}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm"
                   >
                     {scheduleOptions.map(option => (
                       <option key={option.value} value={option.value}>
@@ -369,8 +372,8 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Tags
                 </label>
                 <div className="col-span-9">
@@ -378,7 +381,7 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                     <button
                       type="button"
                       onClick={() => setShowTagDropdown(!showTagDropdown)}
-                      className="w-full flex items-center justify-between bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-sm"
                     >
                       <div className="flex items-center space-x-2">
                         <Tag className="h-4 w-4 text-gray-400" />
@@ -392,7 +395,7 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                     </button>
                     
                     {showTagDropdown && (
-                      <div className="absolute z-10 mt-1 w-full bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
+                      <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
                         <div className="p-2 grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
                           {tagOptions.map((tag) => (
                             <button
@@ -401,8 +404,8 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                               onClick={() => handleTagSelect(tag)}
                               className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md transition-colors ${
                                 formData.tags.includes(tag)
-                                  ? 'bg-blue-600/20 text-blue-400'
-                                  : 'text-gray-300 hover:bg-gray-700'
+                                  ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-700 dark:text-blue-400'
+                                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                               }`}
                             >
                               <span>{tag}</span>
@@ -418,8 +421,8 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-4 items-start">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
+              <div className="grid grid-cols-12 gap-3 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Description *
                 </label>
                 <div className="col-span-9">
@@ -427,22 +430,22 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    rows={4}
-                    className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none ${
+                    rows={3}
+                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none text-sm ${
                       errors.description 
-                        ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50' 
-                        : 'border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50'
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/20 focus:border-blue-500'
                     }`}
                     placeholder="Describe what this report will contain..."
                   />
                   <div className="flex items-center justify-between mt-1">
                     <span className={`text-xs ${
-                      formData.description.length > 450 ? 'text-red-400' : 'text-gray-400'
+                      formData.description.length > 450 ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'
                     }`}>
                       {formData.description.length}/500 characters
                     </span>
                     {errors.description && (
-                      <div className="flex items-center text-red-400 text-sm">
+                      <div className="flex items-center text-red-500 dark:text-red-400 text-sm">
                         <AlertCircle className="w-4 h-4 mr-1" />
                         {errors.description}
                       </div>
@@ -453,26 +456,26 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
             </div>
 
             {/* Report Settings */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Report Settings
               </h2>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Output Format
                 </label>
                 <div className="col-span-9">
-                  <div className="flex gap-3">
+                  <div className="flex gap-2">
                     {['pdf', 'excel', 'html'].map(format => (
                       <button
                         key={format}
                         type="button"
                         onClick={() => handleSettingChange('format', format)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                           formData.settings.format === format
-                            ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                            : 'bg-gray-800/50 text-gray-300 border border-gray-700/50 hover:bg-gray-700/50'
+                            ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                            : 'bg-gray-100 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-700/50'
                         }`}
                       >
                         {format.toUpperCase()}
@@ -482,37 +485,37 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Options
                 </label>
-                <div className="col-span-9 space-y-3">
+                <div className="col-span-9 space-y-2">
                   <label className="flex items-center space-x-3">
                     <input
                       type="checkbox"
                       checked={formData.settings.includeCharts}
                       onChange={(e) => handleSettingChange('includeCharts', e.target.checked)}
-                      className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
                     />
-                    <span className="text-gray-300">Include charts and visualizations</span>
+                    <span className="text-gray-700 dark:text-gray-300 text-sm">Include charts and visualizations</span>
                   </label>
                   <label className="flex items-center space-x-3">
                     <input
                       type="checkbox"
                       checked={formData.settings.includeData}
                       onChange={(e) => handleSettingChange('includeData', e.target.checked)}
-                      className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
                     />
-                    <span className="text-gray-300">Include raw data tables</span>
+                    <span className="text-gray-700 dark:text-gray-300 text-sm">Include raw data tables</span>
                   </label>
                   <label className="flex items-center space-x-3">
                     <input
                       type="checkbox"
                       checked={formData.settings.autoGenerate}
                       onChange={(e) => handleSettingChange('autoGenerate', e.target.checked)}
-                      className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
                     />
-                    <span className="text-gray-300">Auto-generate based on schedule</span>
+                    <span className="text-gray-700 dark:text-gray-300 text-sm">Auto-generate based on schedule</span>
                   </label>
                 </div>
               </div>
@@ -521,16 +524,16 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
         </form>
         
         {errors.submit && (
-          <div className="mx-6 mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <div className="flex items-center space-x-2 text-red-400">
-              <AlertCircle className="w-5 h-5" />
+          <div className="mx-5 mb-5 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
+            <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
+              <AlertCircle className="w-4 h-4" />
               <span>{errors.submit}</span>
             </div>
           </div>
         )}
         
-        <div className="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
-          <div className="flex items-center justify-between text-sm text-gray-400">
+        <div className="px-5 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
+          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">
               <span>Press Ctrl+S to save</span>
               <span>•</span>
@@ -538,7 +541,7 @@ const EditReport = ({ reportId, onNavigateBack, onNavigateToReports }: EditRepor
             </div>
             <div className="flex items-center space-x-2">
               {isSaved && (
-                <div className="flex items-center space-x-1 text-green-400">
+                <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
                   <Check size={14} />
                   <span>Saved</span>
                 </div>

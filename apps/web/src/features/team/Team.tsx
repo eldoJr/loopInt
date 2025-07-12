@@ -136,10 +136,10 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'inactive': return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-      case 'pending': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+      case 'active': return 'bg-green-50 dark:bg-green-500/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-500/30';
+      case 'inactive': return 'bg-gray-50 dark:bg-gray-500/20 text-gray-700 dark:text-gray-400 border-gray-200 dark:border-gray-500/30';
+      case 'pending': return 'bg-amber-50 dark:bg-yellow-500/20 text-amber-700 dark:text-yellow-400 border-amber-200 dark:border-yellow-500/30';
+      default: return 'bg-gray-50 dark:bg-gray-500/20 text-gray-700 dark:text-gray-400 border-gray-200 dark:border-gray-500/30';
     }
   };
 
@@ -196,91 +196,79 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
       <Breadcrumb items={breadcrumbItems} />
       
       {/* Header */}
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-700/50">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl shadow-sm">
+        <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-white">Team Members</h1>
-            <div className="flex items-center space-x-3">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Team Members</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">Manage your team and collaborate effectively</p>
+            </div>
+            <div className="flex items-center space-x-2">
               <button 
                 onClick={() => fetchTeamMembers()}
-                className="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-white px-3 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 text-sm font-medium border border-gray-200 dark:border-gray-600"
               >
                 Refresh
               </button>
               <button 
                 onClick={onNavigateToNewCoworker}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center space-x-2 font-medium shadow-sm hover:shadow-md"
               >
                 <Plus size={16} />
-                <span>New Team Member</span>
+                <span>Add Member</span>
               </button>
             </div>
           </div>
         </div>
         
         {/* Filters */}
-        <div className="px-6 py-4 bg-gray-800/30 border-b border-gray-700/30">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="relative group">
-                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+        <div className="px-5 py-3 bg-gray-50/50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/30">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-3 lg:space-y-0">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+              <div className="relative group w-full sm:w-auto">
+                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
                 <input
                   type="text"
-                  placeholder="Search team members..."
+                  placeholder="Search by name, position, or company..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-64 pl-10 pr-10 py-2.5 bg-gray-700/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 focus:bg-gray-700/70 transition-all"
+                  className="w-full sm:w-72 pl-9 pr-9 py-2.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-500/50 transition-all shadow-sm text-sm"
                 />
                 {searchTerm && (
                   <button
                     onClick={clearSearch}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-400 transition-colors"
+                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-500/10"
                   >
-                    <X size={16} />
+                    <X size={14} />
                   </button>
                 )}
               </div>
               
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-gray-700/50 border border-gray-600/50 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500/50"
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="pending">Pending</option>
-              </select>
+              <div className="flex items-center space-x-2">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-500/50 transition-all shadow-sm font-medium text-sm"
+                >
+                  <option value="all">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="pending">Pending</option>
+                </select>
+                
+                <button 
+                  onClick={resetFilters}
+                  className="px-3 py-2.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600/50 transition-all duration-200 font-medium shadow-sm flex items-center space-x-1.5 text-sm"
+                >
+                  <X size={14} />
+                  <span>Reset</span>
+                </button>
+              </div>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="group relative">
-                  <button className="p-2.5 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 hover:text-white transition-all duration-200 border border-gray-600/30 hover:border-gray-500/50">
-                    <Filter size={16} />
-                  </button>
-                  <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-                    Advanced filters
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-                  </div>
-                </div>
-                
-                <div className="group relative">
-                  <button 
-                    onClick={resetFilters}
-                    className="p-2.5 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 border border-red-500/30 hover:border-red-400/50"
-                  >
-                    <X size={16} />
-                  </button>
-                  <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-                    Reset filters
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="text-sm text-gray-400">
-                <span className="font-medium text-white">{filteredMembers.length}</span> of {teamMembers.length} members
+            <div className="flex items-center justify-between lg:justify-end space-x-3">
+              <div className="text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-700/30 px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600/30">
+                <span className="font-semibold text-gray-900 dark:text-white">{filteredMembers.length}</span> of <span className="font-medium">{teamMembers.length}</span> members
               </div>
             </div>
           </div>
@@ -288,14 +276,14 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
       </div>
 
       {/* Team Members Grid */}
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden shadow-sm">
         {filteredMembers.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 p-5">
             {filteredMembers.map((member) => (
-              <div key={member.id} className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-6 hover:bg-gray-800/50 transition-colors">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center overflow-hidden">
+              <div key={member.id} className="bg-white dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700/50 rounded-lg p-4 hover:shadow-md dark:hover:bg-gray-800/50 transition-all duration-200 group">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700/50 rounded-full flex items-center justify-center overflow-hidden ring-1 ring-gray-200 dark:ring-gray-600/30">
                       {member.photo ? (
                         <img 
                           src={member.photo.startsWith('/uploads') ? `http://localhost:3000${member.photo}` : member.photo} 
@@ -303,71 +291,71 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
                           className="w-full h-full rounded-full object-cover"
                         />
                       ) : (
-                        <User className="w-6 h-6 text-gray-400" />
+                        <User className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                       )}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-white">{member.firstName} {member.lastName}</h3>
-                      <p className="text-sm text-gray-400">{member.position}</p>
+                      <h3 className="font-semibold text-gray-900 dark:text-white text-sm">{member.firstName} {member.lastName}</h3>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">{member.position}</p>
                     </div>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(member.status)}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(member.status)} capitalize`}>
                     {member.status}
                   </span>
                 </div>
                 
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center space-x-2 text-sm text-gray-300">
-                    <Building className="w-4 h-4 text-gray-400" />
-                    <span>{member.company}</span>
+                <div className="space-y-1.5 mb-3">
+                  <div className="flex items-center space-x-2 text-xs text-gray-700 dark:text-gray-300">
+                    <Building className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
+                    <span className="font-medium">{member.company}</span>
                     {member.isIndividual && (
-                      <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded">
+                      <span className="px-1.5 py-0.5 bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 text-xs rounded font-medium">
                         Individual
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-300">
-                    <MapPin className="w-4 h-4 text-gray-400" />
+                  <div className="flex items-center space-x-2 text-xs text-gray-600 dark:text-gray-300">
+                    <MapPin className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                     <span>{member.location}</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-300">
-                    <Mail className="w-4 h-4 text-gray-400" />
+                  <div className="flex items-center space-x-2 text-xs text-gray-600 dark:text-gray-300">
+                    <Mail className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                     <span className="truncate">{member.email || 'No email'}</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-300">
-                    <Phone className="w-4 h-4 text-gray-400" />
+                  <div className="flex items-center space-x-2 text-xs text-gray-600 dark:text-gray-300">
+                    <Phone className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                     <span>{member.phone || 'No phone'}</span>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
+                <div className="flex items-center justify-between pt-2.5 border-t border-gray-100 dark:border-gray-700/50">
+                  <div className="flex items-center space-x-1.5">
                     {member.skype && (
-                      <button className="p-1.5 bg-blue-500/20 text-blue-400 rounded hover:bg-blue-500/30 transition-colors">
-                        <MessageSquare className="w-4 h-4" />
+                      <button className="p-1.5 bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded hover:bg-blue-100 dark:hover:bg-blue-500/30 transition-all duration-200">
+                        <MessageSquare className="w-3.5 h-3.5" />
                       </button>
                     )}
                     {member.linkedin && (
-                      <button className="p-1.5 bg-blue-600/20 text-blue-400 rounded hover:bg-blue-600/30 transition-colors">
-                        <Linkedin className="w-4 h-4" />
+                      <button className="p-1.5 bg-blue-50 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 rounded hover:bg-blue-100 dark:hover:bg-blue-600/30 transition-all duration-200">
+                        <Linkedin className="w-3.5 h-3.5" />
                       </button>
                     )}
-                    <button className="p-1.5 bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 transition-colors">
-                      <Mail className="w-4 h-4" />
+                    <button className="p-1.5 bg-green-50 dark:bg-green-500/20 text-green-600 dark:text-green-400 rounded hover:bg-green-100 dark:hover:bg-green-500/30 transition-all duration-200">
+                      <Mail className="w-3.5 h-3.5" />
                     </button>
                   </div>
                   
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <button
                       onClick={() => handleEdit(member.id)}
-                      className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors"
+                      className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded transition-all duration-200"
                       title="Edit member"
                     >
                       <Edit size={14} />
                     </button>
                     <button
                       onClick={() => handleDelete(member.id)}
-                      className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                      className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded transition-all duration-200"
                       title="Remove member"
                     >
                       <Trash2 size={14} />
@@ -375,9 +363,13 @@ const Team = ({ onNavigateBack, onNavigateToNewCoworker, onNavigateToEditMember 
                   </div>
                 </div>
                 
-                <div className="mt-3 pt-3 border-t border-gray-700/50">
-                  <p className="text-xs text-gray-500">
-                    Joined {new Date(member.joinDate).toLocaleDateString()}
+                <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700/50">
+                  <p className="text-xs text-gray-500 dark:text-gray-500">
+                    Joined {new Date(member.joinDate).toLocaleDateString('en-US', { 
+                      year: 'numeric', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    })}
                   </p>
                 </div>
               </div>

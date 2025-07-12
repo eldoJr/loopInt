@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, Edit, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, Edit, Trash2, Search, X, Filter } from 'lucide-react';
 import { format, addDays, startOfWeek, endOfWeek, isToday, isTomorrow, isThisWeek, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -12,6 +13,7 @@ interface TasksProps {
 }
 
 const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: TasksProps) => {
+  useTheme();
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   type SectionKey = 'today' | 'tomorrow' | 'thisWeek' | 'later';
@@ -42,6 +44,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
 
   const [filter, setFilter] = useState('all');
   const [view, setView] = useState<'Day' | '3 days' | 'Week' | 'Month'>('Week');
+  const [searchQuery, setSearchQuery] = useState('');
 
 
   interface ApiTask {
@@ -297,44 +300,61 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
       <Breadcrumb items={breadcrumbItems} />
       
       {/* Header */}
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-700/50">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-semibold text-white">Tasks</h1>
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Tasks</h1>
             </div>
             <div className="flex items-center space-x-2">
               <button 
                 onClick={fetchTasks}
-                className="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                className="bg-gray-500 dark:bg-gray-600 text-white px-3 py-1.5 rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors text-sm"
               >
                 Refresh
               </button>
               <button 
                 onClick={() => onNavigateToAddTask?.()}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                className="bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2 text-sm"
               >
-                <Plus size={16} />
-                <span>New Task</span>
+                <Plus size={14} />
+                <span>New</span>
               </button>
             </div>
           </div>
         </div>
         
         {/* Filters */}
-        <div className="px-6 py-3 bg-gray-800/30 border-b border-gray-700/50">
+        <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-300">Filter:</span>
-              <div className="flex space-x-2">
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <Search size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search tasks"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-40 pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
+              <div className="flex space-x-1">
                 {['all', 'completed', 'pending', 'high'].map((filterType) => (
                   <button
                     key={filterType}
                     onClick={() => setFilter(filterType)}
-                    className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                    className={`px-2 py-1 rounded-lg text-xs transition-colors ${
                       filter === filterType
-                        ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                        : 'bg-gray-800/50 text-gray-400 border border-gray-700/30 hover:bg-gray-700/50'
+                        ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                        : 'bg-gray-100 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-700/50'
                     }`}
                   >
                     {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
@@ -342,17 +362,16 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
                 ))}
               </div>
             </div>
-            <div className="flex items-center space-x-4 text-sm text-gray-400">
-              <span>View:</span>
+            <div className="flex items-center space-x-2">
               <div className="flex space-x-1">
                 {(['Day', '3 days', 'Week', 'Month'] as const).map((viewType) => (
                   <button
                     key={viewType}
                     onClick={() => setView(viewType)}
-                    className={`px-3 py-1 rounded text-sm transition-colors ${
+                    className={`px-2 py-1 rounded text-xs transition-colors ${
                       view === viewType 
-                        ? 'bg-blue-600/20 text-blue-400' 
-                        : 'hover:bg-gray-700/50 text-gray-400'
+                        ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400' 
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-600 dark:text-gray-400'
                     }`}
                   >
                     {viewType}
@@ -371,9 +390,9 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
           const { completed, total } = getTaskCount(tasks[key]);
           
           return (
-            <div key={key} className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl overflow-hidden">
+            <div key={key} className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300">
               <div 
-                className="px-6 py-4 border-b border-gray-700/50 cursor-pointer hover:bg-gray-800/30 transition-colors"
+                className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
                 onClick={() => toggleSection(key)}
               >
                 <div className="flex items-center justify-between">
@@ -383,13 +402,13 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
                     </button>
                     <Icon size={18} className="text-gray-400" />
                     <div>
-                      <h3 className="font-medium text-white">{title}</h3>
-                      <p className="text-sm text-gray-400">{date}</p>
+                      <h3 className="font-medium text-gray-900 dark:text-white text-sm">{title}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{date}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
                     {total > 0 && (
-                      <div className="flex items-center space-x-2 text-sm text-gray-400">
+                      <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                         <span className="flex items-center space-x-1">
                           <CheckCircle size={14} className="text-green-400" />
                           <span>{completed}</span>
@@ -403,30 +422,30 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
                         e.stopPropagation();
                         onNavigateToAddTask?.();
                       }}
-                      className="bg-blue-600 text-white p-1 rounded hover:bg-blue-700 transition-colors"
+                      className="bg-blue-500 text-white p-1 rounded hover:bg-blue-600 transition-colors"
                     >
-                      <Plus size={16} />
+                      <Plus size={14} />
                     </button>
                   </div>
                 </div>
               </div>
 
               {expandedSections[key] && (
-                <div className="px-6 py-4">
+                <div className="px-4 py-3">
                   {sectionTasks.length === 0 ? (
-                    <div className="text-center py-8 text-gray-400">
-                      <Circle size={48} className="mx-auto mb-3 text-gray-600" />
-                      <p>No tasks for this period</p>
+                    <div className="text-center py-6 text-gray-500 dark:text-gray-400">
+                      <Circle size={32} className="mx-auto mb-2 text-gray-400 dark:text-gray-600" />
+                      <p className="text-sm">No tasks for this period</p>
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {sectionTasks.map((task) => (
                         <div 
                           key={task.id}
                           className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
                             task.status === 'done'
-                              ? 'bg-gray-800/30 border-gray-700/30' 
-                              : 'bg-gray-800/50 border-gray-700/50 hover:border-gray-600/50'
+                              ? 'bg-gray-50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700/30' 
+                              : 'bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600/50'
                           }`}
                         >
                           <div className="flex items-center space-x-3">
@@ -442,29 +461,29 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
                             </button>
                             <div className={`w-2 h-2 rounded-full ${getPriorityColor(task.priority)}`} />
                             <div className="flex-1">
-                              <p className={`font-medium ${task.status === 'done' ? 'line-through text-gray-500' : 'text-white'}`}>
+                              <p className={`font-medium text-sm ${task.status === 'done' ? 'line-through text-gray-500 dark:text-gray-500' : 'text-gray-900 dark:text-white'}`}>
                                 {task.title}
                               </p>
                               {task.description && (
-                                <p className="text-sm text-gray-400">{task.description}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{task.description}</p>
                               )}
                               {task.time && (
-                                <p className="text-sm text-gray-400">{format(parseISO(task.time), 'MMM dd, yyyy')}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{format(parseISO(task.time), 'MMM dd, yyyy')}</p>
                               )}
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
                             <span className={`px-2 py-1 rounded-full text-xs ${
-                              task.status === 'done' ? 'bg-green-500/20 text-green-400' :
-                              task.status === 'in_progress' ? 'bg-blue-500/20 text-blue-400' :
-                              'bg-gray-500/20 text-gray-400'
+                              task.status === 'done' ? 'bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400' :
+                              task.status === 'in_progress' ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400' :
+                              'bg-gray-100 dark:bg-gray-500/20 text-gray-600 dark:text-gray-400'
                             }`}>
                               {task.status.replace('_', ' ')}
                             </span>
                             <span className={`px-2 py-1 rounded-full text-xs ${
-                              task.priority === 'high' ? 'bg-red-500/20 text-red-400' :
-                              task.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                              'bg-green-500/20 text-green-400'
+                              task.priority === 'high' ? 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400' :
+                              task.priority === 'medium' ? 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400' :
+                              'bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400'
                             }`}>
                               {task.priority}
                             </span>
@@ -476,9 +495,9 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
                                     onNavigateToEditTask?.(task.uuid);
                                   }
                                 }}
-                                className="text-gray-400 hover:text-blue-400 p-1 rounded hover:bg-gray-700/50"
+                                className="text-gray-400 hover:text-blue-500 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
                               >
-                                <Edit size={14} />
+                                <Edit size={12} />
                               </button>
                               <button 
                                 onClick={(e) => {
@@ -490,9 +509,9 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
                                     deleteTask(task.uuid, section, task.id);
                                   }
                                 }}
-                                className="text-gray-400 hover:text-red-400 p-1 rounded hover:bg-gray-700/50"
+                                className="text-gray-400 hover:text-red-500 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={12} />
                               </button>
                             </div>
                           </div>

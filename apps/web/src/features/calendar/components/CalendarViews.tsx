@@ -1,4 +1,5 @@
 import { Video, Check, Calendar as CalendarIcon } from 'lucide-react';
+import { useTheme } from '../../../context/ThemeContext';
 
 interface Event {
   id: string;
@@ -25,6 +26,7 @@ interface CalendarViewsProps {
 }
 
 const MonthView = ({ currentDate, events, onDateClick }: { currentDate: Date; events: Event[]; onDateClick: (date: Date) => void }) => {
+  useTheme();
   const getDaysInMonth = (date: Date): CalendarDay[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -71,34 +73,34 @@ const MonthView = ({ currentDate, events, onDateClick }: { currentDate: Date; ev
     <div>
       <div className="grid grid-cols-7 gap-px mb-2">
         {weekdays.map((day) => (
-          <div key={day} className="p-2 text-center text-xs font-medium text-gray-400 uppercase">
+          <div key={day} className="p-1.5 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
             {day}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-px bg-gray-800 rounded-lg overflow-hidden">
+      <div className="grid grid-cols-7 gap-px bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden">
         {days.map((day, index) => (
           <div
             key={index}
-            className={`bg-gray-900/70 p-2 min-h-[100px] hover:bg-gray-800/50 cursor-pointer transition-colors ${
-              !day.isCurrentMonth ? 'text-gray-600' : 'text-gray-200'
+            className={`bg-white dark:bg-gray-900/70 p-2 min-h-[80px] hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors ${
+              !day.isCurrentMonth ? 'text-gray-400 dark:text-gray-600' : 'text-gray-900 dark:text-gray-200'
             }`}
             onClick={() => onDateClick(day.dateObj)}
           >
-            <div className="flex justify-between items-start mb-2">
+            <div className="flex justify-between items-start mb-1">
               <span
                 className={`text-sm font-medium ${
                   day.isToday
-                    ? 'bg-blue-500 text-white w-6 h-6 rounded-full flex items-center justify-center'
+                    ? 'bg-blue-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs'
                     : day.isCurrentMonth
-                    ? 'text-gray-200'
-                    : 'text-gray-600'
+                    ? 'text-gray-900 dark:text-gray-200'
+                    : 'text-gray-400 dark:text-gray-600'
                 }`}
               >
                 {day.date}
               </span>
               {day.isToday && (
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
               )}
             </div>
             
@@ -109,7 +111,7 @@ const MonthView = ({ currentDate, events, onDateClick }: { currentDate: Date; ev
                 .map(event => (
                   <div
                     key={event.id}
-                    className={`text-xs px-2 py-1 rounded text-white truncate ${
+                    className={`text-xs px-1.5 py-0.5 rounded text-white truncate ${
                       event.type === 'meeting' ? 'bg-blue-500/80' :
                       event.type === 'task' ? 'bg-green-500/80' :
                       'bg-purple-500/80'
@@ -117,16 +119,16 @@ const MonthView = ({ currentDate, events, onDateClick }: { currentDate: Date; ev
                     title={`${event.title} (${event.startTime} - ${event.endTime})`}
                   >
                     <div className="flex items-center space-x-1">
-                      {event.type === 'meeting' && <Video size={10} />}
-                      {event.type === 'task' && <Check size={10} />}
-                      {event.type === 'event' && <CalendarIcon size={10} />}
+                      {event.type === 'meeting' && <Video size={8} />}
+                      {event.type === 'task' && <Check size={8} />}
+                      {event.type === 'event' && <CalendarIcon size={8} />}
                       <span className="truncate">{event.title}</span>
                     </div>
                   </div>
                 ))
               }
               {events.filter(event => event.date.toDateString() === day.dateObj.toDateString()).length > 3 && (
-                <div className="text-xs text-gray-400 px-2">
+                <div className="text-xs text-gray-500 dark:text-gray-400 px-1.5">
                   +{events.filter(event => event.date.toDateString() === day.dateObj.toDateString()).length - 3} more
                 </div>
               )}
@@ -139,6 +141,7 @@ const MonthView = ({ currentDate, events, onDateClick }: { currentDate: Date; ev
 };
 
 const WeekView = ({ currentDate, events, onDateClick }: { currentDate: Date; events: Event[]; onDateClick: (date: Date) => void }) => {
+  useTheme();
   const getWeekDays = (date: Date) => {
     const days = [];
     const currentDay = new Date(date);
@@ -162,14 +165,14 @@ const WeekView = ({ currentDate, events, onDateClick }: { currentDate: Date; eve
   const timeSlots = Array.from({ length: 12 }, (_, i) => `${9 + i}:00`);
 
   return (
-    <div className="border border-gray-800 rounded-lg overflow-hidden">
-      <div className="grid grid-cols-8 bg-gray-900 border-b border-gray-800">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+      <div className="grid grid-cols-8 bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="p-2"></div>
         {weekDays.map((day, index) => (
-          <div key={index} className="p-2 text-center border-l border-gray-800">
-            <div className="text-xs text-gray-400 uppercase">{day.day}</div>
+          <div key={index} className="p-2 text-center border-l border-gray-200 dark:border-gray-800">
+            <div className="text-xs text-gray-500 dark:text-gray-400 uppercase">{day.day}</div>
             <div className={`text-sm font-medium mt-1 ${
-              day.isToday ? 'bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center mx-auto' : 'text-white'
+              day.isToday ? 'bg-green-500 text-white w-5 h-5 rounded-full flex items-center justify-center mx-auto text-xs' : 'text-gray-900 dark:text-white'
             }`}>
               {day.date}
             </div>
@@ -179,8 +182,8 @@ const WeekView = ({ currentDate, events, onDateClick }: { currentDate: Date; eve
 
       <div className="max-h-96 overflow-y-auto">
         {timeSlots.map((time, timeIndex) => (
-          <div key={timeIndex} className="grid grid-cols-8 border-b border-gray-800 hover:bg-gray-800/30">
-            <div className="p-2 text-sm text-gray-400 border-r border-gray-800">{time}</div>
+          <div key={timeIndex} className="grid grid-cols-8 border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/30">
+            <div className="p-2 text-sm text-gray-500 dark:text-gray-400 border-r border-gray-200 dark:border-gray-800">{time}</div>
             {weekDays.map((day, dayIndex) => {
               const dayEvents = events.filter(event => 
                 event.date.toDateString() === day.dateObj.toDateString() &&
@@ -190,7 +193,7 @@ const WeekView = ({ currentDate, events, onDateClick }: { currentDate: Date; eve
               return (
                 <div 
                   key={dayIndex} 
-                  className="p-1 border-l border-gray-800 min-h-[40px] hover:bg-blue-900/20 cursor-pointer relative"
+                  className="p-1 border-l border-gray-200 dark:border-gray-800 min-h-[32px] hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer relative"
                   onClick={() => onDateClick(day.dateObj)}
                 >
                   {dayEvents.map(event => (
@@ -216,15 +219,16 @@ const WeekView = ({ currentDate, events, onDateClick }: { currentDate: Date; eve
 };
 
 const DayView = ({ currentDate, events, onDateClick }: { currentDate: Date; events: Event[]; onDateClick: (date: Date) => void }) => {
+  useTheme();
   const timeSlots = Array.from({ length: 12 }, (_, i) => `${9 + i}:00`);
   const dayEvents = events.filter(event => 
     event.date.toDateString() === currentDate.toDateString()
   );
 
   return (
-    <div className="border border-gray-800 rounded-lg overflow-hidden">
-      <div className="bg-gray-900 border-b border-gray-800 p-4">
-        <h3 className="text-lg font-semibold text-white">
+    <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-3">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white">
           {currentDate.toLocaleDateString('en-US', { 
             weekday: 'long', 
             month: 'long', 
@@ -239,12 +243,12 @@ const DayView = ({ currentDate, events, onDateClick }: { currentDate: Date; even
           const timeEvents = dayEvents.filter(event => event.startTime === time);
           
           return (
-            <div key={index} className="flex border-b border-gray-800 hover:bg-gray-800/30">
-              <div className="w-20 p-3 text-sm text-gray-400 border-r border-gray-800">
+            <div key={index} className="flex border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/30">
+              <div className="w-16 p-2 text-sm text-gray-500 dark:text-gray-400 border-r border-gray-200 dark:border-gray-800">
                 {time}
               </div>
               <div 
-                className="flex-1 p-3 min-h-[60px] cursor-pointer hover:bg-blue-900/20"
+                className="flex-1 p-2 min-h-[48px] cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20"
                 onClick={() => onDateClick(currentDate)}
               >
                 {timeEvents.map(event => (
@@ -282,7 +286,7 @@ const CalendarViews = ({ view, currentDate, events, onDateClick }: CalendarViews
     }
   };
 
-  return <div className="p-4">{renderView()}</div>;
+  return <div className="p-3">{renderView()}</div>;
 };
 
 export default CalendarViews;

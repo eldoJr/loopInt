@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Save, X, Upload, Plus, Linkedin, MessageSquare, AlertCircle, Bold, Italic, Underline, Link } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Toggle } from '../../components/ui/Toggle';
@@ -33,6 +34,7 @@ interface FormData {
 }
 
 const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => {
+  useTheme();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showContent, setShowContent] = useState(false);
@@ -275,54 +277,54 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
     }`}>
       <Breadcrumb items={breadcrumbItems} />
       
-      <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-700/50">
+      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-white">New Coworker</h1>
-            <div className="flex items-center space-x-3">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">New Coworker</h1>
+            <div className="flex items-center space-x-2">
               <button 
                 onClick={onNavigateToTeam}
-                className="px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-colors"
+                className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSubmit}
                 disabled={saving}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
                   saving
-                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                    : 'bg-blue-500 text-white hover:bg-blue-600'
                 }`}
               >
-                <Save size={16} />
+                <Save size={14} />
                 <span>{saving ? 'Saving...' : 'Save'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-8 max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit} className="p-4">
+          <div className="space-y-6 max-w-3xl mx-auto">
             {/* Section 1 - Basic Information */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Basic Information
               </h2>
               
               {/* Photo Upload */}
-              <div className="grid grid-cols-12 gap-4 items-start">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
+              <div className="grid grid-cols-12 gap-3 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Photo
                 </label>
                 <div className="col-span-9">
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3">
                     <div className="relative">
-                      <div className="w-20 h-20 bg-gray-800/50 border border-gray-700/50 rounded-lg flex items-center justify-center overflow-hidden">
+                      <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg flex items-center justify-center overflow-hidden">
                         {photoPreview ? (
                           <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
                         ) : (
-                          <Upload className="w-8 h-8 text-gray-400" />
+                          <Upload className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                         )}
                       </div>
                       <input
@@ -333,12 +335,12 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                       />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-300">Upload photo</p>
-                      <p className="text-xs text-gray-500">JPG, JPEG, PNG (max 5MB)</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">Upload photo</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-500">JPG, JPEG, PNG (max 5MB)</p>
                     </div>
                   </div>
                   {errors.photo && (
-                    <div className="flex items-center mt-1 text-red-400 text-sm">
+                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
                       {errors.photo}
                     </div>
@@ -347,8 +349,8 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               </div>
 
               {/* Name Fields */}
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   First Name *
                 </label>
                 <div className="col-span-4">
@@ -356,23 +358,21 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     type="text"
                     value={formData.firstName}
                     onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.firstName 
-                        ? 'border-red-500/50 focus:ring-red-500/50' 
-                        : 'border-gray-700/50 focus:ring-blue-500/50'
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                     }`}
                     placeholder="Enter first name"
                   />
                   {errors.firstName && (
-                    <div className="flex items-center mt-1 text-red-400 text-sm">
+                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
                       {errors.firstName}
                     </div>
                   )}
                 </div>
-              </div>
-              <div className="grid grid-cols-12 gap-4 items-center">
-                  <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Last Name *
                 </label>
                 <div className="col-span-4">
@@ -380,15 +380,15 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     type="text"
                     value={formData.lastName}
                     onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.lastName 
-                        ? 'border-red-500/50 focus:ring-red-500/50' 
-                        : 'border-gray-700/50 focus:ring-blue-500/50'
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                     }`}
                     placeholder="Enter last name"
                   />
                   {errors.lastName && (
-                    <div className="flex items-center mt-1 text-red-400 text-sm">
+                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
                       {errors.lastName}
                     </div>
@@ -397,8 +397,8 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               </div>
 
               {/* Email Field */}
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Email *
                 </label>
                 <div className="col-span-9">
@@ -406,15 +406,15 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.email 
-                        ? 'border-red-500/50 focus:ring-red-500/50' 
-                        : 'border-gray-700/50 focus:ring-blue-500/50'
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                     }`}
                     placeholder="Enter email address"
                   />
                   {errors.email && (
-                    <div className="flex items-center mt-1 text-red-400 text-sm">
+                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
                       {errors.email}
                     </div>
@@ -423,8 +423,8 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               </div>
 
               {/* Individual Toggle */}
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Individual Contractor
                 </label>
                 <div className="col-span-9">
@@ -440,29 +440,29 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               </div>
 
               {/* Dropdowns */}
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Company
                 </label>
-                <div className="col-span-3">
+                <div className="col-span-4">
                   <select
                     value={formData.company}
                     onChange={(e) => handleInputChange('company', e.target.value)}
-                    className="w-auto bg-gray-800/50 border border-gray-700/50 rounded-lg px-2 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                   >
                     {companies.map(company => (
                       <option key={company} value={company}>{company}</option>
                     ))}
                   </select>
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Position
                 </label>
-                <div className="col-span-1">
+                <div className="col-span-4">
                   <select
                     value={formData.position}
                     onChange={(e) => handleInputChange('position', e.target.value)}
-                    className="w-auto bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                   >
                     {positions.map(position => (
                       <option key={position} value={position}>{position}</option>
@@ -472,8 +472,8 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               </div>
 
               {/* Position Description */}
-              <div className="grid grid-cols-12 gap-4 items-start">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
+              <div className="grid grid-cols-12 gap-3 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Position Description
                 </label>
                 <div className="col-span-9">
@@ -481,21 +481,21 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     <textarea
                       value={formData.positionDescription}
                       onChange={(e) => handleInputChange('positionDescription', e.target.value)}
-                      rows={3}
+                      rows={2}
                       maxLength={300}
-                      className={`w-full bg-gray-800/50 border rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none ${
+                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none text-sm ${
                         errors.positionDescription 
-                          ? 'border-red-500/50 focus:ring-red-500/50' 
-                          : 'border-gray-700/50 focus:ring-blue-500/50'
+                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                       }`}
                       placeholder="Describe the position..."
                     />
-                    <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+                    <div className="absolute bottom-2 right-2 text-xs text-gray-500 dark:text-gray-500">
                       {formData.positionDescription.length}/300
                     </div>
                   </div>
                   {errors.positionDescription && (
-                    <div className="flex items-center mt-1 text-red-400 text-sm">
+                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
                       {errors.positionDescription}
                     </div>
@@ -505,39 +505,39 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
             </div>
 
             {/* Section 2 - Contact and Address */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Contact and Address
               </h2>
               
               {/* Skype and LinkedIn */}
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Skype
                 </label>
                 <div className="col-span-4">
                   <div className="relative">
-                    <MessageSquare className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                    <MessageSquare className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                     <input
                       type="text"
                       value={formData.skype}
                       onChange={(e) => handleInputChange('skype', e.target.value)}
-                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="Skype username"
                     />
                   </div>
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-300 text-right">
+                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   LinkedIn
                 </label>
                 <div className="col-span-4">
                   <div className="relative">
-                    <Linkedin className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                    <Linkedin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                     <input
                       type="url"
                       value={formData.linkedin}
                       onChange={(e) => handleInputChange('linkedin', e.target.value)}
-                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="LinkedIn profile URL"
                     />
                   </div>
@@ -546,15 +546,15 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
 
               {/* Additional Links */}
               {formData.additionalLinks.map((link, index) => (
-                <div key={index} className="grid grid-cols-12 gap-4 items-center">
-                  <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                <div key={index} className="grid grid-cols-12 gap-3 items-center">
+                  <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                     Additional Link {index + 1}
                   </label>
                   <div className="col-span-3">
                     <select
                       value={link.type}
                       onChange={(e) => updateAdditionalLink(index, 'type', e.target.value)}
-                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     >
                       <option value="Website">Website</option>
                       <option value="Portfolio">Portfolio</option>
@@ -567,7 +567,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                       type="url"
                       value={link.url}
                       onChange={(e) => updateAdditionalLink(index, 'url', e.target.value)}
-                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="Enter URL"
                     />
                   </div>
@@ -575,23 +575,23 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     <button
                       type="button"
                       onClick={() => removeAdditionalLink(index)}
-                      className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-1.5 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-lg transition-colors"
                     >
-                      <X size={16} />
+                      <X size={14} />
                     </button>
                   </div>
                 </div>
               ))}
               
-              <div className="grid grid-cols-12 gap-4">
+              <div className="grid grid-cols-12 gap-3">
                 <div className="col-span-3"></div>
                 <div className="col-span-9">
                   <button
                     type="button"
                     onClick={addAdditionalLink}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-colors"
+                    className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
                   >
-                    <Plus size={16} />
+                    <Plus size={14} />
                     <span>Add another link</span>
                   </button>
                 </div>
@@ -599,8 +599,8 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
 
               {/* Phone Numbers */}
               {formData.phoneNumbers.map((phone, index) => (
-                <div key={index} className="grid grid-cols-12 gap-4 items-center">
-                  <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                <div key={index} className="grid grid-cols-12 gap-3 items-center">
+                  <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                     Phone {index === 0 ? '' : `${index + 1}`}
                   </label>
                   <div className="col-span-8">
@@ -608,7 +608,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                       type="tel"
                       value={phone}
                       onChange={(e) => updatePhoneNumber(index, e.target.value)}
-                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="Enter phone number"
                     />
                   </div>
@@ -617,9 +617,9 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                       <button
                         type="button"
                         onClick={() => removePhoneNumber(index)}
-                        className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+                        className="p-1.5 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-lg transition-colors"
                       >
-                        <X size={16} />
+                        <X size={14} />
                       </button>
                     </div>
                   )}
@@ -627,15 +627,15 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               ))}
               
               {formData.phoneNumbers.length < 3 && (
-                <div className="grid grid-cols-12 gap-4">
+                <div className="grid grid-cols-12 gap-3">
                   <div className="col-span-3"></div>
                   <div className="col-span-9">
                     <button
                       type="button"
                       onClick={addPhoneNumber}
-                      className="flex items-center space-x-2 px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-colors"
+                      className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
                     >
-                      <Plus size={16} />
+                      <Plus size={14} />
                       <span>Add 2nd phone number</span>
                     </button>
                   </div>
@@ -643,8 +643,8 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               )}
 
               {/* Address Fields */}
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Address Line 1
                 </label>
                 <div className="col-span-9">
@@ -652,15 +652,15 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     type="text"
                     value={formData.addressLine1}
                     onChange={(e) => handleInputChange('addressLine1', e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Enter address line 1"
                   />
                 </div>
               </div>
 
               {formData.addressLine2 !== undefined && (
-                <div className="grid grid-cols-12 gap-4 items-center">
-                  <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+                <div className="grid grid-cols-12 gap-3 items-center">
+                  <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                     Address Line 2
                   </label>
                   <div className="col-span-8">
@@ -668,7 +668,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                       type="text"
                       value={formData.addressLine2}
                       onChange={(e) => handleInputChange('addressLine2', e.target.value)}
-                      className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="Enter address line 2"
                     />
                   </div>
@@ -676,32 +676,32 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     <button
                       type="button"
                       onClick={() => handleInputChange('addressLine2', '')}
-                      className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-1.5 text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-500/10 rounded-lg transition-colors"
                     >
-                      <X size={16} />
+                      <X size={14} />
                     </button>
                   </div>
                 </div>
               )}
               
               {formData.addressLine2 === undefined && (
-                <div className="grid grid-cols-12 gap-4">
+                <div className="grid grid-cols-12 gap-3">
                   <div className="col-span-3"></div>
                   <div className="col-span-9">
                     <button
                       type="button"
                       onClick={() => handleInputChange('addressLine2', '')}
-                      className="flex items-center space-x-2 px-4 py-2 bg-gray-700/50 text-gray-300 rounded-lg hover:bg-gray-600/50 transition-colors"
+                      className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
                     >
-                      <Plus size={16} />
+                      <Plus size={14} />
                       <span>Add 2nd line of address</span>
                     </button>
                   </div>
                 </div>
               )}
 
-              <div className="grid grid-cols-12 gap-4 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Location
                 </label>
                 <div className="col-span-2">
@@ -709,7 +709,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     type="text"
                     value={formData.zipCode}
                     onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Zip code"
                   />
                 </div>
@@ -718,7 +718,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     type="text"
                     value={formData.city}
                     onChange={(e) => handleInputChange('city', e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="City"
                   />
                 </div>
@@ -727,7 +727,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     type="text"
                     value={formData.state}
                     onChange={(e) => handleInputChange('state', e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="State"
                   />
                 </div>
@@ -736,19 +736,19 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     type="text"
                     value={formData.country}
                     onChange={(e) => handleInputChange('country', e.target.value)}
-                    className="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Country"
                   />
                 </div>
               </div>
 
               {/* Rich Text Description */}
-              <div className="grid grid-cols-12 gap-4 items-start">
-                <label className="col-span-3 text-sm font-medium text-gray-300 text-right pt-2">
+              <div className="grid grid-cols-12 gap-3 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Description
                 </label>
                 <div className="col-span-9">
-                  <div className="flex items-center space-x-1 p-2 bg-gray-800/30 border border-gray-700/50 rounded-t-lg">
+                  <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
                     <Toggle
                       pressed={textStyles.bold}
                       onPressedChange={() => handleTextStyle('bold')}
@@ -767,7 +767,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     >
                       <Underline className="h-4 w-4" />
                     </Toggle>
-                    <button type="button" className="p-1 text-gray-400 hover:text-gray-300">
+                    <button type="button" className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                       <Link className="h-4 w-4" />
                     </button>
                   </div>
@@ -776,21 +776,21 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     <textarea
                       value={formData.description}
                       onChange={(e) => handleInputChange('description', e.target.value)}
-                      rows={6}
+                      rows={4}
                       maxLength={999}
-                      className={`w-full bg-gray-800/50 border rounded-b-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none ${
+                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none text-sm ${
                         errors.description 
-                          ? 'border-red-500/50 focus:ring-red-500/50' 
-                          : 'border-gray-700/50 focus:ring-blue-500/50'
+                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                       }`}
                       placeholder="Enter description..."
                     />
-                    <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+                    <div className="absolute bottom-2 right-2 text-xs text-gray-500 dark:text-gray-500">
                       {formData.description.length}/999
                     </div>
                   </div>
                   {errors.description && (
-                    <div className="flex items-center mt-1 text-red-400 text-sm">
+                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
                       {errors.description}
                     </div>
@@ -802,16 +802,16 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
         </form>
         
         {errors.submit && (
-          <div className="mx-6 mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <div className="flex items-center space-x-2 text-red-400">
-              <AlertCircle className="w-5 h-5" />
+          <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
+            <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
+              <AlertCircle className="w-4 h-4" />
               <span>{errors.submit}</span>
             </div>
           </div>
         )}
         
-        <div className="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
-          <div className="flex items-center justify-between text-sm text-gray-400">
+        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
+          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">
               <span>Press Ctrl+S to save</span>
               <span>•</span>
