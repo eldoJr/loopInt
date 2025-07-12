@@ -134,7 +134,7 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
                   
                   {/* Theme Submenu */}
                   {item.hasSubmenu && showThemeMenu && (
-                    <div className="absolute right-full top-0 mr-3 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 backdrop-blur-sm ring-1 ring-black/5 dark:ring-white/10">
+                    <div className="absolute right-full top-0 mr-1 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 backdrop-blur-sm ring-1 ring-black/5 dark:ring-white/10">
                       <div className="p-3">
                         <div className="mb-2">
                           <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide px-1">Theme</h4>
