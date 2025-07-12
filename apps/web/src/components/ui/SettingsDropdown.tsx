@@ -1,48 +1,101 @@
 import { useState, useRef, useEffect } from 'react';
-import { Settings, User, Palette, Globe, Shield, Bell, Monitor } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
+import type { LucideIcon } from 'lucide-react';
+import { Settings, Globe, Bell, Wrench, Package, FolderOpen, Workflow, Puzzle, Users, CreditCard, ExternalLink } from 'lucide-react';
 
 interface SettingsDropdownProps {
   onNavigate?: (section: string) => void;
 }
 
-const settingsItems = [
+interface SettingsItem {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  section: string;
+  external?: boolean;
+}
+
+interface SettingsGroup {
+  title: string;
+  items: SettingsItem[];
+}
+
+const settingsGroups: SettingsGroup[] = [
   {
-    title: 'Account Settings',
-    description: 'Manage your account preferences',
-    icon: User,
-    section: 'Account Settings'
+    title: 'Personal Settings',
+    items: [
+      {
+        title: 'General settings',
+        description: 'Manage language, timezone and other personal preferences',
+        icon: Globe,
+        section: 'General'
+      },
+      {
+        title: 'Notification settings',
+        description: 'Manage email and in-product notifications',
+        icon: Bell,
+        section: 'Notifications'
+      }
+    ]
   },
   {
-    title: 'Appearance',
-    description: 'Customize theme and display',
-    icon: Palette,
-    section: 'Appearance'
+    title: 'Loopint admin settings',
+    items: [
+      {
+        title: 'System',
+        description: 'Manage general configuration, security, automation, user interface and more',
+        icon: Wrench,
+        section: 'System'
+      },
+      {
+        title: 'Products',
+        description: 'Manage access, settings and integrations for Jira products',
+        icon: Package,
+        section: 'Products'
+      },
+      {
+        title: 'Projects',
+        description: 'Manage project settings, categories and more',
+        icon: FolderOpen,
+        section: 'Projects'
+      },
+      {
+        title: 'Work items',
+        description: 'Configure work types, workflows, screens, fields and more',
+        icon: Workflow,
+        section: 'WorkItems'
+      },
+      {
+        title: 'Apps',
+        description: 'Add and manage Loopint and Marketplace apps and integrations',
+        icon: Puzzle,
+        section: 'Apps'
+      }
+    ]
   },
   {
-    title: 'Language',
-    description: 'Change language settings',
-    icon: Globe,
-    section: 'Language'
-  },
-  {
-    title: 'Privacy & Security',
-    description: 'Control your privacy settings',
-    icon: Shield,
-    section: 'Privacy'
-  },
-  {
-    title: 'Notifications',
-    description: 'Manage notification preferences',
-    icon: Bell,
-    section: 'Notifications'
+    title: 'Admin settings',
+    items: [
+      {
+        title: 'User management',
+        description: 'Manage users, groups and access requests',
+        icon: Users,
+        section: 'UserManagement',
+        external: true
+      },
+      {
+        title: 'Billing',
+        description: 'Update billing details, manage subscriptions and more',
+        icon: CreditCard,
+        section: 'Billing',
+        external: true
+      }
+    ]
   }
 ];
 
 const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -59,60 +112,62 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-colors"
+        className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-colors"
         title="Settings"
       >
-        <Settings className="w-4 h-4" />
+        <Settings className="w-5 h-5" />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50">
+        <div className="absolute top-full right-0 mt-2 w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
           <div className="p-3 border-b border-gray-200 dark:border-gray-800">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white">Settings</h3>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white">Settings</h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Manage your preferences and configurations</p>
           </div>
           
-          <div className="p-2">
-            {/* Quick Theme Toggle */}
-            <div className="mb-2 p-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Monitor className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">Theme</span>
+          <div>
+            {settingsGroups.map((group, groupIndex) => (
+              <div key={groupIndex} className="p-3">
+                <h4 className="text-xs font-bold text-gray-900 dark:text-white mb-2 uppercase tracking-wide">
+                  {group.title}
+                </h4>
+                <div className="space-y-0.5">
+                  {group.items.map((item, itemIndex) => {
+                    const IconComponent = item.icon;
+                    return (
+                      <button
+                        key={itemIndex}
+                        onClick={() => {
+                          onNavigate?.(item.section);
+                          setIsOpen(false);
+                        }}
+                        className="w-full flex items-start space-x-2.5 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group"
+                      >
+                        <div className="flex-shrink-0 mt-0.5">
+                          <IconComponent className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-1.5">
+                            <p className="text-xs font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                              {item.title}
+                            </p>
+                            {item.external && (
+                              <ExternalLink className="w-2.5 h-2.5 text-gray-400 dark:text-gray-500" />
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 leading-tight">
+                            {item.description}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-                <button
-                  onClick={toggleTheme}
-                  className="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                >
-                  {theme === 'dark' ? 'Dark' : 'Light'}
-                </button>
+                {groupIndex < settingsGroups.length - 1 && (
+                  <div className="mt-2 border-b border-gray-200 dark:border-gray-700" />
+                )}
               </div>
-            </div>
-
-            {settingsItems.map((item, index) => {
-              const IconComponent = item.icon;
-              return (
-                <button
-                  key={index}
-                  onClick={() => {
-                    onNavigate?.(item.section);
-                    setIsOpen(false);
-                  }}
-                  className="w-full flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
-                >
-                  <div className="flex-shrink-0">
-                    <IconComponent className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                      {item.description}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
+            ))}
           </div>
         </div>
       )}
