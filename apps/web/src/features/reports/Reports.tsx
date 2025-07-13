@@ -181,7 +181,7 @@ const Reports = ({ onNavigateBack, onNavigateToNewReport, onNavigateToEditReport
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-xl p-6">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-blue-600 rounded-xl">
-            <Info className="w-6 h-6 text-white" />
+            <Info className="w-4 h-4 text-white" />
           </div>
           <div>
             <p className="text-blue-700 dark:text-blue-300 text-sm mt-1">Generate comprehensive reports, track KPIs, and gain actionable insights to drive project success and team performance.</p>
