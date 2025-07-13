@@ -1,439 +1,324 @@
-import { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ComposedChart } from 'recharts';
-import { TrendingUp, Users, CheckCircle, Clock, Target, Activity, Calendar, Zap, AlertTriangle, Award, Download, RefreshCw, Eye } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell,} from 'recharts';
+import { TrendingUp, TrendingDown, Eye, Settings, Info} from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
-import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import DashboardStatCard from '../../components/ui/DashboardStatCard';
+import { useTheme } from '../../context/ThemeContext';
 
 interface AnalyticsProps {
   onNavigateBack?: () => void;
 }
 
 const Analytics = ({ onNavigateBack }: AnalyticsProps) => {
-  const [loading, setLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
-  const [timeRange, setTimeRange] = useState('6m');
-  const [selectedMetric, setSelectedMetric] = useState('all');
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-      setTimeout(() => setShowContent(true), 200);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
-
+  useTheme();
+  
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Analytics' }
   ];
 
-  // Mock data - replace with real API calls
-  const taskCompletionData = [
-    { month: 'Jan', completed: 45, pending: 12 },
-    { month: 'Feb', completed: 52, pending: 8 },
-    { month: 'Mar', completed: 61, pending: 15 },
-    { month: 'Apr', completed: 58, pending: 10 },
-    { month: 'May', completed: 67, pending: 7 },
-    { month: 'Jun', completed: 73, pending: 9 }
+  // Traffic Sources Data
+  const trafficData = [
+    { month: 'Jan', website: 500, social: 300, websiteGrowth: 20, socialGrowth: 15 },
+    { month: 'Feb', website: 450, social: 280, websiteGrowth: 18, socialGrowth: 12 },
+    { month: 'Mar', website: 400, social: 320, websiteGrowth: 22, socialGrowth: 18 },
+    { month: 'Apr', website: 650, social: 350, websiteGrowth: 28, socialGrowth: 20 },
+    { month: 'May', website: 200, social: 250, websiteGrowth: 15, socialGrowth: 10 },
+    { month: 'Jun', website: 400, social: 280, websiteGrowth: 25, socialGrowth: 16 },
+    { month: 'Jul', website: 180, social: 200, websiteGrowth: 12, socialGrowth: 8 },
+    { month: 'Aug', website: 320, social: 240, websiteGrowth: 18, socialGrowth: 14 },
+    { month: 'Sep', website: 750, social: 400, websiteGrowth: 35, socialGrowth: 25 },
+    { month: 'Oct', website: 300, social: 220, websiteGrowth: 16, socialGrowth: 11 },
+    { month: 'Nov', website: 250, social: 180, websiteGrowth: 14, socialGrowth: 9 },
+    { month: 'Dec', website: 150, social: 160, websiteGrowth: 10, socialGrowth: 8 }
   ];
 
-  const projectStatusData = [
-    { name: 'Active', value: 12, color: '#10b981' },
-    { name: 'Completed', value: 8, color: '#3b82f6' },
-    { name: 'On Hold', value: 3, color: '#f59e0b' },
-    { name: 'Planning', value: 5, color: '#8b5cf6' }
+  const donutData = [
+    { name: 'Used', value: 75, color: '#3B82F6' },
+    { name: 'Available', value: 25, color: '#E5E7EB' }
   ];
 
-  const priorityData = [
-    { priority: 'High', tasks: 23, projects: 4 },
-    { priority: 'Medium', tasks: 45, projects: 8 },
-    { priority: 'Low', tasks: 32, projects: 6 },
-    { priority: 'Urgent', tasks: 12, projects: 2 }
+  const kpiData: KPICardProps[] = [
+    { title: 'Active Projects', value: '28', trend: 1, score: '92', color: 'blue' },
+    { title: 'Completed Tasks', value: '156', trend: 1, score: '88', color: 'green' },
+    { title: 'Team Productivity', value: '87%', trend: 1, score: '85', color: 'yellow' },
+    { title: 'Client Satisfaction', value: '94%', trend: 1, score: '96', color: 'green' }
   ];
 
-  const productivityData = [
-    { day: 'Mon', hours: 7.5, efficiency: 85 },
-    { day: 'Tue', hours: 8.2, efficiency: 92 },
-    { day: 'Wed', hours: 6.8, efficiency: 78 },
-    { day: 'Thu', hours: 8.5, efficiency: 95 },
-    { day: 'Fri', hours: 7.1, efficiency: 82 },
-    { day: 'Sat', hours: 4.2, efficiency: 88 },
-    { day: 'Sun', hours: 2.1, efficiency: 75 }
+  const projectMetrics = [
+    { title: 'Projects Delivered', value: '42', change: '+18%', trend: 1 },
+    { title: 'On-Time Delivery', value: '89%', change: '+5%', trend: 1 },
+    { title: 'Budget Efficiency', value: '92%', change: '+3%', trend: 1 },
+    { title: 'Client Retention', value: '96%', change: '+2%', trend: 1 }
   ];
 
-  const teamPerformanceData = [
-    { member: 'Alice', tasks: 23, quality: 95, speed: 88, collaboration: 92 },
-    { member: 'Bob', tasks: 19, quality: 87, speed: 94, collaboration: 85 },
-    { member: 'Carol', tasks: 21, quality: 91, speed: 82, collaboration: 89 },
-    { member: 'David', tasks: 18, quality: 89, speed: 90, collaboration: 87 },
-    { member: 'Eve', tasks: 25, quality: 93, speed: 85, collaboration: 94 }
+  const targetData: TargetBarProps[] = [
+    { label: 'Project Completion', percentage: 78, color: 'blue' },
+    { label: 'Team Utilization', percentage: 85, color: 'green' },
+    { label: 'Quality Score', percentage: 92, color: 'yellow' },
+    { label: 'Client Goals', percentage: 89, color: 'blue' }
   ];
 
-  const workflowData = [
-    { stage: 'Planning', tasks: 12, avgTime: 2.5, bottleneck: false },
-    { stage: 'Development', tasks: 34, avgTime: 5.2, bottleneck: true },
-    { stage: 'Review', tasks: 28, avgTime: 1.8, bottleneck: false },
-    { stage: 'Testing', tasks: 22, avgTime: 3.1, bottleneck: false },
-    { stage: 'Deployment', tasks: 15, avgTime: 1.2, bottleneck: false }
-  ];
-
-  const burndownData = [
-    { week: 'W1', planned: 100, actual: 95, ideal: 100 },
-    { week: 'W2', planned: 80, actual: 78, ideal: 80 },
-    { week: 'W3', planned: 60, actual: 65, ideal: 60 },
-    { week: 'W4', planned: 40, actual: 42, ideal: 40 },
-    { week: 'W5', planned: 20, actual: 18, ideal: 20 },
-    { week: 'W6', planned: 0, actual: 5, ideal: 0 }
-  ];
-
-  const aiInsights = [
-    {
-      type: 'performance',
-      title: 'Peak Performance',
-      description: 'Team productivity peaks on Thursdays with 95% efficiency',
-      impact: 'high',
-      action: 'Schedule critical tasks on Thursdays'
-    },
-    {
-      type: 'bottleneck',
-      title: 'Development Bottleneck',
-      description: 'Development stage shows 40% longer completion times',
-      impact: 'medium',
-      action: 'Consider adding developer resources'
-    },
-    {
-      type: 'opportunity',
-      title: 'Weekend Optimization',
-      description: 'Low weekend activity presents automation opportunities',
-      impact: 'low',
-      action: 'Implement automated weekend deployments'
-    }
-  ];
-
-  interface TooltipProps {
-    active?: boolean;
-    payload?: Array<{
-      dataKey: string;
-      value: number | string;
-      color: string;
-    }>;
-    label?: string;
+  interface KPICardProps {
+    title: string;
+    value: string;
+    trend: number;
+    score: string;
+    color?: 'blue' | 'red' | 'yellow' | 'green';
   }
 
-  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-2 shadow-lg">
-          <p className="text-gray-700 dark:text-gray-300 text-xs font-medium">{label}</p>
-          {payload.map((entry, index: number) => (
-            <p key={index} className="text-gray-900 dark:text-white text-xs" style={{ color: entry.color }}>
-              {`${entry.dataKey}: ${entry.value}`}
-            </p>
-          ))}
+  interface MetricCardProps {
+    title: string;
+    value: string;
+    change: string;
+    trend: number;
+  }
+
+  interface TargetBarProps {
+    label: string;
+    percentage: number;
+    color: 'red' | 'green' | 'yellow' | 'blue';
+  }
+
+  const KPICard = ({ title, value, trend, score, color = 'blue' }: KPICardProps) => {
+    const colorClasses = {
+      blue: 'border-blue-500 text-blue-600 bg-blue-500',
+      red: 'border-red-500 text-red-600 bg-red-500',
+      yellow: 'border-yellow-500 text-yellow-600 bg-yellow-500',
+      green: 'border-green-500 text-green-600 bg-green-500'
+    };
+
+    return (
+      <div className="bg-white dark:bg-gray-900/50 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800/50 p-6 relative backdrop-blur-sm hover:shadow-md transition-all duration-200">
+        <div className={`absolute top-0 left-0 w-1 h-full rounded-l-xl ${colorClasses[color as keyof typeof colorClasses].split(' ')[2]}`}></div>
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{title}</h3>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">{value}</span>
+              <div className={`flex items-center ${trend > 0 ? 'text-green-600 dark:text-green-400' : trend < 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
+                {trend > 0 ? <TrendingUp className="w-4 h-4" /> : trend < 0 ? <TrendingDown className="w-4 h-4" /> : null}
+              </div>
+            </div>
+          </div>
+          <div className={`w-10 h-10 rounded-full ${colorClasses[color as keyof typeof colorClasses].split(' ')[2]} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center`}>
+            <span className={`text-xs font-bold ${colorClasses[color as keyof typeof colorClasses].split(' ')[1]}`}>{score}</span>
+          </div>
         </div>
-      );
-    }
-    return null;
+      </div>
+    );
+  };
+
+  const MetricCard = ({ title, value, change, trend }: MetricCardProps) => (
+    <div className="bg-white dark:bg-gray-900/50 rounded-xl shadow-sm p-6 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 hover:shadow-md transition-all duration-200">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{title}</h3>
+        <div className={`flex items-center text-sm px-2 py-1 rounded-full ${trend > 0 ? 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400'}`}>
+          {trend > 0 ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
+          {change}
+        </div>
+      </div>
+      <div className="text-2xl font-bold text-gray-900 dark:text-white">{value}</div>
+    </div>
+  );
+
+  const TargetBar = ({ percentage, color }: Omit<TargetBarProps, 'label'>) => {
+    const colorMap = {
+      red: '#EF4444',
+      green: '#10B981',
+      yellow: '#F59E0B',
+      blue: '#3B82F6'
+    };
+    
+    return (
+      <div className="w-full">
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+          <div 
+            className="h-2 rounded-full transition-all duration-1000 ease-out shadow-sm"
+            style={{ 
+              width: `${percentage}%`, 
+              backgroundColor: colorMap[color as keyof typeof colorMap],
+              boxShadow: `0 0 8px ${colorMap[color as keyof typeof colorMap]}40`
+            }}
+          ></div>
+        </div>
+      </div>
+    );
   };
 
   return (
     <div className="space-y-6">
       <Breadcrumb items={breadcrumbItems} />
       
-      {loading ? (
-        <LoadingSpinner />
-      ) : (
-        <div className={`transition-all duration-500 ${
-          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
-          {/* Controls */}
-          <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg p-4 mb-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <select 
-                  value={timeRange} 
-                  onChange={(e) => setTimeRange(e.target.value)}
-                  className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                >
-                  <option value="1w">Last Week</option>
-                  <option value="1m">Last Month</option>
-                  <option value="3m">Last 3 Months</option>
-                  <option value="6m">Last 6 Months</option>
-                  <option value="1y">Last Year</option>
-                </select>
-                <select 
-                  value={selectedMetric} 
-                  onChange={(e) => setSelectedMetric(e.target.value)}
-                  className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                >
-                  <option value="all">All Metrics</option>
-                  <option value="tasks">Tasks Only</option>
-                  <option value="projects">Projects Only</option>
-                  <option value="team">Team Performance</option>
-                </select>
-              </div>
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => {
-                    setIsRefreshing(true);
-                    setTimeout(() => setIsRefreshing(false), 1000);
-                  }}
-                  className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-gray-800/80 hover:bg-gray-200 dark:hover:bg-gray-700/80 border border-gray-200 dark:border-gray-700/50 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-lg transition-all duration-200 text-sm font-medium"
-                >
-                  <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  Refresh
-                </button>
-                <button className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md">
-                  <Download className="w-4 h-4" />
-                  Export
-                </button>
-              </div>
-            </div>
+      {/* Header Banner */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-4 mb-6">
+        <div className="flex items-center gap-3">
+          <Info className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <div>
+            <p className="text-blue-700 dark:text-blue-300 text-sm">Monitor your project performance, team efficiency, and delivery metrics to optimize workflow and achieve better results.</p>
           </div>
+        </div>
+      </div>
 
-          {/* Key Metrics */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-            <DashboardStatCard
-              title="Total Tasks"
-              value="142"
-              icon={CheckCircle}
-              color="text-green-500 dark:text-green-400"
-            />
-            <DashboardStatCard
-              title="Active Projects"
-              value="28"
-              icon={Target}
-              color="text-blue-500 dark:text-blue-400"
-            />
-            <DashboardStatCard
-              title="Team Members"
-              value="16"
-              icon={Users}
-              color="text-purple-500 dark:text-purple-400"
-            />
-            <DashboardStatCard
-              title="Completion Rate"
-              value="87%"
-              icon={TrendingUp}
-              color="text-emerald-500 dark:text-emerald-400"
-            />
-            <DashboardStatCard
-              title="Avg Velocity"
-              value="23"
-              icon={Zap}
-              color="text-amber-500 dark:text-yellow-400"
-            />
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {kpiData.map((kpi, index) => (
+          <KPICard key={index} {...kpi} />
+        ))}
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Project Performance Chart */}
+        <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl shadow-sm p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Project Performance</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Monthly project delivery and team collaboration metrics</p>
+            </div>
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+              Export Data
+            </button>
           </div>
-
-          {/* Charts Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-            {/* Task Completion Trends */}
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg p-4 shadow-sm">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <Activity className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-                Task Completion Trends
-              </h3>
-              <ResponsiveContainer width="100%" height={240}>
-                <AreaChart data={taskCompletionData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-600" />
-                  <XAxis dataKey="month" stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
-                  <YAxis stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="completed" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.6} />
-                  <Area type="monotone" dataKey="pending" stackId="1" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.6} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Project Status Distribution */}
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg p-4 shadow-sm">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <Target className="w-4 h-4 text-green-500 dark:text-green-400" />
-                Project Status
-              </h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={projectStatusData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={80}
-                    paddingAngle={3}
-                    dataKey="value"
-                  >
-                    {projectStatusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<CustomTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="flex flex-wrap gap-3 mt-3">
-                {projectStatusData.map((item, index) => (
-                  <div key={index} className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }}></div>
-                    <span className="text-xs text-gray-600 dark:text-gray-300">{item.name}: {item.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Priority Analysis */}
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg p-4 shadow-sm">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-red-500 dark:text-red-400" />
-                Priority Distribution
-              </h3>
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={priorityData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-600" />
-                  <XAxis dataKey="priority" stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
-                  <YAxis stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="tasks" fill="#3b82f6" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="projects" fill="#8b5cf6" radius={[3, 3, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Team Productivity */}
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg p-4 shadow-sm">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <Users className="w-4 h-4 text-purple-500 dark:text-purple-400" />
-                Weekly Productivity
-              </h3>
-              <ResponsiveContainer width="100%" height={240}>
-                <LineChart data={productivityData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-600" />
-                  <XAxis dataKey="day" stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
-                  <YAxis stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Line type="monotone" dataKey="hours" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981', strokeWidth: 2, r: 3 }} />
-                  <Line type="monotone" dataKey="efficiency" stroke="#f59e0b" strokeWidth={2} dot={{ fill: '#f59e0b', strokeWidth: 2, r: 3 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Advanced Analytics */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-            {/* Team Performance Radar */}
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg p-4 shadow-sm">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <Award className="w-4 h-4 text-amber-500 dark:text-yellow-400" />
-                Team Performance Matrix
-              </h3>
-              <ResponsiveContainer width="100%" height={240}>
-                <RadarChart data={teamPerformanceData}>
-                  <PolarGrid stroke="#e5e7eb" className="dark:stroke-gray-600" />
-                  <PolarAngleAxis dataKey="member" tick={{ fill: '#6b7280', fontSize: 11 }} />
-                  <PolarRadiusAxis tick={{ fill: '#6b7280', fontSize: 9 }} />
-                  <Radar name="Quality" dataKey="quality" stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
-                  <Radar name="Speed" dataKey="speed" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} />
-                  <Radar name="Collaboration" dataKey="collaboration" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.2} />
-                  <Tooltip content={<CustomTooltip />} />
-                </RadarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Workflow Bottlenecks */}
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg p-4 shadow-sm">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-orange-500 dark:text-orange-400" />
-                Workflow Analysis
-              </h3>
-              <ResponsiveContainer width="100%" height={200}>
-                <ComposedChart data={workflowData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-600" />
-                  <XAxis dataKey="stage" stroke="#6b7280" className="dark:stroke-gray-400" fontSize={11} />
-                  <YAxis stroke="#6b7280" className="dark:stroke-gray-400" fontSize={11} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="tasks" fill="#3b82f6" radius={[3, 3, 0, 0]} />
-                  <Line type="monotone" dataKey="avgTime" stroke="#f59e0b" strokeWidth={2} />
-                </ComposedChart>
-              </ResponsiveContainer>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {workflowData.map((stage, index) => (
-                  <div key={index} className={`px-2 py-1 rounded text-xs ${
-                    stage.bottleneck ? 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400' : 'bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400'
-                  }`}>
-                    {stage.stage}: {stage.avgTime}h
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Sprint Burndown */}
-          <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg p-4 mb-6 shadow-sm">
-            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
-              Sprint Burndown Chart
-            </h3>
-            <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={burndownData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-600" />
-                <XAxis dataKey="week" stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
-                <YAxis stroke="#6b7280" className="dark:stroke-gray-400" fontSize={12} />
-                <Tooltip content={<CustomTooltip />} />
-                <Line type="monotone" dataKey="ideal" stroke="#6b7280" strokeDasharray="4 4" strokeWidth={2} name="Ideal" />
-                <Line type="monotone" dataKey="planned" stroke="#3b82f6" strokeWidth={2} name="Planned" />
-                <Line type="monotone" dataKey="actual" stroke="#10b981" strokeWidth={2} name="Actual" />
-              </LineChart>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={trafficData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="2 2" stroke="#f1f5f9" className="dark:stroke-gray-700" opacity={0.5} />
+                <XAxis 
+                  dataKey="month" 
+                  stroke="#64748b" 
+                  className="dark:stroke-gray-400" 
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  stroke="#64748b" 
+                  className="dark:stroke-gray-400" 
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Bar 
+                  dataKey="website" 
+                  fill="#3B82F6" 
+                  radius={[4, 4, 0, 0]}
+                  name="Projects Completed"
+                />
+                <Bar 
+                  dataKey="social" 
+                  fill="#10B981" 
+                  radius={[4, 4, 0, 0]}
+                  name="Team Collaboration"
+                />
+              </BarChart>
             </ResponsiveContainer>
           </div>
-
-          {/* AI Insights Panel */}
-          <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg p-4 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <Eye className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
-                AI-Powered Insights
-              </h3>
-              <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-                Updated 2m ago
-              </div>
+          <div className="flex justify-center gap-8 mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-blue-500 rounded-full shadow-sm"></div>
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Projects Completed</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {aiInsights.map((insight, index) => {
-                const colors = {
-                  performance: { bg: 'bg-blue-50 dark:bg-blue-500/10', border: 'border-blue-200 dark:border-blue-500/20', text: 'text-blue-600 dark:text-blue-400', icon: TrendingUp },
-                  bottleneck: { bg: 'bg-yellow-50 dark:bg-yellow-500/10', border: 'border-yellow-200 dark:border-yellow-500/20', text: 'text-yellow-600 dark:text-yellow-400', icon: AlertTriangle },
-                  opportunity: { bg: 'bg-green-50 dark:bg-green-500/10', border: 'border-green-200 dark:border-green-500/20', text: 'text-green-600 dark:text-green-400', icon: CheckCircle }
-                };
-                const config = colors[insight.type as keyof typeof colors];
-                const IconComponent = config.icon;
-                
-                return (
-                  <div key={index} className={`${config.bg} border ${config.border} rounded-lg p-3 hover:scale-[1.02] transition-transform`}>
-                    <div className="flex items-center gap-2 mb-2">
-                      <IconComponent className={`w-4 h-4 ${config.text}`} />
-                      <span className={`${config.text} font-medium text-sm`}>{insight.title}</span>
-                      <div className={`ml-auto px-1.5 py-0.5 rounded text-xs ${
-                        insight.impact === 'high' ? 'bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400' :
-                        insight.impact === 'medium' ? 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400' :
-                        'bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400'
-                      }`}>
-                        {insight.impact}
-                      </div>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{insight.description}</p>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800/50 px-2 py-1 rounded">
-                      💡 {insight.action}
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full shadow-sm"></div>
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Team Collaboration</span>
             </div>
           </div>
         </div>
-      )}
+
+        {/* Team Efficiency Chart */}
+        <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl shadow-sm p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Team Efficiency</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Overall team productivity and task completion rate</p>
+            </div>
+            <Settings className="w-5 h-5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer transition-colors" />
+          </div>
+          <div className="flex items-center justify-center h-64">
+            <div className="relative">
+              <ResponsiveContainer width={220} height={220}>
+                <PieChart>
+                  <Pie
+                    data={donutData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={70}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    dataKey="value"
+                    strokeWidth={0}
+                  >
+                    {donutData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">87%</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">Efficiency</div>
+                  <div className="text-xs text-green-600 dark:text-green-400 font-medium mt-1">+5% this month</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            <div className="text-center p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+              <div className="text-lg font-bold text-gray-900 dark:text-white">156</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">Tasks Completed</div>
+            </div>
+            <div className="text-center p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+              <div className="text-lg font-bold text-gray-900 dark:text-white">28</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">Active Projects</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Project Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {projectMetrics.map((metric, index) => (
+          <MetricCard key={index} {...metric} />
+        ))}
+      </div>
+
+      {/* Performance Goals Header */}
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Performance Goals</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Track progress towards quarterly objectives and KPIs</p>
+        </div>
+        <button className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          <Eye className="w-4 h-4" />
+          View Details
+        </button>
+      </div>
+
+      {/* Performance Goal Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {targetData.map((target, index) => (
+          <div key={index} className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">{target.label}</h4>
+              <span className="text-lg font-bold text-gray-900 dark:text-white">{target.percentage}%</span>
+            </div>
+            <TargetBar {...target} />
+            <div className="mt-3 flex items-center justify-between text-xs">
+              <span className="text-gray-500 dark:text-gray-400">Current Progress</span>
+              <span className={`font-medium ${
+                target.percentage >= 80 ? 'text-green-600 dark:text-green-400' :
+                target.percentage >= 60 ? 'text-yellow-600 dark:text-yellow-400' :
+                'text-red-600 dark:text-red-400'
+              }`}>
+                {target.percentage >= 80 ? 'Excellent' :
+                 target.percentage >= 60 ? 'Good' : 'Needs Improvement'}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
-
 
 export default Analytics;

@@ -52,7 +52,7 @@ const DashboardStatCard = ({
 
   return (
     <motion.div 
-      className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-3xl p-4 sm:p-6 cursor-pointer group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50"
+      className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-3xl p-3 sm:p-4 cursor-pointer group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50"
       onClick={onClick}
       whileHover={{ y: -6 }}
       whileTap={{ scale: 0.97 }}
@@ -63,7 +63,7 @@ const DashboardStatCard = ({
       {/* Content */}
       <div className="relative z-10">
         {/* Header */}
-        <div className="flex items-start justify-end mb-4 sm:mb-6">
+        <div className="flex items-start justify-end mb-2 sm:mb-3">
           {trend && (
             <div className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-bold ${
               trend.direction === 'up' 
@@ -76,23 +76,23 @@ const DashboardStatCard = ({
         </div>
         
         {/* Value and Icon */}
-        <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <div className="flex items-center justify-between mb-2 sm:mb-3">
           <div>
-            <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-sm">
+            <p className="text-xl sm:text-2xl lg:text-3xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-sm">
               {value}
             </p>
             <p className="text-blue-100 font-semibold text-sm sm:text-base">
               {title}
             </p>
           </div>
-          <div className="p-3 sm:p-4 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
+          <div className="p-2 sm:p-3 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
             {IconComponent ? (
-              <IconComponent className={`w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`} />
+              <IconComponent className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`} />
             ) : (
               <img 
                 src={iconSrc} 
                 alt={iconAlt} 
-                className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 opacity-90 group-hover:opacity-100" 
+                className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 opacity-90 group-hover:opacity-100" 
               />
             )}
           </div>
