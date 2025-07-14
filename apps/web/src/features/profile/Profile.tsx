@@ -104,9 +104,15 @@ const Profile = ({ onNavigateBack }: ProfileProps) => {
     console.log('Changes cancelled');
   };
 
-  const handleCreateTeam = (teamData: any) => {
-    console.log('Creating team:', teamData);
-  };
+  interface Team {
+    name: string;
+    members?: string[];
+    // Add other properties as needed
+  }
+  
+    const handleCreateTeam = (teamData: Team) => {
+      console.log('Creating team:', teamData);
+    };
 
   return (
     <div className={`space-y-6 transition-all duration-500 ${
