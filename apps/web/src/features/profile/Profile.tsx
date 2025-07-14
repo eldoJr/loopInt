@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import CreateTeamModal from '../../components/ui/CreateTeamModal';
 
 interface ProfileProps {
   onNavigateBack?: () => void;
@@ -30,6 +31,7 @@ const Profile = ({ onNavigateBack }: ProfileProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [avatarImage, setAvatarImage] = useState<string | null>(null);
+  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -100,6 +102,10 @@ const Profile = ({ onNavigateBack }: ProfileProps) => {
     setCoverImage(null);
     setAvatarImage(null);
     console.log('Changes cancelled');
+  };
+
+  const handleCreateTeam = (teamData: any) => {
+    console.log('Creating team:', teamData);
   };
 
   return (
@@ -233,7 +239,10 @@ const Profile = ({ onNavigateBack }: ProfileProps) => {
           {/* Teams Section */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Teams</h3>
-            <button className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+            <button 
+              onClick={() => setShowCreateTeamModal(true)}
+              className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            >
               <Plus className="w-4 h-4" />
               <span className="text-sm font-medium">Create a team</span>
             </button>
@@ -322,6 +331,12 @@ const Profile = ({ onNavigateBack }: ProfileProps) => {
         </div>
       </div>
       </div>
+      
+      <CreateTeamModal
+        isOpen={showCreateTeamModal}
+        onClose={() => setShowCreateTeamModal(false)}
+        onCreateTeam={handleCreateTeam}
+      />
     </div>
   );
 }
