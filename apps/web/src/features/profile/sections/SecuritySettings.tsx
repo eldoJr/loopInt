@@ -122,7 +122,7 @@ const SecuritySettings = () => {
       </div>
 
       {/* Security Options */}
-      <div className="space-y-8">
+      <div className="space-y-4">
         {/* Two-step Verification Section */}
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Two-step verification</h3>
