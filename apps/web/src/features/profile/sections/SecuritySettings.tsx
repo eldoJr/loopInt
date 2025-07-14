@@ -61,7 +61,7 @@ const SecuritySettings = () => {
             When you change your password, we keep you logged in to this device but may log you out from your other devices.
           </p>
           
-          <div className="space-y-4">
+          <div className="space-y-4 max-w-md">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Current password *
@@ -121,12 +121,11 @@ const SecuritySettings = () => {
         </div>
       </div>
 
-      {/* Two-step Verification Section */}
-      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      {/* Security Options */}
+      <div className="space-y-8">
+        {/* Two-step Verification Section */}
+        <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Two-step verification</h3>
-        </div>
-        <div className="p-6 space-y-3">
           <p className="text-gray-600 dark:text-gray-400 text-sm">
             Keep your account extra secure with a second login step.{' '}
             <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline">
@@ -137,14 +136,10 @@ const SecuritySettings = () => {
             Manage two-step verification
           </button>
         </div>
-      </div>
 
-      {/* API Tokens Section */}
-      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        {/* API Tokens Section */}
+        <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">API tokens</h3>
-        </div>
-        <div className="p-6 space-y-3">
           <p className="text-gray-600 dark:text-gray-400 text-sm">
             A script or other process can use an API token to perform basic authentication with Jira Cloud applications or Confluence Cloud. You must use an API token if the Atlassian account you authenticate with has had two-step verification enabled. You should treat API tokens as securely as any other password.{' '}
             <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline">
@@ -155,14 +150,10 @@ const SecuritySettings = () => {
             Create and manage API tokens
           </button>
         </div>
-      </div>
 
-      {/* Recent Devices Section */}
-      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        {/* Recent Devices Section */}
+        <div className="space-y-3">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent devices</h3>
-        </div>
-        <div className="p-6 space-y-3">
           <p className="text-gray-600 dark:text-gray-400 text-sm">
             If you've lost one of your devices or notice any suspicious activity, log out of all your devices and take steps to secure your account.{' '}
             <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline">
