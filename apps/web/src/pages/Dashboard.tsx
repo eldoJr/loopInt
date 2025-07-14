@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { 
   Clock,
@@ -19,7 +19,6 @@ import type { User as UserType } from '../lib/api';
 import Breadcrumb from '../components/ui/Breadcrumb';
 import DashboardHeader from '../components/ui/DashboardHeader';
 import DashboardCard from '../components/ui/DashboardCard';
-import DashboardListItem from '../components/ui/DashboardListItem';
 import DashboardStatCard from '../components/ui/DashboardStatCard';
 import AllActionsDropdown from '../components/ui/AllActionsDropdown';
 import NewProject from '../features/projects/NewProject';
@@ -173,16 +172,16 @@ const Dashboard = () => {
     window.location.href = '/';
   };
 
-  const navigateToSection = (section: string) => {
+  const navigateToSection = useCallback((section: string) => {
     setIsTransitioning(true);
     setTimeout(() => {
       setCurrentView(section);
       setIsTransitioning(false);
     }, 300);
-  };
+  }, []);
 
 
-  const toggleTodo = async (id: string) => {
+  const toggleTodo = useCallback(async (id: string) => {
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
     
@@ -205,7 +204,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error updating task:', error);
     }
-  };
+  }, [todos]);
 
 
   const fetchProjects = async () => {
@@ -258,10 +257,10 @@ const Dashboard = () => {
     }
   };
 
-  const breadcrumbItems = [
+  const breadcrumbItems = useMemo(() => [
     { label: 'LoopInt'},
     { label: 'Dash', onClick: () => navigateToSection('Dashboard')},
-  ];
+  ], [navigateToSection]);
 
   useEffect(() => {
     if (user) {
@@ -284,7 +283,7 @@ const Dashboard = () => {
               <AllActionsDropdown onNavigate={navigateToSection} />
               <button
                 onClick={() => setShowCustomizationAlert(true)}
-                className="p-1.5 bg-gray-100 dark:bg-gray-800/30 text-gray-600 dark:text-gray-400 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-300 border border-gray-200 dark:border-gray-700/30 transition-colors"
+                className="p-2.5 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-white dark:hover:bg-gray-700/80 hover:text-gray-900 dark:hover:text-white border border-gray-200/60 dark:border-gray-600/40 shadow-sm hover:shadow-md transition-all duration-200 backdrop-blur-sm"
                 title="Settings"
               >
                 <Settings className="w-4 h-4" />
@@ -364,39 +363,39 @@ const Dashboard = () => {
                   .filter(todo => showFinishedTodos || !todo.completed)
                   .slice(0, 2)
                   .map((todo) => (
-                    <DashboardListItem
-                      key={todo.id}
-                      title={todo.text}
-                      subtitle={todo.date}
-                      status={todo.completed ? 'done' : 'active'}
-                      completed={todo.completed}
-                      onClick={() => navigateToSection('Tasks')}
-                      icon={
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleTodo(todo.id);
-                          }}
-                          className={`w-4 h-4 rounded border-2 transition-colors ${
-                            todo.completed 
-                              ? 'bg-green-500 border-green-500' 
-                              : 'border-gray-600 hover:border-gray-500'
-                          }`}
-                        >
-                          {todo.completed && (
-                            <CheckCircle className="w-3 h-3 text-white" />
-                          )}
-                        </button>
-                      }
-                      actions={
-                        todo.starred && (
-                          <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                        )
-                      }
-                    />
+                    <div key={todo.id} className="p-3 bg-white/60 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/30 rounded-lg hover:bg-white/80 dark:hover:bg-gray-800/60 transition-all duration-200 cursor-pointer backdrop-blur-sm" onClick={() => navigateToSection('Tasks')}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleTodo(todo.id);
+                            }}
+                            className={`w-4 h-4 rounded border-2 transition-colors ${
+                              todo.completed 
+                                ? 'bg-green-500 border-green-500' 
+                                : 'border-gray-400 dark:border-gray-500 hover:border-gray-500 dark:hover:border-gray-400'
+                            }`}
+                          >
+                            {todo.completed && (
+                              <CheckCircle className="w-3 h-3 text-white" />
+                            )}
+                          </button>
+                          <div>
+                            <p className={`text-sm font-medium ${todo.completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'}`}>
+                              {todo.text}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{todo.date}</p>
+                          </div>
+                        </div>
+                        {todo.starred && (
+                          <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                        )}
+                      </div>
+                    </div>
                   ))
               ) : (
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
+                <div className="bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200/60 dark:border-blue-800/40 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200 backdrop-blur-sm">
                   Here you will see a list of all tasks assigned to you. Click on a task to view details or mark as complete.
                 </div>
               )}
@@ -448,17 +447,31 @@ const Dashboard = () => {
             <div className="space-y-2">
               {projects.length > 0 ? (
                 projects.slice(0, 2).map((project) => (
-                  <DashboardListItem
-                    key={project.id}
-                    title={project.name}
-                    subtitle={project.description}
-                    status={project.status}
-                    color={project.color}
-                    onClick={() => navigateToSection('Projects')}
-                  />
+                  <div key={project.id} className="p-3 bg-white/60 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/30 rounded-lg hover:bg-white/80 dark:hover:bg-gray-800/60 transition-all duration-200 cursor-pointer backdrop-blur-sm" onClick={() => navigateToSection('Projects')}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-3 h-3 rounded-full`} style={{ backgroundColor: project.color }}></div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {project.name}
+                          </p>
+                          {project.description && (
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{project.description}</p>
+                          )}
+                        </div>
+                      </div>
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        project.status === 'active' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
+                        project.status === 'planning' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' :
+                        'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
+                      }`}>
+                        {project.status}
+                      </span>
+                    </div>
+                  </div>
                 ))
               ) : (
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
+                <div className="bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200/60 dark:border-blue-800/40 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200 backdrop-blur-sm">
                   Here you will see a list of all active projects that you are managing or participating in. Click on a project to view details.
                 </div>
               )}

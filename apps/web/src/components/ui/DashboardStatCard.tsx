@@ -52,20 +52,20 @@ const DashboardStatCard = ({
 
   return (
     <motion.div 
-      className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-3xl p-3 sm:p-4 cursor-pointer group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50"
+      className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-3 cursor-pointer group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50"
       onClick={onClick}
-      whileHover={{ y: -6 }}
+      whileHover={{ y: -4 }}
       whileTap={{ scale: 0.97 }}
     >
       {/* Background Pattern */}
-      <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-white/10 to-blue-300/20 dark:from-blue-400/10 dark:to-blue-300/10 rounded-full -translate-y-12 translate-x-12 sm:-translate-y-16 sm:translate-x-16 group-hover:scale-125 transition-transform duration-700"></div>
+      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/10 to-blue-300/20 dark:from-blue-400/10 dark:to-blue-300/10 rounded-full -translate-y-10 translate-x-10 group-hover:scale-125 transition-transform duration-700"></div>
       
       {/* Content */}
       <div className="relative z-10">
         {/* Header */}
-        <div className="flex items-start justify-end mb-2 sm:mb-3">
+        <div className="flex items-start justify-end mb-2">
           {trend && (
-            <div className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-bold ${
+            <div className={`px-2 py-1 rounded-full text-xs font-bold ${
               trend.direction === 'up' 
                 ? 'bg-emerald-400/90 text-emerald-900' 
                 : 'bg-red-400/90 text-red-900'
@@ -76,49 +76,45 @@ const DashboardStatCard = ({
         </div>
         
         {/* Value and Icon */}
-        <div className="flex items-center justify-between mb-2 sm:mb-3">
+        <div className="flex items-center justify-between mb-2">
           <div>
-            <p className="text-xl sm:text-2xl lg:text-3xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-sm">
+            <p className="text-xl sm:text-2xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-sm">
               {value}
             </p>
-            <p className="text-blue-100 font-semibold text-sm sm:text-base">
+            <p className="text-blue-100 font-semibold text-sm">
               {title}
             </p>
           </div>
-          <div className="p-2 sm:p-3 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
+          <div className="p-2 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
             {IconComponent ? (
-              <IconComponent className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`} />
+              <IconComponent className={`w-6 h-6 sm:w-8 sm:h-8 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`} />
             ) : (
               <img 
                 src={iconSrc} 
                 alt={iconAlt} 
-                className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 opacity-90 group-hover:opacity-100" 
+                className="w-6 h-6 sm:w-8 sm:h-8 opacity-90 group-hover:opacity-100" 
               />
             )}
           </div>
         </div>
         
         {/* Footer */}
-        <div className="flex items-center justify-start">
+        <div className="flex items-center justify-between">
           {subtitle && (
-            <p className="text-blue-200 font-medium text-xs sm:text-sm">
+            <p className="text-blue-200 font-medium text-xs">
               {subtitle}
             </p>
           )}
-        </div>
-        
-        {/* Period */}
-        {trend?.period && (
-          <div className="mt-2">
+          {trend?.period && (
             <p className="text-blue-300 font-medium text-xs">
               {trend.period}
             </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       
       {/* Hover Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-3xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-2xl"></div>
     </motion.div>
   );
 };

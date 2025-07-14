@@ -63,7 +63,7 @@ const AllActionsDropdown = ({ onNavigate }: AllActionsDropdownProps = {}) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors text-sm border border-blue-500/30"
+        className="flex items-center space-x-2 px-3 py-2.5 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-white dark:hover:bg-gray-700/80 hover:text-gray-900 dark:hover:text-white border border-gray-200/60 dark:border-gray-600/40 shadow-sm hover:shadow-md transition-all duration-200 text-sm backdrop-blur-sm"
       >
         <span>All Actions</span>
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
