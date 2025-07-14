@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import ProfileAndVisibility from './sections/ProfileAndVisibility';
 
 interface AccountSettingsProps {
   onNavigateBack?: () => void;
@@ -37,6 +38,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
     switch (activeSection) {
 
       case 'profile':
+        return <ProfileAndVisibility />;
+      case 'profile-old':
         return (
           <div className="space-y-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">Profile and visibility</h2>
