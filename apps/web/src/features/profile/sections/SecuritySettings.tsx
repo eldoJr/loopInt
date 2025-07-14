@@ -29,7 +29,7 @@ const SecuritySettings = () => {
       setCurrentPassword('');
       setNewPassword('');
       console.log('Password updated successfully');
-    } catch (err) {
+    } catch {
       setError('Failed to update password. Please try again.');
     } finally {
       setIsLoading(false);
