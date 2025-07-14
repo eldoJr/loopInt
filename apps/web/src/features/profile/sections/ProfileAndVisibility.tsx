@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Globe, User, Info, Lock } from 'lucide-react';
 
 const ProfileAndVisibility = () => {
   const [user, setUser] = useState<any>(null);
@@ -35,10 +36,13 @@ const ProfileAndVisibility = () => {
           {/* Privacy Control */}
           <div className="flex items-center justify-between pt-2">
             <span className="text-sm text-gray-700 dark:text-gray-300">Who can see your profile photo?</span>
-            <select className="px-3 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
-              <option value="anyone">🌍 Anyone</option>
-              <option value="only-you">👤 Only you</option>
-            </select>
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
+              <Globe className="w-4 h-4" />
+              <select className="bg-transparent border-none outline-none text-sm">
+                <option value="anyone">Anyone</option>
+                <option value="only-you">Only you</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -50,116 +54,137 @@ const ProfileAndVisibility = () => {
         </div>
         <div className="p-6 space-y-6">
           {/* Full name */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-end space-x-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full name</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full name</label>
               <input 
                 type="text" 
                 defaultValue={user?.name || ''}
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <select className="ml-4 px-3 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
-              <option value="anyone">🌍 Anyone</option>
-              <option value="only-you">👤 Only you</option>
-            </select>
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <select className="bg-transparent border-none outline-none text-sm flex-1">
+                <option value="anyone">Anyone</option>
+                <option value="only-you">Only you</option>
+              </select>
+            </div>
           </div>
 
           {/* Public name */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-end space-x-4">
             <div className="flex-1">
-              <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Public name 
-                <span className="ml-1 text-blue-500" title="This is how your name appears to others">ℹ️</span>
+                <Info className="ml-1 w-4 h-4 text-blue-500" title="This is how your name appears to others" />
               </label>
               <input 
                 type="text" 
                 placeholder="Your public name"
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <select className="ml-4 px-3 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
-              <option value="anyone">🌍 Anyone</option>
-              <option value="only-you">👤 Only you</option>
-            </select>
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <select className="bg-transparent border-none outline-none text-sm flex-1">
+                <option value="anyone">Anyone</option>
+                <option value="only-you">Only you</option>
+              </select>
+            </div>
           </div>
 
           {/* Job title */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-end space-x-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Job title</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Job title</label>
               <input 
                 type="text" 
                 placeholder="Your job title"
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <select className="ml-4 px-3 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
-              <option value="anyone">🌍 Anyone</option>
-              <option value="only-you">👤 Only you</option>
-            </select>
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <select className="bg-transparent border-none outline-none text-sm flex-1">
+                <option value="anyone">Anyone</option>
+                <option value="only-you">Only you</option>
+              </select>
+            </div>
           </div>
 
           {/* Department */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-end space-x-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Department</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Department</label>
               <input 
                 type="text" 
                 placeholder="Your department"
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <select className="ml-4 px-3 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
-              <option value="anyone">🌍 Anyone</option>
-              <option value="only-you">👤 Only you</option>
-            </select>
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <select className="bg-transparent border-none outline-none text-sm flex-1">
+                <option value="anyone">Anyone</option>
+                <option value="only-you">Only you</option>
+              </select>
+            </div>
           </div>
 
           {/* Organization */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-end space-x-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Organization</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Organization</label>
               <input 
                 type="text" 
                 placeholder="Your organization"
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <select className="ml-4 px-3 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
-              <option value="anyone">🌍 Anyone</option>
-              <option value="only-you">👤 Only you</option>
-            </select>
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <select className="bg-transparent border-none outline-none text-sm flex-1">
+                <option value="anyone">Anyone</option>
+                <option value="only-you">Only you</option>
+              </select>
+            </div>
           </div>
 
           {/* Based in */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-end space-x-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Based in</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Based in</label>
               <input 
                 type="text" 
                 placeholder="Your location"
-                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <select className="ml-4 px-3 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
-              <option value="anyone">🌍 Anyone</option>
-              <option value="only-you">👤 Only you</option>
-            </select>
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <select className="bg-transparent border-none outline-none text-sm flex-1">
+                <option value="anyone">Anyone</option>
+                <option value="only-you">Only you</option>
+              </select>
+            </div>
           </div>
 
           {/* Local time */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-end space-x-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Local time</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Local time</label>
               <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-500 dark:text-gray-400">
                 You have not set your time zone yet
               </div>
             </div>
-            <select className="ml-4 px-3 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
-              <option value="anyone">🌍 Anyone</option>
-              <option value="only-you">👤 Only you</option>
-            </select>
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <select className="bg-transparent border-none outline-none text-sm flex-1">
+                <option value="anyone">Anyone</option>
+                <option value="only-you">Only you</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -177,8 +202,9 @@ const ProfileAndVisibility = () => {
                 {user?.email || 'user@example.com'}
               </div>
             </div>
-            <div className="ml-4 px-3 py-1 bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300">
-              🔒 Only you and administrators
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 min-w-[200px]">
+              <Lock className="w-4 h-4 text-gray-500" />
+              <span>Only you and administrators</span>
             </div>
           </div>
         </div>
