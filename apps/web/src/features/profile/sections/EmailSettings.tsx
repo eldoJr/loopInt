@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
+interface User {
+  email?: string;
+  // Add other user properties if needed
+}
+
 const EmailSettings = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [newEmail, setNewEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,7 +39,7 @@ const EmailSettings = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setNewEmail('');
       console.log('Email updated to:', newEmail);
-    } catch (err) {
+    } catch {
       setError('Failed to update email. Please try again.');
     } finally {
       setIsLoading(false);
