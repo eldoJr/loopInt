@@ -31,8 +31,6 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
     { id: 'security', label: 'Security' },
     { id: 'privacy', label: 'Privacy' },
     { id: 'preferences', label: 'Account preferences' },
-    { id: 'apps', label: 'Connected apps' },
-    { id: 'links', label: 'Link preferences' },
     { id: 'products', label: 'Product settings' }
   ];
 
@@ -98,26 +96,6 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
             </div>
           </div>
         );
-      case 'apps':
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Connected apps</h2>
-            <p className="text-gray-600 dark:text-gray-400">Manage apps and integrations connected to your account.</p>
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
-              <p className="text-gray-600 dark:text-gray-400">Connected apps management coming soon.</p>
-            </div>
-          </div>
-        );
-      case 'links':
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Link preferences</h2>
-            <p className="text-gray-600 dark:text-gray-400">Configure how links behave and are displayed.</p>
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
-              <p className="text-gray-600 dark:text-gray-400">Link preferences coming soon.</p>
-            </div>
-          </div>
-        );
       case 'products':
         return (
           <div className="space-y-6">
@@ -148,8 +126,9 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
     }`}>
       <Breadcrumb items={breadcrumbItems} />
       
-      {/* Navigation Tabs */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
+      <div className="max-w-7xl mx-auto">
+        {/* Navigation Tabs */}
+        <div className="border-b border-gray-200 dark:border-gray-700">
         <div className="overflow-x-auto">
           <nav className="flex space-x-8 min-w-max px-1">
             {navigationItems.map((item) => {
@@ -179,9 +158,10 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className="min-h-[400px]">
-        {renderSectionContent()}
+        {/* Content Area */}
+        <div className="min-h-[400px]">
+          {renderSectionContent()}
+        </div>
       </div>
     </div>
   );
