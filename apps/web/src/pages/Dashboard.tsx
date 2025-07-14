@@ -68,6 +68,7 @@ import Reports from '../features/reports/Reports';
 import NewReport from '../features/reports/NewReport';
 import EditReport from '../features/reports/EditReport';
 import ViewReport from '../features/reports/ViewReport';
+import Profile from '../features/profile/Profile';
 
 const Dashboard = () => {
   useTheme();
@@ -627,6 +628,8 @@ const Dashboard = () => {
         return <Historic onNavigateBack={backToMain} />;
       case 'Buttons Configuration':
         return <ButtonsConfiguration onNavigateBack={backToMain} />;
+      case 'Profile':
+        return <Profile onNavigateBack={backToMain} />;
       default:
         if (currentView.startsWith('Edit Project ')) {
           const projectId = currentView.replace('Edit Project ', '');

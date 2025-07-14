@@ -64,7 +64,7 @@ const UserProfileDropdown = ({ user, onLogout, onNavigate }: UserProfileDropdown
   };
   
   const menuItems: MenuItem[] = [
-      { icon: User, label: 'Profile', action: () => onNavigate?.('Profile') },
+      { icon: User, label: 'Profile', action: () => { onNavigate?.('Profile'); setIsOpen(false); } },
       { icon: Settings, label: 'Account settings', action: () => onNavigate?.('Account Settings') },
       { icon: Palette, label: 'Theme', action: () => setShowThemeMenu(!showThemeMenu), hasSubmenu: true },
       { icon: Users, label: 'Switch account', action: () => onNavigate?.('Switch Account') },
