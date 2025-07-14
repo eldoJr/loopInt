@@ -1,10 +1,22 @@
 import { useState } from 'react';
-import { X, User } from 'lucide-react';
+import { X } from 'lucide-react';
+
+interface TeamMember {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
+interface TeamData {
+  name: string;
+  members: TeamMember[];
+  allowJoinWithoutApproval: boolean;
+}
 
 interface CreateTeamModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreateTeam: (teamData: any) => void;
+  onCreateTeam: (teamData: TeamData) => void;
 }
 
 const CreateTeamModal = ({ isOpen, onClose, onCreateTeam }: CreateTeamModalProps) => {
