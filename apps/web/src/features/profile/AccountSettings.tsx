@@ -4,6 +4,9 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import ProfileAndVisibility from './sections/ProfileAndVisibility';
 import EmailSettings from './sections/EmailSettings';
 import SecuritySettings from './sections/SecuritySettings';
+import PrivacySettings from './sections/PrivacySettings';
+import AccountPreferences from './sections/AccountPreferences';
+import ProductSettings from './sections/ProductSettings';
 
 interface AccountSettingsProps {
   onNavigateBack?: () => void;
@@ -76,6 +79,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
           </div>
         );
       case 'privacy':
+        return <PrivacySettings />;
+      case 'privacy-old':
         return (
           <div className="space-y-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">Privacy</h2>
@@ -86,6 +91,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
           </div>
         );
       case 'preferences':
+        return <AccountPreferences />;
+      case 'preferences-old':
         return (
           <div className="space-y-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">Account preferences</h2>
@@ -96,6 +103,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
           </div>
         );
       case 'products':
+        return <ProductSettings />;
+      case 'products-old':
         return (
           <div className="space-y-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">Product settings</h2>
