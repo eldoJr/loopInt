@@ -9,7 +9,7 @@ interface AccountSettingsProps {
 const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
-  const [activeSection, setActiveSection] = useState('account');
+  const [activeSection, setActiveSection] = useState('profile');
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -25,7 +25,6 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
   ];
 
   const navigationItems = [
-    { id: 'account', label: 'Account' },
     { id: 'profile', label: 'Profile and visibility' },
     { id: 'email', label: 'Email' },
     { id: 'security', label: 'Security' },
@@ -36,16 +35,7 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
 
   const renderSectionContent = () => {
     switch (activeSection) {
-      case 'account':
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Account</h2>
-            <p className="text-gray-600 dark:text-gray-400">Manage your account information and settings.</p>
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
-              <p className="text-gray-600 dark:text-gray-400">Account management features coming soon.</p>
-            </div>
-          </div>
-        );
+
       case 'profile':
         return (
           <div className="space-y-6">
@@ -127,6 +117,11 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
       <Breadcrumb items={breadcrumbItems} />
       
       <div className="max-w-7xl mx-auto">
+        {/* Title */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account Settings</h1>
+        </div>
+        
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200 dark:border-gray-700">
         <div className="overflow-x-auto">
