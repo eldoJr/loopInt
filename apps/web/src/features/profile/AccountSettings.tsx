@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import ProfileAndVisibility from './sections/ProfileAndVisibility';
+import EmailSettings from './sections/EmailSettings';
+import SecuritySettings from './sections/SecuritySettings';
 
 interface AccountSettingsProps {
   onNavigateBack?: () => void;
@@ -50,6 +52,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
           </div>
         );
       case 'email':
+        return <EmailSettings />;
+      case 'email-old':
         return (
           <div className="space-y-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">Email</h2>
@@ -60,6 +64,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
           </div>
         );
       case 'security':
+        return <SecuritySettings />;
+      case 'security-old':
         return (
           <div className="space-y-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">Security</h2>
