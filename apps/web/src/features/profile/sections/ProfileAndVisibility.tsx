@@ -3,6 +3,14 @@ import { Globe, User, Info, Lock } from 'lucide-react';
 
 const ProfileAndVisibility = () => {
   const [user, setUser] = useState<any>(null);
+  const [profilePhotoPrivacy, setProfilePhotoPrivacy] = useState('anyone');
+  const [fullNamePrivacy, setFullNamePrivacy] = useState('anyone');
+  const [publicNamePrivacy, setPublicNamePrivacy] = useState('anyone');
+  const [jobTitlePrivacy, setJobTitlePrivacy] = useState('anyone');
+  const [departmentPrivacy, setDepartmentPrivacy] = useState('anyone');
+  const [organizationPrivacy, setOrganizationPrivacy] = useState('anyone');
+  const [locationPrivacy, setLocationPrivacy] = useState('anyone');
+  const [timeZonePrivacy, setTimeZonePrivacy] = useState('anyone');
 
   useEffect(() => {
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -36,9 +44,13 @@ const ProfileAndVisibility = () => {
           {/* Privacy Control */}
           <div className="flex items-center justify-between pt-2">
             <span className="text-sm text-gray-700 dark:text-gray-300">Who can see your profile photo?</span>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
-              <Globe className="w-4 h-4" />
-              <select className="bg-transparent border-none outline-none text-sm">
+            <div className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
+              {profilePhotoPrivacy === 'anyone' ? <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+              <select 
+                value={profilePhotoPrivacy}
+                onChange={(e) => setProfilePhotoPrivacy(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white flex-1"
+              >
                 <option value="anyone">Anyone</option>
                 <option value="only-you">Only you</option>
               </select>
@@ -63,9 +75,13 @@ const ProfileAndVisibility = () => {
                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <select className="bg-transparent border-none outline-none text-sm flex-1">
+            <div className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              {fullNamePrivacy === 'anyone' ? <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+              <select 
+                value={fullNamePrivacy}
+                onChange={(e) => setFullNamePrivacy(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white flex-1"
+              >
                 <option value="anyone">Anyone</option>
                 <option value="only-you">Only you</option>
               </select>
@@ -85,9 +101,13 @@ const ProfileAndVisibility = () => {
                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <select className="bg-transparent border-none outline-none text-sm flex-1">
+            <div className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              {publicNamePrivacy === 'anyone' ? <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+              <select 
+                value={publicNamePrivacy}
+                onChange={(e) => setPublicNamePrivacy(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white flex-1"
+              >
                 <option value="anyone">Anyone</option>
                 <option value="only-you">Only you</option>
               </select>
@@ -104,9 +124,13 @@ const ProfileAndVisibility = () => {
                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <select className="bg-transparent border-none outline-none text-sm flex-1">
+            <div className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              {jobTitlePrivacy === 'anyone' ? <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+              <select 
+                value={jobTitlePrivacy}
+                onChange={(e) => setJobTitlePrivacy(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white flex-1"
+              >
                 <option value="anyone">Anyone</option>
                 <option value="only-you">Only you</option>
               </select>
@@ -123,9 +147,13 @@ const ProfileAndVisibility = () => {
                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <select className="bg-transparent border-none outline-none text-sm flex-1">
+            <div className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              {departmentPrivacy === 'anyone' ? <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+              <select 
+                value={departmentPrivacy}
+                onChange={(e) => setDepartmentPrivacy(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white flex-1"
+              >
                 <option value="anyone">Anyone</option>
                 <option value="only-you">Only you</option>
               </select>
@@ -142,9 +170,13 @@ const ProfileAndVisibility = () => {
                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <select className="bg-transparent border-none outline-none text-sm flex-1">
+            <div className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              {organizationPrivacy === 'anyone' ? <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+              <select 
+                value={organizationPrivacy}
+                onChange={(e) => setOrganizationPrivacy(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white flex-1"
+              >
                 <option value="anyone">Anyone</option>
                 <option value="only-you">Only you</option>
               </select>
@@ -161,9 +193,13 @@ const ProfileAndVisibility = () => {
                 className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <select className="bg-transparent border-none outline-none text-sm flex-1">
+            <div className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              {locationPrivacy === 'anyone' ? <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+              <select 
+                value={locationPrivacy}
+                onChange={(e) => setLocationPrivacy(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white flex-1"
+              >
                 <option value="anyone">Anyone</option>
                 <option value="only-you">Only you</option>
               </select>
@@ -178,9 +214,13 @@ const ProfileAndVisibility = () => {
                 You have not set your time zone yet
               </div>
             </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <select className="bg-transparent border-none outline-none text-sm flex-1">
+            <div className="flex items-center space-x-2 px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white min-w-[120px]">
+              {timeZonePrivacy === 'anyone' ? <Globe className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />}
+              <select 
+                value={timeZonePrivacy}
+                onChange={(e) => setTimeZonePrivacy(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm text-gray-900 dark:text-white flex-1"
+              >
                 <option value="anyone">Anyone</option>
                 <option value="only-you">Only you</option>
               </select>
@@ -195,15 +235,15 @@ const ProfileAndVisibility = () => {
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Contact</h3>
         </div>
         <div className="p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-end space-x-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email address</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email address</label>
               <div className="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-900 dark:text-white">
                 {user?.email || 'user@example.com'}
               </div>
             </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 min-w-[200px]">
-              <Lock className="w-4 h-4 text-gray-500" />
+            <div className="flex items-center space-x-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-sm text-gray-700 dark:text-gray-300 min-w-[200px]">
+              <Lock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               <span>Only you and administrators</span>
             </div>
           </div>
@@ -211,7 +251,7 @@ const ProfileAndVisibility = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex space-x-3">
+      <div className="flex justify-center space-x-3">
         <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
           Save changes
         </button>
