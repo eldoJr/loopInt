@@ -35,12 +35,8 @@ import Team from '../features/team/Team';
 import Analytics from '../features/analytics/Analytics';
 import Clients from '../features/clients/Clients';
 import PersonalData from '../features/profile/PersonalData';
-import OrganizationData from '../features/profile/OrganizationData';
 import AccountSettings from '../features/profile/AccountSettings';
 import HelpCenter from '../features/support/HelpCenter';
-import Language from '../features/settings/Language';
-import MenuOrientation from '../features/settings/MenuOrientation';
-import ViewResize from '../features/settings/ViewResize';
 import NewFeature from '../features/support/NewFeature';
 import ReportBug from '../features/support/ReportBug';
 import NewAccount from '../features/auth/NewAccount';
@@ -61,7 +57,6 @@ import NewProduct from '../features/clients/NewProduct';
 import HRProject from '../features/hr/HRProject';
 import UndocumentedRevenue from '../features/finance/UndocumentedRevenue';
 import Historic from '../features/support/History';
-import ButtonsConfiguration from '../features/settings/ButtonsConfiguration';
 import CustomizationAlert from '../components/ui/CustomizationAlert';
 import Sidebar from '../components/ui/Sidebar';
 import Reports from '../features/reports/Reports';
@@ -69,6 +64,14 @@ import NewReport from '../features/reports/NewReport';
 import EditReport from '../features/reports/EditReport';
 import ViewReport from '../features/reports/ViewReport';
 import Profile from '../features/profile/Profile';
+import General from '../features/settings/General';
+import Notifications from '../features/settings/Notifications';
+import System from '../features/settings/System';
+import Products from '../features/settings/Products';
+import WorkItems from '../features/settings/WorkItems';
+import Apps from '../features/settings/Apps';
+import UserManagement from '../features/settings/UserManagement';
+import Billing from '../features/settings/Billing';
 
 const Dashboard = () => {
   useTheme();
@@ -573,18 +576,10 @@ const Dashboard = () => {
         return <Clients onNavigateBack={backToMain} />;
       case 'Personal Data':
         return <PersonalData onNavigateBack={backToMain} />;
-      case 'Organization Data':
-        return <OrganizationData onNavigateBack={backToMain} />;
       case 'Account Settings':
         return <AccountSettings onNavigateBack={backToMain} />;
       case 'Help Center':
         return <HelpCenter onNavigateBack={backToMain} />;
-      case 'Language':
-        return <Language onNavigateBack={backToMain} />;
-      case 'Menu Orientation':
-        return <MenuOrientation onNavigateBack={backToMain} />;
-      case 'View Resize':
-        return <ViewResize onNavigateBack={backToMain} />;
       case 'New Feature':
         return <NewFeature onNavigateBack={backToMain} />;
       case 'Report Bug':
@@ -626,10 +621,24 @@ const Dashboard = () => {
         return <UndocumentedRevenue onNavigateBack={backToMain} />;
       case 'History':
         return <Historic onNavigateBack={backToMain} />;
-      case 'Buttons Configuration':
-        return <ButtonsConfiguration onNavigateBack={backToMain} />;
       case 'Profile':
         return <Profile onNavigateBack={backToMain} />;
+      case 'General':
+        return <General onNavigateBack={backToMain} />;
+      case 'Notifications':
+        return <Notifications onNavigateBack={backToMain} />;
+      case 'System':
+        return <System onNavigateBack={backToMain} />;
+      case 'Products':
+        return <Products onNavigateBack={backToMain} />;
+      case 'WorkItems':
+        return <WorkItems onNavigateBack={backToMain} />;
+      case 'Apps':
+        return <Apps onNavigateBack={backToMain} />;
+      case 'UserManagement':
+        return <UserManagement onNavigateBack={backToMain} />;
+      case 'Billing':
+        return <Billing onNavigateBack={backToMain} />;
       default:
         if (currentView.startsWith('Edit Project ')) {
           const projectId = currentView.replace('Edit Project ', '');

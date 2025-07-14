@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
-interface ViewResizeProps {
+interface SystemProps {
   onNavigateBack?: () => void;
 }
 
-const ViewResize = ({ onNavigateBack }: ViewResizeProps) => {
+const System = ({ onNavigateBack }: SystemProps) => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
@@ -20,7 +20,7 @@ const ViewResize = ({ onNavigateBack }: ViewResizeProps) => {
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'View Resize' }
+    { label: 'System' }
   ];
 
   return (
@@ -33,9 +33,9 @@ const ViewResize = ({ onNavigateBack }: ViewResizeProps) => {
         <div className={`transition-all duration-500 ${
           showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}>
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">View Resize</h2>
-            <p className="text-gray-400">View resize settings ready for implementation.</p>
+          <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">System</h2>
+            <p className="text-gray-600 dark:text-gray-400">System settings ready for implementation.</p>
           </div>
         </div>
       )}
@@ -43,4 +43,4 @@ const ViewResize = ({ onNavigateBack }: ViewResizeProps) => {
   );
 };
 
-export default ViewResize;
+export default System;
