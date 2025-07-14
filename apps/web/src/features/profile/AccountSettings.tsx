@@ -39,8 +39,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
       case 'profile':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Profile and visibility</h2>
-            <p className="text-gray-600 dark:text-gray-400">Control how others see your profile and information.</p>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Profile and visibility</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm ">Control how others see your profile and information.</p>
             <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
               <p className="text-gray-600 dark:text-gray-400">Profile visibility settings coming soon.</p>
             </div>
@@ -49,8 +49,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
       case 'email':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Email</h2>
-            <p className="text-gray-600 dark:text-gray-400">Configure email notifications and preferences.</p>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Email</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">Configure email notifications and preferences.</p>
             <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
               <p className="text-gray-600 dark:text-gray-400">Email configuration coming soon.</p>
             </div>
@@ -59,8 +59,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
       case 'security':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Security</h2>
-            <p className="text-gray-600 dark:text-gray-400">Manage passwords, two-factor authentication, and security settings.</p>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Security</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">Manage passwords, two-factor authentication, and security settings.</p>
             <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
               <p className="text-gray-600 dark:text-gray-400">Security settings coming soon.</p>
             </div>
@@ -69,8 +69,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
       case 'privacy':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Privacy</h2>
-            <p className="text-gray-600 dark:text-gray-400">Control your privacy settings and data sharing preferences.</p>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Privacy</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm ">Control your privacy settings and data sharing preferences.</p>
             <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
               <p className="text-gray-600 dark:text-gray-400">Privacy controls coming soon.</p>
             </div>
@@ -79,8 +79,8 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
       case 'preferences':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Account preferences</h2>
-            <p className="text-gray-600 dark:text-gray-400">Set your general account preferences and defaults.</p>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Account preferences</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">Set your general account preferences and defaults.</p>
             <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
               <p className="text-gray-600 dark:text-gray-400">Account preferences coming soon.</p>
             </div>
@@ -89,9 +89,9 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
       case 'products':
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Product settings</h2>
-            <p className="text-gray-600 dark:text-gray-400">Configure settings for individual products and features.</p>
-            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl p-6">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Product settings</h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm ">Configure settings for individual products and features.</p>
+            <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl">
               <p className="text-gray-600 dark:text-gray-400">Product settings coming soon.</p>
             </div>
           </div>
@@ -118,7 +118,7 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
       
       <div className="max-w-7xl mx-auto">
         {/* Title */}
-        <div className="mb-6">
+        <div className="mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account Settings</h1>
         </div>
         
@@ -154,7 +154,7 @@ const AccountSettings = ({ onNavigateBack }: AccountSettingsProps) => {
       </div>
 
         {/* Content Area */}
-        <div className="min-h-[400px]">
+        <div className="min-h-[400px] pt-6">
           {renderSectionContent()}
         </div>
       </div>
