@@ -1,5 +1,4 @@
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface VirtualizedListProps<T> {
   items: T[];
@@ -17,14 +16,43 @@ function VirtualizedList<T>({
   className = '' 
 }: VirtualizedListProps<T>) {
   const parentRef = useRef<HTMLDivElement>(null);
-
-  const virtualizer = useVirtualizer({
-    count: items.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => itemHeight,
-    overscan: 5,
-  });
-
+  const [visibleRange, setVisibleRange] = useState({ start: 0, end: 0 });
+  
+  useEffect(() => {
+    if (!parentRef.current) return;
+    
+    const updateVisibleRange = () => {
+      const container = parentRef.current;
+      if (!container) return;
+      
+      const scrollTop = container.scrollTop;
+      const viewportHeight = container.clientHeight;
+      
+      const startIndex = Math.floor(scrollTop / itemHeight);
+      const endIndex = Math.min(
+        items.length - 1,
+        Math.floor((scrollTop + viewportHeight) / itemHeight) + 5 // Add overscan
+      );
+      
+      setVisibleRange({ start: Math.max(0, startIndex - 5), end: endIndex }); // Add overscan to start too
+    };
+    
+    updateVisibleRange();
+    const container = parentRef.current;
+    container.addEventListener('scroll', updateVisibleRange);
+    
+    return () => {
+      container.removeEventListener('scroll', updateVisibleRange);
+    };
+  }, [items.length, itemHeight]);
+  
+  const visibleItems = [];
+  for (let i = visibleRange.start; i <= visibleRange.end; i++) {
+    if (i >= 0 && i < items.length) {
+      visibleItems.push({ index: i, start: i * itemHeight });
+    }
+  }
+  
   return (
     <div
       ref={parentRef}
@@ -33,24 +61,24 @@ function VirtualizedList<T>({
     >
       <div
         style={{
-          height: `${virtualizer.getTotalSize()}px`,
+          height: `${items.length * itemHeight}px`,
           width: '100%',
           position: 'relative',
         }}
       >
-        {virtualizer.getVirtualItems().map((virtualItem) => (
+        {visibleItems.map((item) => (
           <div
-            key={virtualItem.key}
+            key={item.index}
             style={{
               position: 'absolute',
               top: 0,
               left: 0,
               width: '100%',
-              height: `${virtualItem.size}px`,
-              transform: `translateY(${virtualItem.start}px)`,
+              height: `${itemHeight}px`,
+              transform: `translateY(${item.start}px)`,
             }}
           >
-            {renderItem(items[virtualItem.index], virtualItem.index)}
+            {renderItem(items[item.index], item.index)}
           </div>
         ))}
       </div>

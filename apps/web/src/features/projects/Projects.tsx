@@ -6,6 +6,8 @@ import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { showToast } from '../../components/ui/Toast';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
+import VirtualizedList from '../../components/ui/VirtualizedList';
+import { useDebounce } from '../../hooks/useDebounce';
 
 interface ProjectsProps {
   onNavigateBack?: () => void;
@@ -39,6 +41,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
   const [showContent, setShowContent] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [filters, setFilters] = useState({ name: '', dates: '', tags: '' });
+  const debouncedSearchTerm = useDebounce(filters.name, 300);
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; projectId: string; projectName: string }>({ isOpen: false, projectId: '', projectName: '' });
 
@@ -209,7 +212,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
   };
 
   const filteredProjects = projects.filter(project => {
-    const matchesName = !filters.name || project.name.toLowerCase().includes(filters.name.toLowerCase());
+    const matchesName = !debouncedSearchTerm || project.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
     const matchesDates = !filters.dates || (
       (project.deadline && format(new Date(project.deadline), 'yyyy-MM-dd').includes(filters.dates)) ||
       (project.start_date && format(new Date(project.start_date), 'yyyy-MM-dd').includes(filters.dates)) ||
@@ -352,105 +355,128 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
         </div>
       </div>
 
-      {/* Projects Table */}
+      {/* Projects List */}
       <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700/50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Project</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Progress</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Priority</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Deadline</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
-              {filteredProjects.map((project) => (
-                <tr key={project.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: project.color }}></div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center space-x-2">
-                          <p className="font-medium text-gray-900 dark:text-white text-sm truncate">{project.name}</p>
-                          <button
-                            onClick={() => toggleFavorite(project.id)}
-                            className={`transition-colors flex-shrink-0 ${
-                              project.is_favorite 
-                                ? 'text-yellow-500 hover:text-yellow-400' 
-                                : 'text-gray-400 hover:text-yellow-500'
-                            }`}
-                          >
-                            <Star size={12} className={project.is_favorite ? 'fill-current' : ''} />
-                          </button>
-                        </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{project.description || 'No description'}</p>
+        {filteredProjects.length > 0 ? (
+          <>
+            {/* Table Header */}
+            <div className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700/50 px-4 py-3">
+              <div className="grid grid-cols-12 gap-4 items-center">
+                <div className="col-span-5 flex items-center space-x-3">
+                  <div className="w-2"></div>
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Project</span>
+                </div>
+                <div className="col-span-1 text-center">
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Status</span>
+                </div>
+                <div className="col-span-1 text-center">
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Priority</span>
+                </div>
+                <div className="col-span-2 text-center">
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Progress</span>
+                </div>
+                <div className="col-span-1 text-center">
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Due</span>
+                </div>
+                <div className="col-span-2 text-center">
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Actions</span>
+                </div>
+              </div>
+            </div>
+            <VirtualizedList
+              items={filteredProjects}
+              height={450}
+              itemHeight={70}
+              className="w-full"
+            renderItem={(project) => (
+              <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                <div className="grid grid-cols-12 gap-4 items-center">
+                  {/* Project Info */}
+                  <div className="col-span-5 flex items-center space-x-3">
+                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: project.color }}></div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">{project.name}</h3>
+                        <button
+                          onClick={() => toggleFavorite(project.id)}
+                          className={`transition-colors flex-shrink-0 ${
+                            project.is_favorite 
+                              ? 'text-yellow-500 hover:text-yellow-400' 
+                              : 'text-gray-400 hover:text-yellow-500'
+                          }`}
+                        >
+                          <Star size={12} className={project.is_favorite ? 'fill-current' : ''} />
+                        </button>
                       </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{project.description || 'No description'}</p>
                     </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="w-full max-w-20">
-                      <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="text-gray-600 dark:text-gray-300">{project.progress}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                        <div 
-                          className="h-1.5 rounded-full transition-all" 
-                          style={{ 
-                            width: `${project.progress}%`,
-                            backgroundColor: project.color
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(project.status)}`}>
-                      {project.status}
+                  </div>
+                  
+                  {/* Status */}
+                  <div className="col-span-1 flex justify-center">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(project.status)} capitalize`}>
+                      {project.status.replace('-', ' ')}
                     </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(project.priority)}`}>
+                  </div>
+                  
+                  {/* Priority */}
+                  <div className="col-span-1 flex justify-center">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(project.priority)} capitalize`}>
                       {project.priority}
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-600 dark:text-gray-300 text-sm">
-                    {project.deadline ? new Date(project.deadline).toLocaleDateString() : '-'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center space-x-1">
-                      <button
-                        onClick={() => handleEdit(project.id)}
-                        className="text-gray-400 hover:text-blue-500 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
-                        title="Edit"
-                      >
-                        <Edit size={12} />
-                      </button>
-                      <button
-                        onClick={() => handleCopy(project)}
-                        className="text-gray-400 hover:text-green-500 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
-                        title="Copy"
-                      >
-                        <Copy size={12} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(project.id)}
-                        className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
-                        title="Delete"
-                      >
-                        <Trash2 size={12} />
-                      </button>
+                  </div>
+                  
+                  {/* Progress */}
+                  <div className="col-span-2 flex flex-col items-center">
+                    <div className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">{project.progress}%</div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="h-2 rounded-full transition-all" 
+                        style={{ 
+                          width: `${project.progress}%`,
+                          backgroundColor: project.color
+                        }}
+                      ></div>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
-        {filteredProjects.length === 0 && (
+                  </div>
+                  
+                  {/* Deadline */}
+                  <div className="col-span-1 text-center">
+                    <div className="text-xs text-gray-600 dark:text-gray-300 font-medium">
+                      {project.deadline ? new Date(project.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '-'}
+                    </div>
+                  </div>
+                  
+                  {/* Actions */}
+                  <div className="col-span-2 flex items-center justify-center space-x-1">
+                    <button
+                      onClick={() => handleEdit(project.id)}
+                      className="text-gray-400 hover:text-blue-500 transition-colors p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                      title="Edit"
+                    >
+                      <Edit size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleCopy(project)}
+                      className="text-gray-400 hover:text-green-500 transition-colors p-1.5 rounded-lg hover:bg-green-50 dark:hover:bg-green-500/10"
+                      title="Copy"
+                    >
+                      <Copy size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(project.id)}
+                      className="text-gray-400 hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10"
+                      title="Delete"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            />
+          </>
+        ) : (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             <p className="text-sm">No projects found matching your filters.</p>
           </div>

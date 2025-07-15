@@ -10,9 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/code-frame": "^7.27.1",
     "@dicebear/collection": "^9.2.2",
     "@dicebear/core": "^9.2.2",
-    "@tanstack/react-virtual": "^3.13.12",
     "@types/pg": "^8.15.4",
     "@vercel/analytics": "^1.5.0",
     "bcryptjs": "^3.0.2",
