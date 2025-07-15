@@ -206,13 +206,13 @@ const Dashboard = () => {
         setTodos(todos.map(todo => 
           todo.id === id ? { ...todo, completed: !todo.completed } : todo
         ));
-        showToast.success(updatedTodo?.completed ? 'Tarefa reaberta' : 'Tarefa concluída!');
+        showToast.success(updatedTodo?.completed ? 'Task reopened' : 'Task completed!');
       } else {
-        showToast.error('Erro ao atualizar tarefa');
+        showToast.error('Failed to update task');
       }
     } catch (error) {
       console.error('Error updating task:', error);
-      showToast.error('Erro ao atualizar tarefa');
+      showToast.error('Failed to update task');
     }
   }, [todos]);
 

@@ -175,13 +175,13 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
             t.id === taskId ? { ...t, status: newStatus } : t
           )
         }));
-        showToast.success(newStatus === 'done' ? 'Tarefa concluída!' : 'Tarefa reaberta');
+        showToast.success(newStatus === 'done' ? 'Task completed!' : 'Task reopened');
       } else {
-        showToast.error('Erro ao atualizar tarefa');
+        showToast.error('Failed to update task');
       }
     } catch (error) {
       console.error('Error updating task status:', error);
-      showToast.error('Erro ao atualizar tarefa');
+      showToast.error('Failed to update task');
     }
   };
 
@@ -250,13 +250,13 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
           ...prev,
           [sectionKey]: prev[sectionKey].filter(task => task.id !== taskId)
         }));
-        showToast.success('Tarefa excluída com sucesso!');
+        showToast.success('Task deleted successfully!');
       } else {
-        showToast.error('Erro ao excluir tarefa');
+        showToast.error('Failed to delete task');
       }
     } catch (error) {
       console.error('Error deleting task:', error);
-      showToast.error('Erro ao excluir tarefa');
+      showToast.error('Failed to delete task');
     }
   };
 
