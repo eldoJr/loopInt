@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Globe, User, Info, Lock } from 'lucide-react';
 
+interface User {
+  id?: string;
+  name?: string;
+  email?: string;
+}
+
 const ProfileAndVisibility = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [profilePhotoPrivacy, setProfilePhotoPrivacy] = useState('anyone');
   const [fullNamePrivacy, setFullNamePrivacy] = useState('anyone');
   const [publicNamePrivacy, setPublicNamePrivacy] = useState('anyone');
