@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, Settings } from 'lucide-react';
 
+interface User {
+  id?: string;
+  name?: string;
+  email?: string;
+}
+
 const ProductSettings = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
