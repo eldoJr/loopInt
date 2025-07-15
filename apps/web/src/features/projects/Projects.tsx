@@ -5,6 +5,7 @@ import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { showToast } from '../../components/ui/Toast';
+import ConfirmationModal from '../../components/ui/ConfirmationModal';
 
 interface ProjectsProps {
   onNavigateBack?: () => void;
@@ -39,6 +40,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
   const [showFavorites, setShowFavorites] = useState(false);
   const [filters, setFilters] = useState({ name: '', dates: '', tags: '' });
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; projectId: string; projectName: string }>({ isOpen: false, projectId: '', projectName: '' });
 
   useEffect(() => {
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -177,24 +179,32 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
     }
   };
 
-  const handleDelete = async (projectId: string) => {
+  const handleDelete = (projectId: string) => {
     const project = projects.find(p => p.id === projectId);
-    if (window.confirm(`Are you sure you want to delete "${project?.name}"? This action cannot be undone.`)) {
-      try {
-        const response = await fetch(`http://localhost:3000/projects/${projectId}`, {
-          method: 'DELETE'
-        });
-        
-        if (response.ok) {
-          fetchProjects();
-          showToast.success('Project deleted successfully!');
-        } else {
-          showToast.error('Failed to delete project');
-        }
-      } catch (error) {
-        console.error('Error deleting project:', error);
+    if (project) {
+      setDeleteConfirmation({
+        isOpen: true,
+        projectId,
+        projectName: project.name
+      });
+    }
+  };
+
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/projects/${deleteConfirmation.projectId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        fetchProjects();
+        showToast.success('Project deleted successfully!');
+      } else {
         showToast.error('Failed to delete project');
       }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      showToast.error('Failed to delete project');
     }
   };
 
@@ -446,6 +456,17 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
           </div>
         )}
       </div>
+      
+      <ConfirmationModal
+        isOpen={deleteConfirmation.isOpen}
+        onClose={() => setDeleteConfirmation({ isOpen: false, projectId: '', projectName: '' })}
+        onConfirm={confirmDelete}
+        title="Delete Project"
+        message={`Are you sure you want to delete "${deleteConfirmation.projectName}"? This action cannot be undone and will permanently remove all project data.`}
+        confirmText="Delete Project"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 };

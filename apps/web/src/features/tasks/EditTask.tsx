@@ -4,6 +4,7 @@ import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import { showToast } from '../../components/ui/Toast';
 
 interface EditTaskProps {
   taskId: string;
@@ -66,6 +67,7 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
         }
       } catch (error) {
         console.error('Error fetching task:', error);
+        showToast.error('Failed to load task data');
       }
     };
 
@@ -143,15 +145,16 @@ const EditTask = ({ taskId, onNavigateBack, onNavigateToTasks }: EditTaskProps) 
         const result = await response.json();
         console.log('Task updated successfully:', result);
         setIsSaved(true);
+        showToast.success('Task updated successfully!');
         setTimeout(() => onNavigateToTasks?.(), 1000);
       } else {
         const errorText = await response.text();
         console.error('Failed to update task:', errorText);
-        alert('Failed to update task. Please try again.');
+        showToast.error('Failed to update task. Please try again.');
       }
     } catch (error) {
       console.error('Error updating task:', error);
-      alert('Network error. Please check if the server is running.');
+      showToast.error('Network error. Please check if the server is running.');
     }
   };
 

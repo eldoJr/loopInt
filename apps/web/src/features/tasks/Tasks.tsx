@@ -240,6 +240,11 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
   };
 
   const deleteTask = async (taskUuid: string, sectionKey: SectionKey, taskId: number) => {
+    const task = tasks[sectionKey].find(t => t.id === taskId);
+    if (!window.confirm(`Are you sure you want to delete "${task?.title}"? This action cannot be undone.`)) {
+      return;
+    }
+    
     try {
       const response = await fetch(`http://localhost:3000/tasks/${taskUuid}`, {
         method: 'DELETE'
