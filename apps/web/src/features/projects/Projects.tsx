@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import { showToast } from '../../lib/toast';
+import { showToast } from '../../components/ui/Toast';
 
 interface ProjectsProps {
   onNavigateBack?: () => void;

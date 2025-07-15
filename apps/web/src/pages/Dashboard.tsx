@@ -11,7 +11,7 @@ import {
   Star,
   AlertTriangle
 } from 'lucide-react';
-import { showToast } from '../lib/toast';
+import { showToast } from '../components/ui/Toast';
 import foldersIcon from '../assets/icons/folders.png';
 import taskManagementIcon from '../assets/icons/task-management.png';
 import teamBuildingIcon from '../assets/icons/team-building.png';

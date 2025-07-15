@@ -29,23 +29,23 @@
 ### **FASE 1: Fundação UX (Semana 1-2)**
 *Impacto Alto, Esforço Baixo*
 
-#### 1.1 React Hot Toast - Sistema de Notificações
+#### 1.1 React Hot Toast - Sistema de Notificações ✅
 ```bash
 npm install react-hot-toast
 ```
 
 **Implementação:**
-- [ ] Substituir alerts básicos por toast notifications
-- [ ] Criar wrapper customizado com tema dark/light
-- [ ] Implementar em todas as operações CRUD
-- [ ] Adicionar diferentes tipos: success, error, warning, info
+- [x] Substituir alerts básicos por toast notifications
+- [x] Criar wrapper customizado com tema dark/light
+- [x] Implementar em todas as operações CRUD
+- [x] Adicionar diferentes tipos: success, error, warning, info
 
-**Arquivos a modificar:**
-- `src/lib/toast.ts` (novo)
-- `src/App.tsx` (provider)
-- `src/features/projects/Projects.tsx`
-- `src/features/tasks/Tasks.tsx`
-- `src/features/team/Team.tsx`
+**Arquivos modificados:**
+- `src/lib/toast.ts` ✅ (criado)
+- `src/App.tsx` ✅ (provider adicionado)
+- `src/features/projects/Projects.tsx` ✅ (toasts implementados)
+- `src/features/tasks/Tasks.tsx` ✅ (toasts implementados)
+- `src/pages/Dashboard.tsx` ✅ (toasts implementados)
 
 #### 1.2 React Hook Form + Zod - Formulários Robustos
 ```bash

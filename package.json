@@ -33,6 +33,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "react-hot-toast": "^2.5.2",
     "recharts": "^3.0.2"
   }
 }
