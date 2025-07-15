@@ -5,6 +5,7 @@ import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import AIGenerateTask from '../ai/GenerateTask';
+import { showToast } from '../../components/ui/Toast';
 
 interface AddTaskProps {
   onNavigateBack?: () => void;
@@ -120,15 +121,16 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
         const result = await response.json();
         console.log('Task created successfully:', result);
         setIsSaved(true);
+        showToast.success('Task created successfully!');
         setTimeout(() => onNavigateToTasks?.(), 1000);
       } else {
         const errorText = await response.text();
         console.error('Failed to create task:', errorText);
-        alert('Failed to create task. Please try again.');
+        showToast.error('Failed to create task. Please try again.');
       }
     } catch (error) {
       console.error('Error creating task:', error);
-      alert('Network error. Please check if the server is running.');
+      showToast.error('Network error. Please check if the server is running.');
     }
   };
 

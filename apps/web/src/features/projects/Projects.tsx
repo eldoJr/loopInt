@@ -178,7 +178,8 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
   };
 
   const handleDelete = async (projectId: string) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
+    const project = projects.find(p => p.id === projectId);
+    if (window.confirm(`Are you sure you want to delete "${project?.name}"? This action cannot be undone.`)) {
       try {
         const response = await fetch(`http://localhost:3000/projects/${projectId}`, {
           method: 'DELETE'

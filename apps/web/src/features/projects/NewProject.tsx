@@ -6,6 +6,7 @@ import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Slider } from '../../components/ui/Slider';
 import { Toggle } from '../../components/ui/Toggle';
+import { showToast } from '../../components/ui/Toast';
 
 interface NewProjectProps {
   onNavigateBack?: () => void;
@@ -145,12 +146,14 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
       
       if (response.ok) {
         setIsSaved(true);
+        showToast.success('Project created successfully!');
         setTimeout(() => onNavigateToProjects?.(), 1000);
       } else {
         throw new Error('Failed to create project');
       }
     } catch (error) {
       console.error('Error creating project:', error);
+      showToast.error('Failed to create project. Please try again.');
       setErrors({ submit: 'Failed to create project. Please try again.' });
     } finally {
       setSaving(false);

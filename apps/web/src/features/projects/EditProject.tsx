@@ -6,6 +6,7 @@ import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Slider } from '../../components/ui/Slider';
 import { Toggle } from '../../components/ui/Toggle';
+import { showToast } from '../../components/ui/Toast';
 
 interface EditProjectProps {
   projectId: string;
@@ -93,6 +94,7 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
         }
       } catch (error) {
         console.error('Error fetching project:', error);
+        showToast.error('Failed to load project data');
       }
     };
 
@@ -179,12 +181,14 @@ const EditProject = ({ projectId, onNavigateBack, onNavigateToProjects }: EditPr
       
       if (response.ok) {
         setIsSaved(true);
+        showToast.success('Project updated successfully!');
         setTimeout(() => onNavigateToProjects?.(), 1000);
       } else {
         throw new Error('Failed to update project');
       }
     } catch (error) {
       console.error('Error updating project:', error);
+      showToast.error('Failed to update project. Please try again.');
       setErrors({ submit: 'Failed to update project. Please try again.' });
     } finally {
       setSaving(false);
