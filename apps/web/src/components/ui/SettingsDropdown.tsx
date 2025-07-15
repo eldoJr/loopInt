@@ -185,7 +185,7 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
           </div>
           
           {/* Content */}
-          <div className="max-h-80 overflow-y-auto">
+          <div className="max-h-[36rem] overflow-y-auto">
             {filteredGroups.length > 0 ? (
               filteredGroups.map((group, groupIndex) => (
                 <div key={groupIndex} className="p-4">
@@ -195,7 +195,7 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
                       {group.items.length}
                     </span>
                   </h4>
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {group.items.map((item, itemIndex) => {
                       const IconComponent = item.icon;
                       return (
@@ -205,7 +205,7 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
                             onNavigate?.(item.section);
                             setIsOpen(false);
                           }}
-                          className="w-full flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group"
+                          className="w-full flex items-start space-x-3 p-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group"
                         >
                           <div className="flex-shrink-0 mt-0.5">
                             <IconComponent className="w-5 h-5 text-blue-500 group-hover:text-blue-600 transition-colors" />
