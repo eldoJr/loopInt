@@ -126,13 +126,13 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
         setProjects(prev => prev.map(p => 
           p.id === id ? { ...p, is_favorite: !p.is_favorite } : p
         ));
-        showToast.success(project.is_favorite ? 'Removido dos favoritos' : 'Adicionado aos favoritos');
+        showToast.success(project.is_favorite ? 'Removed from favorites' : 'Added to favorites');
       } else {
-        showToast.error('Erro ao atualizar favorito');
+        showToast.error('Failed to update favorite');
       }
     } catch (error) {
       console.error('Error updating favorite:', error);
-      showToast.error('Erro ao atualizar favorito');
+      showToast.error('Failed to update favorite');
     }
   };
 
@@ -167,13 +167,13 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
       
       if (response.ok) {
         fetchProjects();
-        showToast.success('Projeto copiado com sucesso!');
+        showToast.success('Project copied successfully!');
       } else {
-        showToast.error('Erro ao copiar projeto');
+        showToast.error('Failed to copy project');
       }
     } catch (error) {
       console.error('Error copying project:', error);
-      showToast.error('Erro ao copiar projeto');
+      showToast.error('Failed to copy project');
     }
   };
 
@@ -186,13 +186,13 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
         
         if (response.ok) {
           fetchProjects();
-          showToast.success('Projeto excluído com sucesso!');
+          showToast.success('Project deleted successfully!');
         } else {
-          showToast.error('Erro ao excluir projeto');
+          showToast.error('Failed to delete project');
         }
       } catch (error) {
         console.error('Error deleting project:', error);
-        showToast.error('Erro ao excluir projeto');
+        showToast.error('Failed to delete project');
       }
     }
   };
