@@ -93,7 +93,7 @@ const ProfileAndVisibility = () => {
             <div className="flex-1">
               <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Public name 
-                <Info className="ml-1 w-4 h-4 text-blue-500" title="This is how your name appears to others" />
+                <Info className="ml-1 w-4 h-4 text-blue-500" />
               </label>
               <input 
                 type="text" 

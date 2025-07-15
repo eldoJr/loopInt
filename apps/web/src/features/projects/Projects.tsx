@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Plus, Star, Search, X, Filter, Edit, Copy, Trash2, Calendar } from 'lucide-react';
-import { format, isWithinInterval, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import { showToast } from '../../lib/toast';
 
 interface ProjectsProps {
   onNavigateBack?: () => void;
@@ -125,9 +126,13 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
         setProjects(prev => prev.map(p => 
           p.id === id ? { ...p, is_favorite: !p.is_favorite } : p
         ));
+        showToast.success(project.is_favorite ? 'Removido dos favoritos' : 'Adicionado aos favoritos');
+      } else {
+        showToast.error('Erro ao atualizar favorito');
       }
     } catch (error) {
       console.error('Error updating favorite:', error);
+      showToast.error('Erro ao atualizar favorito');
     }
   };
 
@@ -162,10 +167,13 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
       
       if (response.ok) {
         fetchProjects();
-        console.log('Project copied successfully');
+        showToast.success('Projeto copiado com sucesso!');
+      } else {
+        showToast.error('Erro ao copiar projeto');
       }
     } catch (error) {
       console.error('Error copying project:', error);
+      showToast.error('Erro ao copiar projeto');
     }
   };
 
@@ -178,10 +186,13 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
         
         if (response.ok) {
           fetchProjects();
-          console.log('Project deleted successfully');
+          showToast.success('Projeto excluído com sucesso!');
+        } else {
+          showToast.error('Erro ao excluir projeto');
         }
       } catch (error) {
         console.error('Error deleting project:', error);
+        showToast.error('Erro ao excluir projeto');
       }
     }
   };

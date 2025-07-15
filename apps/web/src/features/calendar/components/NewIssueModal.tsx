@@ -75,12 +75,12 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
     }
   }, [selectedType, subject, description, project, calendar, priority, status, startDate, endDate, startTime, endTime, wholeDay, tags, reminders, onClose]);
 
-  const addTag = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags([...tags, newTag.trim()]);
-      setNewTag('');
-    }
-  };
+  // const addTag = () => {
+  //   if (newTag.trim() && !tags.includes(newTag.trim())) {
+  //     setTags([...tags, newTag.trim()]);
+  //     setNewTag('');
+  //   }
+  // };
 
   const removeTag = (tag: string) => {
     setTags(tags.filter(t => t !== tag));

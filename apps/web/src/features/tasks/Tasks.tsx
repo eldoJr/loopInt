@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, Edit, Trash2, Search, X, Filter } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, Edit, Trash2, Search, X } from 'lucide-react';
 import { format, addDays, startOfWeek, endOfWeek, isToday, isTomorrow, isThisWeek, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import { showToast } from '../../lib/toast';
 
 
 interface TasksProps {
@@ -174,9 +175,13 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
             t.id === taskId ? { ...t, status: newStatus } : t
           )
         }));
+        showToast.success(newStatus === 'done' ? 'Tarefa concluída!' : 'Tarefa reaberta');
+      } else {
+        showToast.error('Erro ao atualizar tarefa');
       }
     } catch (error) {
       console.error('Error updating task status:', error);
+      showToast.error('Erro ao atualizar tarefa');
     }
   };
 
@@ -245,9 +250,13 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
           ...prev,
           [sectionKey]: prev[sectionKey].filter(task => task.id !== taskId)
         }));
+        showToast.success('Tarefa excluída com sucesso!');
+      } else {
+        showToast.error('Erro ao excluir tarefa');
       }
     } catch (error) {
       console.error('Error deleting task:', error);
+      showToast.error('Erro ao excluir tarefa');
     }
   };
 

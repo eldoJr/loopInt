@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Send, Wand2, Brain, Zap, MessageSquare, Loader2, CheckCircle, Copy, Download } from 'lucide-react';
+import { Sparkles, Send, Wand2, Brain, Zap, MessageSquare, Loader2, CheckCircle, Copy } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 interface GeneratedTaskData {

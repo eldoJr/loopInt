@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import FloatingChatIcon from './components/ui/FloatingChatIcon';
+import { Toaster } from './lib/toast';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -35,8 +36,22 @@ function App() {
     <>
       {renderPage()}
       <FloatingChatIcon 
-        hasNotification={true} 
         onChatOpen={() => console.log('Chat opened')} 
+      />
+      <Toaster 
+        position="top-right"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          className: '',
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+        }}
       />
     </>
   );

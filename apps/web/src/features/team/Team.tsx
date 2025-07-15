@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, X, Filter, Edit, Trash2, Mail, Phone, MessageSquare, Linkedin, User, Building, MapPin } from 'lucide-react';
+import { Plus, Search, X, Edit, Trash2, Mail, Phone, MessageSquare, Linkedin, User, Building, MapPin } from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import DashboardEmptyState from '../../components/ui/DashboardEmptyState';

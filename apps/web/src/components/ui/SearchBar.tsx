@@ -87,7 +87,7 @@ const SearchBar = ({
               ? 'border-blue-500 bg-gray-800/50 shadow-lg shadow-blue-500/10' 
               : 'border-gray-700/50 hover:border-gray-600/50'
           }`}
-          whileFocusWithin={{ scale: 1.02 }}
+          whileFocus={{ scale: 1.02 }}
         >
           {/* Search Icon */}
           <div className="pl-3 pr-2">

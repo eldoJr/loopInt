@@ -11,6 +11,7 @@ import {
   Star,
   AlertTriangle
 } from 'lucide-react';
+import { showToast } from '../lib/toast';
 import foldersIcon from '../assets/icons/folders.png';
 import taskManagementIcon from '../assets/icons/task-management.png';
 import teamBuildingIcon from '../assets/icons/team-building.png';
@@ -201,12 +202,17 @@ const Dashboard = () => {
       });
       
       if (response.ok) {
+        const updatedTodo = todos.find(t => t.id === id);
         setTodos(todos.map(todo => 
           todo.id === id ? { ...todo, completed: !todo.completed } : todo
         ));
+        showToast.success(updatedTodo?.completed ? 'Tarefa reaberta' : 'Tarefa concluída!');
+      } else {
+        showToast.error('Erro ao atualizar tarefa');
       }
     } catch (error) {
       console.error('Error updating task:', error);
+      showToast.error('Erro ao atualizar tarefa');
     }
   }, [todos]);
 

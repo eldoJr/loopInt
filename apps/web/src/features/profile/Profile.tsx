@@ -24,6 +24,11 @@ interface User {
   email?: string;
 }
 
+interface TeamData {
+  name: string;
+  description?: string;
+}
+
 const Profile = ({ onNavigateBack }: ProfileProps) => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
@@ -103,7 +108,7 @@ const Profile = ({ onNavigateBack }: ProfileProps) => {
     console.log('Changes cancelled');
   };
 
-  const handleCreateTeam = (teamData: any) => {
+  const handleCreateTeam = (teamData: TeamData) => {
     console.log('Creating team:', teamData);
   };
 
