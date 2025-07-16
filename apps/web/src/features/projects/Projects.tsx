@@ -384,7 +384,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
       <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300">
         {filteredProjects.length > 0 ? (
           <>
-            {/* Table Header */}
+            {/* Table Header */} 
             <div className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700/50 px-4 py-3">
               <div className="grid grid-cols-12 gap-4 items-center">
                 <div className="col-span-5 flex items-center space-x-3">
