@@ -167,8 +167,11 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
     setSearchQuery(value);
   };
 
-  const handleProjectSelect = (project: Project) => {
-    onNavigateToEditProject?.(project.id);
+  const handleProjectSelect = (result: Record<string, unknown>) => {
+    const project = projects.find(p => p.id === result.id) as Project;
+    if (project?.id) {
+      onNavigateToEditProject?.(project.id);
+    }
   };
 
   const handleEdit = (projectId: string) => {
@@ -312,7 +315,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
                 placeholder="Search projects by name, description, or tags..."
                 value={filters.name}
                 onChange={handleSearchChange}
-                searchData={projects}
+                searchData={projects as unknown as Record<string, unknown>[]}
                 searchKeys={['name', 'description', 'tags']}
                 onResultSelect={handleProjectSelect}
                 showResults={true}

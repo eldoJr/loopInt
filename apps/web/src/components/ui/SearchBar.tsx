@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, X, Filter, Command, ArrowUp, ArrowDown, Enter, FolderOpen, CheckSquare, Users, Calendar, BarChart3, Home } from 'lucide-react';
+import { Search, X, Filter, Command } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearch } from '../../hooks/useSearch';
 
@@ -8,14 +8,6 @@ interface FilterOption {
   label: string;
   value: string;
   count?: number;
-}
-
-interface SearchResult {
-  id: string;
-  title: string;
-  subtitle?: string;
-  type?: string;
-  action?: () => void;
 }
 
 interface SearchBarProps {
@@ -28,9 +20,9 @@ interface SearchBarProps {
   onFilterChange?: (filters: string[]) => void;
   showCommandHint?: boolean;
   loading?: boolean;
-  searchData?: any[];
+  searchData?: Array<Record<string, unknown>>;
   searchKeys?: string[];
-  onResultSelect?: (result: any) => void;
+  onResultSelect?: (result: Record<string, unknown>) => void;
   showResults?: boolean;
   maxResults?: number;
 }
@@ -134,7 +126,7 @@ const SearchBar = ({
     }
   };
 
-  const handleResultSelect = (result: any) => {
+  const handleResultSelect = (result: Record<string, unknown>) => {
     onResultSelect?.(result);
     setShowSearchResults(false);
     setSelectedIndex(-1);
@@ -164,23 +156,21 @@ const SearchBar = ({
     <div className="relative w-full max-w-2xl">
       <form onSubmit={handleSubmit} className="relative">
         <motion.div
-          className={`relative flex items-center bg-gray-800/30 border rounded-lg transition-all duration-200 ${
+          className={`relative flex items-center bg-white dark:bg-gray-800/30 border rounded-lg transition-all duration-200 ${
             isFocused 
-              ? 'border-blue-500 bg-gray-800/50 shadow-lg shadow-blue-500/10' 
-              : 'border-gray-700/50 hover:border-gray-600/50'
+              ? 'border-blue-500 dark:border-blue-500 bg-blue-50/50 dark:bg-gray-800/50 shadow-lg shadow-blue-500/10' 
+              : 'border-gray-300 dark:border-gray-700/50 hover:border-gray-400 dark:hover:border-gray-600/50'
           }`}
-          whileFocus={{ scale: 1.02 }}
+          whileFocus={{ scale: 1.01 }}
         >
-          {/* Search Icon */}
-          <div className="pl-3 pr-2">
+          <div className="pl-2.5 pr-1.5">
             {loading ? (
-              <div className="w-4 h-4 border-2 border-gray-600 border-t-blue-500 rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-gray-400 dark:border-gray-600 border-t-blue-500 rounded-full animate-spin" />
             ) : (
-              <Search className="w-4 h-4 text-gray-400" />
+              <Search className="w-4 h-4 text-gray-400 dark:text-gray-400" />
             )}
           </div>
 
-          {/* Input */}
           <input
             ref={inputRef}
             type="text"
@@ -195,47 +185,43 @@ const SearchBar = ({
             }}
             onBlur={() => {
               setIsFocused(false);
-              // Delay hiding results to allow for clicks
               setTimeout(() => {
                 setShowSearchResults(false);
                 setSelectedIndex(-1);
               }, 150);
             }}
             placeholder={placeholder}
-            className="flex-1 bg-transparent text-gray-300 placeholder-gray-500 py-3 px-2 focus:outline-none"
+            className="flex-1 bg-transparent text-gray-900 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-500 py-2 px-2 focus:outline-none text-sm"
           />
 
-          {/* Command Hint */}
           {showCommandHint && !isFocused && !searchValue && (
-            <div className="hidden sm:flex items-center space-x-1 px-2 text-xs text-gray-500">
+            <div className="hidden sm:flex items-center space-x-1 px-2 text-xs text-gray-500 dark:text-gray-500">
               <Command className="w-3 h-3" />
               <span>K</span>
             </div>
           )}
 
-          {/* Clear Button */}
           {searchValue && (
             <motion.button
               type="button"
               onClick={handleClear}
-              className="p-1 mx-1 text-gray-400 hover:text-gray-300 rounded"
+              className="p-1 mx-1 text-gray-400 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </motion.button>
           )}
 
-          {/* Filter Button */}
           {filters.length > 0 && (
             <button
               type="button"
               onClick={() => setShowFilters(!showFilters)}
-              className={`p-2 mx-1 rounded transition-colors ${
+              className={`p-1.5 mx-1 rounded transition-colors ${
                 selectedFilters.length > 0 || showFilters
-                  ? 'text-blue-400 bg-blue-500/10'
-                  : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/30'
+                  ? 'text-blue-500 dark:text-blue-400 bg-blue-100 dark:bg-blue-500/10'
+                  : 'text-gray-400 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/30'
               }`}
             >
               <Filter className="w-4 h-4" />
@@ -247,168 +233,95 @@ const SearchBar = ({
         </motion.div>
       </form>
 
-      {/* Filters Dropdown */}
       <AnimatePresence>
         {showFilters && filters.length > 0 && (
           <motion.div
             ref={filtersRef}
-            className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-800 rounded-lg shadow-xl z-50"
+            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
             <div className="p-3">
-              <h3 className="text-sm font-medium text-gray-300 mb-3">Filters</h3>
+              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-300 mb-3">Filters</h3>
               <div className="space-y-2">
                 {filters.map((filter) => (
                   <label
                     key={filter.id}
-                    className="flex items-center justify-between p-2 hover:bg-gray-800/50 rounded cursor-pointer transition-colors"
+                    className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded cursor-pointer transition-colors"
                   >
                     <div className="flex items-center space-x-2">
                       <input
                         type="checkbox"
                         checked={selectedFilters.includes(filter.id)}
                         onChange={() => toggleFilter(filter.id)}
-                        className="w-4 h-4 bg-gray-800 border border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                        className="w-4 h-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
                       />
-                      <span className="text-sm text-gray-300">{filter.label}</span>
+                      <span className="text-sm text-gray-900 dark:text-gray-300">{filter.label}</span>
                     </div>
                     {filter.count !== undefined && (
-                      <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded">
+                      <span className="text-xs text-gray-500 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                         {filter.count}
                       </span>
                     )}
                   </label>
                 ))}
               </div>
-              
-              {selectedFilters.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-gray-800">
-                  <button
-                    onClick={() => onFilterChange?.([])}
-                    className="text-xs text-gray-400 hover:text-gray-300 transition-colors"
-                  >
-                    Clear all filters
-                  </button>
-                </div>
-              )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Search Results Dropdown */}
       <AnimatePresence>
         {showSearchResults && searchResults.length > 0 && (
           <motion.div
             ref={resultsRef}
-            className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border border-gray-800 rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto"
+            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
           >
             <div className="p-2">
-              <div className="text-xs text-gray-500 px-2 py-1 mb-2">
-                {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
-              </div>
-              {searchResults.slice(0, maxResults).map((result, index) => {
-                const item = result.item;
-                const isSelected = index === selectedIndex;
-                
-                const getTypeIcon = (type: string) => {
-                  switch (type) {
-                    case 'project': return <FolderOpen className="w-4 h-4 text-blue-400" />;
-                    case 'task': return <CheckSquare className="w-4 h-4 text-green-400" />;
-                    case 'team': return <Users className="w-4 h-4 text-purple-400" />;
-                    case 'page': return getPageIcon(item.section || '');
-                    default: return <Search className="w-4 h-4 text-gray-400" />;
-                  }
-                };
-                
-                const getPageIcon = (section: string) => {
-                  switch (section) {
-                    case 'Dashboard': return <Home className="w-4 h-4 text-orange-400" />;
-                    case 'Projects': return <FolderOpen className="w-4 h-4 text-blue-400" />;
-                    case 'Tasks': return <CheckSquare className="w-4 h-4 text-green-400" />;
-                    case 'Team': return <Users className="w-4 h-4 text-purple-400" />;
-                    case 'Calendar': return <Calendar className="w-4 h-4 text-red-400" />;
-                    case 'Analytics': return <BarChart3 className="w-4 h-4 text-yellow-400" />;
-                    default: return <Search className="w-4 h-4 text-gray-400" />;
-                  }
-                };
-                
-                return (
-                  <div
-                    key={item.id || index}
-                    className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                      isSelected 
-                        ? 'bg-blue-500/20 border border-blue-500/30' 
-                        : 'hover:bg-gray-800/50 border border-transparent'
-                    }`}
-                    onClick={() => handleResultSelect(item)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3 flex-1 min-w-0">
-                        <div className="flex-shrink-0">
-                          {getTypeIcon(item.type || '')}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-gray-300 truncate">
-                            {item.name || item.title}
-                          </div>
-                          {(item.description || item.subtitle) && (
-                            <div className="text-xs text-gray-500 truncate mt-1">
-                              {item.description || item.subtitle}
-                            </div>
-                          )}
-                          <div className="flex items-center space-x-2 mt-1">
-                            <div className="text-xs text-blue-400 capitalize">
-                              {item.type}
-                            </div>
-                            {item.section && item.section !== item.type && (
-                              <>
-                                <span className="text-xs text-gray-600">•</span>
-                                <div className="text-xs text-gray-500">
-                                  {item.section}
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
+              {searchResults.slice(0, maxResults).map((result, index) => (
+                <button
+                  key={String(result.item.id) || `result-${index}`}
+                  onClick={() => handleResultSelect(result.item)}
+                  className={`w-full text-left p-2.5 rounded-lg transition-colors ${
+                    index === selectedIndex
+                      ? 'bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-800/50'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0">
+                      <div className="w-7 h-7 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                        <span className="text-xs text-gray-600 dark:text-gray-300">
+                          {String(result.item.name || result.item.title || '?').charAt(0).toUpperCase()}
+                        </span>
                       </div>
-                      {isSelected && (
-                        <div className="flex items-center text-xs text-gray-500 ml-2 flex-shrink-0">
-                          <Enter className="w-3 h-3" />
-                        </div>
-                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">
+                        {(() => {
+                          const name = result.item.name as string | undefined;
+                          const title = result.item.title as string | undefined;
+                          return name || title || 'Untitled';
+                        })()}
+                      </p>
+                      {(() => {
+                        const description = result.item.description as string | undefined;
+                        return description ? (
+                          <p className="text-xs text-gray-400 truncate">
+                            {description}
+                          </p>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
-                );
-              })}
-              
-              {searchResults.length > maxResults && (
-                <div className="text-xs text-gray-500 px-2 py-2 border-t border-gray-800 mt-2">
-                  +{searchResults.length - maxResults} more results
-                </div>
-              )}
-              
-              <div className="text-xs text-gray-600 px-2 py-2 border-t border-gray-800 mt-2 flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <span className="flex items-center space-x-1">
-                    <ArrowUp className="w-3 h-3" />
-                    <ArrowDown className="w-3 h-3" />
-                    <span>Navigate</span>
-                  </span>
-                  <span className="flex items-center space-x-1">
-                    <Enter className="w-3 h-3" />
-                    <span>Select</span>
-                  </span>
-                </div>
-                <span>ESC to close</span>
-              </div>
+                </button>
+              ))}
             </div>
           </motion.div>
         )}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, Edit, Trash2, Search, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, Calendar, Clock, CheckCircle, Circle, Edit, Trash2,} from 'lucide-react';
 import { format, addDays, startOfWeek, endOfWeek, isToday, isTomorrow, isThisWeek, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
@@ -53,7 +53,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
   const allTasks = Object.values(tasks).flat();
   
   // Fuzzy search setup
-  const { results: searchResults, setQuery: setSearchQuery } = useSearch({
+  const { results: searchResults, setQuery: setFuseQuery } = useSearch({
     data: allTasks,
     keys: ['title', 'description'],
     threshold: 0.3
@@ -259,11 +259,12 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    setSearchQuery(value);
+    setFuseQuery(value);
   };
 
-  const handleTaskSelect = (task: Task) => {
-    if (task.uuid) {
+  const handleTaskSelect = (result: Record<string, unknown>) => {
+    const task = allTasks.find(t => t.id === result.id) as Task;
+    if (task?.uuid) {
       onNavigateToEditTask?.(task.uuid);
     }
   };

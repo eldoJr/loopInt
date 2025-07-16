@@ -1,4 +1,4 @@
-import { SidebarOpen, SidebarClose, Search, Sun, Moon } from 'lucide-react';
+import { SidebarOpen, SidebarClose, Sun, Moon } from 'lucide-react';
 import logoImg from '../../assets/img/logo/logo-b.svg';
 import logoImgWhite from '../../assets/img/logo/logo-w.svg';
 import UserProfileDropdown from './UserProfileDropdown';
@@ -69,10 +69,10 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
         );
 
         // Add projects
-        if (projectsRes.ok) {
-          const projects = await projectsRes.json();
-          const userProjects = projects.filter((p: any) => p.created_by === currentUser.id);
-          userProjects.forEach((project: any) => {
+        if (projectsRes.ok && 'json' in projectsRes) {
+          const projects = await projectsRes.json() as Array<{ id: string; name: string; description?: string; created_by: string }>;
+          const userProjects = projects.filter(p => p.created_by === currentUser.id);
+          userProjects.forEach(project => {
             searchItems.push({
               id: `project-${project.id}`,
               name: project.name,
@@ -84,10 +84,10 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
         }
 
         // Add tasks
-        if (tasksRes.ok) {
-          const tasks = await tasksRes.json();
-          const userTasks = tasks.filter((t: any) => t.assigned_to === currentUser.id);
-          userTasks.forEach((task: any) => {
+        if (tasksRes.ok && 'json' in tasksRes) {
+          const tasks = await tasksRes.json() as Array<{ id: string; title: string; description?: string; assigned_to: string }>;
+          const userTasks = tasks.filter(t => t.assigned_to === currentUser.id);
+          userTasks.forEach(task => {
             searchItems.push({
               id: `task-${task.id}`,
               title: task.title,
@@ -111,9 +111,10 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
     setSearchQuery(query);
   };
 
-  const handleGlobalResultSelect = (result: GlobalSearchItem) => {
-    if (result.section) {
-      onNavigate?.(result.section);
+  const handleGlobalResultSelect = (result: Record<string, unknown>) => {
+    const item = result as unknown as GlobalSearchItem;
+    if (item.section) {
+      onNavigate?.(item.section);
     }
     setSearchQuery('');
   };
@@ -158,7 +159,7 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
               placeholder="Search projects, tasks, or navigate..."
               value={searchQuery}
               onChange={handleGlobalSearch}
-              searchData={globalSearchData}
+              searchData={globalSearchData as unknown as Record<string, unknown>[]}
               searchKeys={['name', 'title', 'description']}
               onResultSelect={handleGlobalResultSelect}
               showResults={true}
