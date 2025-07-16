@@ -11,9 +11,9 @@ export const projectSchema = z.object({
   budget: z.string().optional(),
   team_id: z.string().optional(),
   client_id: z.string().optional(),
-  tags: z.array(z.string()).default([]),
+  tags: z.array(z.string()).optional().default([]),
   color: z.string().min(1, 'Color is required'),
-  is_favorite: z.boolean().default(false)
+  is_favorite: z.boolean().optional().default(false)
 }).refine((data) => {
   if (data.start_date && data.deadline) {
     return new Date(data.start_date) <= new Date(data.deadline);

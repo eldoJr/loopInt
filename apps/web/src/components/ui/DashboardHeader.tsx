@@ -6,11 +6,22 @@ import AddDropdown from './AddDropdown';
 import NotificationsDropdown from './NotificationsDropdown';
 import HelpDropdown from './HelpDropdown';
 import SettingsDropdown from './SettingsDropdown';
+import SearchBar from './SearchBar';
 import { useTheme } from '../../context/ThemeContext';
+import { useState, useEffect } from 'react';
 
 interface User {
   name?: string;
   // Add other user properties here as needed
+}
+
+interface GlobalSearchItem {
+  id: string;
+  name?: string;
+  title?: string;
+  description?: string;
+  type: 'project' | 'task' | 'team' | 'page';
+  section?: string;
 }
 
 interface DashboardHeaderProps {
@@ -27,6 +38,85 @@ interface DashboardHeaderProps {
 
 const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNavigate, setSidebarHovered, setIsMouseOverButton }: DashboardHeaderProps) => {
   const { theme, toggleTheme } = useTheme();
+  const [globalSearchData, setGlobalSearchData] = useState<GlobalSearchItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Fetch global search data
+  useEffect(() => {
+    const fetchGlobalData = async () => {
+      try {
+        const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+        const currentUser = userData ? JSON.parse(userData) : null;
+        
+        if (!currentUser) return;
+
+        // Fetch projects and tasks for global search
+        const [projectsRes, tasksRes] = await Promise.all([
+          fetch('http://localhost:3000/projects').catch(() => ({ ok: false })),
+          fetch('http://localhost:3000/tasks').catch(() => ({ ok: false }))
+        ]);
+
+        const searchItems: GlobalSearchItem[] = [];
+
+        // Add navigation pages
+        searchItems.push(
+          { id: 'nav-dashboard', title: 'Dashboard', type: 'page', section: 'Dashboard' },
+          { id: 'nav-projects', title: 'Projects', type: 'page', section: 'Projects' },
+          { id: 'nav-tasks', title: 'Tasks', type: 'page', section: 'Tasks' },
+          { id: 'nav-team', title: 'Team', type: 'page', section: 'Team' },
+          { id: 'nav-calendar', title: 'Calendar', type: 'page', section: 'Calendar' },
+          { id: 'nav-analytics', title: 'Analytics', type: 'page', section: 'Analytics' }
+        );
+
+        // Add projects
+        if (projectsRes.ok) {
+          const projects = await projectsRes.json();
+          const userProjects = projects.filter((p: any) => p.created_by === currentUser.id);
+          userProjects.forEach((project: any) => {
+            searchItems.push({
+              id: `project-${project.id}`,
+              name: project.name,
+              description: project.description,
+              type: 'project',
+              section: 'Projects'
+            });
+          });
+        }
+
+        // Add tasks
+        if (tasksRes.ok) {
+          const tasks = await tasksRes.json();
+          const userTasks = tasks.filter((t: any) => t.assigned_to === currentUser.id);
+          userTasks.forEach((task: any) => {
+            searchItems.push({
+              id: `task-${task.id}`,
+              title: task.title,
+              description: task.description,
+              type: 'task',
+              section: 'Tasks'
+            });
+          });
+        }
+
+        setGlobalSearchData(searchItems);
+      } catch (error) {
+        console.error('Error fetching global search data:', error);
+      }
+    };
+
+    fetchGlobalData();
+  }, []);
+
+  const handleGlobalSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleGlobalResultSelect = (result: GlobalSearchItem) => {
+    if (result.section) {
+      onNavigate?.(result.section);
+    }
+    setSearchQuery('');
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50 px-2 sm:px-4 py-2 h-14">
@@ -61,14 +151,19 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
           </button>
         </div>
 
-        {/* Center - Search */}
+        {/* Center - Global Search */}
         <div className="flex-1 flex items-center justify-center px-2 sm:px-4 max-w-2xl">
-          <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl">
-            <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg pl-8 pr-3 py-1.5 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+          <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl">
+            <SearchBar
+              placeholder="Search projects, tasks, or navigate..."
+              value={searchQuery}
+              onChange={handleGlobalSearch}
+              searchData={globalSearchData}
+              searchKeys={['name', 'title', 'description']}
+              onResultSelect={handleGlobalResultSelect}
+              showResults={true}
+              maxResults={8}
+              showCommandHint={true}
             />
           </div>
           <div className="ml-2 sm:ml-3 hidden sm:block">

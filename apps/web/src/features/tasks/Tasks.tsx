@@ -5,6 +5,8 @@ import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { showToast } from '../../components/ui/Toast';
+import SearchBar from '../../components/ui/SearchBar';
+import { useSearch } from '../../hooks/useSearch';
 
 
 interface TasksProps {
@@ -46,6 +48,16 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
   const [filter, setFilter] = useState('all');
   const [view, setView] = useState<'Day' | '3 days' | 'Week' | 'Month'>('Week');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Get all tasks for search
+  const allTasks = Object.values(tasks).flat();
+  
+  // Fuzzy search setup
+  const { results: searchResults, setQuery: setSearchQuery } = useSearch({
+    data: allTasks,
+    keys: ['title', 'description'],
+    threshold: 0.3
+  });
 
 
   interface ApiTask {
@@ -219,6 +231,12 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
   const filteredTasks = (sectionTasks: Task[]) => {
     let filtered = sectionTasks;
     
+    // Apply search filter first
+    if (searchQuery.trim()) {
+      const searchResultIds = searchResults.map(result => result.item.id);
+      filtered = filtered.filter(task => searchResultIds.includes(task.id));
+    }
+    
     // Apply status filter
     switch (filter) {
       case 'completed': filtered = filtered.filter(task => task.status === 'done'); break;
@@ -237,6 +255,17 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
     }
     
     return filtered;
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setSearchQuery(value);
+  };
+
+  const handleTaskSelect = (task: Task) => {
+    if (task.uuid) {
+      onNavigateToEditTask?.(task.uuid);
+    }
   };
 
   const deleteTask = async (taskUuid: string, sectionKey: SectionKey, taskId: number) => {
@@ -338,28 +367,25 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
           </div>
         </div>
         
-        {/* Filters */}
+        {/* Enhanced Search & Filters */}
         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/50">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex-1 max-w-md">
+              <SearchBar
+                placeholder="Search tasks by title or description..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                searchData={allTasks}
+                searchKeys={['title', 'description']}
+                onResultSelect={handleTaskSelect}
+                showResults={true}
+                maxResults={6}
+                showCommandHint={false}
+              />
+            </div>
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="relative">
-                <Search size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search tasks"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-40 pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
-                  >
-                    <X size={12} />
-                  </button>
-                )}
-              </div>
               <div className="flex space-x-1">
                 {['all', 'completed', 'pending', 'high'].map((filterType) => (
                   <button
@@ -375,6 +401,11 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
                   </button>
                 ))}
               </div>
+              {searchQuery && (
+                <div className="text-xs text-blue-400">
+                  • Search: "{searchQuery}"
+                </div>
+              )}
             </div>
             <div className="flex items-center space-x-2">
               <div className="flex space-x-1">

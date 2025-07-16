@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Star, Search, X, Filter, Edit, Copy, Trash2, Calendar } from 'lucide-react';
+import { Plus, Star, X, Filter, Edit, Copy, Trash2, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
@@ -7,6 +7,8 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { showToast } from '../../components/ui/Toast';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
 import VirtualizedList from '../../components/ui/VirtualizedList';
+import SearchBar from '../../components/ui/SearchBar';
+import { useSearch } from '../../hooks/useSearch';
 import { useDebounce } from '../../hooks/useDebounce';
 
 interface ProjectsProps {
@@ -42,6 +44,15 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
   const [showFavorites, setShowFavorites] = useState(false);
   const [filters, setFilters] = useState({ name: '', dates: '', tags: '' });
   const debouncedSearchTerm = useDebounce(filters.name, 300);
+  
+  const [projects, setProjects] = useState<Project[]>([]);
+  
+  // Fuzzy search setup
+  const { results: searchResults, setQuery: setSearchQuery } = useSearch({
+    data: projects,
+    keys: ['name', 'description', 'tags'],
+    threshold: 0.3
+  });
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; projectId: string; projectName: string }>({ isOpen: false, projectId: '', projectName: '' });
 
@@ -51,8 +62,6 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
       setCurrentUser(JSON.parse(userData));
     }
   }, []);
-
-  const [projects, setProjects] = useState<Project[]>([]);
 
   const fetchProjects = async () => {
     try {
@@ -143,10 +152,23 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
 
   const clearFilter = (field: keyof typeof filters) => {
     setFilters(prev => ({ ...prev, [field]: '' }));
+    if (field === 'name') {
+      setSearchQuery('');
+    }
   };
 
   const resetAllFilters = () => {
     setFilters({ name: '', dates: '', tags: '' });
+    setSearchQuery('');
+  };
+
+  const handleSearchChange = (value: string) => {
+    setFilters(prev => ({ ...prev, name: value }));
+    setSearchQuery(value);
+  };
+
+  const handleProjectSelect = (project: Project) => {
+    onNavigateToEditProject?.(project.id);
   };
 
   const handleEdit = (projectId: string) => {
@@ -211,18 +233,22 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
     }
   };
 
-  const filteredProjects = projects.filter(project => {
-    const matchesName = !debouncedSearchTerm || project.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
-    const matchesDates = !filters.dates || (
-      (project.deadline && format(new Date(project.deadline), 'yyyy-MM-dd').includes(filters.dates)) ||
-      (project.start_date && format(new Date(project.start_date), 'yyyy-MM-dd').includes(filters.dates)) ||
-      (project.deadline && format(new Date(project.deadline), 'dd/MM/yyyy').includes(filters.dates)) ||
-      (project.start_date && format(new Date(project.start_date), 'dd/MM/yyyy').includes(filters.dates))
-    );
-    const matchesTags = !filters.tags || (project.tags && project.tags.some(tag => tag.toLowerCase().includes(filters.tags.toLowerCase())));
-    const matchesFavorites = !showFavorites || project.is_favorite;
-    return matchesName && matchesDates && matchesTags && matchesFavorites;
-  });
+  const filteredProjects = (() => {
+    // Start with search results if there's a search query, otherwise use all projects
+    const baseProjects = debouncedSearchTerm ? searchResults.map(result => result.item) : projects;
+    
+    return baseProjects.filter(project => {
+      const matchesDates = !filters.dates || (
+        (project.deadline && format(new Date(project.deadline), 'yyyy-MM-dd').includes(filters.dates)) ||
+        (project.start_date && format(new Date(project.start_date), 'yyyy-MM-dd').includes(filters.dates)) ||
+        (project.deadline && format(new Date(project.deadline), 'dd/MM/yyyy').includes(filters.dates)) ||
+        (project.start_date && format(new Date(project.start_date), 'dd/MM/yyyy').includes(filters.dates))
+      );
+      const matchesTags = !filters.tags || (project.tags && project.tags.some(tag => tag.toLowerCase().includes(filters.tags.toLowerCase())));
+      const matchesFavorites = !showFavorites || project.is_favorite;
+      return matchesDates && matchesTags && matchesFavorites;
+    });
+  })();
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
@@ -278,34 +304,30 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
           </div>
         </div>
         
-        {/* Filters */}
+        {/* Enhanced Search & Filters */}
         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/30">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex-1 max-w-md">
+              <SearchBar
+                placeholder="Search projects by name, description, or tags..."
+                value={filters.name}
+                onChange={handleSearchChange}
+                searchData={projects}
+                searchKeys={['name', 'description', 'tags']}
+                onResultSelect={handleProjectSelect}
+                showResults={true}
+                maxResults={8}
+                showCommandHint={false}
+              />
+            </div>
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="relative">
-                <Search size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search projects"
-                  value={filters.name}
-                  onChange={(e) => setFilters(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-40 pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
-                />
-                {filters.name && (
-                  <button
-                    onClick={() => clearFilter('name')}
-                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
-                  >
-                    <X size={12} />
-                  </button>
-                )}
-              </div>
-              
               <div className="relative">
                 <Calendar size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Dates"
+                  placeholder="Filter by dates"
                   value={filters.dates}
                   onChange={(e) => setFilters(prev => ({ ...prev, dates: e.target.value }))}
                   className="w-32 pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
@@ -324,10 +346,10 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
                 <Filter size={14} className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Tags"
+                  placeholder="Filter by tags"
                   value={filters.tags}
                   onChange={(e) => setFilters(prev => ({ ...prev, tags: e.target.value }))}
-                  className="w-28 pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
+                  className="w-32 pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
                 />
                 {filters.tags && (
                   <button
@@ -350,6 +372,9 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
             
             <div className="text-sm text-gray-500 dark:text-gray-400">
               <span className="font-medium text-gray-900 dark:text-white">{filteredProjects.length}</span> of {projects.length}
+              {debouncedSearchTerm && (
+                <span className="ml-2 text-blue-400">• Search: "{debouncedSearchTerm}"</span>
+              )}
             </div>
           </div>
         </div>
