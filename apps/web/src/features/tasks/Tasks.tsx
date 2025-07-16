@@ -371,7 +371,7 @@ const Tasks = ({ onNavigateBack, onNavigateToAddTask, onNavigateToEditTask }: Ta
         {/* Enhanced Search & Filters */}
         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex-1 max-w-md">
+            <div className="flex-1 max-w-md relative z-50">
               <SearchBar
                 placeholder="Search tasks by title or description..."
                 value={searchQuery}
