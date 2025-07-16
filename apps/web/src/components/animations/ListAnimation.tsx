@@ -1,5 +1,5 @@
 import { useTransition, animated } from '@react-spring/web';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface ListAnimationProps {
   items: any[];
