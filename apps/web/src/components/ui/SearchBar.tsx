@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, X, Filter, Command } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearch } from '../../hooks/useSearch';
@@ -48,7 +49,9 @@ const SearchBar = ({
   const [isFocused, setIsFocused] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const filtersRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -80,11 +83,23 @@ const SearchBar = ({
   useEffect(() => {
     if (searchValue && showResults && searchData.length > 0) {
       setShowSearchResults(true);
+      updateDropdownPosition();
     } else {
       setShowSearchResults(false);
     }
     setSelectedIndex(-1);
   }, [searchValue, showResults, searchData]);
+
+  const updateDropdownPosition = () => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -153,7 +168,7 @@ const SearchBar = ({
   };
 
   return (
-    <div className="relative w-full max-w-2xl">
+    <div ref={containerRef} className="relative w-full max-w-2xl">
       <form onSubmit={handleSubmit} className="relative">
         <motion.div
           className={`relative flex items-center bg-white dark:bg-gray-800/30 border rounded-lg transition-all duration-200 ${
@@ -181,6 +196,7 @@ const SearchBar = ({
               setIsFocused(true);
               if (searchValue && showResults && searchData.length > 0) {
                 setShowSearchResults(true);
+                updateDropdownPosition();
               }
             }}
             onBlur={() => {
@@ -217,7 +233,10 @@ const SearchBar = ({
           {filters.length > 0 && (
             <button
               type="button"
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => {
+                setShowFilters(!showFilters);
+                if (!showFilters) updateDropdownPosition();
+              }}
               className={`p-1.5 mx-1 rounded transition-colors ${
                 selectedFilters.length > 0 || showFilters
                   ? 'text-blue-500 dark:text-blue-400 bg-blue-100 dark:bg-blue-500/10'
@@ -233,11 +252,16 @@ const SearchBar = ({
         </motion.div>
       </form>
 
-      <AnimatePresence>
-        {showFilters && filters.length > 0 && (
+      {showFilters && filters.length > 0 && createPortal(
+        <AnimatePresence>
           <motion.div
             ref={filtersRef}
-            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999]"
+            className="fixed bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999]"
+            style={{
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+              width: dropdownPosition.width
+            }}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -270,14 +294,20 @@ const SearchBar = ({
               </div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
 
-      <AnimatePresence>
-        {showSearchResults && searchResults.length > 0 && (
+      {showSearchResults && searchResults.length > 0 && createPortal(
+        <AnimatePresence>
           <motion.div
             ref={resultsRef}
-            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999] max-h-80 overflow-y-auto"
+            className="fixed bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999] max-h-80 overflow-y-auto"
+            style={{
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+              width: dropdownPosition.width
+            }}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -324,8 +354,9 @@ const SearchBar = ({
               ))}
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 };
