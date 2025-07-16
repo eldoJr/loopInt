@@ -33,6 +33,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@react-spring/web": "^10.0.1",
     "react-hot-toast": "^2.5.2",
     "recharts": "^3.0.2"
   }
