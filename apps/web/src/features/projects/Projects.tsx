@@ -10,6 +10,7 @@ import VirtualizedList from '../../components/ui/VirtualizedList';
 import SearchBar from '../../components/ui/SearchBar';
 import { useSearch } from '../../hooks/useSearch';
 import { useDebounce } from '../../hooks/useDebounce';
+import { ListAnimation } from '../../components/animations/ListAnimation';
 
 interface ProjectsProps {
   onNavigateBack?: () => void;
@@ -411,98 +412,94 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
                 </div>
               </div>
             </div>
-            <VirtualizedList
-              items={filteredProjects}
-              height={450}
-              itemHeight={70}
-              className="w-full"
-            renderItem={(project) => (
-              <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                <div className="grid grid-cols-12 gap-4 items-center">
-                  {/* Project Info */}
-                  <div className="col-span-5 flex items-center space-x-3">
-                    <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: project.color }}></div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">{project.name}</h3>
-                        <button
-                          onClick={() => toggleFavorite(project.id)}
-                          className={`transition-colors flex-shrink-0 ${
-                            project.is_favorite 
-                              ? 'text-yellow-500 hover:text-yellow-400' 
-                              : 'text-gray-400 hover:text-yellow-500'
-                          }`}
-                        >
-                          <Star size={12} className={project.is_favorite ? 'fill-current' : ''} />
-                        </button>
+            <ListAnimation items={filteredProjects}>
+              {(project) => (
+                <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                  <div className="grid grid-cols-12 gap-4 items-center">
+                    {/* Project Info */}
+                    <div className="col-span-5 flex items-center space-x-3">
+                      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: project.color }}></div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">{project.name}</h3>
+                          <button
+                            onClick={() => toggleFavorite(project.id)}
+                            className={`transition-colors flex-shrink-0 ${
+                              project.is_favorite 
+                                ? 'text-yellow-500 hover:text-yellow-400' 
+                                : 'text-gray-400 hover:text-yellow-500'
+                            }`}
+                          >
+                            <Star size={12} className={project.is_favorite ? 'fill-current' : ''} />
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{project.description || 'No description'}</p>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{project.description || 'No description'}</p>
                     </div>
-                  </div>
-                  
-                  {/* Status */}
-                  <div className="col-span-1 flex justify-center">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(project.status)} capitalize`}>
-                      {project.status.replace('-', ' ')}
-                    </span>
-                  </div>
-                  
-                  {/* Priority */}
-                  <div className="col-span-1 flex justify-center">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(project.priority)} capitalize`}>
-                      {project.priority}
-                    </span>
-                  </div>
-                  
-                  {/* Progress */}
-                  <div className="col-span-2 flex flex-col items-center">
-                    <div className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">{project.progress}%</div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
-                        className="h-2 rounded-full transition-all" 
-                        style={{ 
-                          width: `${project.progress}%`,
-                          backgroundColor: project.color
-                        }}
-                      ></div>
+                    
+                    {/* Status */}
+                    <div className="col-span-1 flex justify-center">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(project.status)} capitalize`}>
+                        {project.status.replace('-', ' ')}
+                      </span>
                     </div>
-                  </div>
-                  
-                  {/* Deadline */}
-                  <div className="col-span-1 text-center">
-                    <div className="text-xs text-gray-600 dark:text-gray-300 font-medium">
-                      {project.deadline ? new Date(project.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '-'}
+                    
+                    {/* Priority */}
+                    <div className="col-span-1 flex justify-center">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(project.priority)} capitalize`}>
+                        {project.priority}
+                      </span>
                     </div>
-                  </div>
-                  
-                  {/* Actions */}
-                  <div className="col-span-2 flex items-center justify-center space-x-1">
-                    <button
-                      onClick={() => handleEdit(project.id)}
-                      className="text-gray-400 hover:text-blue-500 transition-colors p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10"
-                      title="Edit"
-                    >
-                      <Edit size={14} />
-                    </button>
-                    <button
-                      onClick={() => handleCopy(project)}
-                      className="text-gray-400 hover:text-green-500 transition-colors p-1.5 rounded-lg hover:bg-green-50 dark:hover:bg-green-500/10"
-                      title="Copy"
-                    >
-                      <Copy size={14} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(project.id)}
-                      className="text-gray-400 hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10"
-                      title="Delete"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                    
+                    {/* Progress */}
+                    <div className="col-span-2 flex flex-col items-center">
+                      <div className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">{project.progress}%</div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div 
+                          className="h-2 rounded-full transition-all" 
+                          style={{ 
+                            width: `${project.progress}%`,
+                            backgroundColor: project.color
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                    
+                    {/* Deadline */}
+                    <div className="col-span-1 text-center">
+                      <div className="text-xs text-gray-600 dark:text-gray-300 font-medium">
+                        {project.deadline ? new Date(project.deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '-'}
+                      </div>
+                    </div>
+                    
+                    {/* Actions */}
+                    <div className="col-span-2 flex items-center justify-center space-x-1">
+                      <button
+                        onClick={() => handleEdit(project.id)}
+                        className="text-gray-400 hover:text-blue-500 transition-colors p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                        title="Edit"
+                      >
+                        <Edit size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleCopy(project)}
+                        className="text-gray-400 hover:text-green-500 transition-colors p-1.5 rounded-lg hover:bg-green-50 dark:hover:bg-green-500/10"
+                        title="Copy"
+                      >
+                        <Copy size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(project.id)}
+                        className="text-gray-400 hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10"
+                        title="Delete"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-            />
+              )}
+            </ListAnimation>
           </>
         ) : (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">

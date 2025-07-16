@@ -1,13 +1,13 @@
 import { useTransition, animated } from '@react-spring/web';
 import type { ReactNode } from 'react';
 
-interface ListAnimationProps {
-  items: any[];
-  children: (item: any, index: number) => ReactNode;
+interface ListAnimationProps<T> {
+  items: T[];
+  children: (item: T, index: number) => ReactNode;
   className?: string;
 }
 
-export const ListAnimation = ({ items, children, className = '' }: ListAnimationProps) => {
+export const ListAnimation = <T,>({ items, children, className = '' }: ListAnimationProps<T>) => {
   const transitions = useTransition(items, {
     from: { opacity: 0, transform: 'translateY(-10px) scale(0.95)' },
     enter: { opacity: 1, transform: 'translateY(0px) scale(1)' },

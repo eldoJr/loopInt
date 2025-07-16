@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { PageTransition } from '../components/animations/PageTransition';
+import { SpinLoader } from '../components/animations/LoadingAnimations';
 import { 
   Clock,
   FolderOpen, 
@@ -522,7 +524,7 @@ const Dashboard = () => {
     if (isTransitioning) {
       return (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-2 border-gray-700 rounded-full animate-spin border-t-blue-500"></div>
+          <SpinLoader size={32} color="#3B82F6" />
         </div>
       );
     }
@@ -730,9 +732,9 @@ const Dashboard = () => {
           }
         }}
       >
-        <div>
+        <PageTransition location={currentView}>
           {renderCurrentView()}
-        </div>
+        </PageTransition>
       </div>
 
       <CustomizationAlert
