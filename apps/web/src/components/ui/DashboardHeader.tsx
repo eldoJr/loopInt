@@ -41,7 +41,7 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
   const [globalSearchData, setGlobalSearchData] = useState<GlobalSearchItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch global search data
+  // Use static mock data for global search
   useEffect(() => {
     const fetchGlobalData = async () => {
       try {
@@ -49,12 +49,6 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
         const currentUser = userData ? JSON.parse(userData) : null;
         
         if (!currentUser) return;
-
-        // Fetch projects and tasks for global search
-        const [projectsRes, tasksRes] = await Promise.all([
-          fetch('http://localhost:3000/projects').catch(() => ({ ok: false })),
-          fetch('http://localhost:3000/tasks').catch(() => ({ ok: false }))
-        ]);
 
         const searchItems: GlobalSearchItem[] = [];
 
@@ -68,39 +62,43 @@ const DashboardHeader = ({ user, sidebarOpen, setSidebarOpen, onLogout, onNaviga
           { id: 'nav-analytics', title: 'Analytics', type: 'page', section: 'Analytics' }
         );
 
-        // Add projects
-        if (projectsRes.ok && 'json' in projectsRes) {
-          const projects = await projectsRes.json() as Array<{ id: string; name: string; description?: string; created_by: string }>;
-          const userProjects = projects.filter(p => p.created_by === currentUser.id);
-          userProjects.forEach(project => {
-            searchItems.push({
-              id: `project-${project.id}`,
-              name: project.name,
-              description: project.description,
-              type: 'project',
-              section: 'Projects'
-            });
+        // Add mock projects
+        const mockProjects = [
+          { id: '1', name: 'Website Redesign', description: 'Redesign the company website with new branding', created_by: currentUser.id },
+          { id: '2', name: 'Mobile App Development', description: 'Create a new mobile app for customers', created_by: currentUser.id },
+          { id: '3', name: 'Marketing Campaign', description: 'Q3 marketing campaign for new product launch', created_by: currentUser.id }
+        ];
+        
+        mockProjects.forEach(project => {
+          searchItems.push({
+            id: `project-${project.id}`,
+            name: project.name,
+            description: project.description,
+            type: 'project',
+            section: 'Projects'
           });
-        }
+        });
 
-        // Add tasks
-        if (tasksRes.ok && 'json' in tasksRes) {
-          const tasks = await tasksRes.json() as Array<{ id: string; title: string; description?: string; assigned_to: string }>;
-          const userTasks = tasks.filter(t => t.assigned_to === currentUser.id);
-          userTasks.forEach(task => {
-            searchItems.push({
-              id: `task-${task.id}`,
-              title: task.title,
-              description: task.description,
-              type: 'task',
-              section: 'Tasks'
-            });
+        // Add mock tasks
+        const mockTasks = [
+          { id: '1', title: 'Complete project documentation', description: 'Finish all documentation for the current sprint', assigned_to: currentUser.id },
+          { id: '2', title: 'Review pull requests', description: 'Review team PRs for the new feature', assigned_to: currentUser.id },
+          { id: '3', title: 'Prepare for demo', description: 'Create slides for the client demo', assigned_to: currentUser.id }
+        ];
+        
+        mockTasks.forEach(task => {
+          searchItems.push({
+            id: `task-${task.id}`,
+            title: task.title,
+            description: task.description,
+            type: 'task',
+            section: 'Tasks'
           });
-        }
+        });
 
         setGlobalSearchData(searchItems);
       } catch (error) {
-        console.error('Error fetching global search data:', error);
+        console.error('Error setting up global search data:', error);
       }
     };
 

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import LoginForm from '../components/forms/LoginForm';
-import { loginUser } from '../lib/api';
-import { loginWithGoogle, loginWithApple } from '../lib/socialAuth';
+import { staticLogin } from '../lib/staticAuth';
 import logoImg from '../assets/img/logo/logo-b.svg';
 
 const Login = () => {
@@ -15,7 +14,8 @@ const Login = () => {
     setError('');
     
     try {
-      const user = await loginUser(email, password);
+      // Use static login instead of API call
+      const user = await staticLogin(email, password);
       if (user) {
         if (keepLoggedIn) {
           localStorage.setItem('user', JSON.stringify(user));
@@ -25,7 +25,7 @@ const Login = () => {
         }
         window.location.href = '/dashboard';
       } else {
-        setError('Invalid email or password');
+        setError('Invalid credentials. Use admin@loopint.com / admin123');
       }
     } catch {
       setError('Login failed. Please try again.');
@@ -39,11 +39,11 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    loginWithGoogle();
+    setError('Social login is disabled in static mode');
   };
 
   const handleAppleLogin = () => {
-    loginWithApple();
+    setError('Social login is disabled in static mode');
   };
 
   return (
@@ -66,7 +66,8 @@ const Login = () => {
       >
         <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-white mb-2">Login to your acount</h1>
+            <h1 className="text-2xl font-bold text-white mb-2">Login to your account</h1>
+            <p className="text-gray-400 text-sm">Use admin@loopint.com / admin123</p>
           </div>
 
           {error && (

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { PageTransition } from '../components/animations/PageTransition';
-import { SpinLoader } from '../components/animations/LoadingAnimations';
+import SkeletonLoader from '../components/ui/SkeletonLoader';
 import { 
   Clock,
   FolderOpen, 
@@ -18,7 +18,7 @@ import foldersIcon from '../assets/icons/folders.png';
 import taskManagementIcon from '../assets/icons/task-management.png';
 import teamBuildingIcon from '../assets/icons/team-building.png';
 import increaseIcon from '../assets/icons/increase.png';
-import type { User as UserType } from '../lib/api';
+import type { User as UserType } from '../lib/staticAuth';
 import Breadcrumb from '../components/ui/Breadcrumb';
 import DashboardHeader from '../components/ui/DashboardHeader';
 import DashboardCard from '../components/ui/DashboardCard';
@@ -125,26 +125,52 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch('http://localhost:3000/tasks');
-        if (response.ok) {
-          const tasks = await response.json();
-          
-          // Filter tasks for current user
-          const userTasks = user ? 
-            tasks.filter((task: Task) => task.assigned_to === user.id) : 
-            tasks;
-          
-          const formattedTodos: Todo[] = userTasks.map((task: Task) => ({
-            id: task.id,
-            text: task.title,
-            starred: task.priority === 'high',
-            date: task.due_date ? new Date(task.due_date).toLocaleDateString() : new Date().toLocaleDateString(),
-            completed: task.status === 'done'
-          }));
-          setTodos(formattedTodos);
-        }
+        // Mock data for static mode
+        const mockTasks = [
+          {
+            id: '1',
+            title: 'Complete project documentation',
+            description: 'Finish all documentation for the current sprint',
+            status: 'todo',
+            priority: 'high',
+            due_date: new Date().toISOString(),
+            assigned_to: '1'
+          },
+          {
+            id: '2',
+            title: 'Review pull requests',
+            description: 'Review team PRs for the new feature',
+            status: 'done',
+            priority: 'medium',
+            due_date: new Date().toISOString(),
+            assigned_to: '1'
+          },
+          {
+            id: '3',
+            title: 'Prepare for demo',
+            description: 'Create slides for the client demo',
+            status: 'todo',
+            priority: 'high',
+            due_date: new Date().toISOString(),
+            assigned_to: '1'
+          }
+        ];
+        
+        // Filter tasks for current user
+        const userTasks = user ? 
+          mockTasks.filter((task: Task) => task.assigned_to === user.id) : 
+          mockTasks;
+        
+        const formattedTodos: Todo[] = userTasks.map((task: Task) => ({
+          id: task.id,
+          text: task.title,
+          starred: task.priority === 'high',
+          date: task.due_date ? new Date(task.due_date).toLocaleDateString() : new Date().toLocaleDateString(),
+          completed: task.status === 'done'
+        }));
+        setTodos(formattedTodos);
       } catch (error) {
-        console.error('Error fetching tasks:', error);
+        console.error('Error with tasks:', error);
       }
     };
     
@@ -193,25 +219,12 @@ const Dashboard = () => {
     if (!todo) return;
     
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          status: todo.completed ? 'todo' : 'done'
-        }),
-      });
-      
-      if (response.ok) {
-        const updatedTodo = todos.find(t => t.id === id);
-        setTodos(todos.map(todo => 
-          todo.id === id ? { ...todo, completed: !todo.completed } : todo
-        ));
-        showToast.success(updatedTodo?.completed ? 'Task reopened' : 'Task completed!');
-      } else {
-        showToast.error('Failed to update task');
-      }
+      // In static mode, just update the local state
+      const updatedTodo = todos.find(t => t.id === id);
+      setTodos(todos.map(todo => 
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      ));
+      showToast.success(!todo.completed ? 'Task completed!' : 'Task reopened');
     } catch (error) {
       console.error('Error updating task:', error);
       showToast.error('Failed to update task');
@@ -221,25 +234,48 @@ const Dashboard = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch('http://localhost:3000/projects');
-      if (response.ok) {
-        const allProjects = await response.json();
-        
-        // Filter projects for current user
-        const userProjects = user ? 
-          allProjects.filter((project: Project) => project.created_by === user.id) : 
-          [];
-        
-        // Only show active projects (not completed or cancelled)
-        const activeProjects = userProjects.filter((project: Project) => 
-          ['planning', 'active', 'on-hold'].includes(project.status)
-        );
-        
-        setProjects(activeProjects);
-        setActiveProjectsCount(activeProjects.length);
-      }
+      // Mock data for static mode
+      const mockProjects = [
+        {
+          id: '1',
+          name: 'Website Redesign',
+          description: 'Redesign the company website with new branding',
+          status: 'active',
+          color: '#4F46E5',
+          created_by: '1'
+        },
+        {
+          id: '2',
+          name: 'Mobile App Development',
+          description: 'Create a new mobile app for customers',
+          status: 'planning',
+          color: '#10B981',
+          created_by: '1'
+        },
+        {
+          id: '3',
+          name: 'Marketing Campaign',
+          description: 'Q3 marketing campaign for new product launch',
+          status: 'on-hold',
+          color: '#F59E0B',
+          created_by: '1'
+        }
+      ];
+      
+      // Filter projects for current user
+      const userProjects = user ? 
+        mockProjects.filter((project: Project) => project.created_by === user.id) : 
+        [];
+      
+      // Only show active projects (not completed or cancelled)
+      const activeProjects = userProjects.filter((project: Project) => 
+        ['planning', 'active', 'on-hold'].includes(project.status)
+      );
+      
+      setProjects(activeProjects);
+      setActiveProjectsCount(activeProjects.length);
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      console.error('Error with projects:', error);
     }
   };
 
@@ -253,19 +289,33 @@ const Dashboard = () => {
 
   const fetchTeamMembers = async () => {
     try {
-      const response = await fetch('http://localhost:3000/team');
-      if (response.ok) {
-        const allMembers: TeamMemberType[] = await response.json();
-        
-        // Filter team members for current user
-        const userMembers = user ? 
-          allMembers.filter((member: TeamMemberType) => member.created_by === user.id || member.createdBy === user.id) : 
-          allMembers;
-        
-        setTeamMembersCount(userMembers.length);
-      }
+      // Mock data for static mode
+      const mockMembers: TeamMemberType[] = [
+        {
+          id: '1',
+          name: 'John Doe',
+          created_by: '1'
+        },
+        {
+          id: '2',
+          name: 'Jane Smith',
+          created_by: '1'
+        },
+        {
+          id: '3',
+          name: 'Alex Johnson',
+          created_by: '1'
+        }
+      ];
+      
+      // Filter team members for current user
+      const userMembers = user ? 
+        mockMembers.filter((member: TeamMemberType) => member.created_by === user.id || member.createdBy === user.id) : 
+        mockMembers;
+      
+      setTeamMembersCount(userMembers.length);
     } catch (error) {
-      console.error('Error fetching team members:', error);
+      console.error('Error with team members:', error);
     }
   };
 
@@ -524,7 +574,7 @@ const Dashboard = () => {
     if (isTransitioning) {
       return (
         <div className="flex items-center justify-center py-20">
-          <SpinLoader size={32} color="#3B82F6" />
+          <SkeletonLoader className="w-8 h-8 rounded-full" />
         </div>
       );
     }
@@ -732,9 +782,11 @@ const Dashboard = () => {
           }
         }}
       >
-        <PageTransition location={currentView}>
-          {renderCurrentView()}
-        </PageTransition>
+        <div className="min-h-[calc(100vh-8rem)]">
+          <PageTransition location={currentView}>
+            {renderCurrentView()}
+          </PageTransition>
+        </div>
       </div>
 
       <CustomizationAlert

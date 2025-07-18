@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
 import { useTheme } from '../../context/ThemeContext';
 import type { LucideIcon } from 'lucide-react';
+import { AnimatedCard } from '../animations/MicroInteractions';
 
 interface Trend {
   value: number;
@@ -51,11 +51,9 @@ const DashboardStatCard = ({
   }
 
   return (
-    <motion.div 
+    <AnimatedCard 
       className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-3 cursor-pointer group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50"
       onClick={onClick}
-      whileHover={{ y: -4 }}
-      whileTap={{ scale: 0.97 }}
     >
       {/* Background Pattern */}
       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/10 to-blue-300/20 dark:from-blue-400/10 dark:to-blue-300/10 rounded-full -translate-y-10 translate-x-10 group-hover:scale-125 transition-transform duration-700"></div>
@@ -115,7 +113,7 @@ const DashboardStatCard = ({
       
       {/* Hover Effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-2xl"></div>
-    </motion.div>
+    </AnimatedCard>
   );
 };
 

@@ -1,5 +1,6 @@
-import { useTransition, animated } from '@react-spring/web';
-import { ReactNode } from 'react';
+import { useSpring, animated } from '@react-spring/web';
+import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -7,16 +8,29 @@ interface PageTransitionProps {
 }
 
 export const PageTransition = ({ children, location }: PageTransitionProps) => {
-  const transitions = useTransition(location, {
-    from: { opacity: 0, transform: 'translateX(20px)' },
-    enter: { opacity: 1, transform: 'translateX(0px)' },
-    leave: { opacity: 0, transform: 'translateX(-20px)' },
-    config: { tension: 280, friction: 60 }
+  const [currentLocation, setCurrentLocation] = useState(location);
+  const [isVisible, setIsVisible] = useState(true);
+
+  const springProps = useSpring({
+    opacity: isVisible ? 1 : 0,
+    transform: isVisible ? 'translateY(0px)' : 'translateY(10px)',
+    config: { tension: 300, friction: 30 }
   });
 
-  return transitions((style, item) => (
-    <animated.div style={style} className="w-full h-full">
+  useEffect(() => {
+    if (location !== currentLocation) {
+      setIsVisible(false);
+      const timer = setTimeout(() => {
+        setCurrentLocation(location);
+        setIsVisible(true);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [location, currentLocation]);
+
+  return (
+    <animated.div style={springProps} className="w-full">
       {children}
     </animated.div>
-  ));
+  );
 };

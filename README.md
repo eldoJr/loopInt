@@ -9,7 +9,6 @@ This is a modern monorepo built with:
 - **Database**: PostgreSQL
 - **Styling**: TailwindCSS + Framer Motion
 - **Monorepo**: Turborepo for build orchestration
-- **Containerization**: Docker + Docker Compose
 - **Caching**: Redis
 
 ## Project Structure
@@ -32,29 +31,35 @@ loopInt/
 
 ### Prerequisites
 - Node.js 18+
-- Docker & Docker Compose
+- PostgreSQL (local installation or remote access)
+- Redis (optional, for caching)
 
 ### Quick Start
 
 ```bash
+# Clone the repository
 git clone https://github.com/eldoJr/loopInt
 cd loopInt
-npm run docker:dev
+
+# Install dependencies
+npm install
+
+# Start development servers
+npm run dev
 ```
 
 Access:
 - Frontend: http://localhost:5173
 - Backend: http://localhost:3000
 
-### Docker Commands
+### Database Setup
 
-```bash
-npm run docker:dev   # Start development (auto-installs dependencies)
-npm run docker:down  # Stop services
-npm run docker:logs  # View logs
-```
+Ensure you have PostgreSQL running and update the connection details in:
+- `/apps/api/.env`
 
-Docker automatically installs all dependencies for both API and Web applications.
+The project is currently configured to use an AWS RDS instance. You can either:
+1. Continue using the remote database (if you have access)
+2. Set up a local PostgreSQL instance and update the connection details
 
 
 
