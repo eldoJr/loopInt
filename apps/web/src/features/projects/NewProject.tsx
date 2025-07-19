@@ -7,6 +7,7 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Slider } from '../../components/ui/Slider';
 import { Toggle } from '../../components/ui/Toggle';
 import { showToast } from '../../components/ui/Toast';
+import CustomSelect from '../../components/ui/CustomSelect';
 
 interface NewProjectProps {
   onNavigateBack?: () => void;
@@ -166,6 +167,17 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
     
     if (name === 'description') {
       setDescriptionLength(value.length);
+      
+      // Apply text styling to selected text if supported by the browser
+      const textarea = e.target as HTMLTextAreaElement;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      
+      // Store selection for potential formatting
+      if (start !== end) {
+        // Selection exists, could be used for formatting
+        // (This is a placeholder for potential future enhancement)
+      }
     }
     
     // Clear field-specific errors
@@ -189,6 +201,13 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
   const handleTextStyle = (style: keyof typeof textStyles) => {
     setTextStyles(prev => ({ ...prev, [style]: !prev[style] }));
+    
+    // Apply style to selected text if there's a selection
+    const textarea = document.querySelector('textarea[name="description"]') as HTMLTextAreaElement;
+    if (textarea && textarea.selectionStart !== textarea.selectionEnd) {
+      // This is a placeholder for potential future enhancement with a more sophisticated rich text editor
+      // For now, we're just toggling the global style state
+    }
   };
 
   const handleTextAlign = (align: 'left' | 'center' | 'right') => {
@@ -287,7 +306,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Project Signature
+                Project Signature *
               </label>
               <div className="col-span-9">
                 <input
@@ -301,39 +320,30 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Status
+                  Status *
                 </label>
                 <div className="col-span-4">
-                  <select
-                    name="status"
+                  <CustomSelect
+                    options={['planning', 'active', 'on-hold', 'completed', 'cancelled']}
                     value={formData.status}
-                    onChange={handleChange}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                  >
-                    <option value="planning">Planning</option>
-                    <option value="active">Active</option>
-                    <option value="on-hold">On Hold</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
+                    onChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
+                  />
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Priority
+                
+              </div>
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                  Priority *
                 </label>
                 <div className="col-span-4">
-                  <select
-                    name="priority"
+                  <CustomSelect
+                    options={['low', 'medium', 'high', 'urgent']}
                     value={formData.priority}
-                    onChange={handleChange}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
-                  </select>
+                    onChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
+                  />
                 </div>
               </div>
+
             </div>
 
             {/* Section 2 - Project Details */}
@@ -344,7 +354,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Start Date
+                Start Date *
               </label>
               <div className="col-span-4">
                 <div className="relative">
@@ -377,7 +387,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Budget
+                Budget *
               </label>
               <div className="col-span-9">
                 <div className="relative">
@@ -413,43 +423,37 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Team
+                Team *
               </label>
               <div className="col-span-9">
                 <div className="relative">
-                  <select
-                    name="team_id"
-                    value={formData.team_id}
-                    onChange={handleChange}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                  >
-                    <option value="">Select a team...</option>
-                  </select>
+                  <CustomSelect
+                    options={['', 'Team 1', 'Team 2', 'Team 3']}
+                    value={formData.team_id || 'Select a team...'}
+                    onChange={(value) => setFormData(prev => ({ ...prev, team_id: value === 'Select a team...' ? '' : value }))}
+                  />
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Client
+                Client *
               </label>
               <div className="col-span-9">
                 <div className="relative">
-                  <select
-                    name="client_id"
-                    value={formData.client_id}
-                    onChange={handleChange}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                  >
-                    <option value="">Select a client...</option>
-                  </select>
+                  <CustomSelect
+                    options={['', 'Client 1', 'Client 2', 'Client 3']}
+                    value={formData.client_id || 'Select a client...'}
+                    onChange={(value) => setFormData(prev => ({ ...prev, client_id: value === 'Select a client...' ? '' : value }))}
+                  />
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Tags
+                Tags *
               </label>
               <div className="col-span-9">
                 <div className="relative">
@@ -457,6 +461,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                     type="button"
                     onClick={() => setShowTagDropdown(!showTagDropdown)}
                     className="w-auto flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                    style={{ minHeight: '32px' }}
                   >
                     <div className="flex items-center space-x-2">
                       <Tag className="h-4 w-4 text-gray-400" />
@@ -498,7 +503,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Color
+                Color *
               </label>
               <div className="col-span-9 flex space-x-2">
                 {colorOptions.map((color) => (
@@ -517,7 +522,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Favorite
+                Favorite *
               </label>
               <div className="col-span-9">
                 <button
@@ -537,7 +542,7 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
 
             <div className="grid grid-cols-12 gap-3 items-start">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
-                Description
+                Description *
               </label>
               <div className="col-span-9">
                   <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
@@ -618,6 +623,12 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
                       rows={6}
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
                       placeholder="Enter project description..."
+                      style={{
+                        fontWeight: textStyles.bold ? 'bold' : 'normal',
+                        fontStyle: textStyles.italic ? 'italic' : 'normal',
+                        textDecoration: `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
+                        textAlign: textAlign
+                      }}
                     />
                     
                     <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-3">
