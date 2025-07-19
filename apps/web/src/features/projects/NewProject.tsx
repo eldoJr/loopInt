@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Save, Sparkles, Bold, Italic, Underline, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Link, Code, Check, Calendar, DollarSign, Tag, ChevronDown, AlertCircle, Star } from 'lucide-react';
+import { Save, Bold, Italic, Underline, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Link, Code, Check, Calendar, DollarSign, Tag, ChevronDown, AlertCircle, Star } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
@@ -244,10 +244,6 @@ const NewProject = ({ onNavigateBack, onNavigateToProjects }: NewProjectProps) =
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-semibold text-gray-900 dark:text-white">New Project</h1>
             <div className="flex items-center space-x-2">
-              <button className="flex items-center space-x-2 px-3 py-1.5 bg-purple-100 dark:bg-purple-600/20 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-600/30 transition-colors border border-purple-200 dark:border-purple-500/30 text-sm">
-                <Sparkles size={14} />
-                <span>AI</span>
-              </button>
               <button 
                 onClick={onNavigateToProjects}
                 className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
