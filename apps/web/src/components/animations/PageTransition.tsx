@@ -1,7 +1,7 @@
 import { useSpring, animated } from '@react-spring/web';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContext';
 
 interface PageTransitionProps {
   children: ReactNode;

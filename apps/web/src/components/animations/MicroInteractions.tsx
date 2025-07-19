@@ -1,7 +1,7 @@
 import { useSpring, animated } from '@react-spring/web';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { useTheme } from '../../../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContext';
 
 interface AnimatedButtonProps {
   children: ReactNode;
