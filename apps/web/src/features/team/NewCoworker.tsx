@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Save, X, Upload, Plus, Linkedin, MessageSquare, AlertCircle, Bold, Italic, Underline, Link } from 'lucide-react';
+import { Save, X, Upload, Plus, Linkedin, MessageSquare, AlertCircle, Bold, Italic, Underline, Link, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Code } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Toggle } from '../../components/ui/Toggle';
+import CustomSelect from '../../components/ui/CustomSelect';
 
 interface NewCoworkerProps {
   onNavigateBack?: () => void;
@@ -40,7 +41,10 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
   const [showContent, setShowContent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [textStyles, setTextStyles] = useState({ bold: false, italic: false, underline: false });
+  const [textStyles, setTextStyles] = useState({ bold: false, italic: false, underline: false, strikethrough: false });
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
+  const [positionDescLength, setPositionDescLength] = useState(0);
+  const maxPositionDescLength = 300;
 
   const [formData, setFormData] = useState<FormData>({
     photo: null,
@@ -66,7 +70,19 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
   });
 
   const companies = ['Choose company', 'Company A', 'Company B', 'Company C'];
-  const positions = ['Contact person position', 'Manager', 'Developer', 'Designer', 'Analyst'];
+  const positions = [
+    'Choose', 
+    'Admin', 
+    'Default User', 
+    'HR and payroll', 
+    'Manager HR', 
+    'Sales', 
+    'Marketing', 
+    'Customer service', 
+    'Accounting', 
+    'HR specialist', 
+    'Manager'
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -95,6 +111,9 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
 
   const handleInputChange = useCallback((field: keyof FormData, value: string | boolean | File | null | string[] | { type: string; url: string }[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'positionDescription' && typeof value === 'string') {
+      setPositionDescLength(value.length);
+    }
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
@@ -254,6 +273,10 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
 
   const handleTextStyle = (style: keyof typeof textStyles) => {
     setTextStyles(prev => ({ ...prev, [style]: !prev[style] }));
+  };
+
+  const handleTextAlign = (align: 'left' | 'center' | 'right') => {
+    setTextAlign(align);
   };
 
   const breadcrumbItems = [
@@ -445,29 +468,21 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                   Company
                 </label>
                 <div className="col-span-4">
-                  <select
+                  <CustomSelect
+                    options={companies}
                     value={formData.company}
-                    onChange={(e) => handleInputChange('company', e.target.value)}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                  >
-                    {companies.map(company => (
-                      <option key={company} value={company}>{company}</option>
-                    ))}
-                  </select>
+                    onChange={(value) => handleInputChange('company', value)}
+                  />
                 </div>
                 <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Position
                 </label>
                 <div className="col-span-4">
-                  <select
+                  <CustomSelect
+                    options={positions}
                     value={formData.position}
-                    onChange={(e) => handleInputChange('position', e.target.value)}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                  >
-                    {positions.map(position => (
-                      <option key={position} value={position}>{position}</option>
-                    ))}
-                  </select>
+                    onChange={(value) => handleInputChange('position', value)}
+                  />
                 </div>
               </div>
 
@@ -477,29 +492,110 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                   Position Description
                 </label>
                 <div className="col-span-9">
+                  <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
+                    <Toggle
+                      pressed={textStyles.bold}
+                      onPressedChange={() => handleTextStyle('bold')}
+                      aria-label="Bold"
+                    >
+                      <Bold className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textStyles.italic}
+                      onPressedChange={() => handleTextStyle('italic')}
+                      aria-label="Italic"
+                    >
+                      <Italic className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textStyles.underline}
+                      onPressedChange={() => handleTextStyle('underline')}
+                      aria-label="Underline"
+                    >
+                      <Underline className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textStyles.strikethrough}
+                      onPressedChange={() => handleTextStyle('strikethrough')}
+                      aria-label="Strikethrough"
+                    >
+                      <Strikethrough className="h-4 w-4" />
+                    </Toggle>
+                    
+                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+                    
+                    <Toggle
+                      pressed={textAlign === 'left'}
+                      onPressedChange={() => handleTextAlign('left')}
+                      aria-label="Align left"
+                    >
+                      <AlignLeft className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textAlign === 'center'}
+                      onPressedChange={() => handleTextAlign('center')}
+                      aria-label="Align center"
+                    >
+                      <AlignCenter className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textAlign === 'right'}
+                      onPressedChange={() => handleTextAlign('right')}
+                      aria-label="Align right"
+                    >
+                      <AlignRight className="h-4 w-4" />
+                    </Toggle>
+                    
+                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+                    
+                    <Toggle aria-label="List">
+                      <List className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle aria-label="Ordered list">
+                      <ListOrdered className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle aria-label="Link">
+                      <Link className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle aria-label="Code">
+                      <Code className="h-4 w-4" />
+                    </Toggle>
+                  </div>
+                  
                   <div className="relative">
                     <textarea
                       value={formData.positionDescription}
                       onChange={(e) => handleInputChange('positionDescription', e.target.value)}
-                      rows={2}
-                      maxLength={300}
-                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none text-sm ${
-                        errors.positionDescription 
-                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
-                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                      }`}
+                      rows={3}
+                      maxLength={maxPositionDescLength}
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
                       placeholder="Describe the position..."
+                      style={{
+                        fontWeight: textStyles.bold ? 'bold' : 'normal',
+                        fontStyle: textStyles.italic ? 'italic' : 'normal',
+                        textDecoration: `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
+                        textAlign: textAlign
+                      }}
                     />
-                    <div className="absolute bottom-2 right-2 text-xs text-gray-500 dark:text-gray-500">
-                      {formData.positionDescription.length}/300
+                    
+                    <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-3">
+                      <span className={`text-xs ${
+                        positionDescLength > maxPositionDescLength * 0.9 
+                          ? 'text-red-500 dark:text-red-400' 
+                          : 'text-gray-500 dark:text-gray-400'
+                      }`}>
+                        {positionDescLength}/{maxPositionDescLength} characters
+                      </span>
+                      <div className="flex items-center space-x-2">
+                        {errors.positionDescription && (
+                          <div className="flex items-center space-x-1 text-red-500 dark:text-red-400">
+                            <AlertCircle size={14} />
+                            <span className="text-xs">{errors.positionDescription}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  {errors.positionDescription && (
-                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      {errors.positionDescription}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -551,16 +647,11 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     Additional Link {index + 1}
                   </label>
                   <div className="col-span-3">
-                    <select
+                    <CustomSelect
+                      options={['Website', 'Portfolio', 'GitHub', 'Twitter']}
                       value={link.type}
-                      onChange={(e) => updateAdditionalLink(index, 'type', e.target.value)}
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                    >
-                      <option value="Website">Website</option>
-                      <option value="Portfolio">Portfolio</option>
-                      <option value="GitHub">GitHub</option>
-                      <option value="Twitter">Twitter</option>
-                    </select>
+                      onChange={(value) => updateAdditionalLink(index, 'type', value)}
+                    />
                   </div>
                   <div className="col-span-5">
                     <input
