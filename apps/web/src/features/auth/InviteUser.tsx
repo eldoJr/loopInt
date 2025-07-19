@@ -296,11 +296,11 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Role *
                 </label>
-                <div className="col-span-9 relative">
+                <div className="col-span-9">
                   <select
                     value={formData.role}
                     onChange={(e) => handleInputChange('role', e.target.value)}
-                    className={`w-full relative z-10 bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
+                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.role 
                         ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
                         : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
@@ -324,11 +324,11 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Position *
                 </label>
-                <div className="col-span-9 relative">
+                <div className="col-span-9">
                   <select
                     value={formData.position}
                     onChange={(e) => handleInputChange('position', e.target.value)}
-                    className={`w-full relative z-10 bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
+                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.position 
                         ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
                         : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
@@ -378,11 +378,11 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Language *
                 </label>
-                <div className="col-span-9 relative">
+                <div className="col-span-9">
                   <select
                     value={formData.language}
                     onChange={(e) => handleInputChange('language', e.target.value)}
-                    className={`w-full relative z-10 bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
+                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.language 
                         ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
                         : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
