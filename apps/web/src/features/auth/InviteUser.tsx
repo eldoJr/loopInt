@@ -31,7 +31,7 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
     firstName: '',
     lastName: '',
     email: '',
-    role: '',
+    role: 'Choose',
     position: 'Position',
     hourlyRate: '',
     language: ''
@@ -207,7 +207,7 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4" style={{ overflow: 'visible' }}>
+        <form onSubmit={handleSubmit} className="p-4 mt-4" style={{ overflow: 'visible' }}>
           <div className="space-y-6 max-w-3xl mx-auto" style={{ overflow: 'visible' }}>
             {/* User Information */}
             <div className="space-y-4" style={{ overflow: 'visible' }}>
@@ -297,7 +297,7 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Role *
                 </label>
-                <div className="col-span-9 mb-4">
+                <div className="col-span-9">
                   <CustomSelect
                     options={role}
                     value={formData.role}
@@ -318,7 +318,7 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Position *
                 </label>
-                <div className="col-span-9 mb-4">
+                <div className="col-span-9">
                   <CustomSelect
                     options={positions}
                     value={formData.position}
