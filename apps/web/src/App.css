@@ -1,15 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Garante que o dropdown não se sobreponha */
-select {
-  position: relative;
-  z-index: auto;
-}
-
-/* Opcional: estilo para o dropdown aberto */
-select:focus {
-  position: relative;
-  z-index: 10;
-}
