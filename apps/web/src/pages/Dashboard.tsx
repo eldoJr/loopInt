@@ -45,6 +45,7 @@ import ReportBug from '../features/support/ReportBug';
 import NewAccount from '../features/auth/NewAccount';
 import InviteUser from '../features/auth/InviteUser';
 import TaxInvoice from '../features/finance/TaxInvoice';
+import Invoices from '../features/finance/Invoices';
 import NewIssue from '../features/support/NewIssue';
 import NewCompany from '../features/clients/NewCompany';
 import NewContact from '../features/clients/NewContact';
@@ -220,7 +221,6 @@ const Dashboard = () => {
     
     try {
       // In static mode, just update the local state
-      const updatedTodo = todos.find(t => t.id === id);
       setTodos(todos.map(todo => 
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       ));
@@ -647,7 +647,15 @@ const Dashboard = () => {
       case 'Invite User':
         return <InviteUser onNavigateBack={backToMain} />;
       case 'Tax Invoice':
-        return <TaxInvoice onNavigateBack={backToMain} />;
+        return <TaxInvoice 
+          onNavigateBack={backToMain} 
+          onNavigateToInvoices={() => navigateToSection('Invoices')} 
+        />;
+      case 'Invoices':
+        return <Invoices 
+          onNavigateBack={backToMain} 
+          onCreateInvoice={() => navigateToSection('Tax Invoice')}
+        />;
       case 'New Issue':
         return <NewIssue onNavigateBack={backToMain} />;
       case 'New Company':

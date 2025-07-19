@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Plus, X, Calculator, Save, Mail, FileText, Check } from 'lucide-react';
+import { Calendar, Plus, X, Calculator, Mail, FileText, Check } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import { format, parse, isValid } from 'date-fns';
 
 interface InvoiceItem {
   id: string;
@@ -43,14 +44,34 @@ const TaxInvoice: React.FC<TaxInvoiceProps> = ({ onNavigateBack, onNavigateToInv
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const formatDate = (date: Date): string => {
+    return format(date, 'MM/dd/yyyy');
+  };
+
+  const parseDate = (dateString: string): Date => {
+    const parsedDate = parse(dateString, 'MM/dd/yyyy', new Date());
+    return isValid(parsedDate) ? parsedDate : new Date();
+  };
+
+  const handleDateChange = (field: 'invoiceDate' | 'supplyDate' | 'dueDate', value: string) => {
+    try {
+      const parsedDate = parse(value, 'MM/dd/yyyy', new Date());
+      if (isValid(parsedDate)) {
+        handleChange(field, value);
+      }
+    } catch {
+      // Invalid date format, don't update
+    }
+  };
+
   const [formData, setFormData] = useState<InvoiceFormData>({
     header: '',
     description: '',
     invoiceNo: 'TI/17/2025/DEF',
     poNumber: '',
-    invoiceDate: '07/19/2025',
-    supplyDate: '07/19/2025',
-    dueDate: '08/02/2025',
+    invoiceDate: formatDate(new Date()),
+    supplyDate: formatDate(new Date()),
+    dueDate: formatDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)), // 14 days from now
     customer: '',
     project: '',
     paymentType: '',
@@ -213,7 +234,7 @@ const TaxInvoice: React.FC<TaxInvoiceProps> = ({ onNavigateBack, onNavigateToInv
                 disabled={saving}
                 className="flex items-center space-x-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
               >
-                <Save size={14} />
+                <Check size={14} />
                 <span>{saving ? 'Saving...' : 'Save'}</span>
               </button>
             </div>
@@ -307,11 +328,19 @@ const TaxInvoice: React.FC<TaxInvoiceProps> = ({ onNavigateBack, onNavigateToInv
                     </label>
                     <div className="col-span-3">
                       <div className="relative">
-                        <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                        <Calendar 
+                          className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" 
+                          onClick={() => handleChange('invoiceDate', formatDate(new Date()))}
+                        />
                         <input
                           type="text"
+                          placeholder="MM/DD/YYYY"
                           value={formData.invoiceDate}
-                          onChange={(e) => handleChange('invoiceDate', e.target.value)}
+                          onChange={(e) => handleDateChange('invoiceDate', e.target.value)}
+                          onBlur={() => {
+                            const date = parseDate(formData.invoiceDate);
+                            handleChange('invoiceDate', formatDate(date));
+                          }}
                           className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                         />
                       </div>
@@ -321,11 +350,19 @@ const TaxInvoice: React.FC<TaxInvoiceProps> = ({ onNavigateBack, onNavigateToInv
                     </label>
                     <div className="col-span-2">
                       <div className="relative">
-                        <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                        <Calendar 
+                          className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" 
+                          onClick={() => handleChange('supplyDate', formatDate(new Date()))}
+                        />
                         <input
                           type="text"
+                          placeholder="MM/DD/YYYY"
                           value={formData.supplyDate}
-                          onChange={(e) => handleChange('supplyDate', e.target.value)}
+                          onChange={(e) => handleDateChange('supplyDate', e.target.value)}
+                          onBlur={() => {
+                            const date = parseDate(formData.supplyDate);
+                            handleChange('supplyDate', formatDate(date));
+                          }}
                           className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                         />
                       </div>
@@ -335,11 +372,24 @@ const TaxInvoice: React.FC<TaxInvoiceProps> = ({ onNavigateBack, onNavigateToInv
                     </label>
                     <div className="col-span-2">
                       <div className="relative">
-                        <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                        <Calendar 
+                          className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" 
+                          onClick={() => {
+                            // Set due date to 14 days from today when calendar icon is clicked
+                            const dueDate = new Date();
+                            dueDate.setDate(dueDate.getDate() + 14);
+                            handleChange('dueDate', formatDate(dueDate));
+                          }}
+                        />
                         <input
                           type="text"
+                          placeholder="MM/DD/YYYY"
                           value={formData.dueDate}
-                          onChange={(e) => handleChange('dueDate', e.target.value)}
+                          onChange={(e) => handleDateChange('dueDate', e.target.value)}
+                          onBlur={() => {
+                            const date = parseDate(formData.dueDate);
+                            handleChange('dueDate', formatDate(date));
+                          }}
                           className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                         />
                       </div>
