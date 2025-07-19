@@ -3,6 +3,7 @@ import { Share, AlertCircle } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
+import CustomSelect from '../../components/ui/CustomSelect';
 
 interface InviteUserProps {
   onNavigateBack?: () => void;
@@ -206,10 +207,10 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4">
-          <div className="space-y-6 max-w-3xl mx-auto">
+        <form onSubmit={handleSubmit} className="p-4" style={{ overflow: 'visible' }}>
+          <div className="space-y-6 max-w-3xl mx-auto" style={{ overflow: 'visible' }}>
             {/* User Information */}
-            <div className="space-y-4">
+            <div className="space-y-4" style={{ overflow: 'visible' }}>
               <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 User Information
               </h2>
@@ -292,24 +293,17 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
               </div>
 
               {/* Role Field */}
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Role *
                 </label>
-                <div className="col-span-9">
-                  <select
+                <div className="col-span-9 mb-4">
+                  <CustomSelect
+                    options={role}
                     value={formData.role}
-                    onChange={(e) => handleInputChange('role', e.target.value)}
-                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
-                      errors.role 
-                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
-                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                    }`}
-                  >
-                    {role.map(role => (
-                      <option key={role} value={role}>{role}</option>
-                    ))}
-                  </select>
+                    onChange={(value) => handleInputChange('role', value)}
+                    error={errors.role}
+                  />
                   {errors.role && (
                     <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
@@ -320,24 +314,17 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
               </div>
 
               {/* Position Field */}
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Position *
                 </label>
-                <div className="col-span-9">
-                  <select
+                <div className="col-span-9 mb-4">
+                  <CustomSelect
+                    options={positions}
                     value={formData.position}
-                    onChange={(e) => handleInputChange('position', e.target.value)}
-                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
-                      errors.position 
-                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
-                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                    }`}
-                  >
-                    {positions.map(position => (
-                      <option key={position} value={position}>{position}</option>
-                    ))}
-                  </select>
+                    onChange={(value) => handleInputChange('position', value)}
+                    error={errors.position}
+                  />
                   {errors.position && (
                     <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
@@ -374,24 +361,17 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
               </div>
 
               {/* Language Field */}
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="grid grid-cols-12 gap-3 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Language *
                 </label>
-                <div className="col-span-9">
-                  <select
+                <div className="col-span-9 mb-4">
+                  <CustomSelect
+                    options={languages}
                     value={formData.language}
-                    onChange={(e) => handleInputChange('language', e.target.value)}
-                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
-                      errors.language 
-                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
-                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                    }`}
-                  >
-                    {languages.map(language => (
-                      <option key={language} value={language}>{language}</option>
-                    ))}
-                  </select>
+                    onChange={(value) => handleInputChange('language', value)}
+                    error={errors.language}
+                  />
                   {errors.language && (
                     <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
