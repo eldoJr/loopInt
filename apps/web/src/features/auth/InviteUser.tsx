@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Save, AlertCircle } from 'lucide-react';
+import { Share, AlertCircle } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -199,7 +199,7 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
                     : 'bg-blue-500 text-white hover:bg-blue-600'
                 }`}
               >
-                <Save size={14} />
+                <Share size={14} />
                 <span>{saving ? 'Sending...' : 'Send Invitation'}</span>
               </button>
             </div>
