@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Calendar, User, Save, CalendarDays, Timer, Target, CalendarCheck, Check, Sparkles, X } from 'lucide-react';
+import { Calendar, User, Save, CalendarDays, Timer, Target, CalendarCheck, Check, Sparkles, X, Bold, Italic, Underline, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Link, Code } from 'lucide-react';
 import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import AIGenerateTask from '../ai/GenerateTask';
 import { showToast } from '../../components/ui/Toast';
+import CustomSelect from '../../components/ui/CustomSelect';
+import { Toggle } from '../../components/ui/Toggle';
 
 interface AddTaskProps {
   onNavigateBack?: () => void;
@@ -18,6 +20,13 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   const [showForm, setShowForm] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [showAIPanel, setShowAIPanel] = useState(false);
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
+  const [textStyles, setTextStyles] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    strikethrough: false
+  });
   
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string; } | null>(null);
 
@@ -152,6 +161,21 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
     }));
     setShowAIPanel(false);
   };
+  
+  const handleTextStyle = (style: keyof typeof textStyles) => {
+    setTextStyles(prev => ({ ...prev, [style]: !prev[style] }));
+    
+    // Apply style to selected text if there's a selection
+    const textarea = document.querySelector('textarea[name="description"]') as HTMLTextAreaElement;
+    if (textarea && textarea.selectionStart !== textarea.selectionEnd) {
+      // This is a placeholder for potential future enhancement with a more sophisticated rich text editor
+      // For now, we're just toggling the global style state
+    }
+  };
+
+  const handleTextAlign = (align: 'left' | 'center' | 'right') => {
+    setTextAlign(align);
+  };
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
@@ -241,40 +265,32 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
 
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Status
+                  Status *
                 </label>
                 <div className="col-span-4">
-                  <select
-                    name="status"
+                  <CustomSelect
+                    options={['todo', 'in_progress', 'done']}
                     value={formData.status}
-                    onChange={handleChange}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
-                  >
-                    <option value="todo">To Do</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="done">Done</option>
-                  </select>
-                </div>
-                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Priority
-                </label>
-                <div className="col-span-4">
-                  <select
-                    name="priority"
-                    value={formData.priority}
-                    onChange={handleChange}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
+                    onChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
+                  />
                 </div>
               </div>
+              <div className="grid grid-cols-12 gap-3 items-center">
+                  <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                  Priority *
+                  </label>
+                  <div className="col-span-4">
+                    <CustomSelect
+                      options={['low', 'medium', 'high']}
+                      value={formData.priority}
+                      onChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
+                    />
+                  </div>
+                </div>
 
             <div className="grid grid-cols-12 gap-3 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Due Date
+                Due Date *
               </label>
               <div className="col-span-9">
                 <div className="space-y-2">
@@ -314,23 +330,20 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
 
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Project
+                  Project *
                 </label>
                 <div className="col-span-9">
-                  <select
-                    name="project_id"
-                    value={formData.project_id}
-                    onChange={handleChange}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
-                  >
-                    <option value="">Select a project...</option>
-                  </select>
+                  <CustomSelect
+                    options={['', 'Project 1', 'Project 2', 'Project 3']}
+                    value={formData.project_id || 'Select a project...'}
+                    onChange={(value) => setFormData(prev => ({ ...prev, project_id: value === 'Select a project...' ? '' : value }))}
+                  />
                 </div>
               </div>
 
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Assigned To
+                  Assigned To *
                 </label>
                 <div className="col-span-9">
                   <div className="w-full bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-600 dark:text-gray-300 flex items-center space-x-2 text-sm">
@@ -344,22 +357,100 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             {/* Section 2 - Schedule and Details */}
             <div className="space-y-4">
               <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
-                Details
+                Details 
               </h2>
 
               <div className="grid grid-cols-12 gap-3 items-start">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
-                  Description
+                  Description *
                 </label>
                 <div className="col-span-9">
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
-                    placeholder="Enter task description"
-                  />
+                  <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
+                    <Toggle
+                      pressed={textStyles.bold}
+                      onPressedChange={() => handleTextStyle('bold')}
+                      aria-label="Bold"
+                    >
+                      <Bold className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textStyles.italic}
+                      onPressedChange={() => handleTextStyle('italic')}
+                      aria-label="Italic"
+                    >
+                      <Italic className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textStyles.underline}
+                      onPressedChange={() => handleTextStyle('underline')}
+                      aria-label="Underline"
+                    >
+                      <Underline className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textStyles.strikethrough}
+                      onPressedChange={() => handleTextStyle('strikethrough')}
+                      aria-label="Strikethrough"
+                    >
+                      <Strikethrough className="h-4 w-4" />
+                    </Toggle>
+                    
+                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+                    
+                    <Toggle
+                      pressed={textAlign === 'left'}
+                      onPressedChange={() => handleTextAlign('left')}
+                      aria-label="Align left"
+                    >
+                      <AlignLeft className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textAlign === 'center'}
+                      onPressedChange={() => handleTextAlign('center')}
+                      aria-label="Align center"
+                    >
+                      <AlignCenter className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle
+                      pressed={textAlign === 'right'}
+                      onPressedChange={() => handleTextAlign('right')}
+                      aria-label="Align right"
+                    >
+                      <AlignRight className="h-4 w-4" />
+                    </Toggle>
+                    
+                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+                    
+                    <Toggle aria-label="List">
+                      <List className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle aria-label="Ordered list">
+                      <ListOrdered className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle aria-label="Link">
+                      <Link className="h-4 w-4" />
+                    </Toggle>
+                    <Toggle aria-label="Code">
+                      <Code className="h-4 w-4" />
+                    </Toggle>
+                  </div>
+                  
+                  <div className="relative">
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      rows={3}
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
+                      placeholder="Enter task description"
+                      style={{
+                        fontWeight: textStyles.bold ? 'bold' : 'normal',
+                        fontStyle: textStyles.italic ? 'italic' : 'normal',
+                        textDecoration: `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
+                        textAlign: textAlign
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
