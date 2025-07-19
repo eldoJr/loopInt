@@ -161,7 +161,6 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Team', onClick: onNavigateToTeam },
     { label: 'Invite User' }
   ];
 
@@ -186,7 +185,7 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
             <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Invite User</h1>
             <div className="flex items-center space-x-2">
               <button
-                onClick={onNavigateToTeam}
+                onClick={onNavigateBack}
                 className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
