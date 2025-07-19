@@ -692,7 +692,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               {formData.phoneNumbers.map((phone, index) => (
                 <div key={index} className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    Phone {index === 0 ? '' : `${index + 1}`}
+                    Phone* {index === 0 ? '' : `${index + 1}`}
                   </label>
                   <div className="col-span-8">
                     <input
@@ -795,7 +795,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Location
                 </label>
-                <div className="col-span-2">
+                <div className="col-span-2 mb-4">
                   <input
                     type="text"
                     value={formData.zipCode}
@@ -804,7 +804,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     placeholder="Zip code"
                   />
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-2 mb-4">
                   <input
                     type="text"
                     value={formData.city}
@@ -813,7 +813,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     placeholder="City"
                   />
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-2 mb-4">
                   <input
                     type="text"
                     value={formData.state}
@@ -822,7 +822,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     placeholder="State"
                   />
                 </div>
-                <div className="col-span-3">
+                <div className="col-span-3 mb-4">
                   <input
                     type="text"
                     value={formData.country}
@@ -830,62 +830,6 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Country"
                   />
-                </div>
-              </div>
-
-              {/* Rich Text Description */}
-              <div className="grid grid-cols-12 gap-3 items-start">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
-                  Description
-                </label>
-                <div className="col-span-9">
-                  <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
-                    <Toggle
-                      pressed={textStyles.bold}
-                      onPressedChange={() => handleTextStyle('bold')}
-                    >
-                      <Bold className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textStyles.italic}
-                      onPressedChange={() => handleTextStyle('italic')}
-                    >
-                      <Italic className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textStyles.underline}
-                      onPressedChange={() => handleTextStyle('underline')}
-                    >
-                      <Underline className="h-4 w-4" />
-                    </Toggle>
-                    <button type="button" className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-                      <Link className="h-4 w-4" />
-                    </button>
-                  </div>
-                  
-                  <div className="relative">
-                    <textarea
-                      value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
-                      rows={4}
-                      maxLength={999}
-                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all resize-none text-sm ${
-                        errors.description 
-                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
-                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                      }`}
-                      placeholder="Enter description..."
-                    />
-                    <div className="absolute bottom-2 right-2 text-xs text-gray-500 dark:text-gray-500">
-                      {formData.description.length}/999
-                    </div>
-                  </div>
-                  {errors.description && (
-                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      {errors.description}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
