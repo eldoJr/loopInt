@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Save, X, Upload, Plus, Linkedin, MessageSquare, AlertCircle, Bold, Italic, Underline, Link, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Code } from 'lucide-react';
+import { Save, X, Upload, Plus, Linkedin, AlertCircle, Bold, Italic, Underline, Link, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Code } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -52,9 +52,9 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
     lastName: '',
     email: '',
     isIndividual: false,
-    company: '',
+    company: 'Choose company',
     source: '',
-    position: '',
+    position: 'Choose',
     positionDescription: '',
     skype: '',
     linkedin: '',
@@ -347,7 +347,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                         {photoPreview ? (
                           <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
                         ) : (
-                          <Upload className="w-6 h-6 text-gray-500 dark:text-gray-400" />
+                          <Upload className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                         )}
                       </div>
                       <input
@@ -395,7 +395,9 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     </div>
                   )}
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              </div>
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Last Name *
                 </label>
                 <div className="col-span-4">
@@ -465,7 +467,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               {/* Dropdowns */}
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Company
+                  Company *
                 </label>
                 <div className="col-span-4">
                   <CustomSelect
@@ -474,8 +476,11 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     onChange={(value) => handleInputChange('company', value)}
                   />
                 </div>
-                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Position
+              </div>
+
+              <div className="grid grid-cols-12 gap-3 items-center">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                  Position *
                 </label>
                 <div className="col-span-4">
                   <CustomSelect
@@ -489,7 +494,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               {/* Position Description */}
               <div className="grid grid-cols-12 gap-3 items-start">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
-                  Position Description
+                  Position Description *
                 </label>
                 <div className="col-span-9">
                   <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
@@ -609,21 +614,6 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               {/* Skype and LinkedIn */}
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Skype
-                </label>
-                <div className="col-span-4">
-                  <div className="relative">
-                    <MessageSquare className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={formData.skype}
-                      onChange={(e) => handleInputChange('skype', e.target.value)}
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                      placeholder="Skype username"
-                    />
-                  </div>
-                </div>
-                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   LinkedIn
                 </label>
                 <div className="col-span-4">
@@ -680,7 +670,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                   <button
                     type="button"
                     onClick={addAdditionalLink}
-                    className="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
+                    className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 dark:bg-blue-700/50 text-white dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
                   >
                     <Plus size={14} />
                     <span>Add another link</span>
@@ -692,7 +682,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               {formData.phoneNumbers.map((phone, index) => (
                 <div key={index} className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    Phone* {index === 0 ? '' : `${index + 1}`}
+                    Phone * {index === 0 ? '' : `${index + 1}`}
                   </label>
                   <div className="col-span-8">
                     <input
@@ -736,7 +726,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               {/* Address Fields */}
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Address Line 1
+                  Address Line 1 *
                 </label>
                 <div className="col-span-9">
                   <input
@@ -752,7 +742,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
               {formData.addressLine2 !== undefined && (
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    Address Line 2
+                    Address Line 2 *
                   </label>
                   <div className="col-span-8">
                     <input
@@ -793,9 +783,9 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
 
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Location
+                  Location *
                 </label>
-                <div className="col-span-2 mb-4">
+                <div className="col-span-2">
                   <input
                     type="text"
                     value={formData.zipCode}
@@ -804,7 +794,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     placeholder="Zip code"
                   />
                 </div>
-                <div className="col-span-2 mb-4">
+                <div className="col-span-2">
                   <input
                     type="text"
                     value={formData.city}
@@ -813,7 +803,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     placeholder="City"
                   />
                 </div>
-                <div className="col-span-2 mb-4">
+                <div className="col-span-2">
                   <input
                     type="text"
                     value={formData.state}
@@ -822,7 +812,7 @@ const NewCoworker = ({ onNavigateBack, onNavigateToTeam }: NewCoworkerProps) => 
                     placeholder="State"
                   />
                 </div>
-                <div className="col-span-3 mb-4">
+                <div className="col-span-3">
                   <input
                     type="text"
                     value={formData.country}
