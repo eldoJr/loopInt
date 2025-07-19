@@ -22,7 +22,7 @@ export const AnimatedButton = ({ children, onClick, className = '', disabled = f
   return (
     <animated.button
       style={springProps}
-      className={className}
+      className={`${className} ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
       disabled={disabled}
       onClick={onClick}
       onMouseDown={() => setIsPressed(true)}
