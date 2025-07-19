@@ -300,7 +300,7 @@ const InviteUser = ({ onNavigateBack, onNavigateToTeam }: InviteUserProps) => {
                   <select
                     value={formData.role}
                     onChange={(e) => handleInputChange('role', e.target.value)}
-                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
+                    className={`relative z-10 w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.role 
                         ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
                         : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
