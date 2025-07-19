@@ -1,6 +1,7 @@
 import { useSpring, animated } from '@react-spring/web';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
+import { useTheme } from '../../../context/ThemeContext';
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -8,6 +9,7 @@ interface PageTransitionProps {
 }
 
 export const PageTransition = ({ children, location }: PageTransitionProps) => {
+  const { theme } = useTheme();
   const [currentLocation, setCurrentLocation] = useState(location);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -29,7 +31,10 @@ export const PageTransition = ({ children, location }: PageTransitionProps) => {
   }, [location, currentLocation]);
 
   return (
-    <animated.div style={springProps} className="w-full">
+    <animated.div 
+      style={springProps} 
+      className={`w-full ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+    >
       {children}
     </animated.div>
   );
