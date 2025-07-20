@@ -192,7 +192,7 @@ const NewBill: React.FC<NewBillProps> = ({ onNavigateBack, onNavigateToBills }) 
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Revenues', onClick: onNavigateToBills },
+    { label: 'Invoices', onClick: onNavigateToBills },
     { label: 'New Bill' }
   ];
 

@@ -62,7 +62,7 @@ const UndocumentedRevenue: React.FC<UndocumentedRevenueProps> = ({ onNavigateBac
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Revenues', onClick: onNavigateToRevenues },
+    { label: 'Invoices', onClick: onNavigateToRevenues },
     { label: 'New Undocumented Revenue' }
   ];
 
