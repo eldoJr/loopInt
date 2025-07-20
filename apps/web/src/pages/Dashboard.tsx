@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import ModalProvider from '../context/ModalContext';
 import { PageTransition } from '../components/animations/PageTransition';
 import SkeletonLoader from '../components/ui/SkeletonLoader';
 import { 
@@ -76,6 +77,26 @@ import WorkItems from '../features/settings/WorkItems';
 import Apps from '../features/settings/Apps';
 import UserManagement from '../features/settings/UserManagement';
 import Billing from '../features/settings/Billing';
+import NewIssueModal from '../features/calendar/components/NewIssueModal';
+import { useModal } from '../hooks/useModal';
+
+// Component to render modals
+const DashboardModals = () => {
+  const { showNewIssueModal, closeNewIssueModal } = useModal();
+  
+  return (
+    <>
+      {showNewIssueModal && (
+        <div className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <NewIssueModal
+            isOpen={showNewIssueModal}
+            onClose={closeNewIssueModal}
+          />
+        </div>
+      )}
+    </>
+  );
+};
 
 const Dashboard = () => {
   useTheme();
@@ -757,7 +778,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-black dark:to-gray-900">
+    <ModalProvider>
+      <div className="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-black dark:to-gray-900">
+        <DashboardModals />
       {/* Persistent Header */}
       {user && (
         <DashboardHeader 
@@ -812,6 +835,7 @@ const Dashboard = () => {
         onNotNow={() => setShowCustomizationAlert(false)}
       />
     </div>
+    </ModalProvider>
   );
 };
 
