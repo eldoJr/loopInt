@@ -89,7 +89,7 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/20 dark:bg-black/50 flex items-center justify-center z-50">
+    <div className="w-full h-full flex items-center justify-center">
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl max-w-4xl w-full mx-4 h-[70vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-800">

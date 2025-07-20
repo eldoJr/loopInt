@@ -18,6 +18,7 @@ import {
   UserCheck,
   TrendingUp
 } from 'lucide-react';
+import NewIssueModal from '../../features/calendar/components/NewIssueModal';
 
 interface AddDropdownProps {
   onNavigate?: (section: string) => void;
@@ -25,6 +26,7 @@ interface AddDropdownProps {
 
 const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showNewIssueModal, setShowNewIssueModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
   const menuItems = [
     { icon: UserPlus, label: 'Invite user', action: () => onNavigate?.('Invite User') },
     { icon: FileText, label: 'New tax invoice', action: () => onNavigate?.('Tax Invoice') },
-    { icon: AlertCircle, label: 'New issue', action: () => onNavigate?.('New Issue') },
+    { icon: AlertCircle, label: 'New issue', action: () => setShowNewIssueModal(true) },
     { icon: Building, label: 'New company', action: () => onNavigate?.('New Company') },
     { icon: User, label: 'New contact person', action: () => onNavigate?.('New Contact') },
     { icon: FolderOpen, label: 'New project', action: () => onNavigate?.('New Project') },
@@ -59,6 +61,15 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
 
   return (
     <div className="relative" ref={dropdownRef}>
+      {/* New Issue Modal with backdrop */}
+      {showNewIssueModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <NewIssueModal
+            isOpen={showNewIssueModal}
+            onClose={() => setShowNewIssueModal(false)}
+          />
+        </div>
+      )}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="p-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
