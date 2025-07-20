@@ -7,6 +7,8 @@ import { useTheme } from '../../context/ThemeContext';
 interface InvoicesProps {
   onNavigateBack?: () => void;
   onCreateInvoice?: () => void;
+  onCreateBill?: () => void;
+  onCreateUndocumentedRevenue?: () => void;
 }
 
 interface FilterState {
@@ -15,7 +17,7 @@ interface FilterState {
   amount: string;
 }
 
-const Invoices = ({ onNavigateBack, onCreateInvoice }: InvoicesProps) => {
+const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndocumentedRevenue }: InvoicesProps) => {
   useTheme();
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
@@ -76,12 +78,14 @@ const Invoices = ({ onNavigateBack, onCreateInvoice }: InvoicesProps) => {
                     <span>New tax invoice</span>
                   </button>
                   <button 
+                    onClick={onCreateBill}
                     className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center gap-2"
                   >
                     <Plus size={14} />
                     <span>New bill</span>
                   </button>
                   <button 
+                    onClick={onCreateUndocumentedRevenue}
                     className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center gap-2"
                   >
                     <Plus size={14} />

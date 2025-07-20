@@ -655,6 +655,8 @@ const Dashboard = () => {
         return <Invoices 
           onNavigateBack={backToMain} 
           onCreateInvoice={() => navigateToSection('Tax Invoice')}
+          onCreateBill={() => navigateToSection('New Bill')}
+          onCreateUndocumentedRevenue={() => navigateToSection('Undocumented Revenue')}
         />;
       case 'New Issue':
         return <NewIssue onNavigateBack={backToMain} />;
@@ -665,7 +667,7 @@ const Dashboard = () => {
       case 'Job Ad':
         return <JobAd onNavigateBack={backToMain} />;
       case 'New Bill':
-        return <NewBill onNavigateBack={backToMain} />;
+        return <NewBill onNavigateBack={backToMain} onNavigateToBills={() => navigateToSection('Invoices')} />;
       case 'New Candidate':
         return <NewCandidate onNavigateBack={backToMain} />;
       case 'New Coworker':
@@ -684,7 +686,10 @@ const Dashboard = () => {
       case 'HR Project':
         return <HRProject onNavigateBack={backToMain} />;
       case 'Undocumented Revenue':
-        return <UndocumentedRevenue onNavigateBack={backToMain} />;
+        return <UndocumentedRevenue 
+          onNavigateBack={backToMain} 
+          onNavigateToRevenues={() => navigateToSection('Invoices')}
+        />;
       case 'History':
         return <Historic onNavigateBack={backToMain} />;
       case 'Profile':
