@@ -392,7 +392,7 @@ const TaxInvoice: React.FC<TaxInvoiceProps> = ({ onNavigateBack, onNavigateToInv
                         
                         {/* Due Date */}
                         <div className="flex items-center">
-                          <div className="w-24 text-sm text-gray-600 dark:text-gray-300">Due:</div>
+                          <div className="w-24 text-sm text-gray-600 dark:text-gray-300">Due date:</div>
                           <div className="flex gap-2">
                             <div className="relative">
                               <Calendar 
@@ -421,9 +421,6 @@ const TaxInvoice: React.FC<TaxInvoiceProps> = ({ onNavigateBack, onNavigateToInv
                               {showDueDateDropdown && (
                                 <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
                                   <div className="p-2">
-                                    <div className="mb-2 font-medium text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-1">
-                                      Payment Terms
-                                    </div>
                                     <button 
                                       type="button"
                                       onClick={() => {
