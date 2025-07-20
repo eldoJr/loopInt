@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Search, X, Filter, Plus, Star, ArrowUpDown, MoreHorizontal, Phone, Mail, Building } from 'lucide-react';
+import { Search, X, Filter, Plus, Star, ArrowUpDown, MoreHorizontal, Phone, Mail, Building, User } from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -18,6 +18,20 @@ interface Client {
   assignedTo: string;
   status: string;
   type: string;
+  favorite: boolean;
+}
+
+interface Contact {
+  id: string;
+  firstName: string;
+  lastName: string;
+  company: string;
+  position: string;
+  city: string;
+  phone: string;
+  email: string;
+  assignedTo: string;
+  status: string;
   favorite: boolean;
 }
 
@@ -67,14 +81,56 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
     }
   ];
 
+  // Mock data for contacts
+  const mockContacts: Contact[] = [
+    {
+      id: '1',
+      firstName: 'John',
+      lastName: 'Smith',
+      company: 'Acme Corporation',
+      position: 'CEO',
+      city: 'New York',
+      phone: '+1 555-987-6543',
+      email: 'john.smith@acme.com',
+      assignedTo: 'Jane Doe',
+      status: 'Active',
+      favorite: true
+    },
+    {
+      id: '2',
+      firstName: 'Emily',
+      lastName: 'Johnson',
+      company: 'Globex Industries',
+      position: 'Marketing Director',
+      city: 'London',
+      phone: '+44 20-9876-5432',
+      email: 'emily.j@globex.co.uk',
+      assignedTo: 'John Doe',
+      status: 'Lead',
+      favorite: false
+    },
+    {
+      id: '3',
+      firstName: 'Michael',
+      lastName: 'Brown',
+      company: 'Stark Enterprises',
+      position: 'CTO',
+      city: 'Los Angeles',
+      phone: '+1 213-789-0123',
+      email: 'michael.b@stark.com',
+      assignedTo: 'Tony Stark',
+      status: 'Prospect',
+      favorite: true
+    }
+  ];
+
   // Filter clients based on search criteria and active tab
   const filteredClients = useMemo(() => {
+    if (activeTab === 'contacts') {
+      return [];
+    }
+    
     return mockClients.filter(client => {
-      // Filter by tab (companies/contacts)
-      if (activeTab === 'contacts') {
-        return false; // For now, show no contacts in contacts tab
-      }
-      
       // Filter by favorites
       if (showFavorites && !client.favorite) {
         return false;
@@ -92,6 +148,40 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
       
       // Filter by source/type
       if (sourceFilter && !client.type.toLowerCase().includes(sourceFilter.toLowerCase())) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [activeTab, nameFilter, cityFilter, sourceFilter, showFavorites]);
+
+  // Filter contacts based on search criteria and active tab
+  const filteredContacts = useMemo(() => {
+    if (activeTab === 'companies') {
+      return [];
+    }
+    
+    return mockContacts.filter(contact => {
+      // Filter by favorites
+      if (showFavorites && !contact.favorite) {
+        return false;
+      }
+      
+      // Filter by name
+      if (nameFilter && !(
+        contact.firstName.toLowerCase().includes(nameFilter.toLowerCase()) || 
+        contact.lastName.toLowerCase().includes(nameFilter.toLowerCase())
+      )) {
+        return false;
+      }
+      
+      // Filter by city
+      if (cityFilter && !contact.city.toLowerCase().includes(cityFilter.toLowerCase())) {
+        return false;
+      }
+      
+      // Filter by position
+      if (sourceFilter && !contact.position.toLowerCase().includes(sourceFilter.toLowerCase())) {
         return false;
       }
       
@@ -171,7 +261,7 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
                 <input
                   type="text"
-                  placeholder="Name"
+                  placeholder={activeTab === 'companies' ? "Company name" : "Contact name"}
                   value={nameFilter}
                   onChange={(e) => setNameFilter(e.target.value)}
                   className="w-full pl-8 pr-8 py-1.5 text-sm border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -209,7 +299,7 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
                 <input
                   type="text"
-                  placeholder="Type"
+                  placeholder={activeTab === 'companies' ? "Type" : "Position"}
                   value={sourceFilter}
                   onChange={(e) => setSourceFilter(e.target.value)}
                   className="w-full pl-8 pr-8 py-1.5 text-sm border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -283,130 +373,249 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
         {/* Table */}
         <div className="bg-white dark:bg-gray-900/50 border-x border-b border-gray-200 dark:border-gray-800/50 rounded-b-xl">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/50">
-                <tr>
-                  <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    <div className="flex items-center space-x-1">
-                      <span>Name</span>
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <ArrowUpDown size={12} />
-                      </button>
-                    </div>
-                  </th>
-                  <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    <div className="flex items-center space-x-1">
-                      <span>City</span>
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <ArrowUpDown size={12} />
-                      </button>
-                    </div>
-                  </th>
-                  <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Phone
-                  </th>
-                  <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Assigned To
-                  </th>
-                  <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    <div className="flex items-center space-x-1">
-                      <span>Status</span>
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <ArrowUpDown size={12} />
-                      </button>
-                    </div>
-                  </th>
-                  <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="w-8"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
-                {filteredClients.length > 0 ? (
-                  filteredClients.map(client => (
-                    <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                      <td className="py-2 px-4">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center text-blue-600 dark:text-blue-400">
-                            <Building size={12} />
-                          </div>
-                          <div className="flex items-center">
-                            <span className="font-medium text-sm text-gray-900 dark:text-white">{client.name}</span>
-                            {client.favorite && <Star className="ml-1 w-3 h-3 text-yellow-500 fill-current" />}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">{client.city}</td>
-                      <td className="py-2 px-4">
-                        <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-300">
-                          <Phone size={12} className="text-green-500" />
-                          <span>{client.phone}</span>
-                        </div>
-                      </td>
-                      <td className="py-2 px-4">
-                        <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-300">
-                          <Mail size={12} className="text-blue-500" />
-                          <span>{client.email}</span>
-                        </div>
-                      </td>
-                      <td className="py-2 px-4">
-                        <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">{client.assignedTo}</span>
-                      </td>
-                      <td className="py-2 px-4">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          client.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                          client.status === 'Prospect' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
-                          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                        }`}>
-                          {client.status}
-                        </span>
-                      </td>
-                      <td className="py-2 px-4">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-600 text-white">
-                          {client.type}
-                        </span>
-                      </td>
-                      <td className="py-2 px-4">
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <MoreHorizontal size={14} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
+            {activeTab === 'companies' ? (
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/50">
                   <tr>
-                    <td colSpan={8} className="py-12 text-center">
-                      <div className="flex flex-col items-center justify-center space-y-2">
-                        <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-                          <Search className="w-6 h-6 text-gray-400" />
-                        </div>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">No clients found</p>
-                        <p className="text-gray-400 dark:text-gray-500 text-xs max-w-md">
-                          Try adjusting your search or filter to find what you're looking for.
-                        </p>
-                        <button 
-                          onClick={onNavigateToNewCompany}
-                          className="mt-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-1 text-sm"
-                        >
-                          <Plus size={14} />
-                          <span>Add company</span>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Name</span>
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <ArrowUpDown size={12} />
                         </button>
                       </div>
-                    </td>
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>City</span>
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <ArrowUpDown size={12} />
+                        </button>
+                      </div>
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Phone
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Assigned To
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Status</span>
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <ArrowUpDown size={12} />
+                        </button>
+                      </div>
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="w-8"></th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
+                  {filteredClients.length > 0 ? (
+                    filteredClients.map(client => (
+                      <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                        <td className="py-2 px-4">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center text-blue-600 dark:text-blue-400">
+                              <Building size={12} />
+                            </div>
+                            <div className="flex items-center">
+                              <span className="font-medium text-sm text-gray-900 dark:text-white">{client.name}</span>
+                              {client.favorite && <Star className="ml-1 w-3 h-3 text-yellow-500 fill-current" />}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">{client.city}</td>
+                        <td className="py-2 px-4">
+                          <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-300">
+                            <Phone size={12} className="text-green-500" />
+                            <span>{client.phone}</span>
+                          </div>
+                        </td>
+                        <td className="py-2 px-4">
+                          <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-300">
+                            <Mail size={12} className="text-blue-500" />
+                            <span>{client.email}</span>
+                          </div>
+                        </td>
+                        <td className="py-2 px-4">
+                          <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">{client.assignedTo}</span>
+                        </td>
+                        <td className="py-2 px-4">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                            client.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                            client.status === 'Prospect' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                          }`}>
+                            {client.status}
+                          </span>
+                        </td>
+                        <td className="py-2 px-4">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-600 text-white">
+                            {client.type}
+                          </span>
+                        </td>
+                        <td className="py-2 px-4">
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <MoreHorizontal size={14} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="py-12 text-center">
+                        <div className="flex flex-col items-center justify-center space-y-2">
+                          <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                            <Search className="w-6 h-6 text-gray-400" />
+                          </div>
+                          <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">No companies found</p>
+                          <p className="text-gray-400 dark:text-gray-500 text-xs max-w-md">
+                            Try adjusting your search or filter to find what you're looking for.
+                          </p>
+                          <button 
+                            onClick={onNavigateToNewCompany}
+                            className="mt-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-1 text-sm"
+                          >
+                            <Plus size={14} />
+                            <span>Add company</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            ) : (
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/50">
+                  <tr>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Name</span>
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <ArrowUpDown size={12} />
+                        </button>
+                      </div>
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Company
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Position
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>City</span>
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <ArrowUpDown size={12} />
+                        </button>
+                      </div>
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Phone
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="text-left py-2 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <div className="flex items-center space-x-1">
+                        <span>Status</span>
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <ArrowUpDown size={12} />
+                        </button>
+                      </div>
+                    </th>
+                    <th className="w-8"></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
+                  {filteredContacts.length > 0 ? (
+                    filteredContacts.map(contact => (
+                      <tr key={contact.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                        <td className="py-2 px-4">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-400">
+                              <User size={12} />
+                            </div>
+                            <div className="flex items-center">
+                              <span className="font-medium text-sm text-gray-900 dark:text-white">
+                                {contact.firstName} {contact.lastName}
+                              </span>
+                              {contact.favorite && <Star className="ml-1 w-3 h-3 text-yellow-500 fill-current" />}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">{contact.company}</td>
+                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">{contact.position}</td>
+                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">{contact.city}</td>
+                        <td className="py-2 px-4">
+                          <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-300">
+                            <Phone size={12} className="text-green-500" />
+                            <span>{contact.phone}</span>
+                          </div>
+                        </td>
+                        <td className="py-2 px-4">
+                          <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-300">
+                            <Mail size={12} className="text-blue-500" />
+                            <span>{contact.email}</span>
+                          </div>
+                        </td>
+                        <td className="py-2 px-4">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                            contact.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                            contact.status === 'Prospect' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                          }`}>
+                            {contact.status}
+                          </span>
+                        </td>
+                        <td className="py-2 px-4">
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <MoreHorizontal size={14} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="py-12 text-center">
+                        <div className="flex flex-col items-center justify-center space-y-2">
+                          <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                            <Search className="w-6 h-6 text-gray-400" />
+                          </div>
+                          <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">No contacts found</p>
+                          <p className="text-gray-400 dark:text-gray-500 text-xs max-w-md">
+                            Try adjusting your search or filter to find what you're looking for.
+                          </p>
+                          <button 
+                            onClick={onNavigateToNewContact}
+                            className="mt-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-1 text-sm"
+                          >
+                            <Plus size={14} />
+                            <span>Add contact</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
 
           {/* Footer */}
           <div className="border-t border-gray-200 dark:border-gray-700/50 px-4 py-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-600 dark:text-gray-400">Found: {filteredClients.length}</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                Found: {activeTab === 'companies' ? filteredClients.length : filteredContacts.length}
+              </span>
               <div className="flex items-center space-x-3">
                 <span className="text-xs text-gray-600 dark:text-gray-400">Per page:</span>
                 <select className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded px-2 py-1 text-xs">
