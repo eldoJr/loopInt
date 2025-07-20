@@ -23,9 +23,6 @@ const UndocumentedRevenue: React.FC<UndocumentedRevenueProps> = ({ onNavigateBac
     amountDue: 0.00
   });
 
-  const [payments, setPayments] = useState<any[]>([]);
-  const [attachments, setAttachments] = useState<any[]>([]);
-
   const handleInputChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
