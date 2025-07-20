@@ -4,9 +4,10 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 interface NewContactProps {
   onNavigateBack?: () => void;
+  onNavigateToClients?: () => void;
 }
 
-const NewContact = ({ onNavigateBack }: NewContactProps) => {
+const NewContact = ({ onNavigateBack, onNavigateToClients }: NewContactProps) => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
@@ -20,6 +21,7 @@ const NewContact = ({ onNavigateBack }: NewContactProps) => {
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
+    { label: 'Clients', onClick: onNavigateToClients },
     { label: 'New Contact' }
   ];
 

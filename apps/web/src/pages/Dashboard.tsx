@@ -652,7 +652,11 @@ const Dashboard = () => {
       case 'Generate Report':
         return <GenerateReport />;
       case 'Clients':
-        return <Clients onNavigateBack={backToMain} />;
+        return <Clients 
+          onNavigateBack={backToMain} 
+          onNavigateToNewCompany={() => navigateToSection('New Company')} 
+          onNavigateToNewContact={() => navigateToSection('New Contact')} 
+        />;
       case 'Personal Data':
         return <PersonalData onNavigateBack={backToMain} />;
       case 'Account Settings':
@@ -682,9 +686,9 @@ const Dashboard = () => {
       case 'New Issue':
         return <NewIssue onNavigateBack={backToMain} />;
       case 'New Company':
-        return <NewCompany onNavigateBack={backToMain} />;
+        return <NewCompany onNavigateBack={backToMain} onNavigateToClients={() => navigateToSection('Clients')} />;
       case 'New Contact':
-        return <NewContact onNavigateBack={backToMain} />;
+        return <NewContact onNavigateBack={backToMain} onNavigateToClients={() => navigateToSection('Clients')} />;
       case 'Job Ad':
         return <JobAd onNavigateBack={backToMain} />;
       case 'New Bill':
