@@ -157,7 +157,7 @@ const UndocumentedRevenue = ({ onNavigateBack, onNavigateToRevenues }: Undocumen
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Finance', onClick: onNavigateToRevenues },
+    { label: 'Invoices', onClick: onNavigateToRevenues },
     { label: 'Undocumented Revenue' }
   ];
 
