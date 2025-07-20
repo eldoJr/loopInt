@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Plus, X, Calculator, Mail, FileText, Check } from 'lucide-react';
+import { Calendar, Plus, X, Calculator, Mail, FileText, Check, MoreVertical } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -324,74 +324,81 @@ const TaxInvoice: React.FC<TaxInvoiceProps> = ({ onNavigateBack, onNavigateToInv
 
                   <div className="grid grid-cols-12 gap-3 items-center">
                     <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                      Tax invoice date
+                      Dates
                     </label>
-                    <div className="col-span-3">
-                      <div className="relative">
-                        <Calendar 
-                          className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" 
-                          onClick={() => handleChange('invoiceDate', formatDate(new Date()))}
-                        />
-                        <input
-                          type="text"
-                          placeholder="MM/DD/YYYY"
-                          value={formData.invoiceDate}
-                          onChange={(e) => handleDateChange('invoiceDate', e.target.value)}
-                          onBlur={() => {
-                            const date = parseDate(formData.invoiceDate);
-                            handleChange('invoiceDate', formatDate(date));
-                          }}
-                          className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                        />
-                      </div>
-                    </div>
-                    <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                      Supply date
-                    </label>
-                    <div className="col-span-2">
-                      <div className="relative">
-                        <Calendar 
-                          className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" 
-                          onClick={() => handleChange('supplyDate', formatDate(new Date()))}
-                        />
-                        <input
-                          type="text"
-                          placeholder="MM/DD/YYYY"
-                          value={formData.supplyDate}
-                          onChange={(e) => handleDateChange('supplyDate', e.target.value)}
-                          onBlur={() => {
-                            const date = parseDate(formData.supplyDate);
-                            handleChange('supplyDate', formatDate(date));
-                          }}
-                          className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                        />
-                      </div>
-                    </div>
-                    <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                      Due date
-                    </label>
-                    <div className="col-span-2">
-                      <div className="relative">
-                        <Calendar 
-                          className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" 
-                          onClick={() => {
-                            // Set due date to 14 days from today when calendar icon is clicked
-                            const dueDate = new Date();
-                            dueDate.setDate(dueDate.getDate() + 14);
-                            handleChange('dueDate', formatDate(dueDate));
-                          }}
-                        />
-                        <input
-                          type="text"
-                          placeholder="MM/DD/YYYY"
-                          value={formData.dueDate}
-                          onChange={(e) => handleDateChange('dueDate', e.target.value)}
-                          onBlur={() => {
-                            const date = parseDate(formData.dueDate);
-                            handleChange('dueDate', formatDate(date));
-                          }}
-                          className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                        />
+                    <div className="col-span-9">
+                      <div className="flex flex-col space-y-2">
+                        {/* Invoice Date */}
+                        <div className="flex items-center">
+                          <div className="w-24 text-sm text-gray-600 dark:text-gray-300">Invoice:</div>
+                          <div className="relative flex-1">
+                            <Calendar 
+                              className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" 
+                              onClick={() => handleChange('invoiceDate', formatDate(new Date()))}
+                            />
+                            <input
+                              type="text"
+                              placeholder="MM/DD/YYYY"
+                              value={formData.invoiceDate}
+                              onChange={(e) => handleDateChange('invoiceDate', e.target.value)}
+                              onBlur={() => {
+                                const date = parseDate(formData.invoiceDate);
+                                handleChange('invoiceDate', formatDate(date));
+                              }}
+                              className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Supply Date */}
+                        <div className="flex items-center">
+                          <div className="w-24 text-sm text-gray-600 dark:text-gray-300">Supply:</div>
+                          <div className="relative flex-1">
+                            <Calendar 
+                              className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" 
+                              onClick={() => handleChange('supplyDate', formatDate(new Date()))}
+                            />
+                            <input
+                              type="text"
+                              placeholder="MM/DD/YYYY"
+                              value={formData.supplyDate}
+                              onChange={(e) => handleDateChange('supplyDate', e.target.value)}
+                              onBlur={() => {
+                                const date = parseDate(formData.supplyDate);
+                                handleChange('supplyDate', formatDate(date));
+                              }}
+                              className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Due Date */}
+                        <div className="flex items-center">
+                          <div className="w-24 text-sm text-gray-600 dark:text-gray-300">Due:</div>
+                          <div className="relative flex-1">
+                            <Calendar 
+                              className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" 
+                              onClick={() => {
+                                // Set due date to 14 days from today when calendar icon is clicked
+                                const dueDate = new Date();
+                                dueDate.setDate(dueDate.getDate() + 14);
+                                handleChange('dueDate', formatDate(dueDate));
+                              }}
+                            />
+                            <input
+                              type="text"
+                              placeholder="MM/DD/YYYY"
+                              value={formData.dueDate}
+                              onChange={(e) => handleDateChange('dueDate', e.target.value)}
+                              onBlur={() => {
+                                const date = parseDate(formData.dueDate);
+                                handleChange('dueDate', formatDate(date));
+                              }}
+                              className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                            />
+                            <MoreVertical className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 cursor-pointer" />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -403,7 +410,7 @@ const TaxInvoice: React.FC<TaxInvoiceProps> = ({ onNavigateBack, onNavigateToInv
               
               {/* Right Column - Additional Details */}
               <div className="lg:col-span-2 space-y-6">
-                <div className="space-y-4">
+                <div className="space-y-4 pr-4">
                   <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                     Additional Information
                   </h2>
