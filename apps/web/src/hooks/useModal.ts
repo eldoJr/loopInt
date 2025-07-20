@@ -1,10 +1,11 @@
 import { useContext } from 'react';
-import { ModalContext, ModalContextType } from '../context/modalContextDef';
+import { ModalContext } from '../context/modalContext';
+import type { ModalContextType } from '../context/modalTypes';
 
-export const useModal = (): ModalContextType => {
+export function useModal(): ModalContextType {
   const context = useContext(ModalContext);
   if (context === undefined) {
     throw new Error('useModal must be used within a ModalProvider');
   }
   return context;
-};
+}

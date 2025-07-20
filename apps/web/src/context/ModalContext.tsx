@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { ModalContext } from './modalContextDef';
+import { ModalContext } from './modalContext';
 
-const ModalProvider = ({ children }: { children: ReactNode }) => {
+// Provider component
+function ModalProvider({ children }: { children: ReactNode }) {
   const [showNewIssueModal, setShowNewIssueModal] = useState(false);
 
   const openNewIssueModal = () => setShowNewIssueModal(true);
@@ -17,6 +18,6 @@ const ModalProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </ModalContext.Provider>
   );
-};
+}
 
 export default ModalProvider;
