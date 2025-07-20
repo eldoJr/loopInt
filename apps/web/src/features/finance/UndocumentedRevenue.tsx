@@ -206,6 +206,9 @@ const UndocumentedRevenue = ({ onNavigateBack, onNavigateToRevenues }: Undocumen
         <div className="p-4">
           <div className="space-y-6 max-w-3xl mx-auto">
             {/* Customer */}
+              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
+                Revenue Information
+              </h2>
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Customer
