@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Plus, X, Calculator, Save, Mail, FileText, Check, MoreVertical } from 'lucide-react';
+import { Calendar, Plus, X, Calculator, Mail, FileText, Check, MoreVertical } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -241,7 +241,7 @@ const NewBill: React.FC<NewBillProps> = ({ onNavigateBack, onNavigateToBills }) 
                 disabled={saving}
                 className="flex items-center space-x-2 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
               >
-                <Save size={14} />
+                <Check size={14} />
                 <span>{saving ? 'Saving...' : 'Save'}</span>
               </button>
             </div>
