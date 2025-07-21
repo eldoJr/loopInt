@@ -1,29 +1,62 @@
-import { useState } from 'react';
-import { RichTextEditor } from './RichTextEditor';
+import { useState, useRef } from 'react';
+import { RichTextEditor, RichTextEditorRef } from './RichTextEditor';
 
 export const RichTextEditorDemo = () => {
-  const [content, setContent] = useState('# Rich Text Editor Demo\n\nThis is a **bold text** and *italic text*.\n\n## Features\n\n- Bullet list item 1\n- Bullet list item 2\n\n1. Numbered list item 1\n2. Numbered list item 2\n\n> This is a quote\n\n`inline code`\n\n[Link example](https://example.com)\n\n![Image example](https://via.placeholder.com/150)');
+  const [content, setContent] = useState('<p>Try this new rich text editor!</p>');
+  const editorRef = useRef<RichTextEditorRef>(null);
+  
+  const handleChange = (value: string) => {
+    setContent(value);
+  };
+  
+  const handleGetContent = () => {
+    if (editorRef.current) {
+      alert(editorRef.current.getHTML());
+    }
+  };
+  
+  const handleClearContent = () => {
+    if (editorRef.current) {
+      editorRef.current.clearContent();
+    }
+  };
   
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h2 className="text-xl font-semibold mb-4">Rich Text Editor</h2>
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">Rich Text Editor</h2>
       
       <RichTextEditor
-        label="Document Content"
-        initialValue={content}
-        onChange={setContent}
+        ref={editorRef}
+        label="Content Editor"
+        value={content}
+        onChange={handleChange}
         placeholder="Start typing..."
-        required
+        maxLength={1000}
+        className="w-full"
       />
       
-      <div className="mt-6">
-        <h3 className="text-lg font-medium mb-2">Raw Markdown</h3>
-        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-auto text-sm">
+      <div className="flex gap-4">
+        <button
+          onClick={handleGetContent}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+        >
+          Get Content
+        </button>
+        
+        <button
+          onClick={handleClearContent}
+          className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+        >
+          Clear Content
+        </button>
+      </div>
+      
+      <div className="mt-8">
+        <h3 className="text-lg font-medium mb-2">HTML Output:</h3>
+        <pre className="bg-gray-100 p-4 rounded-md overflow-auto max-h-40">
           {content}
         </pre>
       </div>
     </div>
   );
 };
-
-export default RichTextEditorDemo;

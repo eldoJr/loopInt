@@ -9,5 +9,8 @@ module.exports = {
         serif: ['"Cormorant Garamond"', 'serif']
       }
     }
-  }
+  },
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 }
