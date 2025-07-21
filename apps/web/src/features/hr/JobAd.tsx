@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronDown, Plus, Info, Check, Bold, Italic, Underline, Notebook, Link as LinkIcon, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Code, AlertCircle, Printer } from 'lucide-react';
+import { ChevronDown, Plus, Info, Check, Notebook, AlertCircle, Printer } from 'lucide-react';
 import { format, parse } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import { Toggle } from '../../components/ui/Toggle';
+import { RichTextEditor } from '../../components/ui/RichTextEditor';
 
 interface JobAdProps {
   onNavigateBack?: () => void;
@@ -53,9 +53,6 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
   const [showContent, setShowContent] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('details');
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [textStyles, setTextStyles] = useState({ bold: false, italic: false, underline: false, strikethrough: false });
-  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
-  const [contentLength, setContentLength] = useState(0);
   const maxContentLength = 9999;
 
   const statuses = [
@@ -181,21 +178,10 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
 
   const handleInputChange = useCallback((field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (field === 'jobContent' && typeof value === 'string') {
-      setContentLength(value.length);
-    }
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   }, [errors]);
-
-  const handleTextStyle = (style: keyof typeof textStyles) => {
-    setTextStyles(prev => ({ ...prev, [style]: !prev[style] }));
-  };
-
-  const handleTextAlign = (align: 'left' | 'center' | 'right') => {
-    setTextAlign(align);
-  };
   
   const handlePrint = useCallback(() => {
     if (printRef.current) {
@@ -768,109 +754,13 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                       Add content from template
                     </button>
                     
-                    <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
-                      <Toggle
-                        pressed={textStyles.bold}
-                        onPressedChange={() => handleTextStyle('bold')}
-                        aria-label="Bold"
-                      >
-                        <Bold className="h-4 w-4" />
-                      </Toggle>
-                      <Toggle
-                        pressed={textStyles.italic}
-                        onPressedChange={() => handleTextStyle('italic')}
-                        aria-label="Italic"
-                      >
-                        <Italic className="h-4 w-4" />
-                      </Toggle>
-                      <Toggle
-                        pressed={textStyles.underline}
-                        onPressedChange={() => handleTextStyle('underline')}
-                        aria-label="Underline"
-                      >
-                        <Underline className="h-4 w-4" />
-                      </Toggle>
-                      <Toggle
-                        pressed={textStyles.strikethrough}
-                        onPressedChange={() => handleTextStyle('strikethrough')}
-                        aria-label="Strikethrough"
-                      >
-                        <Underline className="h-4 w-4" />
-                      </Toggle>
-                      
-                      <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                      
-                      <Toggle
-                        pressed={textAlign === 'left'}
-                        onPressedChange={() => handleTextAlign('left')}
-                        aria-label="Align left"
-                      >
-                        <AlignLeft className="h-4 w-4" />
-                      </Toggle>
-                      <Toggle
-                        pressed={textAlign === 'center'}
-                        onPressedChange={() => handleTextAlign('center')}
-                        aria-label="Align center"
-                      >
-                        <AlignCenter className="h-4 w-4" />
-                      </Toggle>
-                      <Toggle
-                        pressed={textAlign === 'right'}
-                        onPressedChange={() => handleTextAlign('right')}
-                        aria-label="Align right"
-                      >
-                        <AlignRight className="h-4 w-4" />
-                      </Toggle>
-                      
-                      <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                      
-                      <Toggle aria-label="List">
-                        <List className="h-4 w-4" />
-                      </Toggle>
-                      <Toggle aria-label="Ordered list">
-                        <ListOrdered className="h-4 w-4" />
-                      </Toggle>
-                      <Toggle aria-label="Link">
-                        <LinkIcon className="h-4 w-4" />
-                      </Toggle>
-                      <Toggle aria-label="Code">
-                        <Code className="h-4 w-4" />
-                      </Toggle>
-                    </div>
-                    
-                    <div className="relative">
-                      <textarea
-                        value={formData.jobContent}
-                        onChange={(e) => handleInputChange('jobContent', e.target.value)}
-                        rows={10}
-                        maxLength={maxContentLength}
-                        className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 border-t-0 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-y text-sm"
-                        placeholder="Job ad content..."
-                        style={{
-                          fontWeight: textStyles.bold ? 'bold' : 'normal',
-                          fontStyle: textStyles.italic ? 'italic' : 'normal',
-                          textDecoration: `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
-                          textAlign: textAlign,
-                          minHeight: '150px'
-                        }}
-                      />
-                      
-                      <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-3">
-                        <span className={`text-xs ${
-                          contentLength > maxContentLength * 0.9 
-                            ? 'text-red-500 dark:text-red-400' 
-                            : 'text-gray-500 dark:text-gray-400'
-                        }`}>
-                          {contentLength}/{maxContentLength} characters
-                        </span>
-                        <span className="text-green-600 dark:text-green-400 text-xs">✓ Saved</span>
-                      </div>
-                    </div>
-                    
-                    {/* Resize handle indicator */}
-                    <div className="w-full flex justify-center">
-                      <div className="w-8 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mt-1"></div>
-                    </div>
+                    <RichTextEditor
+                      value={formData.jobContent}
+                      onChange={(value) => handleInputChange('jobContent', value)}
+                      placeholder="Job ad content..."
+                      maxLength={maxContentLength}
+                      showPreview={true}
+                    />
                     
                     {errors.jobContent && (
                       <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
@@ -956,16 +846,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Job Description</h3>
                     <div className="prose dark:prose-invert max-w-none">
                       {formData.jobContent ? (
-                        <div 
-                          style={{
-                            fontWeight: textStyles.bold ? 'bold' : 'normal',
-                            fontStyle: textStyles.italic ? 'italic' : 'normal',
-                            textDecoration: `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
-                            textAlign: textAlign
-                          }}
-                        >
-                          {formData.jobContent}
-                        </div>
+                        <div dangerouslySetInnerHTML={{ __html: formData.jobContent.replace(/\n/g, '<br />') }} />
                       ) : (
                         <p className="text-gray-500 dark:text-gray-400 italic">Job description will appear here...</p>
                       )}
