@@ -126,35 +126,24 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     }, []);
 
     const handleChange = useCallback(() => {
-      // Save current selection position before updating
-      const selection = window.getSelection();
-      const range = selection?.getRangeAt(0).cloneRange();
+      // Save selection before any changes
+      saveSelection();
       
       updateCharCount();
       isInternalChange.current = true;
+      
       if (onChange && editorRef.current) {
-        // Debounce onChange for better performance
         const content = editorRef.current.innerHTML;
-        const timeoutId = setTimeout(() => {
-          onChange(content);
-        }, 100);
-        return () => clearTimeout(timeoutId);
+        onChange(content);
       }
       
-      // Restore selection position after state updates
-      if (range && selection && document.activeElement === editorRef.current) {
-        requestAnimationFrame(() => {
-          try {
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } catch (e) {
-            // Ignore selection errors
-          }
-        });
-      }
+      // Use synchronous layout effect to restore selection
+      useLayoutEffect(() => {
+        restoreSelection();
+      }, []);
       
       checkActiveFormats();
-    }, [onChange, updateCharCount, checkActiveFormats]);
+    }, [onChange, updateCharCount, checkActiveFormats, saveSelection, restoreSelection]);
 
     // Initialize editor content
     useEffect(() => {
