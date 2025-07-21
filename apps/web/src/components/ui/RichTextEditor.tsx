@@ -15,6 +15,7 @@ interface RichTextEditorProps {
   placeholder?: string;
   className?: string;
   maxLength?: number;
+  showPreview?: boolean;
 }
 
 export interface RichTextEditorRef {
@@ -34,9 +35,10 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     value, 
     initialValue = '', 
     placeholder = 'Write something...',
-    maxLength
+    maxLength,
+    showPreview: initialShowPreview = false
   }, ref) => {
-    const [showPreview, setShowPreview] = useState(false);
+    const [showPreview, setShowPreview] = useState(initialShowPreview);
     const [charCount, setCharCount] = useState(0);
     const [activeFormats, setActiveFormats] = useState({
       bold: false,
@@ -145,6 +147,11 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       }
       isInternalChange.current = false;
     }, [value, updateCharCount]);
+    
+    // Update showPreview state when prop changes
+    useEffect(() => {
+      setShowPreview(initialShowPreview);
+    }, [initialShowPreview]);
 
     // Expose methods via ref
     useEffect(() => {
