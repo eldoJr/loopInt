@@ -760,7 +760,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                         onChange={(value) => handleInputChange('jobContent', value)}
                         placeholder="Job ad content..."
                         maxLength={maxContentLength}
-                        showPreview={true}
+                        showPreview={activeTab === 'preview'}
                       />
                     </div>
                     
