@@ -232,8 +232,6 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Clients</h1>
-                <span className="text-gray-400 text-sm">•</span>
-                <span className="text-gray-500 dark:text-gray-400 text-sm">LoopInt</span>
               </div>
               <div className="flex space-x-2">
                 <button 

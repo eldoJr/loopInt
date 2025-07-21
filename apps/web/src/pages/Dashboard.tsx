@@ -12,7 +12,8 @@ import {
   Heart,
   MapPin,
   Star,
-  AlertTriangle
+  AlertTriangle,
+  Briefcase
 } from 'lucide-react';
 import { showToast } from '../components/ui/Toast';
 import foldersIcon from '../assets/icons/folders.png';
@@ -377,7 +378,7 @@ const Dashboard = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-8 max-w-full overflow-x-auto">
         <DashboardStatCard
           title="Active Projects"
           value={activeProjectsCount}
@@ -406,6 +407,16 @@ const Dashboard = () => {
           onClick={() => navigateToSection('Team')}
           trend={{ value: 2, direction: 'up', period: 'new this month' }}
           subtitle="Active members"
+          loading={!user}
+        />
+        <DashboardStatCard
+          title="Job Ads"
+          value="3"
+          icon={Briefcase}
+          iconAlt="Job Ads"
+          onClick={() => navigateToSection('HR Project')}
+          trend={{ value: 1, direction: 'up', period: 'new this week' }}
+          subtitle="Active ads"
           loading={!user}
         />
         <DashboardStatCard
@@ -688,9 +699,9 @@ const Dashboard = () => {
       case 'New Company':
         return <NewCompany onNavigateBack={backToMain} onNavigateToClients={() => navigateToSection('Clients')} />;
       case 'New Contact':
-        return <NewContact onNavigateBack={backToMain} onNavigateToClients={() => navigateToSection('Clients')} />;
+        return <NewContact onNavigateBack={backToMain} onNavigateToNewContact={() => navigateToSection('Clients')} />;
       case 'Job Ad':
-        return <JobAd onNavigateBack={backToMain} />;
+        return <JobAd onNavigateBack={() => navigateToSection('HR Project')} />;
       case 'New Bill':
         return <NewBill onNavigateBack={backToMain} onNavigateToBills={() => navigateToSection('Invoices')} />;
       case 'New Candidate':
@@ -709,7 +720,10 @@ const Dashboard = () => {
       case 'New Product':
         return <NewProduct onNavigateBack={backToMain} />;
       case 'HR Project':
-        return <HRProject onNavigateBack={backToMain} />;
+        return <HRProject 
+          onNavigateBack={backToMain} 
+          onNavigateToJobAd={() => navigateToSection('Job Ad')} 
+        />;
       case 'Undocumented Revenue':
         return <UndocumentedRevenue 
           onNavigateBack={backToMain} 

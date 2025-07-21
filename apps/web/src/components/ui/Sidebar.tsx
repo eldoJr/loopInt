@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Home, FolderOpen, CheckSquare, Calendar, Users, BarChart3, FileText, ChevronRight, Filter, Target, Settings, MessageSquare, Building } from 'lucide-react';
+import { Home, FolderOpen, CheckSquare, Calendar, Users, BarChart3, FileText, ChevronRight, Filter, Target, Settings, MessageSquare, Building, Briefcase } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 interface SidebarProps {
@@ -163,6 +163,13 @@ const Sidebar = ({ isOpen, onClose, currentView, onNavigate, isHovered, setIsHov
                   <Building className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                 </div>
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Clients</span>
+              </div>
+              <div className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 cursor-pointer group"
+                   onClick={() => { onNavigate('HR Project'); if (!isOpen) onClose(); }}>
+                <div className="p-1.5 bg-slate-200/50 dark:bg-slate-700/50 rounded-lg group-hover:bg-slate-300/70 dark:group-hover:bg-slate-600/70 transition-colors">
+                  <Briefcase className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                </div>
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Job Ads</span>
               </div>
               <div className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 cursor-pointer group"
                    onClick={() => { onNavigate('Help Center'); if (!isOpen) onClose(); }}>

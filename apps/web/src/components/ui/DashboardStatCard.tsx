@@ -52,7 +52,7 @@ const DashboardStatCard = ({
 
   return (
     <AnimatedCard 
-      className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-3 cursor-pointer group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50"
+      className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-2.5 cursor-pointer group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50"
       onClick={onClick}
     >
       {/* Background Pattern */}
@@ -76,21 +76,21 @@ const DashboardStatCard = ({
         {/* Value and Icon */}
         <div className="flex items-center justify-between mb-2">
           <div>
-            <p className="text-xl sm:text-2xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-sm">
+            <p className="text-lg sm:text-xl font-black text-white mb-0.5 tracking-tight leading-none drop-shadow-sm">
               {value}
             </p>
-            <p className="text-blue-100 font-semibold text-sm">
+            <p className="text-blue-100 font-semibold text-xs sm:text-sm">
               {title}
             </p>
           </div>
-          <div className="p-2 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
+          <div className="p-1.5 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
             {IconComponent ? (
-              <IconComponent className={`w-6 h-6 sm:w-8 sm:h-8 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`} />
+              <IconComponent className={`w-5 h-5 sm:w-6 sm:h-6 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`} />
             ) : (
               <img 
                 src={iconSrc} 
                 alt={iconAlt} 
-                className="w-6 h-6 sm:w-8 sm:h-8 opacity-90 group-hover:opacity-100" 
+                className="w-5 h-5 sm:w-6 sm:h-6 opacity-90 group-hover:opacity-100" 
               />
             )}
           </div>
