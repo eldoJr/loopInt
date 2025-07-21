@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect, forwardRef, useCallback, memo } from 'react';
-import { useLayoutEffect } from 'react';
-import { useLayoutEffect } from 'react';
 import { 
   Bold, Italic, Underline, List, ListOrdered, Quote, Link, Image, Undo, Redo, 
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Heading1, Heading2, Eye, EyeOff
@@ -42,7 +40,6 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
   }, ref) => {
     const [showPreview, setShowPreview] = useState(initialShowPreview);
     const [charCount, setCharCount] = useState(0);
-    const lastSelectionRef = useRef(null);
     const [activeFormats, setActiveFormats] = useState({
       bold: false,
       italic: false,
@@ -59,36 +56,12 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     });
     const editorRef = useRef<HTMLDivElement>(null);
     const isInternalChange = useRef(false);
+    const lastCaretPosition = useRef<number | null>(null);
 
     // Define functions early to avoid reference errors
     const getContent = () => {
       return editorRef.current?.innerHTML || '';
     };
-    
-    // Save current selection position
-    const saveSelection = useCallback(() => {
-      if (document.activeElement === editorRef.current) {
-        const selection = window.getSelection();
-        if (selection && selection.rangeCount > 0) {
-          lastSelectionRef.current = selection.getRangeAt(0).cloneRange();
-        }
-      }
-    }, []);
-    
-    // Restore saved selection position
-    const restoreSelection = useCallback(() => {
-      if (lastSelectionRef.current && document.activeElement === editorRef.current) {
-        const selection = window.getSelection();
-        if (selection) {
-          try {
-            selection.removeAllRanges();
-            selection.addRange(lastSelectionRef.current);
-          } catch (e) {
-            // Ignore selection errors
-          }
-        }
-      }
-    }, []);
 
     const updateCharCount = useCallback(() => {
       if (editorRef.current) {
@@ -125,25 +98,31 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       }
     }, []);
 
+    // Simple function to preserve caret position
+    const preserveCaretPosition = useCallback(() => {
+      // Only track position when editor has focus
+      if (document.activeElement !== editorRef.current) return;
+      
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+      
+      // Store the current offset
+      lastCaretPosition.current = selection.focusOffset;
+    }, []);
+
     const handleChange = useCallback(() => {
-      // Save selection before any changes
-      saveSelection();
+      // Track caret position before changes
+      preserveCaretPosition();
       
       updateCharCount();
       isInternalChange.current = true;
-      
       if (onChange && editorRef.current) {
+        // Debounce onChange for better performance
         const content = editorRef.current.innerHTML;
         onChange(content);
       }
-      
-      // Use synchronous layout effect to restore selection
-      useLayoutEffect(() => {
-        restoreSelection();
-      }, []);
-      
       checkActiveFormats();
-    }, [onChange, updateCharCount, checkActiveFormats, saveSelection, restoreSelection]);
+    }, [onChange, updateCharCount, checkActiveFormats, preserveCaretPosition]);
 
     // Initialize editor content
     useEffect(() => {
@@ -186,31 +165,10 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     // Update content when value prop changes (external change)
     useEffect(() => {
       if (value !== undefined && editorRef.current && !isInternalChange.current) {
-        // Save cursor position
-        const selection = window.getSelection();
-        const isEditorFocused = document.activeElement === editorRef.current;
-        let savedRange = null;
-        
-        if (isEditorFocused && selection && selection.rangeCount > 0) {
-          savedRange = selection.getRangeAt(0).cloneRange();
-        }
-        
         // Only update if the value has actually changed
         if (editorRef.current.innerHTML !== value) {
           editorRef.current.innerHTML = value;
           updateCharCount();
-          
-          // Restore cursor position if editor was focused
-          if (isEditorFocused && savedRange) {
-            requestAnimationFrame(() => {
-              try {
-                selection?.removeAllRanges();
-                selection?.addRange(savedRange);
-              } catch (e) {
-                // Ignore selection errors
-              }
-            });
-          }
         }
       }
       isInternalChange.current = false;
@@ -268,12 +226,16 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
         }
         
         // Update state after command execution
-        handleChange();
         checkActiveFormats();
+        
+        // Don't call handleChange here to prevent cursor jumping
+        if (onChange && editorRef.current) {
+          onChange(editorRef.current.innerHTML);
+        }
       } catch (error) {
         console.error(`Error executing command ${command}:`, error);
       }
-    }, [handleChange, checkActiveFormats]);
+    }, [onChange, checkActiveFormats]);
 
     const formatBold = useCallback(() => execCommand('bold'), [execCommand]);
     const formatItalic = useCallback(() => execCommand('italic'), [execCommand]);
@@ -425,25 +387,25 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
             <div
               ref={editorRef}
               contentEditable={!showPreview}
-              onInput={(e) => {
-                // Prevent cursor jumping by handling input events carefully
-                e.persist();
-                handleChange();
+              onInput={() => {
+                // Direct event handling to prevent cursor jumping
+                if (onChange && editorRef.current) {
+                  onChange(editorRef.current.innerHTML);
+                }
+                updateCharCount();
+                checkActiveFormats();
               }}
               onBlur={handleChange}
               onMouseUp={checkActiveFormats}
               onMouseDown={checkActiveFormats}
               onClick={checkActiveFormats}
-              onKeyUp={(e) => {
-                // Don't trigger unnecessary updates during typing
-                if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
-                  checkActiveFormats();
-                }
-              }}
+              onKeyUp={checkActiveFormats}
               onKeyDown={(e) => {
                 if (e.key === 'Tab') {
                   e.preventDefault(); // Prevent losing focus
                 }
+                preserveCaretPosition();
+                checkActiveFormats();
               }}
               className="rich-text-editor-content p-4 w-full"
               onFocus={checkActiveFormats}
