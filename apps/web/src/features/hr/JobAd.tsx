@@ -754,13 +754,15 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                       Add content from template
                     </button>
                     
-                    <RichTextEditor
-                      value={formData.jobContent}
-                      onChange={(value) => handleInputChange('jobContent', value)}
-                      placeholder="Job ad content..."
-                      maxLength={maxContentLength}
-                      showPreview={true}
-                    />
+                    <div className="-mr-10 sm:-mr-16 md:-mr-24 lg:-mr-40 xl:-mr-56 2xl:-mr-80">
+                      <RichTextEditor
+                        value={formData.jobContent}
+                        onChange={(value) => handleInputChange('jobContent', value)}
+                        placeholder="Job ad content..."
+                        maxLength={maxContentLength}
+                        showPreview={true}
+                      />
+                    </div>
                     
                     {errors.jobContent && (
                       <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">

@@ -707,7 +707,7 @@ export const RichTextEditor = forwardRef<HTMLTextAreaElement, RichTextEditorProp
         {/* Editor and Preview */}
         <div className={`${showMarkdownPreview && showPreview ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : ''}`}>
           {/* Text Editor */}
-          <div className={`${showMarkdownPreview && showPreview ? '' : 'block'} w-full pr-4`}>
+          <div className={`${showMarkdownPreview && showPreview ? '' : 'block'} w-full`}>
             <textarea
               ref={(node) => {
                 // Handle both the forwarded ref and our internal ref
@@ -738,7 +738,7 @@ export const RichTextEditor = forwardRef<HTMLTextAreaElement, RichTextEditorProp
           
           {/* Markdown Preview */}
           {showMarkdownPreview && showPreview && (
-            <div className="w-full pr-4">
+            <div className="w-full">
               <div className="border border-gray-300 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 overflow-auto" style={{ minHeight: '200px' }}>
                 <div 
                   className="prose dark:prose-invert max-w-none"
