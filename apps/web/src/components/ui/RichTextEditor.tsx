@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect, forwardRef, useCallback, memo } from 'react';
+import { useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { 
   Bold, Italic, Underline, List, ListOrdered, Quote, Link, Image, Undo, Redo, 
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Heading1, Heading2, Eye, EyeOff
@@ -40,6 +42,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
   }, ref) => {
     const [showPreview, setShowPreview] = useState(initialShowPreview);
     const [charCount, setCharCount] = useState(0);
+    const lastSelectionRef = useRef(null);
     const [activeFormats, setActiveFormats] = useState({
       bold: false,
       italic: false,
@@ -61,6 +64,31 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     const getContent = () => {
       return editorRef.current?.innerHTML || '';
     };
+    
+    // Save current selection position
+    const saveSelection = useCallback(() => {
+      if (document.activeElement === editorRef.current) {
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+          lastSelectionRef.current = selection.getRangeAt(0).cloneRange();
+        }
+      }
+    }, []);
+    
+    // Restore saved selection position
+    const restoreSelection = useCallback(() => {
+      if (lastSelectionRef.current && document.activeElement === editorRef.current) {
+        const selection = window.getSelection();
+        if (selection) {
+          try {
+            selection.removeAllRanges();
+            selection.addRange(lastSelectionRef.current);
+          } catch (e) {
+            // Ignore selection errors
+          }
+        }
+      }
+    }, []);
 
     const updateCharCount = useCallback(() => {
       if (editorRef.current) {
@@ -75,7 +103,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       try {
         if (!document.queryCommandEnabled) return;
         
-        // Use requestAnimationFrame for better performance
+        // Use requestAnimationFrame for smoother UI updates
         requestAnimationFrame(() => {
           setActiveFormats({
             bold: document.queryCommandState('bold'),
@@ -98,6 +126,10 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     }, []);
 
     const handleChange = useCallback(() => {
+      // Save current selection position before updating
+      const selection = window.getSelection();
+      const range = selection?.getRangeAt(0).cloneRange();
+      
       updateCharCount();
       isInternalChange.current = true;
       if (onChange && editorRef.current) {
@@ -108,6 +140,19 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
         }, 100);
         return () => clearTimeout(timeoutId);
       }
+      
+      // Restore selection position after state updates
+      if (range && selection && document.activeElement === editorRef.current) {
+        requestAnimationFrame(() => {
+          try {
+            selection.removeAllRanges();
+            selection.addRange(range);
+          } catch (e) {
+            // Ignore selection errors
+          }
+        });
+      }
+      
       checkActiveFormats();
     }, [onChange, updateCharCount, checkActiveFormats]);
 
@@ -130,19 +175,53 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
         }
       };
       
+      // Improve responsiveness with multiple event listeners
       document.addEventListener('selectionchange', handleSelectionChange);
+      
+      // Add pointer event listeners to the editor
+      const editor = editorRef.current;
+      if (editor) {
+        editor.addEventListener('pointerdown', checkActiveFormats);
+        editor.addEventListener('pointerup', checkActiveFormats);
+      }
+      
       return () => {
         document.removeEventListener('selectionchange', handleSelectionChange);
+        if (editor) {
+          editor.removeEventListener('pointerdown', checkActiveFormats);
+          editor.removeEventListener('pointerup', checkActiveFormats);
+        }
       };
     }, [checkActiveFormats]);
 
     // Update content when value prop changes (external change)
     useEffect(() => {
       if (value !== undefined && editorRef.current && !isInternalChange.current) {
+        // Save cursor position
+        const selection = window.getSelection();
+        const isEditorFocused = document.activeElement === editorRef.current;
+        let savedRange = null;
+        
+        if (isEditorFocused && selection && selection.rangeCount > 0) {
+          savedRange = selection.getRangeAt(0).cloneRange();
+        }
+        
         // Only update if the value has actually changed
         if (editorRef.current.innerHTML !== value) {
           editorRef.current.innerHTML = value;
           updateCharCount();
+          
+          // Restore cursor position if editor was focused
+          if (isEditorFocused && savedRange) {
+            requestAnimationFrame(() => {
+              try {
+                selection?.removeAllRanges();
+                selection?.addRange(savedRange);
+              } catch (e) {
+                // Ignore selection errors
+              }
+            });
+          }
         }
       }
       isInternalChange.current = false;
@@ -186,13 +265,22 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     
     const execCommand = useCallback((command: string, value: string = '') => {
       try {
+        // Save current selection
+        const selection = window.getSelection();
+        const range = selection?.getRangeAt(0);
+        
         document.execCommand(command, false, value);
+        
+        // Restore focus and selection
         editorRef.current?.focus();
-        // Use requestAnimationFrame for better performance
-        requestAnimationFrame(() => {
-          handleChange();
-          checkActiveFormats();
-        });
+        if (range && selection) {
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+        
+        // Update state after command execution
+        handleChange();
+        checkActiveFormats();
       } catch (error) {
         console.error(`Error executing command ${command}:`, error);
       }
@@ -233,7 +321,12 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
         type="button"
         onClick={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           onClick();
+        }}
+        onMouseDown={(e) => {
+          // Prevent losing selection when clicking buttons
+          e.preventDefault();
         }}
         className={`p-2 rounded-md transition-colors ${
           active ? 'bg-gray-200 text-gray-900' : 'text-gray-600 hover:bg-gray-100'
@@ -343,10 +436,21 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
             <div
               ref={editorRef}
               contentEditable={!showPreview}
-              onInput={handleChange}
+              onInput={(e) => {
+                // Prevent cursor jumping by handling input events carefully
+                e.persist();
+                handleChange();
+              }}
               onBlur={handleChange}
               onMouseUp={checkActiveFormats}
-              onKeyUp={checkActiveFormats}
+              onMouseDown={checkActiveFormats}
+              onClick={checkActiveFormats}
+              onKeyUp={(e) => {
+                // Don't trigger unnecessary updates during typing
+                if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+                  checkActiveFormats();
+                }
+              }}
               onKeyDown={(e) => {
                 if (e.key === 'Tab') {
                   e.preventDefault(); // Prevent losing focus

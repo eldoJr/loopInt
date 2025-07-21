@@ -8,7 +8,8 @@
 .rich-text-editor-content {
   min-height: 200px;
   outline: none !important;
-  will-change: contents; /* Performance optimization */
+  cursor: text;
+  user-select: text;
 }
 
 .rich-text-editor-content blockquote {
@@ -53,12 +54,24 @@
   border-radius: 0.375rem;
 }
 
-/* Performance optimizations */
+/* Improve selection and pointer behavior */
 .rich-text-editor-content * {
-  transform: translateZ(0); /* Hardware acceleration */
+  user-select: text;
 }
 
 /* Improve button responsiveness */
 button {
   touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* Ensure proper cursor behavior */
+.rich-text-editor-content a {
+  cursor: pointer;
+}
+
+/* Prevent text selection issues */
+.rich-text-editor-content::selection,
+.rich-text-editor-content *::selection {
+  background-color: rgba(59, 130, 246, 0.3);
 }
