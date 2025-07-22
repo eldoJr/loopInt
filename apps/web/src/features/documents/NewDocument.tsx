@@ -430,17 +430,6 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                   <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2 mb-4">
                     Document Content
                   </h2>
-                  
-                  <div className="flex items-center gap-3 mb-4">
-                    <button
-                      type="button"
-                      className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm flex items-center space-x-1"
-                    >
-                      <Upload size={14} />
-                      <span>Import</span>
-                    </button>
-                  </div>
-                  
                   <div className="-mr-10 sm:-mr-16 md:-mr-24 lg:-mr-40 xl:-mr-56 2xl:-mr-80">
                     <RichTextEditor
                       value={formData.documentContent}
