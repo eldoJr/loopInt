@@ -48,7 +48,7 @@ const settingsGroups: SettingsGroup[] = [
       },
       {
         title: 'Products',
-        description: 'Manage access, settings and integrations for Jira products',
+        description: 'Manage access, settings and integrations for LoopInt products',
         icon: Package,
         section: 'Products'
       },
@@ -136,13 +136,13 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-[22rem] max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className="absolute top-full right-0 mt-2 w-[24rem] max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
           {/* Header */}
-          <div className="p-2 border-b border-gray-200 dark:border-gray-800">
+          <div className="p-2.5 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-1.5">
               <h3 className="text-base font-bold text-gray-900 dark:text-white">Settings</h3>
               <div className="flex items-center space-x-2">
-                <span className="text-[10px] text-gray-500 dark:text-gray-400">Admin Access</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">Admin Access</span>
                 <button className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 rounded-md transition-colors">
                   <ExternalLink className="w-4 h-4" />
                 </button>
@@ -170,13 +170,13 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
             
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+              <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search settings..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
               />
             </div>
           </div>
@@ -185,14 +185,14 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
           <div className="overflow-hidden">
             {filteredGroups.length > 0 ? (
               filteredGroups.map((group, groupIndex) => (
-                <div key={groupIndex} className="p-2">
-                  <h4 className="text-[10px] font-bold text-gray-900 dark:text-white mb-0.5 uppercase tracking-wide flex items-center space-x-1">
+                <div key={groupIndex} className="p-2.5">
+                  <h4 className="text-xs font-bold text-gray-900 dark:text-white mb-1 uppercase tracking-wide flex items-center space-x-1.5">
                     <span>{group.title}</span>
-                    <span className="text-[9px] bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1 rounded-full">
+                    <span className="text-[10px] bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0 rounded-full">
                       {group.items.length}
                     </span>
                   </h4>
-                  <div className="space-y-0">
+                  <div className="space-y-0.5">
                     {group.items.map((item, itemIndex) => {
                       const IconComponent = item.icon;
                       return (
@@ -202,9 +202,9 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
                             onNavigate?.(item.section);
                             setIsOpen(false);
                           }}
-                          className="w-full flex items-start space-x-1.5 p-1 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group"
+                          className="w-full flex items-start space-x-2 p-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group"
                         >
-                          <IconComponent className="w-3.5 h-3.5 flex-shrink-0 text-blue-500 group-hover:text-blue-600 transition-colors" />
+                          <IconComponent className="w-4 h-4 flex-shrink-0 text-blue-500 group-hover:text-blue-600 transition-colors" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-0.5">
                               <p className="text-xs font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -216,7 +216,7 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
                                 )}
                               </div>
                             </div>
-                            <p className="text-[10px] text-gray-600 dark:text-gray-400 leading-tight truncate">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 leading-tight truncate">
                               {item.description}
                             </p>
                           </div>
@@ -238,10 +238,10 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
           </div>
           
           {/* Footer */}
-          <div className="px-2 py-1 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
+          <div className="px-2.5 py-1.5 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] text-gray-500 dark:text-gray-400">{allItems.length} settings</p>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400">Esc to close</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{allItems.length} settings</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Esc to close</p>
             </div>
           </div>
         </div>
