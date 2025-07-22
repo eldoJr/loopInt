@@ -59,12 +59,6 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
     'GBP (British Pound, £)'
   ];
 
-  const projects = [
-    'Project Alpha',
-    'Project Beta',
-    'Project Gamma'
-  ];
-
   const calculateTotal = useCallback(() => {
     return formData.items.reduce((sum, item) => {
       const amount = parseFloat(item.amount) || 0;
