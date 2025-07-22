@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Calendar, ChevronDown, AlertCircle, Plus, Receipt, Check, Upload, FileText } from 'lucide-react';
+import { Calendar, ChevronDown, AlertCircle, Plus, Check, X, Calculator } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
@@ -11,6 +11,10 @@ interface NewExpenseProps {
   onNavigateToExpenses?: () => void;
 }
 
+interface ExpenseItem {
+  amount: string;
+}
+
 const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) => {
   useTheme();
   const [loading, setLoading] = useState(true);
@@ -19,48 +23,59 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
   const [isSaved, setIsSaved] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
+  const [activeTab, setActiveTab] = useState('Items');
 
   const [formData, setFormData] = useState({
+    expenseName: '',
     vendor: '',
     date: format(new Date(), 'yyyy-MM-dd'),
-    currency: 'USD (US Dollar, $)',
-    amount: '',
-    category: '',
+    dueDate: '',
+    currency: 'INR (Indian Rupee, ₹)',
+    category: 'Advertising and marketing',
     description: '',
     project: '',
-    paymentMethod: 'Cash',
-    receiptFile: null as File | null,
+    items: [{ amount: '' }] as ExpenseItem[],
     total: 0
   });
 
   const categories = [
-    'Office Supplies',
+    'Advertising and marketing',
+    'Office supplies',
     'Travel',
     'Meals',
     'Software',
     'Hardware',
     'Utilities',
     'Rent',
-    'Marketing',
     'Other'
   ];
 
-  const paymentMethods = [
-    'Cash',
-    'Credit Card',
-    'Debit Card',
-    'Bank Transfer',
-    'PayPal',
-    'Other'
+  const currencies = [
+    'INR (Indian Rupee, ₹)',
+    'USD (US Dollar, $)',
+    'EUR (Euro, €)',
+    'GBP (British Pound, £)'
   ];
+
+  const projects = [
+    'Project Alpha',
+    'Project Beta',
+    'Project Gamma'
+  ];
+
+  const calculateTotal = useCallback(() => {
+    return formData.items.reduce((sum, item) => {
+      const amount = parseFloat(item.amount) || 0;
+      return sum + amount;
+    }, 0);
+  }, [formData.items]);
 
   const isFormValid = useMemo(() => {
-    return formData.vendor.trim().length > 0 && 
-           formData.date && 
-           formData.amount && 
-           parseFloat(formData.amount) > 0 &&
-           formData.category;
-  }, [formData.vendor, formData.date, formData.amount, formData.category]);
+    return formData.expenseName.trim().length > 0 && 
+           formData.vendor.trim().length > 0 &&
+           formData.date &&
+           formData.items.some(item => parseFloat(item.amount) > 0);
+  }, [formData.expenseName, formData.vendor, formData.date, formData.items]);
 
   useEffect(() => {
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -76,6 +91,15 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
     }, 800);
     return () => clearTimeout(timer);
   }, []);
+
+  // Update total whenever items change
+  useEffect(() => {
+    const newTotal = calculateTotal();
+    setFormData(prev => ({
+      ...prev,
+      total: newTotal
+    }));
+  }, [formData.items, calculateTotal]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -103,14 +127,13 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
   const validateForm = useCallback(() => {
     const newErrors: Record<string, string> = {};
     
+    if (!formData.expenseName.trim()) newErrors.expenseName = 'Expense name is required';
     if (!formData.vendor.trim()) newErrors.vendor = 'Vendor is required';
     if (!formData.date) newErrors.date = 'Date is required';
-    if (!formData.amount || parseFloat(formData.amount) <= 0) {
-      newErrors.amount = 'Valid amount is required';
-    }
-    if (!formData.category) newErrors.category = 'Category is required';
-    if (formData.description && formData.description.length > 500) {
-      newErrors.description = 'Description must be under 500 characters';
+    
+    const hasValidItem = formData.items.some(item => parseFloat(item.amount) > 0);
+    if (!hasValidItem) {
+      newErrors.items = 'At least one item with a valid amount is required';
     }
     
     setErrors(newErrors);
@@ -124,14 +147,16 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
     setSaving(true);
     try {
       const expenseData = {
+        expenseName: formData.expenseName.trim(),
         vendor: formData.vendor.trim(),
         date: formData.date,
+        dueDate: formData.dueDate,
         currency: formData.currency,
-        amount: parseFloat(formData.amount),
         category: formData.category,
         description: formData.description.trim(),
-        project: formData.project.trim() || null,
-        paymentMethod: formData.paymentMethod,
+        project: formData.project || null,
+        items: formData.items,
+        total: formData.total,
         created_by: currentUser?.id
       };
       
@@ -141,7 +166,13 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
       
       setIsSaved(true);
       showToast.success('Expense recorded successfully!');
-      setTimeout(() => onNavigateToExpenses?.() || onNavigateBack?.(), 1000);
+      setTimeout(() => {
+        if (onNavigateToExpenses) {
+          onNavigateToExpenses();
+        } else if (onNavigateBack) {
+          onNavigateBack();
+        }
+      }, 1000);
     } catch (error) {
       console.error('Error recording expense:', error);
       showToast.error('Failed to record expense. Please try again.');
@@ -151,27 +182,39 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
     }
   };
 
-  const handleInputChange = (field: string, value: string | File | null) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     
     // Clear field-specific errors
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
-    
-    // Update total when amount changes
-    if (field === 'amount' && typeof value === 'string' && !isNaN(parseFloat(value))) {
-      const amount = parseFloat(value);
-      setFormData(prev => ({
-        ...prev,
-        total: amount
-      }));
-    }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    handleInputChange('receiptFile', file);
+  const addNewItem = () => {
+    setFormData(prev => ({
+      ...prev,
+      items: [...prev.items, { amount: '' }]
+    }));
+  };
+
+  const removeItem = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updateItemAmount = (index: number, amount: string) => {
+    setFormData(prev => {
+      const newItems = [...prev.items];
+      newItems[index] = { ...newItems[index], amount };
+      return { ...prev, items: newItems };
+    });
+    
+    if (errors.items) {
+      setErrors(prev => ({ ...prev, items: '' }));
+    }
   };
 
   const breadcrumbItems = [
@@ -201,7 +244,13 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
             <h1 className="text-xl font-semibold text-gray-900 dark:text-white">New Expense</h1>
             <div className="flex items-center space-x-2">
               <button 
-                onClick={() => onNavigateToExpenses?.() || onNavigateBack?.()}
+                onClick={() => {
+                  if (onNavigateToExpenses) {
+                    onNavigateToExpenses();
+                  } else if (onNavigateBack) {
+                    onNavigateBack();
+                  }
+                }}
                 className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
@@ -228,27 +277,67 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
               Expense Information
             </h2>
             
+            {/* Expense Name */}
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                Expense name *
+              </label>
+              <div className="col-span-9">
+                <input
+                  type="text"
+                  placeholder="Expense name"
+                  value={formData.expenseName}
+                  onChange={(e) => handleInputChange('expenseName', e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                />
+                {errors.expenseName && (
+                  <div className="text-red-500 text-xs mt-1 flex items-center">
+                    <AlertCircle size={12} className="mr-1" />
+                    {errors.expenseName}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Category */}
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                Category *
+              </label>
+              <div className="col-span-8">
+                <div className="relative">
+                  <select
+                    value={formData.category}
+                    onChange={(e) => handleInputChange('category', e.target.value)}
+                    className="w-full appearance-none bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
+                  >
+                    {categories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+              <div className="col-span-1">
+                <button className="p-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center justify-center">
+                  <Plus size={16} />
+                </button>
+              </div>
+            </div>
+
             {/* Vendor */}
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                 Vendor/Payee *
               </label>
               <div className="col-span-8">
-                <div className="relative">
-                  <select
-                    value={formData.vendor}
-                    onChange={(e) => handleInputChange('vendor', e.target.value)}
-                    className="w-full appearance-none bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
-                  >
-                    <option value="">Choose vendor</option>
-                    <option>Amazon</option>
-                    <option>Office Depot</option>
-                    <option>Uber</option>
-                    <option>Staples</option>
-                    <option>Other</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                </div>
+                <input
+                  type="text"
+                  placeholder="Choose vendor"
+                  value={formData.vendor}
+                  onChange={(e) => handleInputChange('vendor', e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                />
                 {errors.vendor && (
                   <div className="text-red-500 text-xs mt-1 flex items-center">
                     <AlertCircle size={12} className="mr-1" />
@@ -274,9 +363,9 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                     type="date"
                     value={formData.date}
                     onChange={(e) => handleInputChange('date', e.target.value)}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pl-10"
                   />
-                  <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
                 {errors.date && (
                   <div className="text-red-500 text-xs mt-1 flex items-center">
@@ -287,31 +376,21 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
               </div>
             </div>
 
-            {/* Category */}
+            {/* Due Date */}
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Category *
+                Due to
               </label>
               <div className="col-span-9">
                 <div className="relative">
-                  <select
-                    value={formData.category}
-                    onChange={(e) => handleInputChange('category', e.target.value)}
-                    className="w-full appearance-none bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
-                  >
-                    <option value="">Select category</option>
-                    {categories.map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  <input
+                    type="date"
+                    value={formData.dueDate}
+                    onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pl-10"
+                  />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
-                {errors.category && (
-                  <div className="text-red-500 text-xs mt-1 flex items-center">
-                    <AlertCircle size={12} className="mr-1" />
-                    {errors.category}
-                  </div>
-                )}
               </div>
             </div>
 
@@ -327,53 +406,8 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                     onChange={(e) => handleInputChange('currency', e.target.value)}
                     className="w-full appearance-none bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
                   >
-                    <option>USD (US Dollar, $)</option>
-                    <option>EUR (Euro, €)</option>
-                    <option>GBP (British Pound, £)</option>
-                    <option>INR (Indian Rupee, ₹)</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-            </div>
-
-            {/* Amount */}
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Amount *
-              </label>
-              <div className="col-span-9">
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="Amount"
-                  value={formData.amount}
-                  onChange={(e) => handleInputChange('amount', e.target.value)}
-                  className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                />
-                {errors.amount && (
-                  <div className="text-red-500 text-xs mt-1 flex items-center">
-                    <AlertCircle size={12} className="mr-1" />
-                    {errors.amount}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Payment Method */}
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Payment Method
-              </label>
-              <div className="col-span-9">
-                <div className="relative">
-                  <select
-                    value={formData.paymentMethod}
-                    onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                    className="w-full appearance-none bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
-                  >
-                    {paymentMethods.map(method => (
-                      <option key={method} value={method}>{method}</option>
+                    {currencies.map(currency => (
+                      <option key={currency} value={currency}>{currency}</option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -381,26 +415,95 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
               </div>
             </div>
 
-            {/* Description */}
-            <div className="grid grid-cols-12 gap-4 items-start">
-              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
-                Description
-              </label>
-              <div className="col-span-9">
-                <div className="relative">
-                  <textarea
-                    rows={3}
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
-                    maxLength={500}
-                  />
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Characters left: {500 - (formData.description?.length || 0)}
+            {/* Tabs */}
+            <div className="border-b border-gray-200 dark:border-gray-700/50">
+              <div className="flex space-x-8">
+                {['Items', 'Taxes', 'Show description'].map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setActiveTab(tab)}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      activeTab === tab
+                        ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Items Tab */}
+            {activeTab === 'Items' && (
+              <div className="space-y-4">
+                <div className="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                  AMOUNT
+                </div>
+                
+                {formData.items.map((item, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      value={item.amount}
+                      onChange={(e) => updateItemAmount(index, e.target.value)}
+                      className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800/50 border-2 border-blue-300 dark:border-blue-700/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    />
+                    {formData.items.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeItem(index)}
+                        className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                {errors.items && (
+                  <div className="text-red-500 text-xs mt-1 flex items-center">
+                    <AlertCircle size={12} className="mr-1" />
+                    {errors.items}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={addNewItem}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add new item</span>
+                </button>
+              </div>
+            )}
+
+            {/* Description Tab */}
+            {activeTab === 'Show description' && (
+              <div className="grid grid-cols-12 gap-4 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
+                  Description
+                </label>
+                <div className="col-span-9">
+                  <div className="relative">
+                    <textarea
+                      rows={3}
+                      value={formData.description}
+                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
+                      maxLength={500}
+                    />
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Characters left: {500 - (formData.description?.length || 0)}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Project */}
             <div className="grid grid-cols-12 gap-4 items-center">
@@ -415,38 +518,11 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                     className="w-full appearance-none bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
                   >
                     <option value="">Choose project</option>
-                    <option>Project Alpha</option>
-                    <option>Project Beta</option>
-                    <option>Project Gamma</option>
+                    {projects.map(project => (
+                      <option key={project} value={project}>{project}</option>
+                    ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-            </div>
-
-            {/* Receipt Upload */}
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Receipt
-              </label>
-              <div className="col-span-9">
-                <div className="flex items-center gap-3">
-                  <label className="flex items-center gap-2 px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer text-sm">
-                    <Upload size={14} />
-                    <span>Upload Receipt</span>
-                    <input 
-                      type="file" 
-                      className="hidden" 
-                      accept="image/*,.pdf" 
-                      onChange={handleFileChange}
-                    />
-                  </label>
-                  {formData.receiptFile && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                      <FileText size={14} className="text-blue-500" />
-                      <span>{formData.receiptFile.name}</span>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -459,17 +535,61 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                 <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 bg-red-100 dark:bg-red-900/30 rounded flex items-center justify-center">
-                        <Receipt size={14} className="text-red-600 dark:text-red-400" />
+                      <div className="w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded flex items-center justify-center">
+                        <Calculator className="w-4 h-4 text-green-600 dark:text-green-400" />
                       </div>
                       <span className="text-lg font-semibold text-gray-900 dark:text-white">Total</span>
                     </div>
                     <span className="text-xl font-bold text-gray-900 dark:text-white">
-                      $ {formData.total.toFixed(2)}
+                      ₹ {formData.total.toFixed(2)}
                     </span>
+                  </div>
+                  <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                    <span>Amount due</span>
+                    <span>₹ {formData.total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-4 mt-6">
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                Payments
+              </label>
+              <div className="col-span-9">
+                <button
+                  type="button"
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add payment</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                Attachment
+              </label>
+              <div className="col-span-9">
+                <button
+                  type="button"
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add file</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mt-8">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+              <div className="bg-green-500 h-2 rounded-full w-3/4"></div>
             </div>
           </div>
         </div>
