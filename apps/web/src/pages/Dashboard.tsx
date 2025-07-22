@@ -56,6 +56,7 @@ import NewBill from '../features/finance/NewBill';
 import NewCandidate from '../features/hr/NewCandidate';
 import NewCoworker from '../features/team/NewCoworker';
 import EditCoworker from '../features/team/EditCoworker';
+import Documents from '../features/documents/Documents';
 import NewDocument from '../features/documents/NewDocument';
 import NewExpense from '../features/finance/NewExpense';
 import NewOffer from '../features/clients/NewOffer';
@@ -711,8 +712,16 @@ const Dashboard = () => {
           onNavigateBack={backToMain} 
           onNavigateToTeam={() => navigateToSection('Team')}
         />;
+      case 'Documents':
+        return <Documents
+          onNavigateBack={backToMain}
+          onNavigateToNewDocument={() => navigateToSection('New Document')}
+          />;
       case 'New Document':
-        return <NewDocument onNavigateBack={backToMain} />;
+        return <NewDocument 
+          onNavigateBack={backToMain}
+          onNavigateToDocuments={() => navigateToSection('Documents')}
+        />;
       case 'New Expense':
         return <NewExpense onNavigateBack={backToMain} />;
       case 'New Offer':

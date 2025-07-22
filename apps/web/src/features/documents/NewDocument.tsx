@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, Plus, Check, AlertCircle } from 'lucide-react';
+import { ChevronDown, Plus, Check, Upload, AlertCircle } from 'lucide-react';
 import { format, parse } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
@@ -8,6 +8,7 @@ import { RichTextEditor } from '../../components/ui/RichTextEditor';
 
 interface NewDocumentProps {
   onNavigateBack?: () => void;
+  onNavigateToDocuments?: () => void;
 }
 
 interface FormData {
@@ -32,7 +33,7 @@ interface ConfirmationDialogProps {
   onConfirm: () => void;
 }
 
-const NewDocument = ({ onNavigateBack }: NewDocumentProps) => {
+const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps) => {
   useTheme();
   
   const showConfirmation = (props: ConfirmationDialogProps) => {
@@ -158,7 +159,11 @@ const NewDocument = ({ onNavigateBack }: NewDocumentProps) => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       console.log('Document created successfully', formData);
-      onNavigateBack?.();
+      if (onNavigateToDocuments) {
+        onNavigateToDocuments();
+      } else if (onNavigateBack) {
+        onNavigateBack();
+      }
     } catch (error) {
       console.error('Error saving document:', error);
       setErrors({ submit: 'Failed to save document. Please try again.' });
@@ -169,7 +174,7 @@ const NewDocument = ({ onNavigateBack }: NewDocumentProps) => {
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Documents', onClick: onNavigateBack },
+    { label: 'Documents', onClick: onNavigateToDocuments },
     { label: 'New Document' }
   ];
 
@@ -425,6 +430,16 @@ const NewDocument = ({ onNavigateBack }: NewDocumentProps) => {
                   <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2 mb-4">
                     Document Content
                   </h2>
+                  
+                  <div className="flex items-center gap-3 mb-4">
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm flex items-center space-x-1"
+                    >
+                      <Upload size={14} />
+                      <span>Import</span>
+                    </button>
+                  </div>
                   
                   <div className="-mr-10 sm:-mr-16 md:-mr-24 lg:-mr-40 xl:-mr-56 2xl:-mr-80">
                     <RichTextEditor
