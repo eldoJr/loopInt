@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { Settings, Globe, Bell, Wrench, Package, FolderOpen, Workflow, Puzzle, Users, CreditCard, ExternalLink, Search, Shield, MoreHorizontal, Bookmark } from 'lucide-react';
+import { Settings, Globe, Bell, Wrench, Package, FolderOpen, Workflow, Puzzle, Users, CreditCard, ExternalLink, Search, MoreHorizontal, Bookmark } from 'lucide-react';
 
 interface SettingsDropdownProps {
   onNavigate?: (section: string) => void;
@@ -143,7 +143,6 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">Settings</h3>
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
-                  <Shield className="w-4 h-4 text-green-500" />
                   <span className="text-xs text-gray-500 dark:text-gray-400">Admin Access</span>
                 </div>
                 <button className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 rounded-md transition-colors">

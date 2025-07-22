@@ -63,22 +63,14 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
   ];
 
   const websites = [
-    'Company Website',
-    'LinkedIn',
     'Indeed',
+    'LinkedIn',
     'Glassdoor',
-    'Monster',
-    'ZipRecruiter',
     'Other service'
   ];
 
   const companies = [
     'Choose customer',
-    'Acme Inc',
-    'TechCorp',
-    'Global Industries',
-    'Innovate Solutions',
-    'Summit Enterprises',
     'Other'
   ];
 
@@ -488,7 +480,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 {/* Reference Number */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    Reference number
+                    Reference number *
                   </label>
                   <div className="col-span-9">
                     <div className="flex items-center gap-3">
@@ -511,7 +503,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 {/* Job Website */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    Job ad website
+                    Job ad website *
                   </label>
                   <div className="col-span-9">
                     <div className="flex items-center gap-3">
@@ -537,7 +529,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 {/* Start and End Date */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    Publication dates
+                    Publication dates *
                   </label>
                   <div className="col-span-9">
                     <div className="flex items-center gap-4">
@@ -590,7 +582,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 {/* Job Link */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    Job ad link
+                    Job ad link *
                   </label>
                   <div className="col-span-9">
                     <input
@@ -606,7 +598,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 {/* HR Project */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    HR project
+                    HR project *
                   </label>
                   <div className="col-span-6">
                     <div className="relative">
@@ -701,7 +693,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 {/* Skills */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    Skills
+                    Skills *
                   </label>
                   <div className="col-span-6">
                     <div className="relative">
@@ -722,7 +714,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 {/* Location */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                    Location
+                    Location *
                   </label>
                   <div className="col-span-6">
                     <div className="relative">
@@ -907,9 +899,6 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
               <span>Press Ctrl+S to save</span>
               <span>•</span>
               <span>Press Esc to cancel</span>
-            </div>
-            <div>
-              Your session will expire in: <span className="font-medium">55:11</span>
             </div>
           </div>
         </div>
