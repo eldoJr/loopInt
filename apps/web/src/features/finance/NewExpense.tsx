@@ -23,7 +23,9 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
   const [isSaved, setIsSaved] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
-  const [activeTab, setActiveTab] = useState('Items');
+  const [showItems, setShowItems] = useState(true);
+  const [showTaxes, setShowTaxes] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
 
   const [formData, setFormData] = useState({
     expenseName: '',
@@ -415,75 +417,108 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
               </div>
             </div>
 
-            {/* Tabs */}
-            <div className="border-b border-gray-200 dark:border-gray-700/50">
-              <div className="flex space-x-8">
-                {['Items', 'Taxes', 'Show description'].map((tab) => (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => setActiveTab(tab)}
-                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                      activeTab === tab
-                        ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                ))}
+            {/* Checkboxes instead of tabs */}
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <div className="col-span-3"></div>
+              <div className="col-span-9 flex space-x-6">
+                <label className="inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showItems}
+                    onChange={() => setShowItems(!showItems)}
+                    className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                  />
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Items</span>
+                </label>
+                <label className="inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showTaxes}
+                    onChange={() => setShowTaxes(!showTaxes)}
+                    className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                  />
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Taxes</span>
+                </label>
+                <label className="inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showDescription}
+                    onChange={() => setShowDescription(!showDescription)}
+                    className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                  />
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Show description</span>
+                </label>
               </div>
             </div>
 
-            {/* Items Tab */}
-            {activeTab === 'Items' && (
-              <div className="space-y-4">
-                <div className="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
-                  AMOUNT
+            {/* Items Section */}
+            {showItems && (
+              <div className="grid grid-cols-12 gap-4 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
+                  Items
+                </label>
+                <div className="col-span-9 space-y-4">
+                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                    AMOUNT
+                  </div>
+                  
+                  {formData.items.map((item, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        value={item.amount}
+                        onChange={(e) => updateItemAmount(index, e.target.value)}
+                        className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800/50 border-2 border-blue-300 dark:border-blue-700/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      />
+                      {formData.items.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeItem(index)}
+                          className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+
+                  {errors.items && (
+                    <div className="text-red-500 text-xs mt-1 flex items-center">
+                      <AlertCircle size={12} className="mr-1" />
+                      {errors.items}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={addNewItem}
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add new item</span>
+                  </button>
                 </div>
-                
-                {formData.items.map((item, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <input
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      value={item.amount}
-                      onChange={(e) => updateItemAmount(index, e.target.value)}
-                      className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800/50 border-2 border-blue-300 dark:border-blue-700/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                    />
-                    {formData.items.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeItem(index)}
-                        className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-
-                {errors.items && (
-                  <div className="text-red-500 text-xs mt-1 flex items-center">
-                    <AlertCircle size={12} className="mr-1" />
-                    {errors.items}
-                  </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={addNewItem}
-                  className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add new item</span>
-                </button>
               </div>
             )}
 
-            {/* Description Tab */}
-            {activeTab === 'Show description' && (
+            {/* Taxes Section */}
+            {showTaxes && (
+              <div className="grid grid-cols-12 gap-4 items-start">
+                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
+                  Taxes
+                </label>
+                <div className="col-span-9">
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Tax settings will appear here</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Description Section */}
+            {showDescription && (
               <div className="grid grid-cols-12 gap-4 items-start">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Description
@@ -505,27 +540,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
               </div>
             )}
 
-            {/* Project */}
-            <div className="grid grid-cols-12 gap-4 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Project
-              </label>
-              <div className="col-span-9">
-                <div className="relative">
-                  <select
-                    value={formData.project}
-                    onChange={(e) => handleInputChange('project', e.target.value)}
-                    className="w-full appearance-none bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
-                  >
-                    <option value="">Choose project</option>
-                    {projects.map(project => (
-                      <option key={project} value={project}>{project}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-            </div>
+
           </div>
 
           {/* Total Section */}
@@ -583,13 +598,6 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                   <span>Add file</span>
                 </button>
               </div>
-            </div>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="mt-8">
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div className="bg-green-500 h-2 rounded-full w-3/4"></div>
             </div>
           </div>
         </div>
