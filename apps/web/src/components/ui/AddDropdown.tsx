@@ -150,14 +150,15 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
+        className="p-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors flex items-center space-x-1"
         title="Add"
       >
         <Plus className="w-4 h-4" />
+        <span className="text-xs font-medium">Create</span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-1 w-64 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className="absolute top-full right-0 mt-1 w-72 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
           {/* Header */}
           <div className="p-2 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-2">
