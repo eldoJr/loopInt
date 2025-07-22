@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, Plus, Check, Upload, AlertCircle } from 'lucide-react';
+import { ChevronDown, Plus, Check, AlertCircle } from 'lucide-react';
 import { format, parse } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
