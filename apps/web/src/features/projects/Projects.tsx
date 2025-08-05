@@ -6,7 +6,6 @@ import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { showToast } from '../../components/ui/Toast';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
-import VirtualizedList from '../../components/ui/VirtualizedList';
 import SearchBar from '../../components/ui/SearchBar';
 import { useSearch } from '../../hooks/useSearch';
 import { useDebounce } from '../../hooks/useDebounce';
