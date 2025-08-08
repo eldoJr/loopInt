@@ -25,4 +25,11 @@ export interface DepartmentContent {
   stats: Stat[];
 }
 
-export type DepartmentName = 'IT' | 'Operations' | 'Marketing' | 'Sales' | 'Finance' | 'Customer Experience' | 'People';
+export type DepartmentName =
+  | 'IT'
+  | 'Operations'
+  | 'Marketing'
+  | 'Sales'
+  | 'Finance'
+  | 'Customer Experience'
+  | 'People';

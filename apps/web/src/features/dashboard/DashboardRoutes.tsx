@@ -1,6 +1,13 @@
 import { Suspense } from 'react';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import { LazyProjects, LazyTasks, LazyCalendar, LazyTeam, LazyAnalytics, LazyClients } from '../../components/performance/LazyComponents';
+import {
+  LazyProjects,
+  LazyTasks,
+  LazyCalendar,
+  LazyTeam,
+  LazyAnalytics,
+  LazyClients,
+} from '../../components/performance/LazyComponents';
 import NewProject from '../projects/NewProject';
 import EditProject from '../projects/EditProject';
 import AddTask from '../tasks/AddTask';
@@ -53,27 +60,35 @@ interface DashboardRoutesProps {
   setCurrentView: (view: string) => void;
 }
 
-export const DashboardRoutes = ({ currentView, navigateToSection, setCurrentView }: DashboardRoutesProps) => {
+export const DashboardRoutes = ({
+  currentView,
+  navigateToSection,
+  setCurrentView,
+}: DashboardRoutesProps) => {
   const backToMain = () => navigateToSection('Dashboard');
 
   switch (currentView) {
     case 'Projects':
       return (
         <Suspense fallback={<LoadingSpinner />}>
-          <LazyProjects 
-            onNavigateBack={backToMain} 
+          <LazyProjects
+            onNavigateBack={backToMain}
             onNavigateToNewProject={() => navigateToSection('New Project')}
-            onNavigateToEditProject={(projectId) => setCurrentView(`Edit Project ${projectId}`)}
+            onNavigateToEditProject={projectId =>
+              setCurrentView(`Edit Project ${projectId}`)
+            }
           />
         </Suspense>
       );
     case 'Tasks':
       return (
         <Suspense fallback={<LoadingSpinner />}>
-          <LazyTasks 
-            onNavigateBack={backToMain} 
+          <LazyTasks
+            onNavigateBack={backToMain}
             onNavigateToAddTask={() => navigateToSection('Add Task')}
-            onNavigateToEditTask={(taskId) => setCurrentView(`Edit Task ${taskId}`)}
+            onNavigateToEditTask={taskId =>
+              setCurrentView(`Edit Task ${taskId}`)
+            }
           />
         </Suspense>
       );
@@ -86,10 +101,12 @@ export const DashboardRoutes = ({ currentView, navigateToSection, setCurrentView
     case 'Team':
       return (
         <Suspense fallback={<LoadingSpinner />}>
-          <LazyTeam 
-            onNavigateBack={backToMain} 
+          <LazyTeam
+            onNavigateBack={backToMain}
             onNavigateToNewCoworker={() => navigateToSection('New Coworker')}
-            onNavigateToEditMember={(memberId) => setCurrentView(`Edit Member ${memberId}`)}
+            onNavigateToEditMember={memberId =>
+              setCurrentView(`Edit Member ${memberId}`)
+            }
           />
         </Suspense>
       );
@@ -102,33 +119,61 @@ export const DashboardRoutes = ({ currentView, navigateToSection, setCurrentView
     case 'Clients':
       return (
         <Suspense fallback={<LoadingSpinner />}>
-          <LazyClients 
-            onNavigateBack={backToMain} 
-            onNavigateToNewCompany={() => navigateToSection('New Company')} 
-            onNavigateToNewContact={() => navigateToSection('New Contact')} 
+          <LazyClients
+            onNavigateBack={backToMain}
+            onNavigateToNewCompany={() => navigateToSection('New Company')}
+            onNavigateToNewContact={() => navigateToSection('New Contact')}
           />
         </Suspense>
       );
     case 'Reports':
-      return <Reports 
-        onNavigateBack={backToMain}
-        onNavigateToNewReport={() => navigateToSection('New Report')}
-        onNavigateToEditReport={(reportId) => setCurrentView(`Edit Report ${reportId}`)}
-        onNavigateToViewReport={(reportId) => setCurrentView(`View Report ${reportId}`)}
-      />;
+      return (
+        <Reports
+          onNavigateBack={backToMain}
+          onNavigateToNewReport={() => navigateToSection('New Report')}
+          onNavigateToEditReport={reportId =>
+            setCurrentView(`Edit Report ${reportId}`)
+          }
+          onNavigateToViewReport={reportId =>
+            setCurrentView(`View Report ${reportId}`)
+          }
+        />
+      );
     case 'New Report':
-      return <NewReport 
-        onNavigateBack={backToMain}
-        onNavigateToReports={() => navigateToSection('Reports')}
-      />;
+      return (
+        <NewReport
+          onNavigateBack={backToMain}
+          onNavigateToReports={() => navigateToSection('Reports')}
+        />
+      );
     case 'New Project':
-      return <NewProject onNavigateBack={backToMain} onNavigateToProjects={() => navigateToSection('Projects')} />;
+      return (
+        <NewProject
+          onNavigateBack={backToMain}
+          onNavigateToProjects={() => navigateToSection('Projects')}
+        />
+      );
     case 'Add Task':
-      return <AddTask onNavigateBack={() => navigateToSection('Tasks')} onNavigateToTasks={() => navigateToSection('Tasks')} />;
+      return (
+        <AddTask
+          onNavigateBack={() => navigateToSection('Tasks')}
+          onNavigateToTasks={() => navigateToSection('Tasks')}
+        />
+      );
     case 'New Client':
-      return <NewClient onNavigateBack={backToMain} onNavigateToClients={() => navigateToSection('Clients')} />;
+      return (
+        <NewClient
+          onNavigateBack={backToMain}
+          onNavigateToClients={() => navigateToSection('Clients')}
+        />
+      );
     case 'Team Member':
-      return <TeamMember onNavigateBack={backToMain} onNavigateToTeam={() => navigateToSection('Team')} />;
+      return (
+        <TeamMember
+          onNavigateBack={backToMain}
+          onNavigateToTeam={() => navigateToSection('Team')}
+        />
+      );
     case 'Generate Report':
       return <GenerateReport />;
     case 'Personal Data':
@@ -146,44 +191,71 @@ export const DashboardRoutes = ({ currentView, navigateToSection, setCurrentView
     case 'Invite User':
       return <InviteUser onNavigateBack={backToMain} />;
     case 'Tax Invoice':
-      return <TaxInvoice 
-        onNavigateBack={backToMain} 
-        onNavigateToInvoices={() => navigateToSection('Invoices')} 
-      />;
+      return (
+        <TaxInvoice
+          onNavigateBack={backToMain}
+          onNavigateToInvoices={() => navigateToSection('Invoices')}
+        />
+      );
     case 'Invoices':
-      return <Invoices 
-        onNavigateBack={backToMain} 
-        onCreateInvoice={() => navigateToSection('Tax Invoice')}
-        onCreateBill={() => navigateToSection('New Bill')}
-        onCreateUndocumentedRevenue={() => navigateToSection('Undocumented Revenue')}
-      />;
+      return (
+        <Invoices
+          onNavigateBack={backToMain}
+          onCreateInvoice={() => navigateToSection('Tax Invoice')}
+          onCreateBill={() => navigateToSection('New Bill')}
+          onCreateUndocumentedRevenue={() =>
+            navigateToSection('Undocumented Revenue')
+          }
+        />
+      );
     case 'New Issue':
       return <NewIssue onNavigateBack={backToMain} />;
     case 'New Company':
-      return <NewCompany onNavigateBack={backToMain} onNavigateToClients={() => navigateToSection('Clients')} />;
+      return (
+        <NewCompany
+          onNavigateBack={backToMain}
+          onNavigateToClients={() => navigateToSection('Clients')}
+        />
+      );
     case 'New Contact':
-      return <NewContact onNavigateBack={backToMain} onNavigateToNewContact={() => navigateToSection('Clients')} />;
+      return (
+        <NewContact
+          onNavigateBack={backToMain}
+          onNavigateToNewContact={() => navigateToSection('Clients')}
+        />
+      );
     case 'Job Ad':
       return <JobAd onNavigateBack={() => navigateToSection('HR Project')} />;
     case 'New Bill':
-      return <NewBill onNavigateBack={backToMain} onNavigateToBills={() => navigateToSection('Invoices')} />;
+      return (
+        <NewBill
+          onNavigateBack={backToMain}
+          onNavigateToBills={() => navigateToSection('Invoices')}
+        />
+      );
     case 'New Candidate':
       return <NewCandidate onNavigateBack={backToMain} />;
     case 'New Coworker':
-      return <NewCoworker 
-        onNavigateBack={backToMain} 
-        onNavigateToTeam={() => navigateToSection('Team')}
-      />;
+      return (
+        <NewCoworker
+          onNavigateBack={backToMain}
+          onNavigateToTeam={() => navigateToSection('Team')}
+        />
+      );
     case 'Documents':
-      return <Documents
-        onNavigateBack={backToMain}
-        onNavigateToNewDocument={() => navigateToSection('New Document')}
-        />;
+      return (
+        <Documents
+          onNavigateBack={backToMain}
+          onNavigateToNewDocument={() => navigateToSection('New Document')}
+        />
+      );
     case 'New Document':
-      return <NewDocument 
-        onNavigateBack={backToMain}
-        onNavigateToDocuments={() => navigateToSection('Documents')}
-      />;
+      return (
+        <NewDocument
+          onNavigateBack={backToMain}
+          onNavigateToDocuments={() => navigateToSection('Documents')}
+        />
+      );
     case 'New Expense':
       return <NewExpense onNavigateBack={backToMain} />;
     case 'New Offer':
@@ -191,15 +263,19 @@ export const DashboardRoutes = ({ currentView, navigateToSection, setCurrentView
     case 'New Product':
       return <NewProduct onNavigateBack={backToMain} />;
     case 'HR Project':
-      return <HRProject 
-        onNavigateBack={backToMain} 
-        onNavigateToJobAd={() => navigateToSection('Job Ad')} 
-      />;
+      return (
+        <HRProject
+          onNavigateBack={backToMain}
+          onNavigateToJobAd={() => navigateToSection('Job Ad')}
+        />
+      );
     case 'Undocumented Revenue':
-      return <UndocumentedRevenue 
-        onNavigateBack={backToMain} 
-        onNavigateToRevenues={() => navigateToSection('Invoices')}
-      />;
+      return (
+        <UndocumentedRevenue
+          onNavigateBack={backToMain}
+          onNavigateToRevenues={() => navigateToSection('Invoices')}
+        />
+      );
     case 'History':
       return <Historic onNavigateBack={backToMain} />;
     case 'Profile':
@@ -223,44 +299,54 @@ export const DashboardRoutes = ({ currentView, navigateToSection, setCurrentView
     default:
       if (currentView.startsWith('Edit Project ')) {
         const projectId = currentView.replace('Edit Project ', '');
-        return <EditProject 
-          projectId={projectId}
-          onNavigateBack={() => navigateToSection('Projects')} 
-          onNavigateToProjects={() => navigateToSection('Projects')} 
-        />;
+        return (
+          <EditProject
+            projectId={projectId}
+            onNavigateBack={() => navigateToSection('Projects')}
+            onNavigateToProjects={() => navigateToSection('Projects')}
+          />
+        );
       }
       if (currentView.startsWith('Edit Task ')) {
         const taskId = currentView.replace('Edit Task ', '');
-        return <EditTask 
-          taskId={taskId}
-          onNavigateBack={() => navigateToSection('Tasks')} 
-          onNavigateToTasks={() => navigateToSection('Tasks')} 
-        />;
+        return (
+          <EditTask
+            taskId={taskId}
+            onNavigateBack={() => navigateToSection('Tasks')}
+            onNavigateToTasks={() => navigateToSection('Tasks')}
+          />
+        );
       }
       if (currentView.startsWith('Edit Member ')) {
         const memberId = currentView.replace('Edit Member ', '');
-        return <EditCoworker 
-          memberId={memberId}
-          onNavigateBack={() => navigateToSection('Team')} 
-          onNavigateToTeam={() => navigateToSection('Team')}
-        />;
+        return (
+          <EditCoworker
+            memberId={memberId}
+            onNavigateBack={() => navigateToSection('Team')}
+            onNavigateToTeam={() => navigateToSection('Team')}
+          />
+        );
       }
       if (currentView.startsWith('Edit Report ')) {
         const reportId = currentView.replace('Edit Report ', '');
-        return <EditReport 
-          reportId={reportId}
-          onNavigateBack={() => navigateToSection('Reports')}
-          onNavigateToReports={() => navigateToSection('Reports')}
-        />;
+        return (
+          <EditReport
+            reportId={reportId}
+            onNavigateBack={() => navigateToSection('Reports')}
+            onNavigateToReports={() => navigateToSection('Reports')}
+          />
+        );
       }
       if (currentView.startsWith('View Report ')) {
         const reportId = currentView.replace('View Report ', '');
-        return <ViewReport 
-          reportId={reportId}
-          onNavigateBack={() => navigateToSection('Reports')}
-          onNavigateToReports={() => navigateToSection('Reports')}
-          onNavigateToEdit={(id) => setCurrentView(`Edit Report ${id}`)}
-        />;
+        return (
+          <ViewReport
+            reportId={reportId}
+            onNavigateBack={() => navigateToSection('Reports')}
+            onNavigateToReports={() => navigateToSection('Reports')}
+            onNavigateToEdit={id => setCurrentView(`Edit Report ${id}`)}
+          />
+        );
       }
       return null;
   }

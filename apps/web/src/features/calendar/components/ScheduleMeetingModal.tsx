@@ -31,51 +31,64 @@ const ScheduleMeetingModal = ({ isOpen, onClose }: ModalProps) => {
         <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center space-x-2">
             <CalendarIcon className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-            <h2 className="text-base font-semibold text-gray-900 dark:text-white">Schedule Meeting</h2>
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+              Schedule Meeting
+            </h2>
           </div>
-          <button onClick={onClose} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+          <button
+            onClick={onClose}
+            className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+          >
             <X size={16} />
           </button>
         </div>
 
         <div className="p-3 space-y-3">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Title</label>
+            <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+              Title
+            </label>
             <input
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={e => setTitle(e.target.value)}
               placeholder="Meeting title"
               className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Date</label>
+            <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+              Date
+            </label>
             <input
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={e => setDate(e.target.value)}
               className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Start Time</label>
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                Start Time
+              </label>
               <input
                 type="time"
                 value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
+                onChange={e => setStartTime(e.target.value)}
                 className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">End Time</label>
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                End Time
+              </label>
               <input
                 type="time"
                 value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
+                onChange={e => setEndTime(e.target.value)}
                 className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
               />
             </div>

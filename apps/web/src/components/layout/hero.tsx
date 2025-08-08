@@ -16,9 +16,7 @@ const Hero = () => {
       <div className="relative z-10 max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12 py-20">
         <div className="text-center space-y-8">
           {/* Badge */}
-          <Badge icon={Sparkles}>
-            Trusted by 10,000+ businesses worldwide
-          </Badge>
+          <Badge icon={Sparkles}>Trusted by 10,000+ businesses worldwide</Badge>
 
           {/* Main Heading */}
           <div className="space-y-6">
@@ -32,7 +30,8 @@ const Hero = () => {
               </span>
             </h1>
             <p className="text-xl sm:text-1xl text-gray-400 max-w-4xl mx-auto leading-relaxed">
-              Streamline projects, manage teams, and boost productivity with our comprehensive business management platform.
+              Streamline projects, manage teams, and boost productivity with our
+              comprehensive business management platform.
             </p>
           </div>
 
@@ -41,16 +40,31 @@ const Hero = () => {
             <Button href="#join" icon={ArrowRight} size="lg">
               Start Free Trial
             </Button>
-            <Button variant="secondary" icon={Play} iconPosition="left" size="lg">
+            <Button
+              variant="secondary"
+              icon={Play}
+              iconPosition="left"
+              size="lg"
+            >
               Watch Demo
             </Button>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-16 max-w-3xl mx-auto">
-            <StatCard icon={Users} value="10K+" label="Active Users" color="blue" />
+            <StatCard
+              icon={Users}
+              value="10K+"
+              label="Active Users"
+              color="blue"
+            />
             <StatCard icon={Zap} value="99.9%" label="Uptime" color="purple" />
-            <StatCard icon={Shield} value="100%" label="Secure" color="emerald" />
+            <StatCard
+              icon={Shield}
+              value="100%"
+              label="Secure"
+              color="emerald"
+            />
           </div>
         </div>
       </div>

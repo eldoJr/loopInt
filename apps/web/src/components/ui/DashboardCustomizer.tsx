@@ -23,7 +23,7 @@ const DashboardCustomizer = ({
   widgets,
   onToggleCustomization,
   onUpdateWidgets,
-  onResetLayout
+  onResetLayout,
 }: DashboardCustomizerProps) => {
   const [localWidgets, setLocalWidgets] = useState(widgets);
   useTheme();
@@ -62,7 +62,9 @@ const DashboardCustomizer = ({
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
               <Settings className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Customize Dashboard</h3>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                Customize Dashboard
+              </h3>
             </div>
             <button
               onClick={handleReset}
@@ -78,12 +80,14 @@ const DashboardCustomizer = ({
           </p>
 
           <div className="space-y-1 mb-3 max-h-48 overflow-y-auto">
-            {localWidgets.map((widget) => (
+            {localWidgets.map(widget => (
               <div
                 key={widget.id}
                 className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800/30 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
               >
-                <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">{widget.title}</span>
+                <span className="text-gray-700 dark:text-gray-300 text-sm font-medium">
+                  {widget.title}
+                </span>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"

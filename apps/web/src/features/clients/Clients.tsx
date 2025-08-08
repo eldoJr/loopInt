@@ -1,5 +1,17 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Search, X, Filter, Plus, Star, ArrowUpDown, MoreHorizontal, Phone, Mail, Building, User } from 'lucide-react';
+import {
+  Search,
+  X,
+  Filter,
+  Plus,
+  Star,
+  ArrowUpDown,
+  MoreHorizontal,
+  Phone,
+  Mail,
+  Building,
+  User,
+} from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -35,7 +47,11 @@ interface Contact {
   favorite: boolean;
 }
 
-const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContact }: ClientsProps) => {
+const Clients = ({
+  onNavigateBack,
+  onNavigateToNewCompany,
+  onNavigateToNewContact,
+}: ClientsProps) => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [activeTab, setActiveTab] = useState('companies');
@@ -55,7 +71,7 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
       assignedTo: 'John Doe',
       status: 'Active',
       type: 'Enterprise',
-      favorite: true
+      favorite: true,
     },
     {
       id: '2',
@@ -66,7 +82,7 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
       assignedTo: 'Jane Smith',
       status: 'Prospect',
       type: 'SMB',
-      favorite: false
+      favorite: false,
     },
     {
       id: '3',
@@ -77,8 +93,8 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
       assignedTo: 'Tony Stark',
       status: 'Lead',
       type: 'Enterprise',
-      favorite: true
-    }
+      favorite: true,
+    },
   ];
 
   // Mock data for contacts
@@ -94,7 +110,7 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
       email: 'john.smith@acme.com',
       assignedTo: 'Jane Doe',
       status: 'Active',
-      favorite: true
+      favorite: true,
     },
     {
       id: '2',
@@ -107,7 +123,7 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
       email: 'emily.j@globex.co.uk',
       assignedTo: 'John Doe',
       status: 'Lead',
-      favorite: false
+      favorite: false,
     },
     {
       id: '3',
@@ -120,8 +136,8 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
       email: 'michael.b@stark.com',
       assignedTo: 'Tony Stark',
       status: 'Prospect',
-      favorite: true
-    }
+      favorite: true,
+    },
   ];
 
   // Filter clients based on search criteria and active tab
@@ -129,28 +145,37 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
     if (activeTab === 'contacts') {
       return [];
     }
-    
+
     return mockClients.filter(client => {
       // Filter by favorites
       if (showFavorites && !client.favorite) {
         return false;
       }
-      
+
       // Filter by name
-      if (nameFilter && !client.name.toLowerCase().includes(nameFilter.toLowerCase())) {
+      if (
+        nameFilter &&
+        !client.name.toLowerCase().includes(nameFilter.toLowerCase())
+      ) {
         return false;
       }
-      
+
       // Filter by city
-      if (cityFilter && !client.city.toLowerCase().includes(cityFilter.toLowerCase())) {
+      if (
+        cityFilter &&
+        !client.city.toLowerCase().includes(cityFilter.toLowerCase())
+      ) {
         return false;
       }
-      
+
       // Filter by source/type
-      if (sourceFilter && !client.type.toLowerCase().includes(sourceFilter.toLowerCase())) {
+      if (
+        sourceFilter &&
+        !client.type.toLowerCase().includes(sourceFilter.toLowerCase())
+      ) {
         return false;
       }
-      
+
       return true;
     });
   }, [activeTab, nameFilter, cityFilter, sourceFilter, showFavorites]);
@@ -160,31 +185,40 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
     if (activeTab === 'companies') {
       return [];
     }
-    
+
     return mockContacts.filter(contact => {
       // Filter by favorites
       if (showFavorites && !contact.favorite) {
         return false;
       }
-      
+
       // Filter by name
-      if (nameFilter && !(
-        contact.firstName.toLowerCase().includes(nameFilter.toLowerCase()) || 
-        contact.lastName.toLowerCase().includes(nameFilter.toLowerCase())
-      )) {
+      if (
+        nameFilter &&
+        !(
+          contact.firstName.toLowerCase().includes(nameFilter.toLowerCase()) ||
+          contact.lastName.toLowerCase().includes(nameFilter.toLowerCase())
+        )
+      ) {
         return false;
       }
-      
+
       // Filter by city
-      if (cityFilter && !contact.city.toLowerCase().includes(cityFilter.toLowerCase())) {
+      if (
+        cityFilter &&
+        !contact.city.toLowerCase().includes(cityFilter.toLowerCase())
+      ) {
         return false;
       }
-      
+
       // Filter by position
-      if (sourceFilter && !contact.position.toLowerCase().includes(sourceFilter.toLowerCase())) {
+      if (
+        sourceFilter &&
+        !contact.position.toLowerCase().includes(sourceFilter.toLowerCase())
+      ) {
         return false;
       }
-      
+
       return true;
     });
   }, [activeTab, nameFilter, cityFilter, sourceFilter, showFavorites]);
@@ -207,7 +241,7 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Clients' }
+    { label: 'Clients' },
   ];
 
   if (loading) {
@@ -222,26 +256,30 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
   return (
     <div className="space-y-4">
       <Breadcrumb items={breadcrumbItems} />
-      
-      <div className={`transition-all duration-500 ${
-        showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      }`}>
+
+      <div
+        className={`transition-all duration-500 ${
+          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}
+      >
         {/* Header */}
         <div className="bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800/50 rounded-t-xl">
           <div className="px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Clients</h1>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Clients
+                </h1>
               </div>
               <div className="flex space-x-2">
-                <button 
+                <button
                   onClick={onNavigateToNewCompany}
                   className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-1 text-sm"
                 >
                   <Plus size={14} />
                   <span>New company</span>
                 </button>
-                <button 
+                <button
                   onClick={onNavigateToNewContact}
                   className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-1 text-sm"
                 >
@@ -256,12 +294,17 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
           <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
             <div className="flex space-x-3">
               <div className="flex-1 relative">
-                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
+                <Search
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={14}
+                />
                 <input
                   type="text"
-                  placeholder={activeTab === 'companies' ? "Company name" : "Contact name"}
+                  placeholder={
+                    activeTab === 'companies' ? 'Company name' : 'Contact name'
+                  }
                   value={nameFilter}
-                  onChange={(e) => setNameFilter(e.target.value)}
+                  onChange={e => setNameFilter(e.target.value)}
                   className="w-full pl-8 pr-8 py-1.5 text-sm border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
                 {nameFilter && (
@@ -273,14 +316,17 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                   </button>
                 )}
               </div>
-              
+
               <div className="flex-1 relative">
-                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
+                <Search
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={14}
+                />
                 <input
                   type="text"
                   placeholder="City"
                   value={cityFilter}
-                  onChange={(e) => setCityFilter(e.target.value)}
+                  onChange={e => setCityFilter(e.target.value)}
                   className="w-full pl-8 pr-8 py-1.5 text-sm border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
                 {cityFilter && (
@@ -292,14 +338,17 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                   </button>
                 )}
               </div>
-              
+
               <div className="flex-1 relative">
-                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={14} />
+                <Search
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={14}
+                />
                 <input
                   type="text"
-                  placeholder={activeTab === 'companies' ? "Type" : "Position"}
+                  placeholder={activeTab === 'companies' ? 'Type' : 'Position'}
                   value={sourceFilter}
-                  onChange={(e) => setSourceFilter(e.target.value)}
+                  onChange={e => setSourceFilter(e.target.value)}
                   className="w-full pl-8 pr-8 py-1.5 text-sm border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
                 {sourceFilter && (
@@ -311,13 +360,16 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                   </button>
                 )}
               </div>
-              
-              <button 
+
+              <button
                 onClick={clearFilters}
                 className="px-3 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-1 text-sm"
               >
                 <X className="text-red-500" size={14} />
-                <Filter size={14} className="text-gray-500 dark:text-gray-400" />
+                <Filter
+                  size={14}
+                  className="text-gray-500 dark:text-gray-400"
+                />
               </button>
             </div>
           </div>
@@ -349,20 +401,22 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                   Contact persons
                 </button>
               </div>
-              
+
               <div className="flex items-center space-x-3 text-sm">
                 <button
                   onClick={() => setShowFavorites(!showFavorites)}
                   className={`flex items-center space-x-1 ${
-                    showFavorites 
-                      ? 'text-yellow-500' 
+                    showFavorites
+                      ? 'text-yellow-500'
                       : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300'
                   }`}
                 >
                   <Star size={14} />
                   <span>Favorites</span>
                 </button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm">Import</button>
+                <button className="text-blue-600 hover:text-blue-800 text-sm">
+                  Import
+                </button>
               </div>
             </div>
           </div>
@@ -417,19 +471,28 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
                   {filteredClients.length > 0 ? (
                     filteredClients.map(client => (
-                      <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                      <tr
+                        key={client.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      >
                         <td className="py-2 px-4">
                           <div className="flex items-center space-x-2">
                             <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center text-blue-600 dark:text-blue-400">
                               <Building size={12} />
                             </div>
                             <div className="flex items-center">
-                              <span className="font-medium text-sm text-gray-900 dark:text-white">{client.name}</span>
-                              {client.favorite && <Star className="ml-1 w-3 h-3 text-yellow-500 fill-current" />}
+                              <span className="font-medium text-sm text-gray-900 dark:text-white">
+                                {client.name}
+                              </span>
+                              {client.favorite && (
+                                <Star className="ml-1 w-3 h-3 text-yellow-500 fill-current" />
+                              )}
                             </div>
                           </div>
                         </td>
-                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">{client.city}</td>
+                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">
+                          {client.city}
+                        </td>
                         <td className="py-2 px-4">
                           <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-300">
                             <Phone size={12} className="text-green-500" />
@@ -443,14 +506,20 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                           </div>
                         </td>
                         <td className="py-2 px-4">
-                          <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">{client.assignedTo}</span>
+                          <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                            {client.assignedTo}
+                          </span>
                         </td>
                         <td className="py-2 px-4">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                            client.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                            client.status === 'Prospect' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
-                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                          }`}>
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                              client.status === 'Active'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                : client.status === 'Prospect'
+                                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                                  : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                            }`}
+                          >
                             {client.status}
                           </span>
                         </td>
@@ -473,11 +542,14 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                           <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
                             <Search className="w-6 h-6 text-gray-400" />
                           </div>
-                          <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">No companies found</p>
-                          <p className="text-gray-400 dark:text-gray-500 text-xs max-w-md">
-                            Try adjusting your search or filter to find what you're looking for.
+                          <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">
+                            No companies found
                           </p>
-                          <button 
+                          <p className="text-gray-400 dark:text-gray-500 text-xs max-w-md">
+                            Try adjusting your search or filter to find what
+                            you're looking for.
+                          </p>
+                          <button
                             onClick={onNavigateToNewCompany}
                             className="mt-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-1 text-sm"
                           >
@@ -536,7 +608,10 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700/50">
                   {filteredContacts.length > 0 ? (
                     filteredContacts.map(contact => (
-                      <tr key={contact.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                      <tr
+                        key={contact.id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      >
                         <td className="py-2 px-4">
                           <div className="flex items-center space-x-2">
                             <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-400">
@@ -546,13 +621,21 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                               <span className="font-medium text-sm text-gray-900 dark:text-white">
                                 {contact.firstName} {contact.lastName}
                               </span>
-                              {contact.favorite && <Star className="ml-1 w-3 h-3 text-yellow-500 fill-current" />}
+                              {contact.favorite && (
+                                <Star className="ml-1 w-3 h-3 text-yellow-500 fill-current" />
+                              )}
                             </div>
                           </div>
                         </td>
-                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">{contact.company}</td>
-                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">{contact.position}</td>
-                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">{contact.city}</td>
+                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">
+                          {contact.company}
+                        </td>
+                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">
+                          {contact.position}
+                        </td>
+                        <td className="py-2 px-4 text-sm text-gray-600 dark:text-gray-300">
+                          {contact.city}
+                        </td>
                         <td className="py-2 px-4">
                           <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-300">
                             <Phone size={12} className="text-green-500" />
@@ -566,11 +649,15 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                           </div>
                         </td>
                         <td className="py-2 px-4">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                            contact.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                            contact.status === 'Prospect' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
-                            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                          }`}>
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                              contact.status === 'Active'
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                : contact.status === 'Prospect'
+                                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                                  : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                            }`}
+                          >
                             {contact.status}
                           </span>
                         </td>
@@ -588,11 +675,14 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
                           <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
                             <Search className="w-6 h-6 text-gray-400" />
                           </div>
-                          <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">No contacts found</p>
-                          <p className="text-gray-400 dark:text-gray-500 text-xs max-w-md">
-                            Try adjusting your search or filter to find what you're looking for.
+                          <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">
+                            No contacts found
                           </p>
-                          <button 
+                          <p className="text-gray-400 dark:text-gray-500 text-xs max-w-md">
+                            Try adjusting your search or filter to find what
+                            you're looking for.
+                          </p>
+                          <button
                             onClick={onNavigateToNewContact}
                             className="mt-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-1 text-sm"
                           >
@@ -612,10 +702,15 @@ const Clients = ({ onNavigateBack, onNavigateToNewCompany, onNavigateToNewContac
           <div className="border-t border-gray-200 dark:border-gray-700/50 px-4 py-3">
             <div className="flex items-center justify-between">
               <span className="text-xs text-gray-600 dark:text-gray-400">
-                Found: {activeTab === 'companies' ? filteredClients.length : filteredContacts.length}
+                Found:{' '}
+                {activeTab === 'companies'
+                  ? filteredClients.length
+                  : filteredContacts.length}
               </span>
               <div className="flex items-center space-x-3">
-                <span className="text-xs text-gray-600 dark:text-gray-400">Per page:</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  Per page:
+                </span>
                 <select className="border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded px-2 py-1 text-xs">
                   <option>20</option>
                   <option>50</option>

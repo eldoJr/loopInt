@@ -1,7 +1,8 @@
 import { forwardRef } from 'react';
 import { AlertCircle } from 'lucide-react';
 
-interface FormTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface FormTextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label: string;
   error?: string;
   required?: boolean;

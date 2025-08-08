@@ -6,10 +6,7 @@ interface UseSearchOptions<T> {
   threshold?: number;
 }
 
-export const useSearch = <T>({
-  data,
-  keys
-}: UseSearchOptions<T>) => {
+export const useSearch = <T>({ data, keys }: UseSearchOptions<T>) => {
   const [query, setQuery] = useState('');
 
   const results = useMemo(() => {
@@ -23,9 +20,13 @@ export const useSearch = <T>({
         return keys.some(key => {
           const value = (item as Record<string, unknown>)[key];
           if (Array.isArray(value)) {
-            return value.some(v => String(v).toLowerCase().includes(searchTerm));
+            return value.some(v =>
+              String(v).toLowerCase().includes(searchTerm)
+            );
           }
-          return String(value || '').toLowerCase().includes(searchTerm);
+          return String(value || '')
+            .toLowerCase()
+            .includes(searchTerm);
         });
       })
       .map(item => ({ item }));
@@ -35,7 +36,7 @@ export const useSearch = <T>({
     query,
     setQuery,
     results,
-    hasQuery: query.trim().length > 0
+    hasQuery: query.trim().length > 0,
   };
 };
 

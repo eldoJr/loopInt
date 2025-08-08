@@ -1,5 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronDown, Plus, Info, Check, Notebook, AlertCircle, Printer } from 'lucide-react';
+import {
+  ChevronDown,
+  Plus,
+  Info,
+  Check,
+  Notebook,
+  AlertCircle,
+  Printer,
+} from 'lucide-react';
 import { format, parse } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
@@ -39,15 +47,15 @@ interface ConfirmationDialogProps {
 
 const JobAd = ({ onNavigateBack }: JobAdProps) => {
   useTheme();
-  
+
   const printRef = useRef<HTMLDivElement>(null);
-  
+
   const showConfirmation = (props: ConfirmationDialogProps) => {
     if (window.confirm(props.message)) {
       props.onConfirm();
     }
   };
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showContent, setShowContent] = useState(false);
@@ -55,24 +63,11 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const maxContentLength = 9999;
 
-  const statuses = [
-    'Draft',
-    'Published',
-    'Closed',
-    'Archived'
-  ];
+  const statuses = ['Draft', 'Published', 'Closed', 'Archived'];
 
-  const websites = [
-    'Indeed',
-    'LinkedIn',
-    'Glassdoor',
-    'Other service'
-  ];
+  const websites = ['Indeed', 'LinkedIn', 'Glassdoor', 'Other service'];
 
-  const companies = [
-    'Choose customer',
-    'Other'
-  ];
+  const companies = ['Choose customer', 'Other'];
 
   const positions = [
     'Position',
@@ -86,7 +81,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
     'Financial Analyst',
     'Operations Manager',
     'Customer Support',
-    'Other'
+    'Other',
   ];
 
   const skills = [
@@ -101,7 +96,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
     'Project Management',
     'Communication',
     'Leadership',
-    'Other'
+    'Other',
   ];
 
   const locations = [
@@ -115,7 +110,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
     'Berlin',
     'Tokyo',
     'Sydney',
-    'Other'
+    'Other',
   ];
 
   const hrProjects = [
@@ -123,7 +118,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
     'HR/2023/001',
     'HR/2023/002',
     'HR/2023/003',
-    'HR/2023/004'
+    'HR/2023/004',
   ];
 
   const [formData, setFormData] = useState<FormData>({
@@ -140,7 +135,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
     position: 'Position',
     skills: 'Skills',
     location: 'Localizations',
-    jobContent: ''
+    jobContent: '',
   });
 
   useEffect(() => {
@@ -163,23 +158,26 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
         handleCancel();
       }
     };
-    
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleInputChange = useCallback((field: keyof FormData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  }, [errors]);
-  
+  const handleInputChange = useCallback(
+    (field: keyof FormData, value: string | boolean) => {
+      setFormData(prev => ({ ...prev, [field]: value }));
+      if (errors[field]) {
+        setErrors(prev => ({ ...prev, [field]: '' }));
+      }
+    },
+    [errors]
+  );
+
   const handlePrint = useCallback(() => {
     if (printRef.current) {
       const originalContents = document.body.innerHTML;
       const printContents = printRef.current.innerHTML;
-      
+
       // Create a print-optimized version with A4 styling
       document.body.innerHTML = `
         <style>
@@ -216,7 +214,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
           ${printContents}
         </div>
       `;
-      
+
       setTimeout(() => {
         window.print();
         document.body.innerHTML = originalContents;
@@ -224,7 +222,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
       }, 200);
     }
   }, []);
-  
+
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     try {
@@ -239,15 +237,18 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.jobName.trim()) newErrors.jobName = 'Job name is required';
-    if (formData.status === 'Draft') newErrors.status = 'Please select a status';
-    if (formData.company === 'Choose customer') newErrors.company = 'Please select a company';
-    if (formData.position === 'Position') newErrors.position = 'Please select a position';
+    if (formData.status === 'Draft')
+      newErrors.status = 'Please select a status';
+    if (formData.company === 'Choose customer')
+      newErrors.company = 'Please select a company';
+    if (formData.position === 'Position')
+      newErrors.position = 'Please select a position';
     if (formData.jobContent.length > maxContentLength) {
       newErrors.jobContent = `Content must be under ${maxContentLength} characters`;
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -256,10 +257,11 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
     if (formData.jobName.trim() || formData.jobContent.trim()) {
       showConfirmation({
         title: 'Discard changes?',
-        message: 'You have unsaved changes. Are you sure you want to discard them?',
+        message:
+          'You have unsaved changes. Are you sure you want to discard them?',
         confirmText: 'Discard',
         cancelText: 'Continue editing',
-        onConfirm: () => onNavigateBack?.()
+        onConfirm: () => onNavigateBack?.(),
       });
     } else {
       onNavigateBack?.();
@@ -269,14 +271,15 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
     setSaving(true);
     try {
-      const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+      const userData =
+        localStorage.getItem('user') || sessionStorage.getItem('user');
       const currentUser = userData ? JSON.parse(userData) : null;
-      
+
       const formDataToSend = new FormData();
-      
+
       // Add all fields
       Object.entries(formData).forEach(([key, value]) => {
         if (typeof value === 'string' && value.trim()) {
@@ -285,14 +288,14 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
           formDataToSend.append(key, String(value));
         }
       });
-      
+
       if (currentUser?.id) formDataToSend.append('createdBy', currentUser.id);
-      
+
       const response = await fetch('http://localhost:3000/job-ads', {
         method: 'POST',
-        body: formDataToSend
+        body: formDataToSend,
       });
-      
+
       if (response.ok) {
         console.log('Job ad created successfully');
         onNavigateBack?.();
@@ -329,7 +332,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Human Resource', onClick: onNavigateBack },
-    { label: 'New Job Ad' }
+    { label: 'New Job Ad' },
   ];
 
   if (loading) {
@@ -342,30 +345,34 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
   }
 
   return (
-    <div className={`space-y-6 transition-all duration-500 ${
-      showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-    }`}>
+    <div
+      className={`space-y-6 transition-all duration-500 ${
+        showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+    >
       <Breadcrumb items={breadcrumbItems} />
-      
+
       <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
         <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">New Job Ad</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              New Job Ad
+            </h1>
             <div className="flex items-center space-x-2">
-              <button 
+              <button
                 onClick={handleCancel}
                 className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleSaveAsTemplate}
                 className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm flex items-center space-x-1"
               >
                 <Notebook size={14} />
                 <span>Save as template</span>
               </button>
-              <button 
+              <button
                 onClick={handleSaveAndPublish}
                 disabled={saving}
                 className="px-3 py-1.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm flex items-center space-x-1"
@@ -373,7 +380,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 <Check size={14} />
                 <span>Save and Publish</span>
               </button>
-              <button 
+              <button
                 onClick={handleSubmit}
                 disabled={saving}
                 className={`flex items-center space-x-1 px-3 py-1.5 rounded-lg transition-colors text-sm ${
@@ -396,18 +403,22 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
               <button
                 type="button"
                 onClick={() => setActiveTab('details')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'details' 
-                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}`}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeTab === 'details'
+                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
               >
                 Job Details
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('preview')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'preview' 
-                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}`}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeTab === 'preview'
+                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
               >
                 Preview
               </button>
@@ -419,7 +430,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                   Job Advertisement Details
                 </h2>
-                
+
                 {/* Job Name */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -429,11 +440,13 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <input
                       type="text"
                       value={formData.jobName}
-                      onChange={(e) => handleInputChange('jobName', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('jobName', e.target.value)
+                      }
                       placeholder="Name of job ad"
                       className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                        errors.jobName 
-                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                        errors.jobName
+                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                           : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                       }`}
                     />
@@ -455,15 +468,19 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <div className="relative">
                       <select
                         value={formData.status}
-                        onChange={(e) => handleInputChange('status', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('status', e.target.value)
+                        }
                         className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.status 
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                          errors.status
+                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                             : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                         }`}
                       >
-                        {statuses.map((status) => (
-                          <option key={status} value={status}>{status}</option>
+                        {statuses.map(status => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -487,7 +504,9 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                       <input
                         type="text"
                         value={formData.referenceNumber}
-                        onChange={(e) => handleInputChange('referenceNumber', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('referenceNumber', e.target.value)
+                        }
                         className="flex-1 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       />
                       <button
@@ -510,11 +529,15 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                       <div className="relative flex-1">
                         <select
                           value={formData.jobWebsite}
-                          onChange={(e) => handleInputChange('jobWebsite', e.target.value)}
+                          onChange={e =>
+                            handleInputChange('jobWebsite', e.target.value)
+                          }
                           className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                         >
-                          {websites.map((website) => (
-                            <option key={website} value={website}>{website}</option>
+                          {websites.map(website => (
+                            <option key={website} value={website}>
+                              {website}
+                            </option>
                           ))}
                         </select>
                         <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -536,21 +559,49 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                       <div className="relative">
                         <input
                           type="date"
-                          value={formData.startDate ? format(parse(formData.startDate, 'MM/dd yyyy', new Date()), 'yyyy-MM-dd') : ''}
-                          onChange={(e) => {
-                            const date = e.target.value ? format(new Date(e.target.value), 'MM/dd yyyy') : '';
+                          value={
+                            formData.startDate
+                              ? format(
+                                  parse(
+                                    formData.startDate,
+                                    'MM/dd yyyy',
+                                    new Date()
+                                  ),
+                                  'yyyy-MM-dd'
+                                )
+                              : ''
+                          }
+                          onChange={e => {
+                            const date = e.target.value
+                              ? format(new Date(e.target.value), 'MM/dd yyyy')
+                              : '';
                             handleInputChange('startDate', date);
                           }}
                           className="bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                         />
                       </div>
-                      <span className="text-gray-500 dark:text-gray-400">-</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        -
+                      </span>
                       <div className="relative">
                         <input
                           type="date"
-                          value={formData.endDate ? format(parse(formData.endDate, 'MM/dd yyyy', new Date()), 'yyyy-MM-dd') : ''}
-                          onChange={(e) => {
-                            const date = e.target.value ? format(new Date(e.target.value), 'MM/dd yyyy') : '';
+                          value={
+                            formData.endDate
+                              ? format(
+                                  parse(
+                                    formData.endDate,
+                                    'MM/dd yyyy',
+                                    new Date()
+                                  ),
+                                  'yyyy-MM-dd'
+                                )
+                              : ''
+                          }
+                          onChange={e => {
+                            const date = e.target.value
+                              ? format(new Date(e.target.value), 'MM/dd yyyy')
+                              : '';
                             handleInputChange('endDate', date);
                           }}
                           className="bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
@@ -567,14 +618,22 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleInputChange('remindMe', !formData.remindMe)}
+                        onClick={() =>
+                          handleInputChange('remindMe', !formData.remindMe)
+                        }
                         className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                          formData.remindMe ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+                          formData.remindMe
+                            ? 'bg-green-500'
+                            : 'bg-gray-300 dark:bg-gray-600'
                         }`}
                       >
-                        {formData.remindMe && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                        {formData.remindMe && (
+                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                        )}
                       </button>
-                      <span className="text-gray-700 dark:text-gray-300 text-sm">Remind me</span>
+                      <span className="text-gray-700 dark:text-gray-300 text-sm">
+                        Remind me
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -588,7 +647,9 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <input
                       type="text"
                       value={formData.jobLink}
-                      onChange={(e) => handleInputChange('jobLink', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('jobLink', e.target.value)
+                      }
                       placeholder="Job ad link"
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     />
@@ -604,11 +665,15 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <div className="relative">
                       <select
                         value={formData.hrProject}
-                        onChange={(e) => handleInputChange('hrProject', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('hrProject', e.target.value)
+                        }
                         className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       >
-                        {hrProjects.map((project) => (
-                          <option key={project} value={project}>{project}</option>
+                        {hrProjects.map(project => (
+                          <option key={project} value={project}>
+                            {project}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -626,15 +691,19 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                       <div className="relative flex-1">
                         <select
                           value={formData.company}
-                          onChange={(e) => handleInputChange('company', e.target.value)}
+                          onChange={e =>
+                            handleInputChange('company', e.target.value)
+                          }
                           className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
-                            errors.company 
-                              ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                            errors.company
+                              ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                               : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                           }`}
                         >
-                          {companies.map((company) => (
-                            <option key={company} value={company}>{company}</option>
+                          {companies.map(company => (
+                            <option key={company} value={company}>
+                              {company}
+                            </option>
                           ))}
                         </select>
                         <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -655,10 +724,9 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                   </div>
                 </div>
               </div>
-            
-            {/* Section 2 - Job Details */}
+
+              {/* Section 2 - Job Details */}
               <div className="space-y-4 mt-6">
-                
                 {/* Position */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -668,15 +736,19 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <div className="relative">
                       <select
                         value={formData.position}
-                        onChange={(e) => handleInputChange('position', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('position', e.target.value)
+                        }
                         className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.position 
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                          errors.position
+                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                             : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                         }`}
                       >
-                        {positions.map((position) => (
-                          <option key={position} value={position}>{position}</option>
+                        {positions.map(position => (
+                          <option key={position} value={position}>
+                            {position}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -699,11 +771,15 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <div className="relative">
                       <select
                         value={formData.skills}
-                        onChange={(e) => handleInputChange('skills', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('skills', e.target.value)
+                        }
                         className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       >
-                        {skills.map((skill) => (
-                          <option key={skill} value={skill}>{skill}</option>
+                        {skills.map(skill => (
+                          <option key={skill} value={skill}>
+                            {skill}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -720,11 +796,15 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <div className="relative">
                       <select
                         value={formData.location}
-                        onChange={(e) => handleInputChange('location', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('location', e.target.value)
+                        }
                         className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       >
-                        {locations.map((location) => (
-                          <option key={location} value={location}>{location}</option>
+                        {locations.map(location => (
+                          <option key={location} value={location}>
+                            {location}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -745,17 +825,19 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                       <Plus className="w-4 h-4" />
                       Add content from template
                     </button>
-                    
+
                     <div className="-mr-10 sm:-mr-16 md:-mr-24 lg:-mr-40 xl:-mr-56 2xl:-mr-80">
                       <RichTextEditor
                         value={formData.jobContent}
-                        onChange={(value) => handleInputChange('jobContent', value)}
+                        onChange={value =>
+                          handleInputChange('jobContent', value)
+                        }
                         placeholder="Job ad content..."
                         maxLength={maxContentLength}
                         showPreview={activeTab === 'preview'}
                       />
                     </div>
-                    
+
                     {errors.jobContent && (
                       <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                         <AlertCircle className="w-4 h-4 mr-1" />
@@ -766,7 +848,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                 </div>
               </div>
             </div>
-            
+
             {/* Preview Tab */}
             <div className={activeTab === 'preview' ? 'block' : 'hidden'}>
               <div className="space-y-4">
@@ -783,46 +865,75 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                     <span>Print</span>
                   </button>
                 </div>
-                
-                <div ref={printRef} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mx-auto max-w-3xl w-full" style={{ minHeight: '29.7cm', width: '21cm', maxWidth: '100%' }}>
+
+                <div
+                  ref={printRef}
+                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mx-auto max-w-3xl w-full"
+                  style={{
+                    minHeight: '29.7cm',
+                    width: '21cm',
+                    maxWidth: '100%',
+                  }}
+                >
                   {/* Header with logo and reference */}
                   <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
                     <div>
                       <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center mb-2">
-                        <span className="text-gray-500 dark:text-gray-400 text-xs">LOGO</span>
+                        <span className="text-gray-500 dark:text-gray-400 text-xs">
+                          LOGO
+                        </span>
                       </div>
                       <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {formData.company !== 'Choose customer' ? formData.company : 'Company'}
+                        {formData.company !== 'Choose customer'
+                          ? formData.company
+                          : 'Company'}
                       </h3>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">Reference</div>
-                      <div className="text-lg font-bold text-blue-600 dark:text-blue-400">{formData.referenceNumber}</div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        Reference
+                      </div>
+                      <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                        {formData.referenceNumber}
+                      </div>
                       {(formData.startDate || formData.endDate) && (
                         <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          Valid: {formData.startDate ? formatDate(formData.startDate) : ''}
+                          Valid:{' '}
+                          {formData.startDate
+                            ? formatDate(formData.startDate)
+                            : ''}
                           {formData.startDate && formData.endDate ? ' - ' : ''}
                           {formData.endDate ? formatDate(formData.endDate) : ''}
                         </div>
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Job Title and Location */}
                   <div className="mb-6">
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                       {formData.jobName || 'Job Title'}
                     </h2>
                     <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
-                      <span>{formData.position !== 'Position' ? formData.position : 'Position'}</span>
+                      <span>
+                        {formData.position !== 'Position'
+                          ? formData.position
+                          : 'Position'}
+                      </span>
                       <span>•</span>
-                      <span>{formData.location !== 'Localizations' ? formData.location : 'Location'}</span>
+                      <span>
+                        {formData.location !== 'Localizations'
+                          ? formData.location
+                          : 'Location'}
+                      </span>
                     </div>
                   </div>
-                  
+
                   {/* Skills and Requirements */}
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Skills & Requirements</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      Skills & Requirements
+                    </h3>
                     <div className="flex flex-wrap gap-2 mb-4">
                       {formData.skills !== 'Skills' && (
                         <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm">
@@ -830,60 +941,99 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
                         </span>
                       )}
                       <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm">
-                        {formData.position !== 'Position' ? formData.position : 'Job Position'}
+                        {formData.position !== 'Position'
+                          ? formData.position
+                          : 'Job Position'}
                       </span>
                     </div>
                   </div>
-                  
+
                   {/* Job Description */}
                   <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Job Description</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      Job Description
+                    </h3>
                     <div className="prose dark:prose-invert max-w-none">
                       {formData.jobContent ? (
-                        <div dangerouslySetInnerHTML={{ __html: formData.jobContent.replace(/\n/g, '<br />') }} />
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: formData.jobContent.replace(
+                              /\n/g,
+                              '<br />'
+                            ),
+                          }}
+                        />
                       ) : (
-                        <p className="text-gray-500 dark:text-gray-400 italic">Job description will appear here...</p>
+                        <p className="text-gray-500 dark:text-gray-400 italic">
+                          Job description will appear here...
+                        </p>
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Application Process */}
                   <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">How to Apply</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                      How to Apply
+                    </h3>
                     <p className="text-gray-700 dark:text-gray-300">
-                      Please submit your application through our website or send your resume to <span className="text-blue-600 dark:text-blue-400">careers@{formData.company !== 'Choose customer' ? formData.company.toLowerCase().replace(/\s+/g, '') : 'company'}.com</span>
+                      Please submit your application through our website or send
+                      your resume to{' '}
+                      <span className="text-blue-600 dark:text-blue-400">
+                        careers@
+                        {formData.company !== 'Choose customer'
+                          ? formData.company.toLowerCase().replace(/\s+/g, '')
+                          : 'company'}
+                        .com
+                      </span>
                     </p>
                     {formData.jobLink && (
                       <p className="text-gray-700 dark:text-gray-300 mt-2">
-                        Application link: <a href={formData.jobLink} className="text-blue-600 dark:text-blue-400 underline">{formData.jobLink}</a>
+                        Application link:{' '}
+                        <a
+                          href={formData.jobLink}
+                          className="text-blue-600 dark:text-blue-400 underline"
+                        >
+                          {formData.jobLink}
+                        </a>
                       </p>
                     )}
                   </div>
-                  
+
                   {/* Signatures Section */}
                   <div className="mt-auto pt-8 border-t border-gray-200 dark:border-gray-700">
                     <div className="grid grid-cols-2 gap-8">
                       <div>
                         <div className="h-16 border-b border-gray-300 dark:border-gray-600 mb-2"></div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">HR Manager</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          HR Manager
+                        </p>
                       </div>
                       <div>
                         <div className="h-16 border-b border-gray-300 dark:border-gray-600 mb-2"></div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Department Head</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Department Head
+                        </p>
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Footer */}
                   <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-xs text-gray-500 dark:text-gray-400">
-                    <p>© {new Date().getFullYear()} {formData.company !== 'Choose customer' ? formData.company : 'Company'} - All Rights Reserved</p>
+                    <p>
+                      © {new Date().getFullYear()}{' '}
+                      {formData.company !== 'Choose customer'
+                        ? formData.company
+                        : 'Company'}{' '}
+                      - All Rights Reserved
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </form>
-        
+
         {errors.submit && (
           <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
             <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
@@ -892,7 +1042,7 @@ const JobAd = ({ onNavigateBack }: JobAdProps) => {
             </div>
           </div>
         )}
-        
+
         <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">

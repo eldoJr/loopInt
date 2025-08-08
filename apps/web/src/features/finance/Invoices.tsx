@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Plus, Filter, FolderOpen, X, CreditCard, Calculator, TrendingUp } from 'lucide-react';
+import {
+  Plus,
+  Filter,
+  FolderOpen,
+  X,
+  CreditCard,
+  Calculator,
+  TrendingUp,
+} from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { useTheme } from '../../context/ThemeContext';
@@ -17,7 +25,12 @@ interface FilterState {
   amount: string;
 }
 
-const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndocumentedRevenue }: InvoicesProps) => {
+const Invoices = ({
+  onNavigateBack,
+  onCreateInvoice,
+  onCreateBill,
+  onCreateUndocumentedRevenue,
+}: InvoicesProps) => {
   useTheme();
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
@@ -25,7 +38,7 @@ const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndoc
   const [filters, setFilters] = useState<FilterState>({
     invoiceName: '',
     customer: '',
-    amount: ''
+    amount: '',
   });
 
   useEffect(() => {
@@ -52,39 +65,45 @@ const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndoc
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Invoices' }
+    { label: 'Invoices' },
   ];
 
   return (
     <div className="space-y-6">
       <Breadcrumb items={breadcrumbItems} />
-      
+
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <div className={`transition-all duration-500 ${
-          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
+        <div
+          className={`transition-all duration-500 ${
+            showContent
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-4'
+          }`}
+        >
           <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl">
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
               <div className="flex items-center justify-between">
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Invoices</h1>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Invoices
+                </h1>
                 <div className="flex gap-3">
-                  <button 
+                  <button
                     onClick={onCreateInvoice}
                     className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center gap-2"
                   >
                     <Plus size={14} />
                     <span>New tax invoice</span>
                   </button>
-                  <button 
+                  <button
                     onClick={onCreateBill}
                     className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center gap-2"
                   >
                     <Plus size={14} />
                     <span>New bill</span>
                   </button>
-                  <button 
+                  <button
                     onClick={onCreateUndocumentedRevenue}
                     className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center gap-2"
                   >
@@ -104,7 +123,9 @@ const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndoc
                       type="text"
                       placeholder="Revenue name"
                       value={filters.invoiceName}
-                      onChange={(e) => updateFilter('invoiceName', e.target.value)}
+                      onChange={e =>
+                        updateFilter('invoiceName', e.target.value)
+                      }
                       className="w-full pl-3 pr-8 py-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     />
                     {filters.invoiceName && (
@@ -124,7 +145,7 @@ const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndoc
                       type="text"
                       placeholder="Customer"
                       value={filters.customer}
-                      onChange={(e) => updateFilter('customer', e.target.value)}
+                      onChange={e => updateFilter('customer', e.target.value)}
                       className="w-full pl-3 pr-8 py-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     />
                     {filters.customer && (
@@ -172,7 +193,7 @@ const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndoc
                   </div>
                 </div>
               </div>
-              
+
               {/* Revenue total YTD */}
               <div className="bg-white dark:bg-gray-800/40 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/30 p-4">
                 <div className="flex items-center gap-4">
@@ -189,7 +210,7 @@ const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndoc
                   </div>
                 </div>
               </div>
-              
+
               {/* Payment totals YTD */}
               <div className="bg-white dark:bg-gray-800/40 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/30 p-4">
                 <div className="flex items-center gap-4">
@@ -206,7 +227,7 @@ const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndoc
                   </div>
                 </div>
               </div>
-              
+
               {/* Outstanding Amount */}
               <div className="bg-white dark:bg-gray-800/40 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700/30 p-4">
                 <div className="flex items-center gap-4">
@@ -224,7 +245,7 @@ const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndoc
                 </div>
               </div>
             </div>
-            
+
             {/* Tab Navigation */}
             <div className="border-b border-gray-200 dark:border-gray-700/50">
               <nav className="flex">
@@ -257,20 +278,23 @@ const Invoices = ({ onNavigateBack, onCreateInvoice, onCreateBill, onCreateUndoc
                 <div className="text-gray-400 mb-4">
                   <FolderOpen size={48} className="mx-auto opacity-50" />
                 </div>
-                <p className="text-gray-500 dark:text-gray-400 text-lg">No data to display</p>
+                <p className="text-gray-500 dark:text-gray-400 text-lg">
+                  No data to display
+                </p>
                 <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
-                  {activeTab === 'tax' 
+                  {activeTab === 'tax'
                     ? 'Create your first documented revenue to get started'
-                    : 'Create your first undocumented revenue to get started'
-                  }
+                    : 'Create your first undocumented revenue to get started'}
                 </p>
                 <div className="mt-6">
-                  <button 
+                  <button
                     onClick={onCreateInvoice}
                     className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center gap-2 mx-auto"
                   >
                     <Plus size={16} />
-                    {activeTab === 'tax' ? 'New Tax Invoice' : 'New Undocumented Revenue'}
+                    {activeTab === 'tax'
+                      ? 'New Tax Invoice'
+                      : 'New Undocumented Revenue'}
                   </button>
                 </div>
               </div>

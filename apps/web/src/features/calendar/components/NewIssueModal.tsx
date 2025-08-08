@@ -1,5 +1,17 @@
 import { useState, useCallback, useEffect } from 'react';
-import { X, Check, User, Calendar as CalendarIcon, Tag, FileText, Video, CheckSquare, Target, Clock, AlertCircle } from 'lucide-react';
+import {
+  X,
+  Check,
+  User,
+  Calendar as CalendarIcon,
+  Tag,
+  FileText,
+  Video,
+  CheckSquare,
+  Target,
+  Clock,
+  AlertCircle,
+} from 'lucide-react';
 import { useTheme } from '../../../context/ThemeContext';
 
 interface ModalProps {
@@ -30,7 +42,7 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
     { id: 'event', label: 'Event', icon: CalendarIcon, color: 'bg-purple-500' },
     { id: 'meeting', label: 'Meeting', icon: Video, color: 'bg-blue-500' },
     { id: 'task', label: 'Task', icon: CheckSquare, color: 'bg-green-500' },
-    { id: 'deadline', label: 'Deadline', icon: Target, color: 'bg-red-500' }
+    { id: 'deadline', label: 'Deadline', icon: Target, color: 'bg-red-500' },
   ];
 
   // Auto-focus subject field when modal opens
@@ -48,18 +60,18 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-      
+
       // Escape key to close modal
       if (e.key === 'Escape') {
         onClose();
       }
-      
+
       // Ctrl/Cmd + Enter to save
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         handleSave();
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
@@ -71,8 +83,7 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
       document.getElementById('issue-subject')?.focus();
       return;
     }
-    
-    
+
     try {
       const response = await fetch('http://localhost:3000/calendar/events', {
         method: 'POST',
@@ -83,23 +94,33 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
           title: subject.trim(),
           description: description.trim(),
           eventType: selectedType,
-          startDate: wholeDay ? startDate.toISOString().split('T')[0] + 'T00:00:00.000Z' : new Date(`${startDate.toISOString().split('T')[0]}T${startTime}:00.000Z`).toISOString(),
-          endDate: wholeDay ? endDate.toISOString().split('T')[0] + 'T23:59:59.999Z' : new Date(`${endDate.toISOString().split('T')[0]}T${endTime}:00.000Z`).toISOString(),
+          startDate: wholeDay
+            ? startDate.toISOString().split('T')[0] + 'T00:00:00.000Z'
+            : new Date(
+                `${startDate.toISOString().split('T')[0]}T${startTime}:00.000Z`
+              ).toISOString(),
+          endDate: wholeDay
+            ? endDate.toISOString().split('T')[0] + 'T23:59:59.999Z'
+            : new Date(
+                `${endDate.toISOString().split('T')[0]}T${endTime}:00.000Z`
+              ).toISOString(),
           allDay: wholeDay,
           calendarName: calendar,
           priority,
           status,
           tags,
           reminders,
-          createdBy: '00000000-0000-0000-0000-000000000001'
-        })
+          createdBy: '00000000-0000-0000-0000-000000000001',
+        }),
       });
-      
+
       if (response.ok) {
         console.log('Issue created successfully');
         onClose();
       } else {
-        const errorData = await response.json().catch(() => ({ message: 'Failed to create issue' }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: 'Failed to create issue' }));
         console.error('Error creating issue:', errorData.message);
         showError(`Failed to create issue: ${errorData.message}`);
       }
@@ -107,20 +128,42 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
       console.error('Error creating issue:', error);
       showError('Failed to create issue. Please try again.');
     }
-  }, [selectedType, subject, description, project, calendar, priority, status, startDate, endDate, startTime, endTime, wholeDay, tags, reminders, onClose]);
+  }, [
+    selectedType,
+    subject,
+    description,
+    project,
+    calendar,
+    priority,
+    status,
+    startDate,
+    endDate,
+    startTime,
+    endTime,
+    wholeDay,
+    tags,
+    reminders,
+    onClose,
+  ]);
 
   const [errorMessage, setErrorMessage] = useState('');
   const [showErrorMsg, setShowErrorMsg] = useState(false);
-  
+
   const showError = (message: string) => {
     setErrorMessage(message);
     setShowErrorMsg(true);
     setTimeout(() => setShowErrorMsg(false), 5000);
   };
-  
+
   const addCustomTag = () => {
-    const customTagInput = document.getElementById('custom-tag-input') as HTMLInputElement;
-    if (customTagInput && customTagInput.value.trim() && !tags.includes(customTagInput.value.trim())) {
+    const customTagInput = document.getElementById(
+      'custom-tag-input'
+    ) as HTMLInputElement;
+    if (
+      customTagInput &&
+      customTagInput.value.trim() &&
+      !tags.includes(customTagInput.value.trim())
+    ) {
       setTags([...tags, customTagInput.value.trim()]);
       customTagInput.value = '';
     }
@@ -142,7 +185,10 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
               <AlertCircle className="w-4 h-4 mr-2" />
               {errorMessage}
             </div>
-            <button onClick={() => setShowErrorMsg(false)} className="text-white hover:text-gray-200">
+            <button
+              onClick={() => setShowErrorMsg(false)}
+              className="text-white hover:text-gray-200"
+            >
               <X size={16} />
             </button>
           </div>
@@ -153,7 +199,9 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
             <div className="w-6 h-6 bg-purple-500 rounded-lg flex items-center justify-center">
               <FileText className="w-3 h-3 text-white" />
             </div>
-            <h2 className="text-base font-semibold text-gray-900 dark:text-white">Create New Issue</h2>
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+              Create New Issue
+            </h2>
             <div className="hidden sm:flex items-center ml-2 text-xs text-gray-500 dark:text-gray-400">
               <Clock className="w-3 h-3 mr-1" />
               <span>Press Esc to close, Ctrl+Enter to save</span>
@@ -167,7 +215,7 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
               <X size={14} />
               <span>Cancel</span>
             </button>
-            <button 
+            <button
               onClick={handleSave}
               className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center space-x-1 transition-colors text-sm"
             >
@@ -182,9 +230,11 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
           <div className="w-1/2 p-3 border-r border-gray-200 dark:border-gray-800 overflow-y-auto">
             {/* Issue Type Selection */}
             <div className="mb-3">
-              <label className="block text-sm font-medium mb-2 text-gray-600 dark:text-gray-300">Issue Type</label>
+              <label className="block text-sm font-medium mb-2 text-gray-600 dark:text-gray-300">
+                Issue Type
+              </label>
               <div className="grid grid-cols-2 gap-2">
-                {issueTypes.map((type) => {
+                {issueTypes.map(type => {
                   const IconComponent = type.icon;
                   return (
                     <button
@@ -197,7 +247,9 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
                       }`}
                     >
                       <IconComponent className="w-3 h-3 text-blue-500 dark:text-blue-400" />
-                      <span className="font-medium text-gray-900 dark:text-white">{type.label}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {type.label}
+                      </span>
                     </button>
                   );
                 })}
@@ -206,12 +258,14 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
 
             {/* Subject */}
             <div className="mb-3">
-              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Subject *</label>
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                Subject *
+              </label>
               <input
                 id="issue-subject"
                 type="text"
                 value={subject}
-                onChange={(e) => {
+                onChange={e => {
                   setSubject(e.target.value);
                   if (e.target.value.trim()) setSubjectError(false);
                 }}
@@ -225,10 +279,12 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
 
             {/* Description */}
             <div className="mb-3">
-              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Description</label>
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                Description
+              </label>
               <textarea
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 placeholder="Add description or notes..."
                 rows={2}
                 className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white resize-none text-sm"
@@ -238,20 +294,24 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
             {/* Project & Calendar */}
             <div className="grid grid-cols-2 gap-2 mb-3">
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Project</label>
-                <select 
+                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                  Project
+                </label>
+                <select
                   value={project}
-                  onChange={(e) => setProject(e.target.value)}
+                  onChange={e => setProject(e.target.value)}
                   className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                 >
                   <option value="">No project available</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Calendar</label>
-                <select 
+                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                  Calendar
+                </label>
+                <select
                   value={calendar}
-                  onChange={(e) => setCalendar(e.target.value)}
+                  onChange={e => setCalendar(e.target.value)}
                   className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                 >
                   <option value="General">General</option>
@@ -265,10 +325,12 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
             {/* Priority & Status */}
             <div className="grid grid-cols-2 gap-2 mb-3">
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Priority</label>
-                <select 
+                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                  Priority
+                </label>
+                <select
                   value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
+                  onChange={e => setPriority(e.target.value)}
                   className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                 >
                   <option value="low">Low</option>
@@ -278,10 +340,12 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Status</label>
-                <select 
+                <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                  Status
+                </label>
+                <select
                   value={status}
-                  onChange={(e) => setStatus(e.target.value)}
+                  onChange={e => setStatus(e.target.value)}
                   className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                 >
                   <option value="new">New</option>
@@ -294,11 +358,13 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
 
             {/* Tags */}
             <div className="mb-3">
-              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Tags</label>
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                Tags
+              </label>
               <div className="flex space-x-2 mb-2">
-                <select 
+                <select
                   value={newTag}
-                  onChange={(e) => {
+                  onChange={e => {
                     const selectedTag = e.target.value;
                     if (selectedTag && !tags.includes(selectedTag)) {
                       setTags([...tags, selectedTag]);
@@ -326,7 +392,7 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
                   type="text"
                   placeholder="Add custom tag..."
                   className="flex-1 px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
-                  onKeyDown={(e) => e.key === 'Enter' && addCustomTag()}
+                  onKeyDown={e => e.key === 'Enter' && addCustomTag()}
                 />
                 <button
                   onClick={addCustomTag}
@@ -359,52 +425,60 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
           <div className="w-1/2 p-3 overflow-y-auto">
             {/* Date & Time */}
             <div className="mb-3">
-              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Schedule</label>
-              
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                Schedule
+              </label>
+
               {/* Whole Day Toggle */}
               <div className="mb-2">
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={wholeDay}
-                    onChange={(e) => setWholeDay(e.target.checked)}
+                    onChange={e => setWholeDay(e.target.checked)}
                     className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 bg-white dark:bg-gray-800"
                   />
-                  <span className="text-sm text-blue-600 dark:text-blue-400">All day event</span>
+                  <span className="text-sm text-blue-600 dark:text-blue-400">
+                    All day event
+                  </span>
                 </label>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">Start Date</label>
+                  <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     value={startDate.toISOString().split('T')[0]}
-                    onChange={(e) => setStartDate(new Date(e.target.value))}
+                    onChange={e => setStartDate(new Date(e.target.value))}
                     className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                   />
                   {!wholeDay && (
                     <input
                       type="time"
                       value={startTime}
-                      onChange={(e) => setStartTime(e.target.value)}
+                      onChange={e => setStartTime(e.target.value)}
                       className="w-full mt-2 px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                     />
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">End Date</label>
+                  <label className="block text-xs font-medium mb-1 text-gray-500 dark:text-gray-400">
+                    End Date
+                  </label>
                   <input
                     type="date"
                     value={endDate.toISOString().split('T')[0]}
-                    onChange={(e) => setEndDate(new Date(e.target.value))}
+                    onChange={e => setEndDate(new Date(e.target.value))}
                     className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                   />
                   {!wholeDay && (
                     <input
                       type="time"
                       value={endTime}
-                      onChange={(e) => setEndTime(e.target.value)}
+                      onChange={e => setEndTime(e.target.value)}
                       className="w-full mt-2 px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
                     />
                   )}
@@ -414,14 +488,16 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
 
             {/* Reminders */}
             <div className="mb-3">
-              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Reminders</label>
+              <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">
+                Reminders
+              </label>
               <div className="space-y-1">
-                {['15min', '1hour', '1day'].map((reminder) => (
+                {['15min', '1hour', '1day'].map(reminder => (
                   <label key={reminder} className="flex items-center space-x-2">
                     <input
                       type="checkbox"
                       checked={reminders.includes(reminder)}
-                      onChange={(e) => {
+                      onChange={e => {
                         if (e.target.checked) {
                           setReminders([...reminders, reminder]);
                         } else {
@@ -444,11 +520,11 @@ const NewIssueModal = ({ isOpen, onClose }: ModalProps) => {
             <div className="mb-3">
               <div className="flex items-center space-x-2 mb-1">
                 <User className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Assigned User</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  Assigned User
+                </span>
               </div>
-              <select 
-                className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm"
-              >
+              <select className="w-full px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-sm">
                 <option value="current">You (Current User)</option>
                 <option value="">Select a user...</option>
               </select>

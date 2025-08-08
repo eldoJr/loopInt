@@ -16,16 +16,19 @@ const createToastContainer = () => {
   return toastContainer;
 };
 
-const createToast = (message: string, type: 'success' | 'error' | 'loading') => {
+const createToast = (
+  message: string,
+  type: 'success' | 'error' | 'loading'
+) => {
   const container = createToastContainer();
   const toast = document.createElement('div');
-  
+
   const colors = {
     success: '#10B981',
     error: '#EF4444',
-    loading: '#3B82F6'
+    loading: '#3B82F6',
   };
-  
+
   toast.style.cssText = `
     background: ${colors[type]};
     color: white;
@@ -39,24 +42,27 @@ const createToast = (message: string, type: 'success' | 'error' | 'loading') => 
     transition: transform 0.3s ease;
     pointer-events: auto;
   `;
-  
+
   toast.textContent = message;
   container.appendChild(toast);
-  
+
   // Animate in
   setTimeout(() => {
     toast.style.transform = 'translateX(0)';
   }, 10);
-  
+
   // Auto remove
-  setTimeout(() => {
-    toast.style.transform = 'translateX(100%)';
-    setTimeout(() => {
-      if (toast.parentNode) {
-        toast.parentNode.removeChild(toast);
-      }
-    }, 300);
-  }, type === 'error' ? 5000 : 4000);
+  setTimeout(
+    () => {
+      toast.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 300);
+    },
+    type === 'error' ? 5000 : 4000
+  );
 };
 
 export const showToast = {

@@ -14,10 +14,10 @@ const Pricing = () => {
         '5 team members',
         'Basic templates',
         'Email support',
-        '1GB storage'
+        '1GB storage',
       ],
       color: 'blue',
-      popular: false
+      popular: false,
     },
     {
       name: 'Professional',
@@ -31,10 +31,10 @@ const Pricing = () => {
         'Priority support',
         '100GB storage',
         'Custom integrations',
-        'Advanced analytics'
+        'Advanced analytics',
       ],
       color: 'purple',
-      popular: true
+      popular: true,
     },
     {
       name: 'Enterprise',
@@ -48,11 +48,11 @@ const Pricing = () => {
         'Dedicated support',
         'Unlimited storage',
         'Advanced security',
-        'SLA guarantee'
+        'SLA guarantee',
       ],
       color: 'emerald',
-      popular: false
-    }
+      popular: false,
+    },
   ];
 
   const getColorClasses = (color: string) => {
@@ -60,18 +60,18 @@ const Pricing = () => {
       blue: {
         bg: 'bg-gradient-to-br from-blue-500/10 to-blue-600/5',
         border: 'border-blue-500/20',
-        text: 'text-blue-400'
+        text: 'text-blue-400',
       },
       purple: {
         bg: 'bg-gradient-to-br from-purple-500/10 to-purple-600/5',
         border: 'border-purple-500/20',
-        text: 'text-purple-400'
+        text: 'text-purple-400',
       },
       emerald: {
         bg: 'bg-gradient-to-br from-emerald-500/10 to-emerald-600/5',
         border: 'border-emerald-500/20',
-        text: 'text-emerald-400'
-      }
+        text: 'text-emerald-400',
+      },
     };
     return colors[color as keyof typeof colors] || colors.blue;
   };
@@ -91,7 +91,8 @@ const Pricing = () => {
             </span>
           </h2>
           <p className="text-base text-gray-400 max-w-3xl mx-auto">
-            Choose the perfect plan for your business needs. Start free and scale as you grow.
+            Choose the perfect plan for your business needs. Start free and
+            scale as you grow.
           </p>
         </div>
 
@@ -103,8 +104,8 @@ const Pricing = () => {
               <div
                 key={index}
                 className={`relative p-8 rounded-2xl backdrop-blur-sm border transition-all duration-300 hover:scale-105 ${
-                  plan.popular 
-                    ? 'bg-gradient-to-br from-purple-500/20 to-purple-600/10 border-purple-500/30 shadow-lg shadow-purple-500/10' 
+                  plan.popular
+                    ? 'bg-gradient-to-br from-purple-500/20 to-purple-600/10 border-purple-500/30 shadow-lg shadow-purple-500/10'
                     : `${colorClasses.bg} ${colorClasses.border}`
                 }`}
               >
@@ -117,7 +118,9 @@ const Pricing = () => {
                 )}
 
                 <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    {plan.name}
+                  </h3>
                   <div className="mb-4">
                     <span className={`text-4xl font-bold ${colorClasses.text}`}>
                       {plan.price}

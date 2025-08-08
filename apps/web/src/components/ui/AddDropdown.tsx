@@ -1,23 +1,23 @@
 import { useState, useRef, useEffect } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { 
-  Plus, 
-  Search, 
-  AlertCircle, 
-  FolderOpen, 
-  UserPlus, 
-  Building, 
-  User, 
-  FileText, 
-  Receipt, 
-  DollarSign, 
-  ShoppingBag, 
-  Package, 
-  Briefcase, 
-  UserCheck, 
-  Users, 
-  FileCheck, 
-  TrendingUp 
+import {
+  Plus,
+  Search,
+  AlertCircle,
+  FolderOpen,
+  UserPlus,
+  Building,
+  User,
+  FileText,
+  Receipt,
+  DollarSign,
+  ShoppingBag,
+  Package,
+  Briefcase,
+  UserCheck,
+  Users,
+  FileCheck,
+  TrendingUp,
 } from 'lucide-react';
 import { useModal } from '../../hooks/useModal';
 
@@ -45,7 +45,10 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -58,129 +61,134 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
     {
       title: 'Quick Actions',
       items: [
-        { 
+        {
           icon: AlertCircle,
-          label: 'New issue', 
+          label: 'New issue',
           action: () => openNewIssueModal(),
-          category: 'task'
+          category: 'task',
         },
-        { 
+        {
           icon: FolderOpen,
-          label: 'New project', 
+          label: 'New project',
           action: () => onNavigate?.('New Project'),
-          category: 'project'
+          category: 'project',
         },
-        { 
+        {
           icon: UserPlus,
-          label: 'Invite user', 
+          label: 'Invite user',
           action: () => onNavigate?.('Invite User'),
-          category: 'user'
-        }
-      ]
+          category: 'user',
+        },
+      ],
     },
     {
       title: 'Business',
       items: [
-        { 
+        {
           icon: Building,
-          label: 'New company', 
+          label: 'New company',
           action: () => onNavigate?.('New Company'),
-          category: 'business'
+          category: 'business',
         },
-        { 
+        {
           icon: User,
-          label: 'New contact person', 
+          label: 'New contact person',
           action: () => onNavigate?.('New Contact'),
-          category: 'business'
+          category: 'business',
         },
-        { 
+        {
           icon: FileText,
-          label: 'New tax invoice', 
+          label: 'New tax invoice',
           action: () => onNavigate?.('Tax Invoice'),
-          category: 'finance'
+          category: 'finance',
         },
-        { 
+        {
           icon: Receipt,
-          label: 'New bill', 
+          label: 'New bill',
           action: () => onNavigate?.('New Bill'),
-          category: 'finance'
+          category: 'finance',
         },
-        { 
+        {
           icon: DollarSign,
-          label: 'New expense', 
+          label: 'New expense',
           action: () => onNavigate?.('New Expense'),
-          category: 'finance'
+          category: 'finance',
         },
-        { 
+        {
           icon: ShoppingBag,
-          label: 'New offer', 
+          label: 'New offer',
           action: () => onNavigate?.('New Offer'),
-          category: 'sales'
+          category: 'sales',
         },
-        { 
+        {
           icon: Package,
-          label: 'New product/service', 
+          label: 'New product/service',
           action: () => onNavigate?.('New Product'),
-          category: 'product'
+          category: 'product',
         },
-        { 
+        {
           icon: TrendingUp,
-          label: 'New undocumented revenue', 
+          label: 'New undocumented revenue',
           action: () => onNavigate?.('Undocumented Revenue'),
-          category: 'finance'
-        }
-      ]
+          category: 'finance',
+        },
+      ],
     },
     {
       title: 'Human Resources',
       items: [
-        { 
+        {
           icon: Briefcase,
-          label: 'New job ad', 
+          label: 'New job ad',
           action: () => onNavigate?.('Job Ad'),
-          category: 'hr'
+          category: 'hr',
         },
-        { 
+        {
           icon: UserCheck,
-          label: 'New candidate', 
+          label: 'New candidate',
           action: () => onNavigate?.('New Candidate'),
-          category: 'hr'
+          category: 'hr',
         },
-        { 
+        {
           icon: Users,
-          label: 'New coworker', 
+          label: 'New coworker',
           action: () => onNavigate?.('New Coworker'),
-          category: 'hr'
+          category: 'hr',
         },
-        { 
+        {
           icon: Briefcase,
-          label: 'New HR project', 
+          label: 'New HR project',
           action: () => onNavigate?.('HR Project'),
-          category: 'hr'
-        }
-      ]
+          category: 'hr',
+        },
+      ],
     },
     {
       title: 'Documents',
       items: [
-        { 
+        {
           icon: FileCheck,
-          label: 'New document', 
+          label: 'New document',
           action: () => onNavigate?.('New Document'),
-          category: 'document'
-        }
-      ]
-    }
+          category: 'document',
+        },
+      ],
+    },
   ];
 
   // Filter menu items based on search query
-  const filteredGroups = searchQuery ? menuGroups.map(group => ({
-    ...group,
-    items: group.items.filter(item => 
-      item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  })).filter(group => group.items.length > 0) : menuGroups;
+  const filteredGroups = searchQuery
+    ? menuGroups
+        .map(group => ({
+          ...group,
+          items: group.items.filter(
+            item =>
+              item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              item.category.toLowerCase().includes(searchQuery.toLowerCase())
+          ),
+        }))
+        .filter(group => group.items.length > 0)
+    : menuGroups;
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -198,9 +206,11 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
           {/* Header */}
           <div className="p-3 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-2.5">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Create New</h3>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+                Create New
+              </h3>
             </div>
-            
+
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
@@ -208,12 +218,12 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="w-full pl-8 pr-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
               />
             </div>
           </div>
-          
+
           {/* Content - without scrollbar */}
           <div>
             {filteredGroups.length > 0 ? (

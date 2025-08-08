@@ -10,7 +10,14 @@ interface AnimatedTabProps {
   colorClass: string;
 }
 
-const AnimatedTab = ({ name, icon: Icon, isActive, onClick, index, colorClass }: AnimatedTabProps) => {
+const AnimatedTab = ({
+  name,
+  icon: Icon,
+  isActive,
+  onClick,
+  index,
+  colorClass,
+}: AnimatedTabProps) => {
   return (
     <motion.button
       onClick={onClick}

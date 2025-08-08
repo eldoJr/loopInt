@@ -28,23 +28,29 @@ interface ProjectState {
   setLoading: (loading: boolean) => void;
 }
 
-export const useProjectStore = create<ProjectState>((set,) => ({
+export const useProjectStore = create<ProjectState>(set => ({
   projects: [],
   loading: false,
-  setProjects: (projects) => set({ projects }),
-  addProject: (project) => set((state) => ({ 
-    projects: [...state.projects, project] 
-  })),
-  updateProject: (id, updates) => set((state) => ({
-    projects: state.projects.map(p => p.id === id ? { ...p, ...updates } : p)
-  })),
-  deleteProject: (id) => set((state) => ({
-    projects: state.projects.filter(p => p.id !== id)
-  })),
-  toggleFavorite: (id) => set((state) => ({
-    projects: state.projects.map(p => 
-      p.id === id ? { ...p, is_favorite: !p.is_favorite } : p
-    )
-  })),
-  setLoading: (loading) => set({ loading }),
+  setProjects: projects => set({ projects }),
+  addProject: project =>
+    set(state => ({
+      projects: [...state.projects, project],
+    })),
+  updateProject: (id, updates) =>
+    set(state => ({
+      projects: state.projects.map(p =>
+        p.id === id ? { ...p, ...updates } : p
+      ),
+    })),
+  deleteProject: id =>
+    set(state => ({
+      projects: state.projects.filter(p => p.id !== id),
+    })),
+  toggleFavorite: id =>
+    set(state => ({
+      projects: state.projects.map(p =>
+        p.id === id ? { ...p, is_favorite: !p.is_favorite } : p
+      ),
+    })),
+  setLoading: loading => set({ loading }),
 }));

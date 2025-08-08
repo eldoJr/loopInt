@@ -22,23 +22,33 @@ interface TaskState {
   setLoading: (loading: boolean) => void;
 }
 
-export const useTaskStore = create<TaskState>((set) => ({
+export const useTaskStore = create<TaskState>(set => ({
   tasks: [],
   loading: false,
-  setTasks: (tasks) => set({ tasks }),
-  addTask: (task) => set((state) => ({ 
-    tasks: [...state.tasks, task] 
-  })),
-  updateTask: (id, updates) => set((state) => ({
-    tasks: state.tasks.map(t => t.id === id ? { ...t, ...updates } : t)
-  })),
-  deleteTask: (id) => set((state) => ({
-    tasks: state.tasks.filter(t => t.id !== id)
-  })),
-  toggleTask: (id) => set((state) => ({
-    tasks: state.tasks.map(t => 
-      t.id === id ? { ...t, completed: !t.completed, status: t.completed ? 'todo' : 'done' } : t
-    )
-  })),
-  setLoading: (loading) => set({ loading }),
+  setTasks: tasks => set({ tasks }),
+  addTask: task =>
+    set(state => ({
+      tasks: [...state.tasks, task],
+    })),
+  updateTask: (id, updates) =>
+    set(state => ({
+      tasks: state.tasks.map(t => (t.id === id ? { ...t, ...updates } : t)),
+    })),
+  deleteTask: id =>
+    set(state => ({
+      tasks: state.tasks.filter(t => t.id !== id),
+    })),
+  toggleTask: id =>
+    set(state => ({
+      tasks: state.tasks.map(t =>
+        t.id === id
+          ? {
+              ...t,
+              completed: !t.completed,
+              status: t.completed ? 'todo' : 'done',
+            }
+          : t
+      ),
+    })),
+  setLoading: loading => set({ loading }),
 }));

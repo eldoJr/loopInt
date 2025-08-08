@@ -1,5 +1,5 @@
-import { Github, Linkedin, Instagram, Mail, ArrowRight } from "lucide-react";
-import logoImg from "../../assets/img/logo/logo-b.svg";
+import { Github, Linkedin, Instagram, Mail, ArrowRight } from 'lucide-react';
+import logoImg from '../../assets/img/logo/logo-b.svg';
 
 export default function Footer() {
   return (
@@ -10,16 +10,26 @@ export default function Footer() {
             <img src={logoImg} alt="Firmbee Logo" className="h-10 w-auto" />
           </a>
           <p className="text-gray-400 mb-6 text-center md:text-left max-w-sm">
-            Transform your business operations with our comprehensive management platform. Streamline, automate, and grow.
+            Transform your business operations with our comprehensive management
+            platform. Streamline, automate, and grow.
           </p>
           <div className="flex space-x-4">
-            <a href="#" className="p-2 bg-gray-800/50 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 transition-all duration-300 group">
+            <a
+              href="#"
+              className="p-2 bg-gray-800/50 rounded-lg hover:bg-blue-500/20 hover:text-blue-400 transition-all duration-300 group"
+            >
               <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
             </a>
-            <a href="#" className="p-2 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 hover:text-white transition-all duration-300 group">
+            <a
+              href="#"
+              className="p-2 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 hover:text-white transition-all duration-300 group"
+            >
               <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
             </a>
-            <a href="#" className="p-2 bg-gray-800/50 rounded-lg hover:bg-pink-500/20 hover:text-pink-400 transition-all duration-300 group">
+            <a
+              href="#"
+              className="p-2 bg-gray-800/50 rounded-lg hover:bg-pink-500/20 hover:text-pink-400 transition-all duration-300 group"
+            >
               <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
             </a>
           </div>
@@ -27,20 +37,70 @@ export default function Footer() {
 
         <div className="flex flex-col text-center md:text-left">
           <h3 className="text-lg font-bold mb-4 text-white">Solutions</h3>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors mb-2">Project Management</a>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors mb-2">CBM Tools</a>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors mb-2">Financial Suite</a>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors mb-2">HRMS Platform</a>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Integrations</a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors mb-2"
+          >
+            Project Management
+          </a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors mb-2"
+          >
+            CBM Tools
+          </a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors mb-2"
+          >
+            Financial Suite
+          </a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors mb-2"
+          >
+            HRMS Platform
+          </a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors"
+          >
+            Integrations
+          </a>
         </div>
 
         <div className="flex flex-col text-center md:text-left">
           <h3 className="text-lg font-bold mb-4 text-white">Company</h3>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors mb-2">About Us</a>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors mb-2">Careers</a>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors mb-2">Contact</a>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors mb-2">Security</a>
-          <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">Partners</a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors mb-2"
+          >
+            About Us
+          </a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors mb-2"
+          >
+            Careers
+          </a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors mb-2"
+          >
+            Contact
+          </a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors mb-2"
+          >
+            Security
+          </a>
+          <a
+            href="#"
+            className="text-gray-400 hover:text-blue-400 transition-colors"
+          >
+            Partners
+          </a>
         </div>
 
         <div className="flex flex-col text-center md:text-left">
@@ -71,11 +131,17 @@ export default function Footer() {
       <div className="text-center text-gray-500 text-sm mt-12 border-t border-gray-800/50 pt-8 max-w-[90rem] mx-auto px-6 sm:px-8 lg:px-12">
         <p>&copy; 2025 LoopInt. All rights reserved.</p>
         <div className="flex justify-center space-x-4 mt-2">
-          <a href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-blue-400 transition-colors">
+            Privacy Policy
+          </a>
           <span>|</span>
-          <a href="#" className="hover:text-blue-400 transition-colors">Terms of Service</a>
+          <a href="#" className="hover:text-blue-400 transition-colors">
+            Terms of Service
+          </a>
           <span>|</span>
-          <a href="#" className="hover:text-blue-400 transition-colors">Cookie Policy</a>
+          <a href="#" className="hover:text-blue-400 transition-colors">
+            Cookie Policy
+          </a>
         </div>
       </div>
     </footer>

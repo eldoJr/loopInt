@@ -33,15 +33,18 @@ interface ConfirmationDialogProps {
   onConfirm: () => void;
 }
 
-const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps) => {
+const NewDocument = ({
+  onNavigateBack,
+  onNavigateToDocuments,
+}: NewDocumentProps) => {
   useTheme();
-  
+
   const showConfirmation = (props: ConfirmationDialogProps) => {
     if (window.confirm(props.message)) {
       props.onConfirm();
     }
   };
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showContent, setShowContent] = useState(false);
@@ -55,28 +58,23 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
     'Report',
     'Proposal',
     'Agreement',
-    'Other'
+    'Other',
   ];
 
-  const projects = [
-    'Choose project',
-    'Project A',
-    'Project B',
-    'Project C'
-  ];
+  const projects = ['Choose project', 'Project A', 'Project B', 'Project C'];
 
   const contractors = [
     'Choose contractor',
     'Contractor A',
     'Contractor B',
-    'Contractor C'
+    'Contractor C',
   ];
 
   const coworkers = [
     'Choose coworker',
     'John Doe',
     'Jane Smith',
-    'Alex Johnson'
+    'Alex Johnson',
   ];
 
   const [formData, setFormData] = useState<FormData>({
@@ -88,7 +86,7 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
     project: 'Choose project',
     contractor: 'Choose contractor',
     coworker: 'Choose coworker',
-    documentContent: ''
+    documentContent: '',
   });
 
   useEffect(() => {
@@ -111,27 +109,32 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
         handleCancel();
       }
     };
-    
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleInputChange = useCallback((field: keyof FormData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  }, [errors]);
+  const handleInputChange = useCallback(
+    (field: keyof FormData, value: string | boolean) => {
+      setFormData(prev => ({ ...prev, [field]: value }));
+      if (errors[field]) {
+        setErrors(prev => ({ ...prev, [field]: '' }));
+      }
+    },
+    [errors]
+  );
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.documentName.trim()) newErrors.documentName = 'Document name is required';
-    if (formData.project === 'Choose project') newErrors.project = 'Please select a project';
+
+    if (!formData.documentName.trim())
+      newErrors.documentName = 'Document name is required';
+    if (formData.project === 'Choose project')
+      newErrors.project = 'Please select a project';
     if (formData.documentContent.length > maxContentLength) {
       newErrors.documentContent = `Content must be under ${maxContentLength} characters`;
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -140,10 +143,11 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
     if (formData.documentName.trim() || formData.documentContent.trim()) {
       showConfirmation({
         title: 'Discard changes?',
-        message: 'You have unsaved changes. Are you sure you want to discard them?',
+        message:
+          'You have unsaved changes. Are you sure you want to discard them?',
         confirmText: 'Discard',
         cancelText: 'Continue editing',
-        onConfirm: () => onNavigateBack?.()
+        onConfirm: () => onNavigateBack?.(),
       });
     } else {
       onNavigateBack?.();
@@ -153,7 +157,7 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
     setSaving(true);
     try {
       // Simulate API call
@@ -175,7 +179,7 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Documents', onClick: onNavigateToDocuments },
-    { label: 'New Document' }
+    { label: 'New Document' },
   ];
 
   if (loading) {
@@ -188,23 +192,27 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
   }
 
   return (
-    <div className={`space-y-6 transition-all duration-500 ${
-      showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-    }`}>
+    <div
+      className={`space-y-6 transition-all duration-500 ${
+        showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+    >
       <Breadcrumb items={breadcrumbItems} />
-      
+
       <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
         <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">New Document</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              New Document
+            </h1>
             <div className="flex items-center space-x-2">
-              <button 
+              <button
                 onClick={handleCancel}
                 className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleSubmit}
                 disabled={saving}
                 className={`flex items-center space-x-1 px-3 py-1.5 rounded-lg transition-colors text-sm ${
@@ -227,18 +235,22 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
               <button
                 type="button"
                 onClick={() => setActiveTab('details')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'details' 
-                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}`}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeTab === 'details'
+                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
               >
                 Document Details
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('preview')}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${activeTab === 'preview' 
-                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400' 
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'}`}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  activeTab === 'preview'
+                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                }`}
               >
                 Preview
               </button>
@@ -250,7 +262,7 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                 <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                   Document Information
                 </h2>
-                
+
                 {/* Document Name */}
                 <div className="grid grid-cols-12 gap-3 items-center">
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -260,11 +272,13 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                     <input
                       type="text"
                       value={formData.documentName}
-                      onChange={(e) => handleInputChange('documentName', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('documentName', e.target.value)
+                      }
                       placeholder="Document name"
                       className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                        errors.documentName 
-                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                        errors.documentName
+                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                           : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                       }`}
                     />
@@ -286,11 +300,15 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                     <div className="relative">
                       <select
                         value={formData.documentType}
-                        onChange={(e) => handleInputChange('documentType', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('documentType', e.target.value)
+                        }
                         className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       >
-                        {documentTypes.map((type) => (
-                          <option key={type} value={type}>{type}</option>
+                        {documentTypes.map(type => (
+                          <option key={type} value={type}>
+                            {type}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -320,21 +338,49 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                       <div className="relative">
                         <input
                           type="date"
-                          value={formData.startDate ? format(parse(formData.startDate, 'MM/dd/yyyy', new Date()), 'yyyy-MM-dd') : ''}
-                          onChange={(e) => {
-                            const date = e.target.value ? format(new Date(e.target.value), 'MM/dd/yyyy') : '';
+                          value={
+                            formData.startDate
+                              ? format(
+                                  parse(
+                                    formData.startDate,
+                                    'MM/dd/yyyy',
+                                    new Date()
+                                  ),
+                                  'yyyy-MM-dd'
+                                )
+                              : ''
+                          }
+                          onChange={e => {
+                            const date = e.target.value
+                              ? format(new Date(e.target.value), 'MM/dd/yyyy')
+                              : '';
                             handleInputChange('startDate', date);
                           }}
                           className="bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                         />
                       </div>
-                      <span className="text-gray-500 dark:text-gray-400">-</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        -
+                      </span>
                       <div className="relative">
                         <input
                           type="date"
-                          value={formData.endDate ? format(parse(formData.endDate, 'MM/dd/yyyy', new Date()), 'yyyy-MM-dd') : ''}
-                          onChange={(e) => {
-                            const date = e.target.value ? format(new Date(e.target.value), 'MM/dd/yyyy') : '';
+                          value={
+                            formData.endDate
+                              ? format(
+                                  parse(
+                                    formData.endDate,
+                                    'MM/dd/yyyy',
+                                    new Date()
+                                  ),
+                                  'yyyy-MM-dd'
+                                )
+                              : ''
+                          }
+                          onChange={e => {
+                            const date = e.target.value
+                              ? format(new Date(e.target.value), 'MM/dd/yyyy')
+                              : '';
                             handleInputChange('endDate', date);
                           }}
                           className="bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
@@ -353,15 +399,19 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                     <div className="relative">
                       <select
                         value={formData.project}
-                        onChange={(e) => handleInputChange('project', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('project', e.target.value)
+                        }
                         className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.project 
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                          errors.project
+                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                             : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                         }`}
                       >
-                        {projects.map((project) => (
-                          <option key={project} value={project}>{project}</option>
+                        {projects.map(project => (
+                          <option key={project} value={project}>
+                            {project}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -385,11 +435,15 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                       <div className="relative flex-1">
                         <select
                           value={formData.contractor}
-                          onChange={(e) => handleInputChange('contractor', e.target.value)}
+                          onChange={e =>
+                            handleInputChange('contractor', e.target.value)
+                          }
                           className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                         >
-                          {contractors.map((contractor) => (
-                            <option key={contractor} value={contractor}>{contractor}</option>
+                          {contractors.map(contractor => (
+                            <option key={contractor} value={contractor}>
+                              {contractor}
+                            </option>
                           ))}
                         </select>
                         <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -413,11 +467,15 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                     <div className="relative">
                       <select
                         value={formData.coworker}
-                        onChange={(e) => handleInputChange('coworker', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('coworker', e.target.value)
+                        }
                         className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       >
-                        {coworkers.map((coworker) => (
-                          <option key={coworker} value={coworker}>{coworker}</option>
+                        {coworkers.map(coworker => (
+                          <option key={coworker} value={coworker}>
+                            {coworker}
+                          </option>
                         ))}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
@@ -433,13 +491,15 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                   <div className="-mr-10 sm:-mr-16 md:-mr-24 lg:-mr-40 xl:-mr-56 2xl:-mr-80">
                     <RichTextEditor
                       value={formData.documentContent}
-                      onChange={(value) => handleInputChange('documentContent', value)}
+                      onChange={value =>
+                        handleInputChange('documentContent', value)
+                      }
                       placeholder="Document content..."
                       maxLength={maxContentLength}
                       showPreview={activeTab === 'preview'}
                     />
                   </div>
-                  
+
                   {errors.documentContent && (
                     <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
                       <AlertCircle className="w-4 h-4 mr-1" />
@@ -449,7 +509,7 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                 </div>
               </div>
             </div>
-            
+
             {/* Preview Tab */}
             <div className={activeTab === 'preview' ? 'block' : 'hidden'}>
               <div className="space-y-4">
@@ -458,7 +518,7 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                     Document Preview
                   </h2>
                 </div>
-                
+
                 <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mx-auto max-w-3xl w-full">
                   {/* Document Header */}
                   <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
@@ -479,21 +539,33 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
                       </p>
                     </div>
                   </div>
-                  
+
                   {/* Document Content */}
                   <div className="prose dark:prose-invert max-w-none">
                     {formData.documentContent ? (
-                      <div dangerouslySetInnerHTML={{ __html: formData.documentContent.replace(/\n/g, '<br />') }} />
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: formData.documentContent.replace(
+                            /\n/g,
+                            '<br />'
+                          ),
+                        }}
+                      />
                     ) : (
-                      <p className="text-gray-500 dark:text-gray-400 italic">Document content will appear here...</p>
+                      <p className="text-gray-500 dark:text-gray-400 italic">
+                        Document content will appear here...
+                      </p>
                     )}
                   </div>
-                  
+
                   {/* Document Footer */}
                   <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
                       <div>
-                        Project: {formData.project !== 'Choose project' ? formData.project : 'Not specified'}
+                        Project:{' '}
+                        {formData.project !== 'Choose project'
+                          ? formData.project
+                          : 'Not specified'}
                       </div>
                       <div>
                         {formData.contractor !== 'Choose contractor' && (
@@ -507,7 +579,7 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
             </div>
           </div>
         </form>
-        
+
         {errors.submit && (
           <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
             <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
@@ -516,7 +588,7 @@ const NewDocument = ({ onNavigateBack, onNavigateToDocuments }: NewDocumentProps
             </div>
           </div>
         )}
-        
+
         <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">

@@ -18,7 +18,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    set => ({
       user: null,
       isAuthenticated: false,
       login: (user, keepLoggedIn = false) => {
@@ -36,7 +36,7 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       storage: {
-        getItem: (name) => {
+        getItem: name => {
           const keepLoggedIn = localStorage.getItem('keepLoggedIn');
           const storage = keepLoggedIn ? localStorage : sessionStorage;
           const value = storage.getItem(name);
@@ -47,7 +47,7 @@ export const useAuthStore = create<AuthState>()(
           const storage = keepLoggedIn ? localStorage : sessionStorage;
           storage.setItem(name, JSON.stringify(value));
         },
-        removeItem: (name) => {
+        removeItem: name => {
           localStorage.removeItem(name);
           sessionStorage.removeItem(name);
         },

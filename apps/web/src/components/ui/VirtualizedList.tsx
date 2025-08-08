@@ -9,18 +9,20 @@ interface VirtualizedListProps<T> {
   className?: string;
 }
 
-function VirtualizedListComponent<T>({ 
-  items, 
-  height, 
-  itemHeight, 
-  renderItem, 
-  className = '' 
+function VirtualizedListComponent<T>({
+  items,
+  height,
+  itemHeight,
+  renderItem,
+  className = '',
 }: VirtualizedListProps<T>) {
-  const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => (
-    <div style={style}>
-      {renderItem(items[index], index)}
-    </div>
-  );
+  const Row = ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: React.CSSProperties;
+  }) => <div style={style}>{renderItem(items[index], index)}</div>;
 
   return (
     <List
@@ -35,4 +37,6 @@ function VirtualizedListComponent<T>({
   );
 }
 
-export const VirtualizedList = memo(VirtualizedListComponent) as typeof VirtualizedListComponent;
+export const VirtualizedList = memo(
+  VirtualizedListComponent
+) as typeof VirtualizedListComponent;

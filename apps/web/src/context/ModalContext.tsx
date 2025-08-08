@@ -10,11 +10,13 @@ function ModalProvider({ children }: { children: ReactNode }) {
   const closeNewIssueModal = () => setShowNewIssueModal(false);
 
   return (
-    <ModalContext.Provider value={{ 
-      showNewIssueModal, 
-      openNewIssueModal, 
-      closeNewIssueModal 
-    }}>
+    <ModalContext.Provider
+      value={{
+        showNewIssueModal,
+        openNewIssueModal,
+        closeNewIssueModal,
+      }}
+    >
       {children}
     </ModalContext.Provider>
   );

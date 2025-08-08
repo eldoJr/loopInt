@@ -1,5 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Calendar, ChevronDown, AlertCircle, Plus, Check, X, Calculator } from 'lucide-react';
+import {
+  Calendar,
+  ChevronDown,
+  AlertCircle,
+  Plus,
+  Check,
+  X,
+  Calculator,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
@@ -15,14 +23,20 @@ interface ExpenseItem {
   amount: string;
 }
 
-const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) => {
+const NewExpense = ({
+  onNavigateBack,
+  onNavigateToExpenses,
+}: NewExpenseProps) => {
   useTheme();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
+  const [currentUser, setCurrentUser] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [showItems, setShowItems] = useState(true);
   const [showTaxes, setShowTaxes] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
@@ -37,7 +51,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
     description: '',
     project: '',
     items: [{ amount: '' }] as ExpenseItem[],
-    total: 0
+    total: 0,
   });
 
   const categories = [
@@ -49,14 +63,14 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
     'Hardware',
     'Utilities',
     'Rent',
-    'Other'
+    'Other',
   ];
 
   const currencies = [
     'INR (Indian Rupee, ₹)',
     'USD (US Dollar, $)',
     'EUR (Euro, €)',
-    'GBP (British Pound, £)'
+    'GBP (British Pound, £)',
   ];
 
   const calculateTotal = useCallback(() => {
@@ -67,14 +81,17 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
   }, [formData.items]);
 
   const isFormValid = useMemo(() => {
-    return formData.expenseName.trim().length > 0 && 
-           formData.vendor.trim().length > 0 &&
-           formData.date &&
-           formData.items.some(item => parseFloat(item.amount) > 0);
+    return (
+      formData.expenseName.trim().length > 0 &&
+      formData.vendor.trim().length > 0 &&
+      formData.date &&
+      formData.items.some(item => parseFloat(item.amount) > 0)
+    );
   }, [formData.expenseName, formData.vendor, formData.date, formData.items]);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+    const userData =
+      localStorage.getItem('user') || sessionStorage.getItem('user');
     if (userData) {
       setCurrentUser(JSON.parse(userData));
     }
@@ -93,7 +110,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
     const newTotal = calculateTotal();
     setFormData(prev => ({
       ...prev,
-      total: newTotal
+      total: newTotal,
     }));
   }, [formData.items, calculateTotal]);
 
@@ -115,23 +132,26 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
         }
       }
     };
-    
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isFormValid, onNavigateToExpenses, onNavigateBack]);
 
   const validateForm = useCallback(() => {
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.expenseName.trim()) newErrors.expenseName = 'Expense name is required';
+
+    if (!formData.expenseName.trim())
+      newErrors.expenseName = 'Expense name is required';
     if (!formData.vendor.trim()) newErrors.vendor = 'Vendor is required';
     if (!formData.date) newErrors.date = 'Date is required';
-    
-    const hasValidItem = formData.items.some(item => parseFloat(item.amount) > 0);
+
+    const hasValidItem = formData.items.some(
+      item => parseFloat(item.amount) > 0
+    );
     if (!hasValidItem) {
       newErrors.items = 'At least one item with a valid amount is required';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [formData]);
@@ -139,7 +159,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
     setSaving(true);
     try {
       const expenseData = {
@@ -153,13 +173,13 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
         project: formData.project || null,
         items: formData.items,
         total: formData.total,
-        created_by: currentUser?.id
+        created_by: currentUser?.id,
       };
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       console.log('Expense data to be submitted:', expenseData);
-      
+
       setIsSaved(true);
       showToast.success('Expense recorded successfully!');
       setTimeout(() => {
@@ -180,7 +200,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Clear field-specific errors
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
@@ -190,14 +210,14 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
   const addNewItem = () => {
     setFormData(prev => ({
       ...prev,
-      items: [...prev.items, { amount: '' }]
+      items: [...prev.items, { amount: '' }],
     }));
   };
 
   const removeItem = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      items: prev.items.filter((_, i) => i !== index)
+      items: prev.items.filter((_, i) => i !== index),
     }));
   };
 
@@ -207,7 +227,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
       newItems[index] = { ...newItems[index], amount };
       return { ...prev, items: newItems };
     });
-    
+
     if (errors.items) {
       setErrors(prev => ({ ...prev, items: '' }));
     }
@@ -216,7 +236,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Finance', onClick: onNavigateToExpenses },
-    { label: 'New Expense' }
+    { label: 'New Expense' },
   ];
 
   if (loading) {
@@ -229,17 +249,21 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
   }
 
   return (
-    <div className={`space-y-6 transition-all duration-500 ${
-      showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-    }`}>
+    <div
+      className={`space-y-6 transition-all duration-500 ${
+        showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+    >
       <Breadcrumb items={breadcrumbItems} />
-      
+
       <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
         <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">New Expense</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              New Expense
+            </h1>
             <div className="flex items-center space-x-2">
-              <button 
+              <button
                 onClick={() => {
                   if (onNavigateToExpenses) {
                     onNavigateToExpenses();
@@ -251,7 +275,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleSubmit}
                 disabled={!isFormValid || saving}
                 className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
@@ -272,7 +296,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
             <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
               Expense Information
             </h2>
-            
+
             {/* Expense Name */}
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -283,7 +307,9 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                   type="text"
                   placeholder="Expense name"
                   value={formData.expenseName}
-                  onChange={(e) => handleInputChange('expenseName', e.target.value)}
+                  onChange={e =>
+                    handleInputChange('expenseName', e.target.value)
+                  }
                   className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
                 {errors.expenseName && (
@@ -294,7 +320,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                 )}
               </div>
             </div>
-            
+
             {/* Category */}
             <div className="grid grid-cols-12 gap-4 items-center">
               <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -304,11 +330,15 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                 <div className="relative">
                   <select
                     value={formData.category}
-                    onChange={(e) => handleInputChange('category', e.target.value)}
+                    onChange={e =>
+                      handleInputChange('category', e.target.value)
+                    }
                     className="w-full appearance-none bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
                   >
                     {categories.map(category => (
-                      <option key={category} value={category}>{category}</option>
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -331,7 +361,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                   type="text"
                   placeholder="Choose vendor"
                   value={formData.vendor}
-                  onChange={(e) => handleInputChange('vendor', e.target.value)}
+                  onChange={e => handleInputChange('vendor', e.target.value)}
                   className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
                 {errors.vendor && (
@@ -358,7 +388,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                   <input
                     type="date"
                     value={formData.date}
-                    onChange={(e) => handleInputChange('date', e.target.value)}
+                    onChange={e => handleInputChange('date', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pl-10"
                   />
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -382,7 +412,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                   <input
                     type="date"
                     value={formData.dueDate}
-                    onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                    onChange={e => handleInputChange('dueDate', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pl-10"
                   />
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -399,11 +429,15 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                 <div className="relative">
                   <select
                     value={formData.currency}
-                    onChange={(e) => handleInputChange('currency', e.target.value)}
+                    onChange={e =>
+                      handleInputChange('currency', e.target.value)
+                    }
                     className="w-full appearance-none bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 pr-10"
                   >
                     {currencies.map(currency => (
-                      <option key={currency} value={currency}>{currency}</option>
+                      <option key={currency} value={currency}>
+                        {currency}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -422,7 +456,9 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                     onChange={() => setShowItems(!showItems)}
                     className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
                   />
-                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Items</span>
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                    Items
+                  </span>
                 </label>
                 <label className="inline-flex items-center cursor-pointer">
                   <input
@@ -431,7 +467,9 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                     onChange={() => setShowTaxes(!showTaxes)}
                     className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
                   />
-                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Taxes</span>
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                    Taxes
+                  </span>
                 </label>
                 <label className="inline-flex items-center cursor-pointer">
                   <input
@@ -440,7 +478,9 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                     onChange={() => setShowDescription(!showDescription)}
                     className="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
                   />
-                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Show description</span>
+                  <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                    Show description
+                  </span>
                 </label>
               </div>
             </div>
@@ -455,7 +495,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                   <div className="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                     AMOUNT
                   </div>
-                  
+
                   {formData.items.map((item, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <input
@@ -463,7 +503,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                         step="0.01"
                         placeholder="0.00"
                         value={item.amount}
-                        onChange={(e) => updateItemAmount(index, e.target.value)}
+                        onChange={e => updateItemAmount(index, e.target.value)}
                         className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-800/50 border-2 border-blue-300 dark:border-blue-700/50 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                       />
                       {formData.items.length > 1 && (
@@ -505,12 +545,14 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                 </label>
                 <div className="col-span-9">
                   <div className="p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Tax settings will appear here</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Tax settings will appear here
+                    </p>
                   </div>
                 </div>
               </div>
             )}
-            
+
             {/* Description Section */}
             {showDescription && (
               <div className="grid grid-cols-12 gap-4 items-start">
@@ -522,19 +564,20 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                     <textarea
                       rows={3}
                       value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('description', e.target.value)
+                      }
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
                       maxLength={500}
                     />
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Characters left: {500 - (formData.description?.length || 0)}
+                      Characters left:{' '}
+                      {500 - (formData.description?.length || 0)}
                     </div>
                   </div>
                 </div>
               </div>
             )}
-
-
           </div>
 
           {/* Total Section */}
@@ -547,7 +590,9 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
                       <div className="w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded flex items-center justify-center">
                         <Calculator className="w-4 h-4 text-green-600 dark:text-green-400" />
                       </div>
-                      <span className="text-lg font-semibold text-gray-900 dark:text-white">Total</span>
+                      <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                        Total
+                      </span>
                     </div>
                     <span className="text-xl font-bold text-gray-900 dark:text-white">
                       ₹ {formData.total.toFixed(2)}
@@ -595,7 +640,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
             </div>
           </div>
         </div>
-        
+
         {errors.submit && (
           <div className="mx-6 mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
             <div className="flex items-center space-x-2 text-red-400">
@@ -604,7 +649,7 @@ const NewExpense = ({ onNavigateBack, onNavigateToExpenses }: NewExpenseProps) =
             </div>
           </div>
         )}
-        
+
         <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">

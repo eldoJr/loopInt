@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Plus, X, Filter, Play, HelpCircle, MessageCircle, FileText, Folder, Search } from 'lucide-react';
+import {
+  Plus,
+  X,
+  Filter,
+  Play,
+  HelpCircle,
+  MessageCircle,
+  FileText,
+  Folder,
+  Search,
+} from 'lucide-react';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
@@ -8,14 +18,17 @@ interface DocumentsProps {
   onNavigateToNewDocument?: () => void;
 }
 
-const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) => {
+const Documents = ({
+  onNavigateBack,
+  onNavigateToNewDocument,
+}: DocumentsProps) => {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [filters, setFilters] = useState({
     name: '',
     type: '',
     project: '',
-    status: ''
+    status: '',
   });
   const [activeTab, setActiveTab] = useState('documents');
 
@@ -30,42 +43,48 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
   const handleFilterChange = (field: string, value: string) => {
     setFilters(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const clearFilter = (field: string) => {
     setFilters(prev => ({
       ...prev,
-      [field]: ''
+      [field]: '',
     }));
   };
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Documents'},
+    { label: 'Documents' },
   ];
 
   return (
     <div className="space-y-6">
       <Breadcrumb items={breadcrumbItems} />
-      
+
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <div className={`transition-all duration-500 ${
-          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
+        <div
+          className={`transition-all duration-500 ${
+            showContent
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-4'
+          }`}
+        >
           <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden">
             {/* Header */}
             <div className="bg-white dark:bg-gray-900/70 border-b border-gray-200 dark:border-gray-800/70">
               <div className="px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                   <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {activeTab === 'documents' ? 'Documents' : 'Document Templates'}
+                    {activeTab === 'documents'
+                      ? 'Documents'
+                      : 'Document Templates'}
                   </h1>
                 </div>
-                <button 
+                <button
                   onClick={onNavigateToNewDocument}
                   className="bg-blue-500 text-white px-3 py-1.5 rounded-md hover:bg-blue-600 flex items-center gap-1.5 text-sm"
                 >
@@ -81,13 +100,17 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder={activeTab === 'documents' ? "Document name" : "Template name"}
+                    placeholder={
+                      activeTab === 'documents'
+                        ? 'Document name'
+                        : 'Template name'
+                    }
                     value={filters.name}
-                    onChange={(e) => handleFilterChange('name', e.target.value)}
+                    onChange={e => handleFilterChange('name', e.target.value)}
                     className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-700 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent pr-8 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   />
                   {filters.name && (
-                    <button 
+                    <button
                       onClick={() => clearFilter('name')}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
@@ -101,11 +124,11 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                     type="text"
                     placeholder="Document type"
                     value={filters.type}
-                    onChange={(e) => handleFilterChange('type', e.target.value)}
+                    onChange={e => handleFilterChange('type', e.target.value)}
                     className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-700 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent pr-8 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   />
                   {filters.type && (
-                    <button 
+                    <button
                       onClick={() => clearFilter('type')}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
@@ -119,11 +142,13 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                     type="text"
                     placeholder="Project"
                     value={filters.project}
-                    onChange={(e) => handleFilterChange('project', e.target.value)}
+                    onChange={e =>
+                      handleFilterChange('project', e.target.value)
+                    }
                     className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-700 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent pr-8 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   />
                   {filters.project && (
-                    <button 
+                    <button
                       onClick={() => clearFilter('project')}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                     >
@@ -138,11 +163,13 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                       type="text"
                       placeholder="Status"
                       value={filters.status}
-                      onChange={(e) => handleFilterChange('status', e.target.value)}
+                      onChange={e =>
+                        handleFilterChange('status', e.target.value)
+                      }
                       className="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-700 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent pr-8 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     />
                     {filters.status && (
-                      <button 
+                      <button
                         onClick={() => clearFilter('status')}
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                       >
@@ -166,8 +193,8 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                 <button
                   onClick={() => setActiveTab('documents')}
                   className={`px-3 py-2 text-xs font-medium border-b-2 ${
-                    activeTab === 'documents' 
-                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                    activeTab === 'documents'
+                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
                       : 'text-gray-600 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-200'
                   }`}
                 >
@@ -179,8 +206,8 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                 <button
                   onClick={() => setActiveTab('templates')}
                   className={`px-3 py-2 text-xs font-medium border-b-2 ${
-                    activeTab === 'templates' 
-                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                    activeTab === 'templates'
+                      ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
                       : 'text-gray-600 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-200'
                   }`}
                 >
@@ -201,7 +228,7 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                     <div className="w-48 h-48 md:w-56 md:h-56 relative">
                       {/* Blue circular background */}
                       <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full transform rotate-12"></div>
-                      
+
                       <div className="absolute inset-0 flex items-center justify-center">
                         <FileText className="w-20 h-20 text-white" />
                       </div>
@@ -214,10 +241,12 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                       No documents yet
                     </h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
-                      Create your first document to start organizing your project files. You can use templates to speed up the process.
+                      Create your first document to start organizing your
+                      project files. You can use templates to speed up the
+                      process.
                     </p>
-                    
-                    <button 
+
+                    <button
                       onClick={onNavigateToNewDocument}
                       className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center gap-2 text-sm font-medium mb-6 mx-auto md:mx-0"
                     >
@@ -247,7 +276,7 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                     <div className="w-48 h-48 md:w-56 md:h-56 relative">
                       {/* Green circular background */}
                       <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-green-500 rounded-full transform rotate-12"></div>
-                      
+
                       <div className="absolute inset-0 flex items-center justify-center">
                         <Folder className="w-20 h-20 text-white" />
                       </div>
@@ -260,10 +289,11 @@ const Documents = ({ onNavigateBack, onNavigateToNewDocument }: DocumentsProps) 
                       No templates available
                     </h2>
                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
-                      Create reusable templates for your documents to save time and maintain consistency across your projects.
+                      Create reusable templates for your documents to save time
+                      and maintain consistency across your projects.
                     </p>
-                    
-                    <button 
+
+                    <button
                       onClick={onNavigateToNewDocument}
                       className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 flex items-center gap-2 text-sm font-medium mb-6 mx-auto md:mx-0"
                     >

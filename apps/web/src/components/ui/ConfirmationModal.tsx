@@ -19,7 +19,7 @@ const ConfirmationModal = ({
   message,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
-  type = 'danger'
+  type = 'danger',
 }: ConfirmationModalProps) => {
   if (!isOpen) return null;
 
@@ -29,19 +29,19 @@ const ConfirmationModal = ({
         return {
           icon: 'text-red-500',
           confirmButton: 'bg-red-600 hover:bg-red-700 text-white',
-          iconBg: 'bg-red-100 dark:bg-red-900/20'
+          iconBg: 'bg-red-100 dark:bg-red-900/20',
         };
       case 'warning':
         return {
           icon: 'text-yellow-500',
           confirmButton: 'bg-yellow-600 hover:bg-yellow-700 text-white',
-          iconBg: 'bg-yellow-100 dark:bg-yellow-900/20'
+          iconBg: 'bg-yellow-100 dark:bg-yellow-900/20',
         };
       default:
         return {
           icon: 'text-blue-500',
           confirmButton: 'bg-blue-600 hover:bg-blue-700 text-white',
-          iconBg: 'bg-blue-100 dark:bg-blue-900/20'
+          iconBg: 'bg-blue-100 dark:bg-blue-900/20',
         };
     }
   };
@@ -53,7 +53,9 @@ const ConfirmationModal = ({
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
         <div className="p-6">
           <div className="flex items-start space-x-4">
-            <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${styles.iconBg}`}>
+            <div
+              className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${styles.iconBg}`}
+            >
               <AlertTriangle className={`w-6 h-6 ${styles.icon}`} />
             </div>
             <div className="flex-1 min-w-0">
@@ -72,7 +74,7 @@ const ConfirmationModal = ({
             </button>
           </div>
         </div>
-        
+
         <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 rounded-b-xl flex items-center justify-end space-x-3">
           <button
             onClick={onClose}

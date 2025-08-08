@@ -1,5 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
-import { HelpCircle, Book, MessageCircle, Video, ExternalLink, Mail, Search, Lightbulb, Users, Zap } from 'lucide-react';
+import {
+  HelpCircle,
+  Book,
+  MessageCircle,
+  Video,
+  ExternalLink,
+  Mail,
+  Search,
+  Lightbulb,
+  Users,
+  Zap,
+} from 'lucide-react';
 
 const helpCategories = {
   resources: [
@@ -7,41 +18,41 @@ const helpCategories = {
       title: 'Documentation',
       description: 'Browse our comprehensive guides and API references',
       icon: Book,
-      action: () => window.open('https://docs.loopint.com', '_blank')
+      action: () => window.open('https://docs.loopint.com', '_blank'),
     },
     {
       title: 'Video Tutorials',
       description: 'Watch step-by-step tutorials and demos',
       icon: Video,
-      action: () => window.open('https://youtube.com/loopint', '_blank')
+      action: () => window.open('https://youtube.com/loopint', '_blank'),
     },
     {
-      title: 'What\'s New',
+      title: "What's New",
       description: 'Latest features and product updates',
       icon: Zap,
-      action: () => window.open('https://loopint.com/changelog', '_blank')
-    }
+      action: () => window.open('https://loopint.com/changelog', '_blank'),
+    },
   ],
   support: [
     {
       title: 'Community Forum',
       description: 'Get help from the community',
       icon: MessageCircle,
-      action: () => window.open('https://community.loopint.com', '_blank')
+      action: () => window.open('https://community.loopint.com', '_blank'),
     },
     {
       title: 'Contact Support',
       description: 'Reach out to our support team',
       icon: Mail,
-      action: () => window.open('mailto:support@loopint.com', '_blank')
+      action: () => window.open('mailto:support@loopint.com', '_blank'),
     },
     {
       title: 'Feature Requests',
       description: 'Suggest new features and improvements',
       icon: Lightbulb,
-      action: () => window.open('https://feedback.loopint.com', '_blank')
-    }
-  ]
+      action: () => window.open('https://feedback.loopint.com', '_blank'),
+    },
+  ],
 };
 
 const HelpDropdown = () => {
@@ -52,7 +63,10 @@ const HelpDropdown = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -62,9 +76,10 @@ const HelpDropdown = () => {
   }, []);
 
   const currentItems = helpCategories[activeTab as keyof typeof helpCategories];
-  const filteredItems = currentItems.filter(item => 
-    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredItems = currentItems.filter(
+    item =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -82,13 +97,17 @@ const HelpDropdown = () => {
           {/* Header */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Help & Support</h3>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                Help & Support
+              </h3>
               <div className="flex items-center space-x-2">
                 <Users className="w-4 h-4 text-blue-500" />
-                <span className="text-xs text-gray-500 dark:text-gray-400">24/7 Support</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  24/7 Support
+                </span>
               </div>
             </div>
-            
+
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -96,7 +115,7 @@ const HelpDropdown = () => {
                 type="text"
                 placeholder="Search help topics..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               />
             </div>
@@ -127,7 +146,7 @@ const HelpDropdown = () => {
               </button>
             </div>
           </div>
-          
+
           {/* Content */}
           <div className="p-3 max-h-64 overflow-y-auto">
             {filteredItems.length > 0 ? (
@@ -164,19 +183,21 @@ const HelpDropdown = () => {
             ) : (
               <div className="text-center py-6">
                 <Search className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm text-gray-500 dark:text-gray-400">No results found for "{searchQuery}"</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  No results found for "{searchQuery}"
+                </p>
               </div>
             )}
           </div>
-          
+
           {/* Footer */}
           <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
             <div className="flex items-center justify-between">
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Still need help?
               </p>
-              <a 
-                href="mailto:support@loopint.com" 
+              <a
+                href="mailto:support@loopint.com"
                 className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium"
               >
                 Contact Support →

@@ -29,8 +29,8 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({
-  placeholder = "Search...",
-  value = "",
+  placeholder = 'Search...',
+  value = '',
   onChange,
   onSearch,
   filters = [],
@@ -42,14 +42,18 @@ const SearchBar = ({
   searchKeys = ['name', 'title'],
   onResultSelect,
   showResults = false,
-  maxResults = 5
+  maxResults = 5,
 }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState(value);
   const [showFilters, setShowFilters] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showSearchResults, setShowSearchResults] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const filtersRef = useRef<HTMLDivElement>(null);
@@ -58,7 +62,7 @@ const SearchBar = ({
   const { results: searchResults } = useSearch({
     data: searchData,
     keys: searchKeys,
-    threshold: 0.3
+    threshold: 0.3,
   });
 
   useEffect(() => {
@@ -67,10 +71,16 @@ const SearchBar = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (filtersRef.current && !filtersRef.current.contains(event.target as Node)) {
+      if (
+        filtersRef.current &&
+        !filtersRef.current.contains(event.target as Node)
+      ) {
         setShowFilters(false);
       }
-      if (resultsRef.current && !resultsRef.current.contains(event.target as Node)) {
+      if (
+        resultsRef.current &&
+        !resultsRef.current.contains(event.target as Node)
+      ) {
         setShowSearchResults(false);
         setSelectedIndex(-1);
       }
@@ -96,7 +106,7 @@ const SearchBar = ({
       setDropdownPosition({
         top: rect.bottom + window.scrollY + 8,
         left: rect.left + window.scrollX,
-        width: rect.width
+        width: rect.width,
       });
     }
   };
@@ -115,13 +125,13 @@ const SearchBar = ({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex(prev => 
+        setSelectedIndex(prev =>
           prev < visibleResults.length - 1 ? prev + 1 : 0
         );
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setSelectedIndex(prev => 
+        setSelectedIndex(prev =>
           prev > 0 ? prev - 1 : visibleResults.length - 1
         );
         break;
@@ -154,9 +164,9 @@ const SearchBar = ({
   };
 
   const handleClear = () => {
-    setSearchValue("");
-    onChange?.("");
-    onSearch?.("");
+    setSearchValue('');
+    onChange?.('');
+    onSearch?.('');
     inputRef.current?.focus();
   };
 
@@ -172,8 +182,8 @@ const SearchBar = ({
       <form onSubmit={handleSubmit} className="relative">
         <motion.div
           className={`relative flex items-center bg-white dark:bg-gray-800/30 border rounded-lg transition-all duration-200 ${
-            isFocused 
-              ? 'border-blue-500 dark:border-blue-500 bg-blue-50/50 dark:bg-gray-800/50 shadow-lg shadow-blue-500/10' 
+            isFocused
+              ? 'border-blue-500 dark:border-blue-500 bg-blue-50/50 dark:bg-gray-800/50 shadow-lg shadow-blue-500/10'
               : 'border-gray-300 dark:border-gray-700/50 hover:border-gray-400 dark:hover:border-gray-600/50'
           }`}
           whileFocus={{ scale: 1.01 }}
@@ -252,111 +262,127 @@ const SearchBar = ({
         </motion.div>
       </form>
 
-      {showFilters && filters.length > 0 && createPortal(
-        <AnimatePresence>
-          <motion.div
-            ref={filtersRef}
-            className="fixed bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999]"
-            style={{
-              top: dropdownPosition.top,
-              left: dropdownPosition.left,
-              width: dropdownPosition.width
-            }}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="p-3">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-300 mb-3">Filters</h3>
-              <div className="space-y-2">
-                {filters.map((filter) => (
-                  <label
-                    key={filter.id}
-                    className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded cursor-pointer transition-colors"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={selectedFilters.includes(filter.id)}
-                        onChange={() => toggleFilter(filter.id)}
-                        className="w-4 h-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
-                      />
-                      <span className="text-sm text-gray-900 dark:text-gray-300">{filter.label}</span>
-                    </div>
-                    {filter.count !== undefined && (
-                      <span className="text-xs text-gray-500 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-                        {filter.count}
-                      </span>
-                    )}
-                  </label>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>,
-        document.body
-      )}
-
-      {showSearchResults && searchResults.length > 0 && createPortal(
-        <AnimatePresence>
-          <motion.div
-            ref={resultsRef}
-            className="fixed bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999] max-h-80 overflow-y-auto"
-            style={{
-              top: dropdownPosition.top,
-              left: dropdownPosition.left,
-              width: dropdownPosition.width
-            }}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="p-2">
-              {searchResults.slice(0, maxResults).map((result, index) => (
-                <button
-                  key={String(result.item.id) || `result-${index}`}
-                  onClick={() => handleResultSelect(result.item)}
-                  className={`w-full text-left p-2.5 rounded-lg transition-colors ${
-                    index === selectedIndex
-                      ? 'bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800/50'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="flex-shrink-0">
-                      <div className="w-7 h-7 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                        <span className="text-xs text-gray-600 dark:text-gray-300">
-                          {String(result.item.name || result.item.title || '?').charAt(0).toUpperCase()}
+      {showFilters &&
+        filters.length > 0 &&
+        createPortal(
+          <AnimatePresence>
+            <motion.div
+              ref={filtersRef}
+              className="fixed bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999]"
+              style={{
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
+              }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="p-3">
+                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-300 mb-3">
+                  Filters
+                </h3>
+                <div className="space-y-2">
+                  {filters.map(filter => (
+                    <label
+                      key={filter.id}
+                      className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded cursor-pointer transition-colors"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedFilters.includes(filter.id)}
+                          onChange={() => toggleFilter(filter.id)}
+                          className="w-4 h-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                        <span className="text-sm text-gray-900 dark:text-gray-300">
+                          {filter.label}
                         </span>
                       </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">
+                      {filter.count !== undefined && (
+                        <span className="text-xs text-gray-500 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                          {filter.count}
+                        </span>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>,
+          document.body
+        )}
+
+      {showSearchResults &&
+        searchResults.length > 0 &&
+        createPortal(
+          <AnimatePresence>
+            <motion.div
+              ref={resultsRef}
+              className="fixed bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999] max-h-80 overflow-y-auto"
+              style={{
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
+              }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="p-2">
+                {searchResults.slice(0, maxResults).map((result, index) => (
+                  <button
+                    key={String(result.item.id) || `result-${index}`}
+                    onClick={() => handleResultSelect(result.item)}
+                    className={`w-full text-left p-2.5 rounded-lg transition-colors ${
+                      index === selectedIndex
+                        ? 'bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30'
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-800/50'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-shrink-0">
+                        <div className="w-7 h-7 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                          <span className="text-xs text-gray-600 dark:text-gray-300">
+                            {String(
+                              result.item.name || result.item.title || '?'
+                            )
+                              .charAt(0)
+                              .toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">
+                          {(() => {
+                            const name = result.item.name as string | undefined;
+                            const title = result.item.title as
+                              | string
+                              | undefined;
+                            return name || title || 'Untitled';
+                          })()}
+                        </p>
                         {(() => {
-                          const name = result.item.name as string | undefined;
-                          const title = result.item.title as string | undefined;
-                          return name || title || 'Untitled';
+                          const description = result.item.description as
+                            | string
+                            | undefined;
+                          return description ? (
+                            <p className="text-xs text-gray-400 truncate">
+                              {description}
+                            </p>
+                          ) : null;
                         })()}
-                      </p>
-                      {(() => {
-                        const description = result.item.description as string | undefined;
-                        return description ? (
-                          <p className="text-xs text-gray-400 truncate">
-                            {description}
-                          </p>
-                        ) : null;
-                      })()}
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        </AnimatePresence>,
-        document.body
-      )}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>,
+          document.body
+        )}
     </div>
   );
 };

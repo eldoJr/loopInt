@@ -21,17 +21,20 @@ const adminUser: User = {
   role: 'admin',
   avatar_url: undefined,
   created_at: new Date(),
-  updated_at: new Date()
+  updated_at: new Date(),
 };
 
 /**
  * Static login function that only accepts the admin credentials
  */
-export const staticLogin = async (email: string, password: string): Promise<User | null> => {
+export const staticLogin = async (
+  email: string,
+  password: string
+): Promise<User | null> => {
   // Simple validation for admin credentials
   if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
     return adminUser;
   }
-  
+
   return null;
 };

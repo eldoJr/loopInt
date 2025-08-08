@@ -8,9 +8,7 @@ function App() {
   return (
     <ErrorBoundary>
       <AppRouter />
-      <FloatingChatIcon 
-        onChatOpen={() => console.log('Chat opened')} 
-      />
+      <FloatingChatIcon onChatOpen={() => console.log('Chat opened')} />
       <ToastContainer />
     </ErrorBoundary>
   );

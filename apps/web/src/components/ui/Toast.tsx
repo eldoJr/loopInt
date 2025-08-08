@@ -18,13 +18,13 @@ const ToastItem = ({ toast, onRemove }: ToastProps) => {
 
   useEffect(() => {
     setIsVisible(true);
-    
+
     if (toast.type !== 'loading') {
       const timer = setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => onRemove(toast.id), 300);
       }, toast.duration || 4000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [toast.id, toast.duration, toast.type, onRemove]);
@@ -32,13 +32,13 @@ const ToastItem = ({ toast, onRemove }: ToastProps) => {
   const icons = {
     success: CheckCircle,
     error: XCircle,
-    loading: Loader2
+    loading: Loader2,
   };
 
   const colors = {
     success: 'bg-green-500 text-white',
     error: 'bg-red-500 text-white',
-    loading: 'bg-blue-500 text-white'
+    loading: 'bg-blue-500 text-white',
   };
 
   const Icon = icons[toast.type];
@@ -49,7 +49,9 @@ const ToastItem = ({ toast, onRemove }: ToastProps) => {
         isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
       }`}
     >
-      <Icon className={`w-5 h-5 ${toast.type === 'loading' ? 'animate-spin' : ''}`} />
+      <Icon
+        className={`w-5 h-5 ${toast.type === 'loading' ? 'animate-spin' : ''}`}
+      />
       <span className="text-sm font-medium flex-1">{toast.message}</span>
       <button
         onClick={() => {
@@ -85,7 +87,7 @@ export const ToastContainer = () => {
   useEffect(() => {
     const listener = (newToasts: Toast[]) => setCurrentToasts(newToasts);
     toastListeners.push(listener);
-    
+
     return () => {
       const index = toastListeners.indexOf(listener);
       if (index > -1) toastListeners.splice(index, 1);
@@ -103,6 +105,7 @@ export const ToastContainer = () => {
 
 export const showToast = {
   success: (message: string) => addToast({ message, type: 'success' }),
-  error: (message: string) => addToast({ message, type: 'error', duration: 5000 }),
+  error: (message: string) =>
+    addToast({ message, type: 'error', duration: 5000 }),
   loading: (message: string) => addToast({ message, type: 'loading' }),
 };

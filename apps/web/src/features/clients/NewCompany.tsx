@@ -1,5 +1,26 @@
 import { useState, useEffect, useCallback } from 'react';
-import { X, Upload, Plus, AlertCircle, Globe, MapPin, Phone, Mail, Bold, Italic, Underline, Link, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Code, Check } from 'lucide-react';
+import {
+  X,
+  Upload,
+  Plus,
+  AlertCircle,
+  Globe,
+  MapPin,
+  Phone,
+  Mail,
+  Bold,
+  Italic,
+  Underline,
+  Link,
+  Strikethrough,
+  List,
+  ListOrdered,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Code,
+  Check,
+} from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -36,7 +57,10 @@ interface ConfirmationDialogProps {
   onConfirm: () => void;
 }
 
-const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) => {
+const NewCompany = ({
+  onNavigateBack,
+  onNavigateToClients,
+}: NewCompanyProps) => {
   useTheme();
   //const modal = useModal();
   // Add a type-safe showConfirmation function
@@ -47,14 +71,21 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
       props.onConfirm();
     }
   };
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [textStyles, setTextStyles] = useState({ bold: false, italic: false, underline: false, strikethrough: false });
-  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
+  const [textStyles, setTextStyles] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    strikethrough: false,
+  });
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>(
+    'left'
+  );
   const [descriptionLength, setDescriptionLength] = useState(0);
   const maxDescriptionLength = 999;
 
@@ -72,7 +103,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
     state: '',
     country: '',
     description: '',
-    status: 'active'
+    status: 'active',
   });
 
   const industries = [
@@ -89,7 +120,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
     'Transportation',
     'Energy',
     'Agriculture',
-    'Other'
+    'Other',
   ];
 
   useEffect(() => {
@@ -112,20 +143,26 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
         handleCancel();
       }
     };
-    
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleInputChange = useCallback((field: keyof FormData, value: string | boolean | File | null | string[]) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (field === 'description' && typeof value === 'string') {
-      setDescriptionLength(value.length);
-    }
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  }, [errors]);
+  const handleInputChange = useCallback(
+    (
+      field: keyof FormData,
+      value: string | boolean | File | null | string[]
+    ) => {
+      setFormData(prev => ({ ...prev, [field]: value }));
+      if (field === 'description' && typeof value === 'string') {
+        setDescriptionLength(value.length);
+      }
+      if (errors[field]) {
+        setErrors(prev => ({ ...prev, [field]: '' }));
+      }
+    },
+    [errors]
+  );
 
   const handleTextStyle = (style: keyof typeof textStyles) => {
     setTextStyles(prev => ({ ...prev, [style]: !prev[style] }));
@@ -138,16 +175,27 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
+      const validTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/svg+xml',
+      ];
       if (!validTypes.includes(file.type)) {
-        setErrors(prev => ({ ...prev, logo: 'Please upload JPG, JPEG, PNG, or SVG format only' }));
+        setErrors(prev => ({
+          ...prev,
+          logo: 'Please upload JPG, JPEG, PNG, or SVG format only',
+        }));
         return;
       }
       if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, logo: 'File size must be less than 5MB' }));
+        setErrors(prev => ({
+          ...prev,
+          logo: 'File size must be less than 5MB',
+        }));
         return;
       }
-      
+
       setFormData(prev => ({ ...prev, logo: file }));
       const reader = new FileReader();
       reader.onload = () => setLogoPreview(reader.result as string);
@@ -158,14 +206,19 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
 
   const addPhoneNumber = () => {
     if (formData.phoneNumbers.length < 3) {
-      setFormData(prev => ({ ...prev, phoneNumbers: [...prev.phoneNumbers, ''] }));
+      setFormData(prev => ({
+        ...prev,
+        phoneNumbers: [...prev.phoneNumbers, ''],
+      }));
     }
   };
 
   const updatePhoneNumber = (index: number, value: string) => {
     setFormData(prev => ({
       ...prev,
-      phoneNumbers: prev.phoneNumbers.map((phone, i) => i === index ? value : phone)
+      phoneNumbers: prev.phoneNumbers.map((phone, i) =>
+        i === index ? value : phone
+      ),
     }));
   };
 
@@ -173,38 +226,53 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
     if (formData.phoneNumbers.length > 1) {
       setFormData(prev => ({
         ...prev,
-        phoneNumbers: prev.phoneNumbers.filter((_, i) => i !== index)
+        phoneNumbers: prev.phoneNumbers.filter((_, i) => i !== index),
       }));
     }
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.name.trim()) newErrors.name = 'Company name is required';
-    if (formData.industry === 'Select industry') newErrors.industry = 'Please select an industry';
-    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+    if (formData.industry === 'Select industry')
+      newErrors.industry = 'Please select an industry';
+    if (
+      formData.email.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
+    ) {
       newErrors.email = 'Please enter a valid email address';
     }
-    if (formData.website.trim() && !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(formData.website.trim())) {
+    if (
+      formData.website.trim() &&
+      !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(
+        formData.website.trim()
+      )
+    ) {
       newErrors.website = 'Please enter a valid website URL';
     }
     if (formData.description.length > maxDescriptionLength) {
       newErrors.description = `Description must be under ${maxDescriptionLength} characters`;
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleCancel = () => {
-    if (formData.name.trim() || formData.logo || formData.website.trim() || formData.email.trim()) {
+    if (
+      formData.name.trim() ||
+      formData.logo ||
+      formData.website.trim() ||
+      formData.email.trim()
+    ) {
       showConfirmation({
         title: 'Discard changes?',
-        message: 'You have unsaved changes. Are you sure you want to discard them?',
+        message:
+          'You have unsaved changes. Are you sure you want to discard them?',
         confirmText: 'Discard',
         cancelText: 'Continue editing',
-        onConfirm: () => onNavigateToClients?.()
+        onConfirm: () => onNavigateToClients?.(),
       });
     } else {
       onNavigateToClients?.();
@@ -214,40 +282,53 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
     setSaving(true);
     try {
-      const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+      const userData =
+        localStorage.getItem('user') || sessionStorage.getItem('user');
       const currentUser = userData ? JSON.parse(userData) : null;
-      
+
       const formDataToSend = new FormData();
-      
+
       // Add logo file if exists
       if (formData.logo) {
         formDataToSend.append('logo', formData.logo);
       }
-      
+
       // Add all other fields
       formDataToSend.append('name', formData.name.trim());
       formDataToSend.append('industry', formData.industry);
-      if (formData.website.trim()) formDataToSend.append('website', formData.website.trim());
-      if (formData.email.trim()) formDataToSend.append('email', formData.email.trim());
-      formDataToSend.append('phoneNumbers', JSON.stringify(formData.phoneNumbers.filter(phone => phone.trim())));
-      if (formData.addressLine1.trim()) formDataToSend.append('addressLine1', formData.addressLine1.trim());
-      if (formData.addressLine2?.trim()) formDataToSend.append('addressLine2', formData.addressLine2.trim());
-      if (formData.zipCode.trim()) formDataToSend.append('zipCode', formData.zipCode.trim());
-      if (formData.city.trim()) formDataToSend.append('city', formData.city.trim());
-      if (formData.state.trim()) formDataToSend.append('state', formData.state.trim());
-      if (formData.country.trim()) formDataToSend.append('country', formData.country.trim());
-      if (formData.description.trim()) formDataToSend.append('description', formData.description.trim());
+      if (formData.website.trim())
+        formDataToSend.append('website', formData.website.trim());
+      if (formData.email.trim())
+        formDataToSend.append('email', formData.email.trim());
+      formDataToSend.append(
+        'phoneNumbers',
+        JSON.stringify(formData.phoneNumbers.filter(phone => phone.trim()))
+      );
+      if (formData.addressLine1.trim())
+        formDataToSend.append('addressLine1', formData.addressLine1.trim());
+      if (formData.addressLine2?.trim())
+        formDataToSend.append('addressLine2', formData.addressLine2.trim());
+      if (formData.zipCode.trim())
+        formDataToSend.append('zipCode', formData.zipCode.trim());
+      if (formData.city.trim())
+        formDataToSend.append('city', formData.city.trim());
+      if (formData.state.trim())
+        formDataToSend.append('state', formData.state.trim());
+      if (formData.country.trim())
+        formDataToSend.append('country', formData.country.trim());
+      if (formData.description.trim())
+        formDataToSend.append('description', formData.description.trim());
       formDataToSend.append('status', formData.status);
       if (currentUser?.id) formDataToSend.append('createdBy', currentUser.id);
-      
+
       const response = await fetch('http://localhost:3000/companies', {
         method: 'POST',
-        body: formDataToSend
+        body: formDataToSend,
       });
-      
+
       if (response.ok) {
         console.log('Company created successfully');
         onNavigateToClients?.();
@@ -273,7 +354,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Clients', onClick: onNavigateToClients },
-    { label: 'New Company' }
+    { label: 'New Company' },
   ];
 
   if (loading) {
@@ -286,23 +367,27 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
   }
 
   return (
-    <div className={`space-y-6 transition-all duration-500 ${
-      showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-    }`}>
+    <div
+      className={`space-y-6 transition-all duration-500 ${
+        showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+    >
       <Breadcrumb items={breadcrumbItems} />
-      
+
       <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
         <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">New Company</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              New Company
+            </h1>
             <div className="flex items-center space-x-2">
-              <button 
+              <button
                 onClick={handleCancel}
                 className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleSubmit}
                 disabled={saving}
                 className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
@@ -325,7 +410,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
               <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Basic Information
               </h2>
-              
+
               {/* Logo Upload */}
               <div className="grid grid-cols-12 gap-3 items-start">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
@@ -336,7 +421,11 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                     <div className="relative">
                       <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg flex items-center justify-center overflow-hidden">
                         {logoPreview ? (
-                          <img src={logoPreview} alt="Preview" className="w-full h-full object-contain" />
+                          <img
+                            src={logoPreview}
+                            alt="Preview"
+                            className="w-full h-full object-contain"
+                          />
                         ) : (
                           <Upload className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                         )}
@@ -349,8 +438,12 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                       />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">Upload logo</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-500">JPG, JPEG, PNG, SVG (max 5MB)</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                        Upload logo
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-500">
+                        JPG, JPEG, PNG, SVG (max 5MB)
+                      </p>
                     </div>
                   </div>
                   {errors.logo && (
@@ -371,10 +464,10 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                   <input
                     type="text"
                     value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    onChange={e => handleInputChange('name', e.target.value)}
                     className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                      errors.name 
-                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                      errors.name
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                         : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                     }`}
                     placeholder="Enter company name"
@@ -396,11 +489,15 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                 <div className="col-span-4">
                   <select
                     value={formData.industry}
-                    onChange={(e) => handleInputChange('industry', e.target.value)}
+                    onChange={e =>
+                      handleInputChange('industry', e.target.value)
+                    }
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                   >
-                    {industries.map((industry) => (
-                      <option key={industry} value={industry}>{industry}</option>
+                    {industries.map(industry => (
+                      <option key={industry} value={industry}>
+                        {industry}
+                      </option>
                     ))}
                   </select>
                   {errors.industry && (
@@ -423,10 +520,12 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                     <input
                       type="url"
                       value={formData.website}
-                      onChange={(e) => handleInputChange('website', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('website', e.target.value)
+                      }
                       className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                        errors.website 
-                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                        errors.website
+                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                           : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                       }`}
                       placeholder="https://example.com"
@@ -447,7 +546,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
               <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Contact Information
               </h2>
-              
+
               {/* Email */}
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -459,10 +558,10 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                     <input
                       type="email"
                       value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      onChange={e => handleInputChange('email', e.target.value)}
                       className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                        errors.email 
-                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                        errors.email
+                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                           : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                       }`}
                       placeholder="company@example.com"
@@ -479,7 +578,10 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
 
               {/* Phone Numbers */}
               {formData.phoneNumbers.map((phone, index) => (
-                <div key={index} className="grid grid-cols-12 gap-3 items-center">
+                <div
+                  key={index}
+                  className="grid grid-cols-12 gap-3 items-center"
+                >
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                     Phone * {index === 0 ? '' : `${index + 1}`}
                   </label>
@@ -489,7 +591,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                       <input
                         type="tel"
                         value={phone}
-                        onChange={(e) => updatePhoneNumber(index, e.target.value)}
+                        onChange={e => updatePhoneNumber(index, e.target.value)}
                         className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                         placeholder="Enter phone number"
                       />
@@ -508,7 +610,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                   )}
                 </div>
               ))}
-              
+
               {formData.phoneNumbers.length < 3 && (
                 <div className="grid grid-cols-12 gap-3">
                   <div className="col-span-3"></div>
@@ -531,7 +633,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
               <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Address
               </h2>
-              
+
               {/* Address Fields */}
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -543,7 +645,9 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                     <input
                       type="text"
                       value={formData.addressLine1}
-                      onChange={(e) => handleInputChange('addressLine1', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('addressLine1', e.target.value)
+                      }
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="Street address"
                     />
@@ -559,7 +663,9 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                   <input
                     type="text"
                     value={formData.addressLine2}
-                    onChange={(e) => handleInputChange('addressLine2', e.target.value)}
+                    onChange={e =>
+                      handleInputChange('addressLine2', e.target.value)
+                    }
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Suite, floor, etc."
                   />
@@ -574,7 +680,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                   <input
                     type="text"
                     value={formData.zipCode}
-                    onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                    onChange={e => handleInputChange('zipCode', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Zip code"
                   />
@@ -583,7 +689,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                   <input
                     type="text"
                     value={formData.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
+                    onChange={e => handleInputChange('city', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="City"
                   />
@@ -592,7 +698,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                   <input
                     type="text"
                     value={formData.state}
-                    onChange={(e) => handleInputChange('state', e.target.value)}
+                    onChange={e => handleInputChange('state', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="State"
                   />
@@ -601,7 +707,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                   <input
                     type="text"
                     value={formData.country}
-                    onChange={(e) => handleInputChange('country', e.target.value)}
+                    onChange={e => handleInputChange('country', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Country"
                   />
@@ -614,7 +720,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
               <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Additional Information
               </h2>
-              
+
               <div className="grid grid-cols-12 gap-3 items-start">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
                   Description *
@@ -649,9 +755,9 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                     >
                       <Strikethrough className="h-4 w-4" />
                     </Toggle>
-                    
+
                     <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                    
+
                     <Toggle
                       pressed={textAlign === 'left'}
                       onPressedChange={() => handleTextAlign('left')}
@@ -673,9 +779,9 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                     >
                       <AlignRight className="h-4 w-4" />
                     </Toggle>
-                    
+
                     <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                    
+
                     <Toggle aria-label="List">
                       <List className="h-4 w-4" />
                     </Toggle>
@@ -689,11 +795,13 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                       <Code className="h-4 w-4" />
                     </Toggle>
                   </div>
-                  
+
                   <div className="relative">
                     <textarea
                       value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('description', e.target.value)
+                      }
                       rows={6}
                       maxLength={maxDescriptionLength}
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-y text-sm"
@@ -701,31 +809,36 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
                       style={{
                         fontWeight: textStyles.bold ? 'bold' : 'normal',
                         fontStyle: textStyles.italic ? 'italic' : 'normal',
-                        textDecoration: `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
+                        textDecoration:
+                          `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
                         textAlign: textAlign,
-                        minHeight: '150px'
+                        minHeight: '150px',
                       }}
                     />
-                    
+
                     <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-3">
-                      <span className={`text-xs ${
-                        descriptionLength > maxDescriptionLength * 0.9 
-                          ? 'text-red-500 dark:text-red-400' 
-                          : 'text-gray-500 dark:text-gray-400'
-                      }`}>
+                      <span
+                        className={`text-xs ${
+                          descriptionLength > maxDescriptionLength * 0.9
+                            ? 'text-red-500 dark:text-red-400'
+                            : 'text-gray-500 dark:text-gray-400'
+                        }`}
+                      >
                         {descriptionLength}/{maxDescriptionLength} characters
                       </span>
                       <div className="flex items-center space-x-2">
                         {errors.description && (
                           <div className="flex items-center space-x-1 text-red-500 dark:text-red-400">
                             <AlertCircle size={14} />
-                            <span className="text-xs">{errors.description}</span>
+                            <span className="text-xs">
+                              {errors.description}
+                            </span>
                           </div>
                         )}
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Resize handle indicator */}
                   <div className="w-full flex justify-center">
                     <div className="w-8 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mt-1"></div>
@@ -735,7 +848,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
             </div>
           </div>
         </form>
-        
+
         {errors.submit && (
           <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
             <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
@@ -744,7 +857,7 @@ const NewCompany = ({ onNavigateBack, onNavigateToClients }: NewCompanyProps) =>
             </div>
           </div>
         )}
-        
+
         <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">

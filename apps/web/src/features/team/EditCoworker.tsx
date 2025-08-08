@@ -1,5 +1,23 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Save, X, Upload, Plus, Linkedin, AlertCircle, Bold, Italic, Underline, Link, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Code } from 'lucide-react';
+import {
+  Save,
+  X,
+  Upload,
+  Plus,
+  Linkedin,
+  AlertCircle,
+  Bold,
+  Italic,
+  Underline,
+  Link,
+  Strikethrough,
+  List,
+  ListOrdered,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Code,
+} from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -35,15 +53,26 @@ interface FormData {
   description: string;
 }
 
-const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCoworkerProps) => {
+const EditCoworker = ({
+  memberId,
+  onNavigateBack,
+  onNavigateToTeam,
+}: EditCoworkerProps) => {
   useTheme();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [textStyles, setTextStyles] = useState({ bold: false, italic: false, underline: false, strikethrough: false });
-  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
+  const [textStyles, setTextStyles] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    strikethrough: false,
+  });
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>(
+    'left'
+  );
   const [positionDescLength, setPositionDescLength] = useState(0);
   const maxPositionDescLength = 300;
 
@@ -67,22 +96,22 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
     city: '',
     state: '',
     country: '',
-    description: ''
+    description: '',
   });
 
   const companies = ['Choose company', 'Company A', 'Company B', 'Company C'];
   const positions = [
-    'Choose', 
-    'Admin', 
-    'Default User', 
-    'HR and payroll', 
-    'Manager HR', 
-    'Sales', 
-    'Marketing', 
-    'Customer service', 
-    'Accounting', 
-    'HR specialist', 
-    'Manager'
+    'Choose',
+    'Admin',
+    'Default User',
+    'HR and payroll',
+    'Manager HR',
+    'Sales',
+    'Marketing',
+    'Customer service',
+    'Accounting',
+    'HR specialist',
+    'Manager',
   ];
 
   useEffect(() => {
@@ -91,7 +120,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
         const response = await fetch(`http://localhost:3000/team/${memberId}`);
         if (response.ok) {
           const member = await response.json();
-          
+
           setFormData({
             photo: null,
             firstName: member.first_name || '',
@@ -104,20 +133,25 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
             positionDescription: member.position_description || '',
             skype: member.skype || '',
             linkedin: member.linkedin || '',
-            additionalLinks: Array.isArray(member.additional_links) ? member.additional_links : [],
-            phoneNumbers: Array.isArray(member.phone_numbers) && member.phone_numbers.length ? member.phone_numbers : [''],
+            additionalLinks: Array.isArray(member.additional_links)
+              ? member.additional_links
+              : [],
+            phoneNumbers:
+              Array.isArray(member.phone_numbers) && member.phone_numbers.length
+                ? member.phone_numbers
+                : [''],
             addressLine1: member.address_line1 || '',
             addressLine2: member.address_line2 || '',
             zipCode: member.zip_code || '',
             city: member.city || '',
             state: member.state || '',
             country: member.country || '',
-            description: member.description || ''
+            description: member.description || '',
           });
 
           if (member.photo_url) {
-            const photoUrl = member.photo_url.startsWith('/uploads') 
-              ? `http://localhost:3000${member.photo_url}` 
+            const photoUrl = member.photo_url.startsWith('/uploads')
+              ? `http://localhost:3000${member.photo_url}`
               : member.photo_url;
             setPhotoPreview(photoUrl);
           }
@@ -145,34 +179,52 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
         onNavigateToTeam?.();
       }
     };
-    
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onNavigateToTeam]);
 
-  const handleInputChange = useCallback((field: keyof FormData, value: string | boolean | File | null | string[] | { type: string; url: string }[]) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (field === 'positionDescription' && typeof value === 'string') {
-      setPositionDescLength(value.length);
-    }
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  }, [errors]);
+  const handleInputChange = useCallback(
+    (
+      field: keyof FormData,
+      value:
+        | string
+        | boolean
+        | File
+        | null
+        | string[]
+        | { type: string; url: string }[]
+    ) => {
+      setFormData(prev => ({ ...prev, [field]: value }));
+      if (field === 'positionDescription' && typeof value === 'string') {
+        setPositionDescLength(value.length);
+      }
+      if (errors[field]) {
+        setErrors(prev => ({ ...prev, [field]: '' }));
+      }
+    },
+    [errors]
+  );
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
       if (!validTypes.includes(file.type)) {
-        setErrors(prev => ({ ...prev, photo: 'Please upload JPG, JPEG, or PNG format only' }));
+        setErrors(prev => ({
+          ...prev,
+          photo: 'Please upload JPG, JPEG, or PNG format only',
+        }));
         return;
       }
       if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({ ...prev, photo: 'File size must be less than 5MB' }));
+        setErrors(prev => ({
+          ...prev,
+          photo: 'File size must be less than 5MB',
+        }));
         return;
       }
-      
+
       setFormData(prev => ({ ...prev, photo: file }));
       const reader = new FileReader();
       reader.onload = () => setPhotoPreview(reader.result as string);
@@ -184,36 +236,45 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
   const addAdditionalLink = () => {
     setFormData(prev => ({
       ...prev,
-      additionalLinks: [...prev.additionalLinks, { type: 'Website', url: '' }]
+      additionalLinks: [...prev.additionalLinks, { type: 'Website', url: '' }],
     }));
   };
 
-  const updateAdditionalLink = (index: number, field: 'type' | 'url', value: string) => {
+  const updateAdditionalLink = (
+    index: number,
+    field: 'type' | 'url',
+    value: string
+  ) => {
     setFormData(prev => ({
       ...prev,
-      additionalLinks: prev.additionalLinks.map((link, i) => 
+      additionalLinks: prev.additionalLinks.map((link, i) =>
         i === index ? { ...link, [field]: value } : link
-      )
+      ),
     }));
   };
 
   const removeAdditionalLink = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      additionalLinks: prev.additionalLinks.filter((_, i) => i !== index)
+      additionalLinks: prev.additionalLinks.filter((_, i) => i !== index),
     }));
   };
 
   const addPhoneNumber = () => {
     if (formData.phoneNumbers.length < 3) {
-      setFormData(prev => ({ ...prev, phoneNumbers: [...prev.phoneNumbers, ''] }));
+      setFormData(prev => ({
+        ...prev,
+        phoneNumbers: [...prev.phoneNumbers, ''],
+      }));
     }
   };
 
   const updatePhoneNumber = (index: number, value: string) => {
     setFormData(prev => ({
       ...prev,
-      phoneNumbers: prev.phoneNumbers.map((phone, i) => i === index ? value : phone)
+      phoneNumbers: prev.phoneNumbers.map((phone, i) =>
+        i === index ? value : phone
+      ),
     }));
   };
 
@@ -221,27 +282,32 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
     if (formData.phoneNumbers.length > 1) {
       setFormData(prev => ({
         ...prev,
-        phoneNumbers: prev.phoneNumbers.filter((_, i) => i !== index)
+        phoneNumbers: prev.phoneNumbers.filter((_, i) => i !== index),
       }));
     }
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
+
+    if (!formData.firstName.trim())
+      newErrors.firstName = 'First name is required';
     if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
     if (!formData.email.trim()) newErrors.email = 'Email is required';
-    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+    if (
+      formData.email.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())
+    ) {
       newErrors.email = 'Please enter a valid email address';
     }
     if (formData.positionDescription.length > 300) {
-      newErrors.positionDescription = 'Position description must be under 300 characters';
+      newErrors.positionDescription =
+        'Position description must be under 300 characters';
     }
     if (formData.description.length > 999) {
       newErrors.description = 'Description must be under 999 characters';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -249,42 +315,64 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
     setSaving(true);
     try {
       const formDataToSend = new FormData();
-      
+
       // Add photo file if exists
       if (formData.photo) {
         formDataToSend.append('photo', formData.photo);
       }
-      
+
       // Add all other fields
       formDataToSend.append('firstName', formData.firstName.trim());
       formDataToSend.append('lastName', formData.lastName.trim());
       formDataToSend.append('email', formData.email.trim());
       formDataToSend.append('isIndividual', formData.isIndividual.toString());
-      if (formData.company !== 'Choose company') formDataToSend.append('company', formData.company);
-      if (formData.source.trim()) formDataToSend.append('source', formData.source.trim());
-      if (formData.position !== 'Contact person position') formDataToSend.append('position', formData.position);
-      if (formData.positionDescription.trim()) formDataToSend.append('positionDescription', formData.positionDescription.trim());
-      formDataToSend.append('phoneNumbers', JSON.stringify(formData.phoneNumbers.filter(phone => phone.trim())));
-      if (formData.skype.trim()) formDataToSend.append('skype', formData.skype.trim());
-      if (formData.linkedin.trim()) formDataToSend.append('linkedin', formData.linkedin.trim());
-      formDataToSend.append('additionalLinks', JSON.stringify(formData.additionalLinks.filter(link => link.url.trim())));
-      if (formData.addressLine1.trim()) formDataToSend.append('addressLine1', formData.addressLine1.trim());
-      if (formData.addressLine2?.trim()) formDataToSend.append('addressLine2', formData.addressLine2.trim());
-      if (formData.zipCode.trim()) formDataToSend.append('zipCode', formData.zipCode.trim());
-      if (formData.city.trim()) formDataToSend.append('city', formData.city.trim());
-      if (formData.state.trim()) formDataToSend.append('state', formData.state.trim());
-      if (formData.country.trim()) formDataToSend.append('country', formData.country.trim());
-      if (formData.description.trim()) formDataToSend.append('description', formData.description.trim());
-      
+      if (formData.company !== 'Choose company')
+        formDataToSend.append('company', formData.company);
+      if (formData.source.trim())
+        formDataToSend.append('source', formData.source.trim());
+      if (formData.position !== 'Contact person position')
+        formDataToSend.append('position', formData.position);
+      if (formData.positionDescription.trim())
+        formDataToSend.append(
+          'positionDescription',
+          formData.positionDescription.trim()
+        );
+      formDataToSend.append(
+        'phoneNumbers',
+        JSON.stringify(formData.phoneNumbers.filter(phone => phone.trim()))
+      );
+      if (formData.skype.trim())
+        formDataToSend.append('skype', formData.skype.trim());
+      if (formData.linkedin.trim())
+        formDataToSend.append('linkedin', formData.linkedin.trim());
+      formDataToSend.append(
+        'additionalLinks',
+        JSON.stringify(formData.additionalLinks.filter(link => link.url.trim()))
+      );
+      if (formData.addressLine1.trim())
+        formDataToSend.append('addressLine1', formData.addressLine1.trim());
+      if (formData.addressLine2?.trim())
+        formDataToSend.append('addressLine2', formData.addressLine2.trim());
+      if (formData.zipCode.trim())
+        formDataToSend.append('zipCode', formData.zipCode.trim());
+      if (formData.city.trim())
+        formDataToSend.append('city', formData.city.trim());
+      if (formData.state.trim())
+        formDataToSend.append('state', formData.state.trim());
+      if (formData.country.trim())
+        formDataToSend.append('country', formData.country.trim());
+      if (formData.description.trim())
+        formDataToSend.append('description', formData.description.trim());
+
       const response = await fetch(`http://localhost:3000/team/${memberId}`, {
         method: 'PUT',
-        body: formDataToSend
+        body: formDataToSend,
       });
-      
+
       if (response.ok) {
         console.log('Team member updated successfully');
         onNavigateToTeam?.();
@@ -311,7 +399,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Team', onClick: onNavigateToTeam },
-    { label: 'Edit Coworker' }
+    { label: 'Edit Coworker' },
   ];
 
   if (loading) {
@@ -324,23 +412,27 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
   }
 
   return (
-    <div className={`space-y-6 transition-all duration-500 ${
-      showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-    }`}>
+    <div
+      className={`space-y-6 transition-all duration-500 ${
+        showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+    >
       <Breadcrumb items={breadcrumbItems} />
-      
+
       <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
         <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Edit Coworker</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Edit Coworker
+            </h1>
             <div className="flex items-center space-x-2">
-              <button 
+              <button
                 onClick={onNavigateToTeam}
                 className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleSubmit}
                 disabled={saving}
                 className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
@@ -363,7 +455,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
               <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Basic Information
               </h2>
-              
+
               {/* Photo Upload */}
               <div className="grid grid-cols-12 gap-3 items-start">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
@@ -374,7 +466,11 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                     <div className="relative">
                       <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg flex items-center justify-center overflow-hidden">
                         {photoPreview ? (
-                          <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+                          <img
+                            src={photoPreview}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <Upload className="w-6 h-6 text-gray-500 dark:text-gray-400" />
                         )}
@@ -387,8 +483,12 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                       />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">Upload photo</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-500">JPG, JPEG, PNG (max 5MB)</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                        Upload photo
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-500">
+                        JPG, JPEG, PNG (max 5MB)
+                      </p>
                     </div>
                   </div>
                   {errors.photo && (
@@ -409,10 +509,12 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <input
                     type="text"
                     value={formData.firstName}
-                    onChange={(e) => handleInputChange('firstName', e.target.value)}
+                    onChange={e =>
+                      handleInputChange('firstName', e.target.value)
+                    }
                     className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                      errors.firstName 
-                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                      errors.firstName
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                         : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                     }`}
                     placeholder="Enter first name"
@@ -431,10 +533,12 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <input
                     type="text"
                     value={formData.lastName}
-                    onChange={(e) => handleInputChange('lastName', e.target.value)}
+                    onChange={e =>
+                      handleInputChange('lastName', e.target.value)
+                    }
                     className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                      errors.lastName 
-                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                      errors.lastName
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                         : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                     }`}
                     placeholder="Enter last name"
@@ -457,10 +561,10 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <input
                     type="email"
                     value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    onChange={e => handleInputChange('email', e.target.value)}
                     className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                      errors.email 
-                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50' 
+                      errors.email
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                         : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                     }`}
                     placeholder="Enter email address"
@@ -482,10 +586,14 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                 <div className="col-span-9">
                   <Toggle
                     pressed={formData.isIndividual}
-                    onPressedChange={(pressed) => handleInputChange('isIndividual', pressed)}
+                    onPressedChange={pressed =>
+                      handleInputChange('isIndividual', pressed)
+                    }
                   >
                     <span className="text-sm">
-                      {formData.isIndividual ? 'Individual contractor' : 'Company employee'}
+                      {formData.isIndividual
+                        ? 'Individual contractor'
+                        : 'Company employee'}
                     </span>
                   </Toggle>
                 </div>
@@ -500,7 +608,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <CustomSelect
                     options={companies}
                     value={formData.company}
-                    onChange={(value) => handleInputChange('company', value)}
+                    onChange={value => handleInputChange('company', value)}
                   />
                 </div>
                 <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -510,7 +618,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <CustomSelect
                     options={positions}
                     value={formData.position}
-                    onChange={(value) => handleInputChange('position', value)}
+                    onChange={value => handleInputChange('position', value)}
                   />
                 </div>
               </div>
@@ -550,9 +658,9 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                     >
                       <Strikethrough className="h-4 w-4" />
                     </Toggle>
-                    
+
                     <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                    
+
                     <Toggle
                       pressed={textAlign === 'left'}
                       onPressedChange={() => handleTextAlign('left')}
@@ -574,9 +682,9 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                     >
                       <AlignRight className="h-4 w-4" />
                     </Toggle>
-                    
+
                     <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                    
+
                     <Toggle aria-label="List">
                       <List className="h-4 w-4" />
                     </Toggle>
@@ -590,11 +698,13 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                       <Code className="h-4 w-4" />
                     </Toggle>
                   </div>
-                  
+
                   <div className="relative">
                     <textarea
                       value={formData.positionDescription}
-                      onChange={(e) => handleInputChange('positionDescription', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('positionDescription', e.target.value)
+                      }
                       rows={3}
                       maxLength={maxPositionDescLength}
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
@@ -602,24 +712,29 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                       style={{
                         fontWeight: textStyles.bold ? 'bold' : 'normal',
                         fontStyle: textStyles.italic ? 'italic' : 'normal',
-                        textDecoration: `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
-                        textAlign: textAlign
+                        textDecoration:
+                          `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
+                        textAlign: textAlign,
                       }}
                     />
-                    
+
                     <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-3">
-                      <span className={`text-xs ${
-                        positionDescLength > maxPositionDescLength * 0.9 
-                          ? 'text-red-500 dark:text-red-400' 
-                          : 'text-gray-500 dark:text-gray-400'
-                      }`}>
+                      <span
+                        className={`text-xs ${
+                          positionDescLength > maxPositionDescLength * 0.9
+                            ? 'text-red-500 dark:text-red-400'
+                            : 'text-gray-500 dark:text-gray-400'
+                        }`}
+                      >
                         {positionDescLength}/{maxPositionDescLength} characters
                       </span>
                       <div className="flex items-center space-x-2">
                         {errors.positionDescription && (
                           <div className="flex items-center space-x-1 text-red-500 dark:text-red-400">
                             <AlertCircle size={14} />
-                            <span className="text-xs">{errors.positionDescription}</span>
+                            <span className="text-xs">
+                              {errors.positionDescription}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -634,7 +749,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
               <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                 Contact and Address
               </h2>
-              
+
               {/* LinkedIn */}
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -646,7 +761,9 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                     <input
                       type="url"
                       value={formData.linkedin}
-                      onChange={(e) => handleInputChange('linkedin', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('linkedin', e.target.value)
+                      }
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="LinkedIn profile URL"
                     />
@@ -656,7 +773,10 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
 
               {/* Additional Links */}
               {formData.additionalLinks.map((link, index) => (
-                <div key={index} className="grid grid-cols-12 gap-3 items-center">
+                <div
+                  key={index}
+                  className="grid grid-cols-12 gap-3 items-center"
+                >
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                     Additional Link {index + 1}
                   </label>
@@ -664,14 +784,18 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                     <CustomSelect
                       options={['Website', 'Portfolio', 'GitHub', 'Twitter']}
                       value={link.type}
-                      onChange={(value) => updateAdditionalLink(index, 'type', value)}
+                      onChange={value =>
+                        updateAdditionalLink(index, 'type', value)
+                      }
                     />
                   </div>
                   <div className="col-span-5">
                     <input
                       type="url"
                       value={link.url}
-                      onChange={(e) => updateAdditionalLink(index, 'url', e.target.value)}
+                      onChange={e =>
+                        updateAdditionalLink(index, 'url', e.target.value)
+                      }
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="Enter URL"
                     />
@@ -687,7 +811,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   </div>
                 </div>
               ))}
-              
+
               <div className="grid grid-cols-12 gap-3">
                 <div className="col-span-3"></div>
                 <div className="col-span-9">
@@ -704,7 +828,10 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
 
               {/* Phone Numbers */}
               {formData.phoneNumbers.map((phone, index) => (
-                <div key={index} className="grid grid-cols-12 gap-3 items-center">
+                <div
+                  key={index}
+                  className="grid grid-cols-12 gap-3 items-center"
+                >
                   <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                     Phone {index === 0 ? '' : `${index + 1}`}
                   </label>
@@ -712,7 +839,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                     <input
                       type="tel"
                       value={phone}
-                      onChange={(e) => updatePhoneNumber(index, e.target.value)}
+                      onChange={e => updatePhoneNumber(index, e.target.value)}
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="Enter phone number"
                     />
@@ -730,7 +857,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   )}
                 </div>
               ))}
-              
+
               {formData.phoneNumbers.length < 3 && (
                 <div className="grid grid-cols-12 gap-3">
                   <div className="col-span-3"></div>
@@ -756,7 +883,9 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <input
                     type="text"
                     value={formData.addressLine1}
-                    onChange={(e) => handleInputChange('addressLine1', e.target.value)}
+                    onChange={e =>
+                      handleInputChange('addressLine1', e.target.value)
+                    }
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Enter address line 1"
                   />
@@ -772,7 +901,9 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                     <input
                       type="text"
                       value={formData.addressLine2}
-                      onChange={(e) => handleInputChange('addressLine2', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('addressLine2', e.target.value)
+                      }
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                       placeholder="Enter address line 2"
                     />
@@ -788,7 +919,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   </div>
                 </div>
               )}
-              
+
               {formData.addressLine2 === undefined && (
                 <div className="grid grid-cols-12 gap-3">
                   <div className="col-span-3"></div>
@@ -813,7 +944,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <input
                     type="text"
                     value={formData.zipCode}
-                    onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                    onChange={e => handleInputChange('zipCode', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Zip code"
                   />
@@ -822,7 +953,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <input
                     type="text"
                     value={formData.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
+                    onChange={e => handleInputChange('city', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="City"
                   />
@@ -831,7 +962,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <input
                     type="text"
                     value={formData.state}
-                    onChange={(e) => handleInputChange('state', e.target.value)}
+                    onChange={e => handleInputChange('state', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="State"
                   />
@@ -840,7 +971,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                   <input
                     type="text"
                     value={formData.country}
-                    onChange={(e) => handleInputChange('country', e.target.value)}
+                    onChange={e => handleInputChange('country', e.target.value)}
                     className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     placeholder="Country"
                   />
@@ -882,9 +1013,9 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                     >
                       <Strikethrough className="h-4 w-4" />
                     </Toggle>
-                    
+
                     <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                    
+
                     <Toggle
                       pressed={textAlign === 'left'}
                       onPressedChange={() => handleTextAlign('left')}
@@ -906,9 +1037,9 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                     >
                       <AlignRight className="h-4 w-4" />
                     </Toggle>
-                    
+
                     <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                    
+
                     <Toggle aria-label="List">
                       <List className="h-4 w-4" />
                     </Toggle>
@@ -922,11 +1053,13 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                       <Code className="h-4 w-4" />
                     </Toggle>
                   </div>
-                  
+
                   <div className="relative">
                     <textarea
                       value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('description', e.target.value)
+                      }
                       rows={4}
                       maxLength={999}
                       className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
@@ -934,11 +1067,12 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                       style={{
                         fontWeight: textStyles.bold ? 'bold' : 'normal',
                         fontStyle: textStyles.italic ? 'italic' : 'normal',
-                        textDecoration: `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
-                        textAlign: textAlign
+                        textDecoration:
+                          `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
+                        textAlign: textAlign,
                       }}
                     />
-                    
+
                     <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-3">
                       <span className="text-xs text-gray-500 dark:text-gray-400">
                         {formData.description.length}/999 characters
@@ -947,7 +1081,9 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
                         {errors.description && (
                           <div className="flex items-center space-x-1 text-red-500 dark:text-red-400">
                             <AlertCircle size={14} />
-                            <span className="text-xs">{errors.description}</span>
+                            <span className="text-xs">
+                              {errors.description}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -958,7 +1094,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
             </div>
           </div>
         </form>
-        
+
         {errors.submit && (
           <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
             <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
@@ -967,7 +1103,7 @@ const EditCoworker = ({ memberId, onNavigateBack, onNavigateToTeam }: EditCowork
             </div>
           </div>
         )}
-        
+
         <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">

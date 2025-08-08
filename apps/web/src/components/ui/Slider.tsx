@@ -7,7 +7,14 @@ interface SliderProps {
   className?: string;
 }
 
-export const Slider = ({ value, onValueChange, max = 100, min = 0, step = 1, className = '' }: SliderProps) => {
+export const Slider = ({
+  value,
+  onValueChange,
+  max = 100,
+  min = 0,
+  step = 1,
+  className = '',
+}: SliderProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onValueChange([parseInt(e.target.value)]);
   };
@@ -22,7 +29,7 @@ export const Slider = ({ value, onValueChange, max = 100, min = 0, step = 1, cla
       onChange={handleChange}
       className={`w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider ${className}`}
       style={{
-        background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${(value[0] / max) * 100}%, #374151 ${(value[0] / max) * 100}%, #374151 100%)`
+        background: `linear-gradient(to right, #3B82F6 0%, #3B82F6 ${(value[0] / max) * 100}%, #374151 ${(value[0] / max) * 100}%, #374151 100%)`,
       }}
     />
   );

@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, Filter } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+  Plus,
+  Filter,
+} from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -48,7 +54,7 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
       endTime: '11:00',
       type: 'meeting',
       color: 'bg-blue-500',
-      date: new Date()
+      date: new Date(),
     },
     {
       id: '2',
@@ -57,26 +63,56 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
       endTime: '15:30',
       type: 'task',
       color: 'bg-green-500',
-      date: new Date(new Date().setDate(new Date().getDate() + 2))
-    }
+      date: new Date(new Date().setDate(new Date().getDate() + 2)),
+    },
   ]);
   const [viewFilters, setViewFilters] = useState<ViewFilter[]>([
-    { id: 'meetings', label: 'Meetings', description: 'Show scheduled meetings', active: true },
-    { id: 'tasks', label: 'Tasks', description: 'Show tasks and deadlines', active: true },
-    { id: 'events', label: 'Events', description: 'Show calendar events', active: true },
-    { id: 'personal', label: 'Personal', description: 'Show personal items', active: false }
+    {
+      id: 'meetings',
+      label: 'Meetings',
+      description: 'Show scheduled meetings',
+      active: true,
+    },
+    {
+      id: 'tasks',
+      label: 'Tasks',
+      description: 'Show tasks and deadlines',
+      active: true,
+    },
+    {
+      id: 'events',
+      label: 'Events',
+      description: 'Show calendar events',
+      active: true,
+    },
+    {
+      id: 'personal',
+      label: 'Personal',
+      description: 'Show personal items',
+      active: false,
+    },
   ]);
 
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   const viewOptions = [
     { id: 'Day', label: 'Day', description: 'Single day view' },
     { id: 'Week', label: 'Week', description: '7-day week view' },
     { id: 'Month', label: 'Month', description: 'Full month grid' },
-    { id: 'Agenda', label: 'Agenda', description: 'List view of events' }
+    { id: 'Agenda', label: 'Agenda', description: 'List view of events' },
   ];
 
   useEffect(() => {
@@ -89,16 +125,19 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
 
   const filteredEvents = events.filter(event => {
     const activeFilters = viewFilters.filter(f => f.active).map(f => f.id);
-    if (activeFilters.includes('meetings') && event.type === 'meeting') return true;
+    if (activeFilters.includes('meetings') && event.type === 'meeting')
+      return true;
     if (activeFilters.includes('tasks') && event.type === 'task') return true;
     if (activeFilters.includes('events') && event.type === 'event') return true;
     return false;
   });
 
   const toggleFilter = (filterId: string) => {
-    setViewFilters(prev => prev.map(filter => 
-      filter.id === filterId ? { ...filter, active: !filter.active } : filter
-    ));
+    setViewFilters(prev =>
+      prev.map(filter =>
+        filter.id === filterId ? { ...filter, active: !filter.active } : filter
+      )
+    );
   };
 
   const handleDateClick = (date: Date) => {
@@ -123,24 +162,30 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
 
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
-    { label: 'Calendar' }
+    { label: 'Calendar' },
   ];
 
   return (
     <div className="space-y-6">
       <Breadcrumb items={breadcrumbItems} />
-      
+
       {loading ? (
         <LoadingSpinner />
       ) : (
-        <div className={`transition-all duration-500 ${
-          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}>
+        <div
+          className={`transition-all duration-500 ${
+            showContent
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-4'
+          }`}
+        >
           <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300">
             {/* Header */}
             <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-800">
               <div className="flex items-center space-x-4">
-                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Calendar</h1>
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Calendar
+                </h1>
               </div>
               <div className="flex items-center space-x-2">
                 <button
@@ -187,11 +232,11 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
                   {months[currentDate.getMonth()]} {currentDate.getFullYear()}
                 </h2>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 {/* View Options */}
                 <div className="flex items-center space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-lg p-1">
-                  {viewOptions.map((option) => (
+                  {viewOptions.map(option => (
                     <button
                       key={option.id}
                       onClick={() => setView(option.id)}
@@ -206,7 +251,7 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
                     </button>
                   ))}
                 </div>
-                
+
                 {/* Filters */}
                 <div className="relative">
                   <button
@@ -220,15 +265,20 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
                     <Filter size={12} />
                     <span>Filters</span>
                   </button>
-                  
+
                   {showFilters && (
                     <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-10">
                       <div className="p-2 border-b border-gray-200 dark:border-gray-800">
-                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">View Filters</h3>
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                          View Filters
+                        </h3>
                       </div>
                       <div className="p-2">
-                        {viewFilters.map((filter) => (
-                          <label key={filter.id} className="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer">
+                        {viewFilters.map(filter => (
+                          <label
+                            key={filter.id}
+                            className="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
+                          >
                             <input
                               type="checkbox"
                               checked={filter.active}
@@ -236,8 +286,12 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
                               className="w-3 h-3 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 bg-white dark:bg-gray-800"
                             />
                             <div>
-                              <div className="text-sm font-medium text-gray-900 dark:text-white">{filter.label}</div>
-                              <div className="text-xs text-gray-500 dark:text-gray-400">{filter.description}</div>
+                              <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                {filter.label}
+                              </div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                                {filter.description}
+                              </div>
                             </div>
                           </label>
                         ))}
@@ -268,11 +322,11 @@ const Calendar = ({ onNavigateBack }: CalendarProps) => {
           />
         </div>
       )}
-      
+
       {/* Click outside to close filters */}
       {showFilters && (
-        <div 
-          className="fixed inset-0 z-0" 
+        <div
+          className="fixed inset-0 z-0"
           onClick={() => setShowFilters(false)}
         />
       )}

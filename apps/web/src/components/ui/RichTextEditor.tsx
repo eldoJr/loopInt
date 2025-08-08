@@ -1,7 +1,30 @@
-import { useState, useRef, useEffect, forwardRef, useCallback, memo } from 'react';
-import { 
-  Bold, Italic, Underline, List, ListOrdered, Quote, Link, Image, Undo, Redo, 
-  AlignLeft, AlignCenter, AlignRight, AlignJustify, Heading1, Heading2, Eye, EyeOff
+import {
+  useState,
+  useRef,
+  useEffect,
+  forwardRef,
+  useCallback,
+  memo,
+} from 'react';
+import {
+  Bold,
+  Italic,
+  Underline,
+  List,
+  ListOrdered,
+  Quote,
+  Link,
+  Image,
+  Undo,
+  Redo,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  Heading1,
+  Heading2,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import './RichTextEditor.css';
 
@@ -25,19 +48,25 @@ export interface RichTextEditorRef {
   clearContent: () => void;
 }
 
-export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(
-  ({ 
-    label, 
-    error, 
-    required, 
-    className = '', 
-    onChange, 
-    value, 
-    initialValue = '', 
-    placeholder = 'Write something...',
-    maxLength,
-    showPreview: initialShowPreview = false
-  }, ref) => {
+export const RichTextEditor = forwardRef<
+  RichTextEditorRef,
+  RichTextEditorProps
+>(
+  (
+    {
+      label,
+      error,
+      required,
+      className = '',
+      onChange,
+      value,
+      initialValue = '',
+      placeholder = 'Write something...',
+      maxLength,
+      showPreview: initialShowPreview = false,
+    },
+    ref
+  ) => {
     const [showPreview, setShowPreview] = useState(initialShowPreview);
     const [charCount, setCharCount] = useState(0);
     const [activeFormats, setActiveFormats] = useState({
@@ -52,7 +81,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       alignLeft: false,
       alignCenter: false,
       alignRight: false,
-      alignJustify: false
+      alignJustify: false,
     });
     const editorRef = useRef<HTMLDivElement>(null);
     const isInternalChange = useRef(false);
@@ -75,22 +104,34 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     const checkActiveFormats = useCallback(() => {
       try {
         if (!document.queryCommandEnabled) return;
-        
+
         // Use requestAnimationFrame for smoother UI updates
         requestAnimationFrame(() => {
           setActiveFormats({
             bold: document.queryCommandState('bold'),
             italic: document.queryCommandState('italic'),
             underline: document.queryCommandState('underline'),
-            h1: document.queryCommandValue('formatBlock').toLowerCase() === 'h1' || document.queryCommandValue('formatBlock').toLowerCase() === '<h1>',
-            h2: document.queryCommandValue('formatBlock').toLowerCase() === 'h2' || document.queryCommandValue('formatBlock').toLowerCase() === '<h2>',
+            h1:
+              document.queryCommandValue('formatBlock').toLowerCase() ===
+                'h1' ||
+              document.queryCommandValue('formatBlock').toLowerCase() ===
+                '<h1>',
+            h2:
+              document.queryCommandValue('formatBlock').toLowerCase() ===
+                'h2' ||
+              document.queryCommandValue('formatBlock').toLowerCase() ===
+                '<h2>',
             ul: document.queryCommandState('insertUnorderedList'),
             ol: document.queryCommandState('insertOrderedList'),
-            blockquote: document.queryCommandValue('formatBlock').toLowerCase() === 'blockquote' || document.queryCommandValue('formatBlock').toLowerCase() === '<blockquote>',
+            blockquote:
+              document.queryCommandValue('formatBlock').toLowerCase() ===
+                'blockquote' ||
+              document.queryCommandValue('formatBlock').toLowerCase() ===
+                '<blockquote>',
             alignLeft: document.queryCommandState('justifyLeft'),
             alignCenter: document.queryCommandState('justifyCenter'),
             alignRight: document.queryCommandState('justifyRight'),
-            alignJustify: document.queryCommandState('justifyFull')
+            alignJustify: document.queryCommandState('justifyFull'),
           });
         });
       } catch (error) {
@@ -102,10 +143,10 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     const preserveCaretPosition = useCallback(() => {
       // Only track position when editor has focus
       if (document.activeElement !== editorRef.current) return;
-      
+
       const selection = window.getSelection();
       if (!selection || selection.rangeCount === 0) return;
-      
+
       // Store the current offset
       lastCaretPosition.current = selection.focusOffset;
     }, []);
@@ -113,7 +154,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     const handleChange = useCallback(() => {
       // Track caret position before changes
       preserveCaretPosition();
-      
+
       updateCharCount();
       isInternalChange.current = true;
       if (onChange && editorRef.current) {
@@ -134,7 +175,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
         }
       }
     }, [initialValue, updateCharCount, value]);
-    
+
     // Add event listeners for selection changes
     useEffect(() => {
       const handleSelectionChange = () => {
@@ -142,17 +183,17 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
           checkActiveFormats();
         }
       };
-      
+
       // Improve responsiveness with multiple event listeners
       document.addEventListener('selectionchange', handleSelectionChange);
-      
+
       // Add pointer event listeners to the editor
       const editor = editorRef.current;
       if (editor) {
         editor.addEventListener('pointerdown', checkActiveFormats);
         editor.addEventListener('pointerup', checkActiveFormats);
       }
-      
+
       return () => {
         document.removeEventListener('selectionchange', handleSelectionChange);
         if (editor) {
@@ -164,7 +205,11 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
 
     // Update content when value prop changes (external change)
     useEffect(() => {
-      if (value !== undefined && editorRef.current && !isInternalChange.current) {
+      if (
+        value !== undefined &&
+        editorRef.current &&
+        !isInternalChange.current
+      ) {
         // Only update if the value has actually changed
         if (editorRef.current.innerHTML !== value) {
           editorRef.current.innerHTML = value;
@@ -173,7 +218,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       }
       isInternalChange.current = false;
     }, [value, updateCharCount]);
-    
+
     // Update showPreview state when prop changes
     useEffect(() => {
       setShowPreview(initialShowPreview);
@@ -192,7 +237,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                 editorRef.current.innerHTML = '';
                 handleChange();
               }
-            }
+            },
           });
         } else {
           ref.current = {
@@ -204,48 +249,69 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                 editorRef.current.innerHTML = '';
                 handleChange();
               }
-            }
+            },
           };
         }
       }
     }, [ref, handleChange]);
-    
-    const execCommand = useCallback((command: string, value: string = '') => {
-      try {
-        // Save current selection
-        const selection = window.getSelection();
-        const range = selection?.getRangeAt(0);
-        
-        document.execCommand(command, false, value);
-        
-        // Restore focus and selection
-        editorRef.current?.focus();
-        if (range && selection) {
-          selection.removeAllRanges();
-          selection.addRange(range);
+
+    const execCommand = useCallback(
+      (command: string, value: string = '') => {
+        try {
+          // Save current selection
+          const selection = window.getSelection();
+          const range = selection?.getRangeAt(0);
+
+          document.execCommand(command, false, value);
+
+          // Restore focus and selection
+          editorRef.current?.focus();
+          if (range && selection) {
+            selection.removeAllRanges();
+            selection.addRange(range);
+          }
+
+          // Update state after command execution
+          checkActiveFormats();
+
+          // Don't call handleChange here to prevent cursor jumping
+          if (onChange && editorRef.current) {
+            onChange(editorRef.current.innerHTML);
+          }
+        } catch (error) {
+          console.error(`Error executing command ${command}:`, error);
         }
-        
-        // Update state after command execution
-        checkActiveFormats();
-        
-        // Don't call handleChange here to prevent cursor jumping
-        if (onChange && editorRef.current) {
-          onChange(editorRef.current.innerHTML);
-        }
-      } catch (error) {
-        console.error(`Error executing command ${command}:`, error);
-      }
-    }, [onChange, checkActiveFormats]);
+      },
+      [onChange, checkActiveFormats]
+    );
 
     const formatBold = useCallback(() => execCommand('bold'), [execCommand]);
-    const formatItalic = useCallback(() => execCommand('italic'), [execCommand]);
-    const formatUnderline = useCallback(() => execCommand('underline'), [execCommand]);
-    const formatHeading = useCallback((level: number) => {
-      execCommand('formatBlock', `<h${level}>`);
-    }, [execCommand]);
-    const formatBulletList = useCallback(() => execCommand('insertUnorderedList'), [execCommand]);
-    const formatNumberedList = useCallback(() => execCommand('insertOrderedList'), [execCommand]);
-    const formatQuote = useCallback(() => execCommand('formatBlock', '<blockquote>'), [execCommand]);
+    const formatItalic = useCallback(
+      () => execCommand('italic'),
+      [execCommand]
+    );
+    const formatUnderline = useCallback(
+      () => execCommand('underline'),
+      [execCommand]
+    );
+    const formatHeading = useCallback(
+      (level: number) => {
+        execCommand('formatBlock', `<h${level}>`);
+      },
+      [execCommand]
+    );
+    const formatBulletList = useCallback(
+      () => execCommand('insertUnorderedList'),
+      [execCommand]
+    );
+    const formatNumberedList = useCallback(
+      () => execCommand('insertOrderedList'),
+      [execCommand]
+    );
+    const formatQuote = useCallback(
+      () => execCommand('formatBlock', '<blockquote>'),
+      [execCommand]
+    );
     const formatLink = useCallback(() => {
       const url = prompt('Enter URL:', 'https://');
       if (url) execCommand('createLink', url);
@@ -254,38 +320,45 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       const url = prompt('Enter image URL:', 'https://');
       if (url) execCommand('insertImage', url);
     }, [execCommand]);
-    const formatAlign = useCallback((align: string) => execCommand('justify' + align), [execCommand]);
+    const formatAlign = useCallback(
+      (align: string) => execCommand('justify' + align),
+      [execCommand]
+    );
     const handleUndo = useCallback(() => execCommand('undo'), [execCommand]);
     const handleRedo = useCallback(() => execCommand('redo'), [execCommand]);
 
     // Use memo for better performance
-    const MenuButton = memo(({ 
-      onClick, 
-      active = false,
-      children 
-    }: { 
-      onClick: () => void; 
-      active?: boolean;
-      children: React.ReactNode;
-    }) => (
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onClick();
-        }}
-        onMouseDown={(e) => {
-          // Prevent losing selection when clicking buttons
-          e.preventDefault();
-        }}
-        className={`p-2 rounded-md transition-colors ${
-          active ? 'bg-gray-200 text-gray-900' : 'text-gray-600 hover:bg-gray-100'
-        }`}
-      >
-        {children}
-      </button>
-    ));
+    const MenuButton = memo(
+      ({
+        onClick,
+        active = false,
+        children,
+      }: {
+        onClick: () => void;
+        active?: boolean;
+        children: React.ReactNode;
+      }) => (
+        <button
+          type="button"
+          onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            onClick();
+          }}
+          onMouseDown={e => {
+            // Prevent losing selection when clicking buttons
+            e.preventDefault();
+          }}
+          className={`p-2 rounded-md transition-colors ${
+            active
+              ? 'bg-gray-200 text-gray-900'
+              : 'text-gray-600 hover:bg-gray-100'
+          }`}
+        >
+          {children}
+        </button>
+      )
+    );
 
     return (
       <div className={`flex flex-col space-y-2 ${className}`}>
@@ -294,96 +367,119 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
             {label} {required && <span className="text-red-500">*</span>}
           </label>
         )}
-        
+
         <div className="border border-gray-300 rounded-md overflow-hidden">
           {/* Editor Toolbar */}
           <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-200 bg-gray-50 sticky top-0 z-10">
             <MenuButton onClick={formatBold} active={activeFormats.bold}>
               <Bold size={18} />
             </MenuButton>
-            
+
             <MenuButton onClick={formatItalic} active={activeFormats.italic}>
               <Italic size={18} />
             </MenuButton>
-            
-            <MenuButton onClick={formatUnderline} active={activeFormats.underline}>
+
+            <MenuButton
+              onClick={formatUnderline}
+              active={activeFormats.underline}
+            >
               <Underline size={18} />
             </MenuButton>
-            
+
             <div className="w-px h-6 bg-gray-300 mx-1" />
-            
-            <MenuButton onClick={() => formatHeading(1)} active={activeFormats.h1}>
+
+            <MenuButton
+              onClick={() => formatHeading(1)}
+              active={activeFormats.h1}
+            >
               <Heading1 size={18} />
             </MenuButton>
-            
-            <MenuButton onClick={() => formatHeading(2)} active={activeFormats.h2}>
+
+            <MenuButton
+              onClick={() => formatHeading(2)}
+              active={activeFormats.h2}
+            >
               <Heading2 size={18} />
             </MenuButton>
-            
+
             <div className="w-px h-6 bg-gray-300 mx-1" />
-            
+
             <MenuButton onClick={formatBulletList} active={activeFormats.ul}>
               <List size={18} />
             </MenuButton>
-            
+
             <MenuButton onClick={formatNumberedList} active={activeFormats.ol}>
               <ListOrdered size={18} />
             </MenuButton>
-            
+
             <MenuButton onClick={formatQuote} active={activeFormats.blockquote}>
               <Quote size={18} />
             </MenuButton>
-            
+
             <div className="w-px h-6 bg-gray-300 mx-1" />
-            
+
             <MenuButton onClick={formatLink}>
               <Link size={18} />
             </MenuButton>
-            
+
             <MenuButton onClick={formatImage}>
               <Image size={18} />
             </MenuButton>
-            
+
             <div className="w-px h-6 bg-gray-300 mx-1" />
-            
-            <MenuButton onClick={() => formatAlign('Left')} active={activeFormats.alignLeft}>
+
+            <MenuButton
+              onClick={() => formatAlign('Left')}
+              active={activeFormats.alignLeft}
+            >
               <AlignLeft size={18} />
             </MenuButton>
-            
-            <MenuButton onClick={() => formatAlign('Center')} active={activeFormats.alignCenter}>
+
+            <MenuButton
+              onClick={() => formatAlign('Center')}
+              active={activeFormats.alignCenter}
+            >
               <AlignCenter size={18} />
             </MenuButton>
-            
-            <MenuButton onClick={() => formatAlign('Right')} active={activeFormats.alignRight}>
+
+            <MenuButton
+              onClick={() => formatAlign('Right')}
+              active={activeFormats.alignRight}
+            >
               <AlignRight size={18} />
             </MenuButton>
-            
-            <MenuButton onClick={() => formatAlign('Full')} active={activeFormats.alignJustify}>
+
+            <MenuButton
+              onClick={() => formatAlign('Full')}
+              active={activeFormats.alignJustify}
+            >
               <AlignJustify size={18} />
             </MenuButton>
-            
+
             <div className="w-px h-6 bg-gray-300 mx-1" />
-            
+
             <MenuButton onClick={handleUndo}>
               <Undo size={18} />
             </MenuButton>
-            
+
             <MenuButton onClick={handleRedo}>
               <Redo size={18} />
             </MenuButton>
-            
+
             <div className="flex-grow" />
-            
-            <MenuButton 
+
+            <MenuButton
               onClick={() => setShowPreview(!showPreview)}
               active={showPreview}
             >
               {showPreview ? <EyeOff size={18} /> : <Eye size={18} />}
             </MenuButton>
           </div>
-          
+
           {/* Editor Content */}
-          <div className={`transition-all duration-200 ${showPreview ? 'bg-gray-50' : 'bg-white'}`}>
+          <div
+            className={`transition-all duration-200 ${showPreview ? 'bg-gray-50' : 'bg-white'}`}
+          >
             <div
               ref={editorRef}
               contentEditable={!showPreview}
@@ -400,7 +496,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
               onMouseDown={checkActiveFormats}
               onClick={checkActiveFormats}
               onKeyUp={checkActiveFormats}
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 if (e.key === 'Tab') {
                   e.preventDefault(); // Prevent losing focus
                 }
@@ -413,7 +509,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
               suppressContentEditableWarning={true}
             />
           </div>
-          
+
           {/* Character Count */}
           {maxLength && (
             <div className="flex justify-end p-2 text-sm text-gray-500 border-t border-gray-200">
@@ -426,10 +522,8 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
             </div>
           )}
         </div>
-        
-        {error && (
-          <p className="mt-1 text-sm text-red-600">{error}</p>
-        )}
+
+        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
       </div>
     );
   }

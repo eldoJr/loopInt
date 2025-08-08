@@ -14,7 +14,7 @@ export const colors = {
     },
     pink: {
       500: 'rgb(236 72 153)',
-    }
+    },
   },
   neutral: {
     white: 'rgb(255 255 255)',
@@ -30,5 +30,5 @@ export const colors = {
       900: 'rgb(17 24 39)',
     },
     black: 'rgb(0 0 0)',
-  }
+  },
 } as const;

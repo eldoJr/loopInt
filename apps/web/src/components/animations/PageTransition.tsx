@@ -16,7 +16,7 @@ export const PageTransition = ({ children, location }: PageTransitionProps) => {
   const springProps = useSpring({
     opacity: isVisible ? 1 : 0,
     transform: isVisible ? 'translateY(0px)' : 'translateY(10px)',
-    config: { tension: 300, friction: 30 }
+    config: { tension: 300, friction: 30 },
   });
 
   useEffect(() => {
@@ -31,8 +31,8 @@ export const PageTransition = ({ children, location }: PageTransitionProps) => {
   }, [location, currentLocation]);
 
   return (
-    <animated.div 
-      style={springProps} 
+    <animated.div
+      style={springProps}
       className={`w-full ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
     >
       {children}

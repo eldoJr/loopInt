@@ -1,15 +1,15 @@
-import '@testing-library/jest-dom'
-import { vi } from 'vitest'
-import React from 'react'
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+import React from 'react';
 
 // Mock React for proper hook testing
 vi.mock('react', async () => {
-  const actual = await vi.importActual('react')
+  const actual = await vi.importActual('react');
   return {
     ...actual,
-    useCallback: vi.fn((fn) => fn),
-  }
-})
+    useCallback: vi.fn(fn => fn),
+  };
+});
 
 // Mock localStorage
 const localStorageMock = {
@@ -17,8 +17,8 @@ const localStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-}
-global.localStorage = localStorageMock
+};
+global.localStorage = localStorageMock;
 
 // Mock sessionStorage
 const sessionStorageMock = {
@@ -26,8 +26,8 @@ const sessionStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-}
-global.sessionStorage = sessionStorageMock
+};
+global.sessionStorage = sessionStorageMock;
 
 // Mock window.location
 Object.defineProperty(window, 'location', {
@@ -40,14 +40,21 @@ Object.defineProperty(window, 'location', {
     reload: vi.fn(),
   },
   writable: true,
-})
+});
 
 // Mock Lucide React icons
 vi.mock('lucide-react', () => {
-  const MockIcon = ({ className, ...props }: any) => 
-    React.createElement('div', { className, 'data-testid': 'mock-icon', ...props })
-  
-  return new Proxy({}, {
-    get: () => MockIcon
-  })
-})
+  const MockIcon = ({ className, ...props }: any) =>
+    React.createElement('div', {
+      className,
+      'data-testid': 'mock-icon',
+      ...props,
+    });
+
+  return new Proxy(
+    {},
+    {
+      get: () => MockIcon,
+    }
+  );
+});

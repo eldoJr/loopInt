@@ -10,7 +10,13 @@ interface CustomSelectProps {
   className?: string;
 }
 
-const CustomSelect = ({ options, value, onChange, error, className = '' }: CustomSelectProps) => {
+const CustomSelect = ({
+  options,
+  value,
+  onChange,
+  error,
+  className = '',
+}: CustomSelectProps) => {
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,7 +28,10 @@ const CustomSelect = ({ options, value, onChange, error, className = '' }: Custo
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -37,18 +46,26 @@ const CustomSelect = ({ options, value, onChange, error, className = '' }: Custo
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex items-center justify-between ${theme === 'dark' ? 'bg-gray-800/50 text-white' : 'bg-gray-50 text-gray-900'} border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 transition-all text-sm text-left ${
-          error 
-            ? theme === 'dark' ? 'border-red-500/50 focus:ring-red-500/50' : 'border-red-300 focus:ring-red-500/50'
-            : theme === 'dark' ? 'border-gray-700/50 focus:ring-blue-500/50' : 'border-gray-300 focus:ring-blue-500/50'
+          error
+            ? theme === 'dark'
+              ? 'border-red-500/50 focus:ring-red-500/50'
+              : 'border-red-300 focus:ring-red-500/50'
+            : theme === 'dark'
+              ? 'border-gray-700/50 focus:ring-blue-500/50'
+              : 'border-gray-300 focus:ring-blue-500/50'
         } ${className}`}
       >
         <span>{value}</span>
-        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
+        <ChevronDown
+          className={`w-4 h-4 transition-transform ${isOpen ? 'transform rotate-180' : ''}`}
+        />
       </button>
-      
+
       {isOpen && (
-        <div className={`w-full mt-1 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'} border rounded-lg shadow-lg max-h-none overflow-auto`}>
-          {options.map((option) => (
+        <div
+          className={`w-full mt-1 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-300'} border rounded-lg shadow-lg max-h-none overflow-auto`}
+        >
+          {options.map(option => (
             <div
               key={option}
               className={`px-3 py-2 cursor-pointer ${theme === 'dark' ? 'hover:bg-gray-700 text-white' : 'hover:bg-gray-100 text-gray-900'} text-sm`}

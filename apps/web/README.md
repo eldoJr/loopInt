@@ -9,6 +9,7 @@ The application has been configured to run in static mode without requiring the 
 ### Static Admin Credentials
 
 Use these credentials to log in:
+
 - **Email**: admin@loopint.com
 - **Password**: admin123
 

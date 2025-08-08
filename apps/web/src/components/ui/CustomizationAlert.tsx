@@ -8,7 +8,12 @@ interface CustomizationAlertProps {
   onNotNow: () => void;
 }
 
-const CustomizationAlert = ({ isOpen, onClose, onGotIt, onNotNow }: CustomizationAlertProps) => {
+const CustomizationAlert = ({
+  isOpen,
+  onClose,
+  onGotIt,
+  onNotNow,
+}: CustomizationAlertProps) => {
   if (!isOpen) return null;
 
   return (
@@ -17,7 +22,7 @@ const CustomizationAlert = ({ isOpen, onClose, onGotIt, onNotNow }: Customizatio
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
         className="bg-gray-900/95 backdrop-blur-md border border-gray-800/50 rounded-2xl shadow-2xl max-w-md mx-4 p-6"
       >
         <div className="flex items-start justify-between mb-4">
@@ -25,7 +30,9 @@ const CustomizationAlert = ({ isOpen, onClose, onGotIt, onNotNow }: Customizatio
             <div className="p-2 bg-blue-500/20 rounded-lg">
               <Settings className="w-5 h-5 text-blue-400" />
             </div>
-            <h3 className="text-lg font-semibold text-white">Dashboard Customization</h3>
+            <h3 className="text-lg font-semibold text-white">
+              Dashboard Customization
+            </h3>
           </div>
           <button
             onClick={onClose}
@@ -36,8 +43,9 @@ const CustomizationAlert = ({ isOpen, onClose, onGotIt, onNotNow }: Customizatio
         </div>
 
         <p className="text-gray-300 leading-relaxed mb-6">
-          Customize your dashboard by enabling the switch next to the chosen features. 
-          Drag & drop to change the order. Click the "finish" button to complete the dashboard configuration.
+          Customize your dashboard by enabling the switch next to the chosen
+          features. Drag & drop to change the order. Click the "finish" button
+          to complete the dashboard configuration.
         </p>
 
         <div className="flex space-x-3">

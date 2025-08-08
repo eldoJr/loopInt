@@ -1,6 +1,36 @@
 import { useState, useEffect } from 'react';
-import { Calendar, User, Save, CalendarDays, Timer, Target, CalendarCheck, Check, Sparkles, X, Bold, Italic, Underline, Strikethrough, List, ListOrdered, AlignLeft, AlignCenter, AlignRight, Link, Code } from 'lucide-react';
-import { format, addDays, startOfWeek, addWeeks, isToday, isTomorrow, isThisWeek } from 'date-fns';
+import {
+  Calendar,
+  User,
+  Save,
+  CalendarDays,
+  Timer,
+  Target,
+  CalendarCheck,
+  Check,
+  Sparkles,
+  X,
+  Bold,
+  Italic,
+  Underline,
+  Strikethrough,
+  List,
+  ListOrdered,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Link,
+  Code,
+} from 'lucide-react';
+import {
+  format,
+  addDays,
+  startOfWeek,
+  addWeeks,
+  isToday,
+  isTomorrow,
+  isThisWeek,
+} from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -20,23 +50,30 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   const [showForm, setShowForm] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [showAIPanel, setShowAIPanel] = useState(false);
-  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>('left');
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>(
+    'left'
+  );
   const [textStyles, setTextStyles] = useState({
     bold: false,
     italic: false,
     underline: false,
-    strikethrough: false
+    strikethrough: false,
   });
-  
-  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; email: string; } | null>(null);
+
+  const [currentUser, setCurrentUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+  } | null>(null);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+    const userData =
+      localStorage.getItem('user') || sessionStorage.getItem('user');
     if (userData) {
       setCurrentUser(JSON.parse(userData));
     }
   }, []);
-  
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -45,7 +82,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
     due_date: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
     project_id: '',
     user_id: currentUser?.id || '',
-    user_name: currentUser?.name || ''
+    user_name: currentUser?.name || '',
   });
 
   useEffect(() => {
@@ -53,16 +90,32 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
       setFormData(prev => ({
         ...prev,
         user_id: currentUser.id,
-        user_name: currentUser.name
+        user_name: currentUser.name,
       }));
     }
   }, [currentUser]);
 
   const quickDateOptions = [
-    { label: 'Today', value: format(new Date(), 'yyyy-MM-dd'), icon: CalendarDays },
-    { label: 'Tomorrow', value: format(addDays(new Date(), 1), 'yyyy-MM-dd'), icon: Timer },
-    { label: 'This Weekend', value: format(addDays(startOfWeek(new Date()), 6), 'yyyy-MM-dd'), icon: Target },
-    { label: 'Next Week', value: format(addWeeks(new Date(), 1), 'yyyy-MM-dd'), icon: CalendarCheck }
+    {
+      label: 'Today',
+      value: format(new Date(), 'yyyy-MM-dd'),
+      icon: CalendarDays,
+    },
+    {
+      label: 'Tomorrow',
+      value: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
+      icon: Timer,
+    },
+    {
+      label: 'This Weekend',
+      value: format(addDays(startOfWeek(new Date()), 6), 'yyyy-MM-dd'),
+      icon: Target,
+    },
+    {
+      label: 'Next Week',
+      value: format(addWeeks(new Date(), 1), 'yyyy-MM-dd'),
+      icon: CalendarCheck,
+    },
   ];
 
   const getDateLabel = (dateStr: string) => {
@@ -99,7 +152,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
         onNavigateToTasks?.();
       }
     };
-    
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onNavigateToTasks]);
@@ -114,9 +167,9 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
         priority: formData.priority,
         due_date: formData.due_date || null,
         user_id: formData.user_id,
-        user_name: formData.user_name
+        user_name: formData.user_name,
       };
-      
+
       console.log('Submitting task:', taskData);
       const response = await fetch('http://localhost:3000/tasks', {
         method: 'POST',
@@ -125,7 +178,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
         },
         body: JSON.stringify(taskData),
       });
-      
+
       if (response.ok) {
         const result = await response.json();
         console.log('Task created successfully:', result);
@@ -143,30 +196,42 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
-  const handleAIApply = (aiData: { title?: string; description?: string; priority?: string; status?: string; due_date?: string }) => {
+  const handleAIApply = (aiData: {
+    title?: string;
+    description?: string;
+    priority?: string;
+    status?: string;
+    due_date?: string;
+  }) => {
     setFormData(prev => ({
       ...prev,
       title: aiData.title || prev.title,
       description: aiData.description || prev.description,
       priority: aiData.priority || prev.priority,
       status: aiData.status || prev.status,
-      due_date: aiData.due_date || prev.due_date
+      due_date: aiData.due_date || prev.due_date,
     }));
     setShowAIPanel(false);
   };
-  
+
   const handleTextStyle = (style: keyof typeof textStyles) => {
     setTextStyles(prev => ({ ...prev, [style]: !prev[style] }));
-    
+
     // Apply style to selected text if there's a selection
-    const textarea = document.querySelector('textarea[name="description"]') as HTMLTextAreaElement;
+    const textarea = document.querySelector(
+      'textarea[name="description"]'
+    ) as HTMLTextAreaElement;
     if (textarea && textarea.selectionStart !== textarea.selectionEnd) {
       // This is a placeholder for potential future enhancement with a more sophisticated rich text editor
       // For now, we're just toggling the global style state
@@ -180,7 +245,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   const breadcrumbItems = [
     { label: 'LoopInt', onClick: onNavigateBack },
     { label: 'Tasks', onClick: onNavigateToTasks },
-    { label: 'Add Task' }
+    { label: 'Add Task' },
   ];
 
   if (loading) {
@@ -193,15 +258,19 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   }
 
   return (
-    <div className={`space-y-6 transition-all duration-500 ${
-      showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-    }`}>
+    <div
+      className={`space-y-6 transition-all duration-500 ${
+        showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+    >
       <Breadcrumb items={breadcrumbItems} />
-      
+
       <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
         <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Add New Task</h1>
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Add New Task
+            </h1>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowAIPanel(!showAIPanel)}
@@ -211,20 +280,24 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     : 'bg-green-100 dark:bg-green-600/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-500/30 hover:bg-green-200 dark:hover:bg-green-600/30'
                 }`}
               >
-                <div className={`transition-transform duration-300 ${
-                  showAIPanel ? 'rotate-180' : 'group-hover:rotate-12'
-                }`}>
+                <div
+                  className={`transition-transform duration-300 ${
+                    showAIPanel ? 'rotate-180' : 'group-hover:rotate-12'
+                  }`}
+                >
                   {showAIPanel ? <X size={14} /> : <Sparkles size={14} />}
                 </div>
-                <span className="font-medium">{showAIPanel ? 'Close AI' : 'AI'}</span>
+                <span className="font-medium">
+                  {showAIPanel ? 'Close AI' : 'AI'}
+                </span>
               </button>
-              <button 
+              <button
                 onClick={onNavigateToTasks}
                 className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleSubmit}
                 className="flex items-center space-x-2 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm"
               >
@@ -236,224 +309,252 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
         </div>
 
         <div className="relative">
-          <div className={`flex transition-all duration-500 ease-in-out ${!showAIPanel ? 'block' : ''}`}>
-            <div className={`${showAIPanel ? 'w-1/2' : 'w-full'} flex-shrink-0 p-4 transition-all duration-500`}>
+          <div
+            className={`flex transition-all duration-500 ease-in-out ${!showAIPanel ? 'block' : ''}`}
+          >
+            <div
+              className={`${showAIPanel ? 'w-1/2' : 'w-full'} flex-shrink-0 p-4 transition-all duration-500`}
+            >
               <form onSubmit={handleSubmit}>
-                <div className={`space-y-6 ${!showAIPanel ? 'max-w-3xl mx-auto' : ''}`}>
-            {/* Section 1 - Basic Information */}
-            <div className="space-y-4">
-              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
-                Task Information
-              </h2>
-              
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Task Title *
-                </label>
-                <div className="col-span-9">
-                  <input
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
-                    placeholder="Enter task title"
-                  />
-                </div>
-              </div>
+                <div
+                  className={`space-y-6 ${!showAIPanel ? 'max-w-3xl mx-auto' : ''}`}
+                >
+                  {/* Section 1 - Basic Information */}
+                  <div className="space-y-4">
+                    <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
+                      Task Information
+                    </h2>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Status *
-                </label>
-                <div className="col-span-4">
-                  <CustomSelect
-                    options={['todo', 'in_progress', 'done']}
-                    value={formData.status}
-                    onChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-12 gap-3 items-center">
-                  <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Priority *
-                  </label>
-                  <div className="col-span-4">
-                    <CustomSelect
-                      options={['low', 'medium', 'high']}
-                      value={formData.priority}
-                      onChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
-                    />
-                  </div>
-                </div>
+                    <div className="grid grid-cols-12 gap-3 items-center">
+                      <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                        Task Title *
+                      </label>
+                      <div className="col-span-9">
+                        <input
+                          type="text"
+                          name="title"
+                          value={formData.title}
+                          onChange={handleChange}
+                          required
+                          className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
+                          placeholder="Enter task title"
+                        />
+                      </div>
+                    </div>
 
-            <div className="grid grid-cols-12 gap-3 items-center">
-              <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                Due Date *
-              </label>
-              <div className="col-span-9">
-                <div className="space-y-2">
-                  <div className="flex flex-wrap gap-1">
-                    {quickDateOptions.map((option) => (
-                      <button
-                        key={option.label}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, due_date: option.value })}
-                        className={`px-2 py-1 rounded-lg text-xs font-medium transition-all flex items-center space-x-1 ${
-                          formData.due_date === option.value
-                            ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
-                            : 'bg-gray-100 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-700/50'
-                        }`}
-                      >
-                        <option.icon size={12} />
-                        <span>{option.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                    <input
-                      type="date"
-                      name="due_date"
-                      value={formData.due_date}
-                      onChange={handleChange}
-                      className="w-auto bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
-                    />
-                  </div>
-                  {formData.due_date && (
-                    <span className="text-blue-500 dark:text-blue-400 text-xs">({getDateLabel(formData.due_date)})</span>
-                  )}
-                </div>
-              </div>
-            </div>
+                    <div className="grid grid-cols-12 gap-3 items-center">
+                      <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                        Status *
+                      </label>
+                      <div className="col-span-4">
+                        <CustomSelect
+                          options={['todo', 'in_progress', 'done']}
+                          value={formData.status}
+                          onChange={value =>
+                            setFormData(prev => ({ ...prev, status: value }))
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-12 gap-3 items-center">
+                      <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                        Priority *
+                      </label>
+                      <div className="col-span-4">
+                        <CustomSelect
+                          options={['low', 'medium', 'high']}
+                          value={formData.priority}
+                          onChange={value =>
+                            setFormData(prev => ({ ...prev, priority: value }))
+                          }
+                        />
+                      </div>
+                    </div>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Project *
-                </label>
-                <div className="col-span-9">
-                  <CustomSelect
-                    options={['', 'Project 1', 'Project 2', 'Project 3']}
-                    value={formData.project_id || 'Select a project...'}
-                    onChange={(value) => setFormData(prev => ({ ...prev, project_id: value === 'Select a project...' ? '' : value }))}
-                  />
-                </div>
-              </div>
+                    <div className="grid grid-cols-12 gap-3 items-center">
+                      <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                        Due Date *
+                      </label>
+                      <div className="col-span-9">
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap gap-1">
+                            {quickDateOptions.map(option => (
+                              <button
+                                key={option.label}
+                                type="button"
+                                onClick={() =>
+                                  setFormData({
+                                    ...formData,
+                                    due_date: option.value,
+                                  })
+                                }
+                                className={`px-2 py-1 rounded-lg text-xs font-medium transition-all flex items-center space-x-1 ${
+                                  formData.due_date === option.value
+                                    ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                                    : 'bg-gray-100 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-700/50'
+                                }`}
+                              >
+                                <option.icon size={12} />
+                                <span>{option.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                          <div className="relative">
+                            <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                            <input
+                              type="date"
+                              name="due_date"
+                              value={formData.due_date}
+                              onChange={handleChange}
+                              className="w-auto bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
+                            />
+                          </div>
+                          {formData.due_date && (
+                            <span className="text-blue-500 dark:text-blue-400 text-xs">
+                              ({getDateLabel(formData.due_date)})
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Assigned To *
-                </label>
-                <div className="col-span-9">
-                  <div className="w-full bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-600 dark:text-gray-300 flex items-center space-x-2 text-sm">
-                    <User className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-                    <span>{currentUser?.name || 'User'} (You)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    <div className="grid grid-cols-12 gap-3 items-center">
+                      <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                        Project *
+                      </label>
+                      <div className="col-span-9">
+                        <CustomSelect
+                          options={['', 'Project 1', 'Project 2', 'Project 3']}
+                          value={formData.project_id || 'Select a project...'}
+                          onChange={value =>
+                            setFormData(prev => ({
+                              ...prev,
+                              project_id:
+                                value === 'Select a project...' ? '' : value,
+                            }))
+                          }
+                        />
+                      </div>
+                    </div>
 
-            {/* Section 2 - Schedule and Details */}
-            <div className="space-y-4">
-              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
-                Details 
-              </h2>
+                    <div className="grid grid-cols-12 gap-3 items-center">
+                      <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                        Assigned To *
+                      </label>
+                      <div className="col-span-9">
+                        <div className="w-full bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-600 dark:text-gray-300 flex items-center space-x-2 text-sm">
+                          <User className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                          <span>{currentUser?.name || 'User'} (You)</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="grid grid-cols-12 gap-3 items-start">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
-                  Description *
-                </label>
-                <div className="col-span-9">
-                  <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
-                    <Toggle
-                      pressed={textStyles.bold}
-                      onPressedChange={() => handleTextStyle('bold')}
-                      aria-label="Bold"
-                    >
-                      <Bold className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textStyles.italic}
-                      onPressedChange={() => handleTextStyle('italic')}
-                      aria-label="Italic"
-                    >
-                      <Italic className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textStyles.underline}
-                      onPressedChange={() => handleTextStyle('underline')}
-                      aria-label="Underline"
-                    >
-                      <Underline className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textStyles.strikethrough}
-                      onPressedChange={() => handleTextStyle('strikethrough')}
-                      aria-label="Strikethrough"
-                    >
-                      <Strikethrough className="h-4 w-4" />
-                    </Toggle>
-                    
-                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                    
-                    <Toggle
-                      pressed={textAlign === 'left'}
-                      onPressedChange={() => handleTextAlign('left')}
-                      aria-label="Align left"
-                    >
-                      <AlignLeft className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textAlign === 'center'}
-                      onPressedChange={() => handleTextAlign('center')}
-                      aria-label="Align center"
-                    >
-                      <AlignCenter className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textAlign === 'right'}
-                      onPressedChange={() => handleTextAlign('right')}
-                      aria-label="Align right"
-                    >
-                      <AlignRight className="h-4 w-4" />
-                    </Toggle>
-                    
-                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-                    
-                    <Toggle aria-label="List">
-                      <List className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle aria-label="Ordered list">
-                      <ListOrdered className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle aria-label="Link">
-                      <Link className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle aria-label="Code">
-                      <Code className="h-4 w-4" />
-                    </Toggle>
+                  {/* Section 2 - Schedule and Details */}
+                  <div className="space-y-4">
+                    <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
+                      Details
+                    </h2>
+
+                    <div className="grid grid-cols-12 gap-3 items-start">
+                      <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
+                        Description *
+                      </label>
+                      <div className="col-span-9">
+                        <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
+                          <Toggle
+                            pressed={textStyles.bold}
+                            onPressedChange={() => handleTextStyle('bold')}
+                            aria-label="Bold"
+                          >
+                            <Bold className="h-4 w-4" />
+                          </Toggle>
+                          <Toggle
+                            pressed={textStyles.italic}
+                            onPressedChange={() => handleTextStyle('italic')}
+                            aria-label="Italic"
+                          >
+                            <Italic className="h-4 w-4" />
+                          </Toggle>
+                          <Toggle
+                            pressed={textStyles.underline}
+                            onPressedChange={() => handleTextStyle('underline')}
+                            aria-label="Underline"
+                          >
+                            <Underline className="h-4 w-4" />
+                          </Toggle>
+                          <Toggle
+                            pressed={textStyles.strikethrough}
+                            onPressedChange={() =>
+                              handleTextStyle('strikethrough')
+                            }
+                            aria-label="Strikethrough"
+                          >
+                            <Strikethrough className="h-4 w-4" />
+                          </Toggle>
+
+                          <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+
+                          <Toggle
+                            pressed={textAlign === 'left'}
+                            onPressedChange={() => handleTextAlign('left')}
+                            aria-label="Align left"
+                          >
+                            <AlignLeft className="h-4 w-4" />
+                          </Toggle>
+                          <Toggle
+                            pressed={textAlign === 'center'}
+                            onPressedChange={() => handleTextAlign('center')}
+                            aria-label="Align center"
+                          >
+                            <AlignCenter className="h-4 w-4" />
+                          </Toggle>
+                          <Toggle
+                            pressed={textAlign === 'right'}
+                            onPressedChange={() => handleTextAlign('right')}
+                            aria-label="Align right"
+                          >
+                            <AlignRight className="h-4 w-4" />
+                          </Toggle>
+
+                          <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
+
+                          <Toggle aria-label="List">
+                            <List className="h-4 w-4" />
+                          </Toggle>
+                          <Toggle aria-label="Ordered list">
+                            <ListOrdered className="h-4 w-4" />
+                          </Toggle>
+                          <Toggle aria-label="Link">
+                            <Link className="h-4 w-4" />
+                          </Toggle>
+                          <Toggle aria-label="Code">
+                            <Code className="h-4 w-4" />
+                          </Toggle>
+                        </div>
+
+                        <div className="relative">
+                          <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            rows={3}
+                            className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
+                            placeholder="Enter task description"
+                            style={{
+                              fontWeight: textStyles.bold ? 'bold' : 'normal',
+                              fontStyle: textStyles.italic
+                                ? 'italic'
+                                : 'normal',
+                              textDecoration:
+                                `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
+                              textAlign: textAlign,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="relative">
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      rows={3}
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
-                      placeholder="Enter task description"
-                      style={{
-                        fontWeight: textStyles.bold ? 'bold' : 'normal',
-                        fontStyle: textStyles.italic ? 'italic' : 'normal',
-                        textDecoration: `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
-                        textAlign: textAlign
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
                 </div>
               </form>
             </div>
@@ -464,7 +565,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             )}
           </div>
         </div>
-        
+
         <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
           <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center space-x-4">

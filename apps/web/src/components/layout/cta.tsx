@@ -24,7 +24,8 @@ const CTA = () => {
               </span>
             </h2>
             <p className="text-xl sm:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-              Join thousands of businesses already using our platform to streamline operations and boost productivity.
+              Join thousands of businesses already using our platform to
+              streamline operations and boost productivity.
             </p>
           </div>
 

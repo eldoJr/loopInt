@@ -1,6 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { Settings, Globe, Bell, Wrench, Package, FolderOpen, Workflow, Puzzle, Users, CreditCard, ExternalLink, Search, MoreHorizontal, Bookmark } from 'lucide-react';
+import {
+  Settings,
+  Globe,
+  Bell,
+  Wrench,
+  Package,
+  FolderOpen,
+  Workflow,
+  Puzzle,
+  Users,
+  CreditCard,
+  ExternalLink,
+  Search,
+  MoreHorizontal,
+  Bookmark,
+} from 'lucide-react';
 
 interface SettingsDropdownProps {
   onNavigate?: (section: string) => void;
@@ -27,50 +42,54 @@ const settingsGroups: SettingsGroup[] = [
         title: 'General settings',
         description: 'Manage language, timezone and other personal preferences',
         icon: Globe,
-        section: 'General'
+        section: 'General',
       },
       {
         title: 'Notification settings',
         description: 'Manage email and in-product notifications',
         icon: Bell,
-        section: 'Notifications'
-      }
-    ]
+        section: 'Notifications',
+      },
+    ],
   },
   {
     title: 'Loopint admin settings',
     items: [
       {
         title: 'System',
-        description: 'Manage general configuration, security, automation, user interface and more',
+        description:
+          'Manage general configuration, security, automation, user interface and more',
         icon: Wrench,
-        section: 'System'
+        section: 'System',
       },
       {
         title: 'Products',
-        description: 'Manage access, settings and integrations for LoopInt products',
+        description:
+          'Manage access, settings and integrations for LoopInt products',
         icon: Package,
-        section: 'Products'
+        section: 'Products',
       },
       {
         title: 'Projects',
         description: 'Manage project settings, categories and more',
         icon: FolderOpen,
-        section: 'Projects'
+        section: 'Projects',
       },
       {
         title: 'Work items',
-        description: 'Configure work types, workflows, screens, fields and more',
+        description:
+          'Configure work types, workflows, screens, fields and more',
         icon: Workflow,
-        section: 'WorkItems'
+        section: 'WorkItems',
       },
       {
         title: 'Apps',
-        description: 'Add and manage Loopint and Marketplace apps and integrations',
+        description:
+          'Add and manage Loopint and Marketplace apps and integrations',
         icon: Puzzle,
-        section: 'Apps'
-      }
-    ]
+        section: 'Apps',
+      },
+    ],
   },
   {
     title: 'Admin settings',
@@ -80,17 +99,17 @@ const settingsGroups: SettingsGroup[] = [
         description: 'Manage users, groups and access requests',
         icon: Users,
         section: 'UserManagement',
-        external: true
+        external: true,
       },
       {
         title: 'Billing',
         description: 'Update billing details, manage subscriptions and more',
         icon: CreditCard,
         section: 'Billing',
-        external: true
-      }
-    ]
-  }
+        external: true,
+      },
+    ],
+  },
 ];
 
 const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
@@ -101,7 +120,10 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
         setShowMoreMenu(false);
       }
@@ -112,13 +134,16 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
   }, []);
 
   const allItems = settingsGroups.flatMap(group => group.items);
-  const filteredGroups = settingsGroups.map(group => ({
-    ...group,
-    items: group.items.filter(item => 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  })).filter(group => group.items.length > 0);
+  const filteredGroups = settingsGroups
+    .map(group => ({
+      ...group,
+      items: group.items.filter(
+        item =>
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    }))
+    .filter(group => group.items.length > 0);
 
   const handleExportSettings = () => {
     console.log('Export Settings clicked');
@@ -140,14 +165,18 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
           {/* Header */}
           <div className="p-2.5 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-1.5">
-              <h3 className="text-base font-bold text-gray-900 dark:text-white">Settings</h3>
+              <h3 className="text-base font-bold text-gray-900 dark:text-white">
+                Settings
+              </h3>
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Admin Access</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  Admin Access
+                </span>
                 <button className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 rounded-md transition-colors">
                   <ExternalLink className="w-4 h-4" />
                 </button>
                 <div className="relative">
-                  <button 
+                  <button
                     onClick={() => setShowMoreMenu(!showMoreMenu)}
                     className="p-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 rounded-md transition-colors"
                   >
@@ -167,7 +196,7 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
                 </div>
               </div>
             </div>
-            
+
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -175,12 +204,12 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
                 type="text"
                 placeholder="Search settings..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
               />
             </div>
           </div>
-          
+
           {/* Content */}
           <div className="overflow-hidden">
             {filteredGroups.length > 0 ? (
@@ -232,16 +261,22 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
             ) : (
               <div className="text-center py-2">
                 <Search className="w-6 h-6 text-gray-400 mx-auto mb-1" />
-                <p className="text-sm text-gray-500 dark:text-gray-400">No settings found for "{searchQuery}"</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  No settings found for "{searchQuery}"
+                </p>
               </div>
             )}
           </div>
-          
+
           {/* Footer */}
           <div className="px-2.5 py-1.5 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
             <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-500 dark:text-gray-400">{allItems.length} settings</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Esc to close</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {allItems.length} settings
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Esc to close
+              </p>
             </div>
           </div>
         </div>

@@ -17,7 +17,7 @@ const Breadcrumb = ({ items, onHomeClick }: BreadcrumbProps) => {
   useTheme();
 
   return (
-    <motion.nav 
+    <motion.nav
       className="flex items-center space-x-1 text-sm py-3 mb-6 overflow-x-auto"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -37,11 +37,11 @@ const Breadcrumb = ({ items, onHomeClick }: BreadcrumbProps) => {
           <ChevronRight className="w-3 h-3 text-gray-400 dark:text-gray-500" />
         )}
       </motion.div>
-      
+
       {/* Breadcrumb Items */}
       {items.map((item, index) => (
-        <motion.div 
-          key={index} 
+        <motion.div
+          key={index}
           className="flex items-center space-x-2 whitespace-nowrap"
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
@@ -58,11 +58,13 @@ const Breadcrumb = ({ items, onHomeClick }: BreadcrumbProps) => {
               <span>{item.label}</span>
             </motion.button>
           ) : (
-            <div className={`flex items-center space-x-1 px-2 py-1 rounded-md font-medium ${
-              index === items.length - 1 
-                ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800' 
-                : 'text-gray-600 dark:text-gray-400'
-            }`}>
+            <div
+              className={`flex items-center space-x-1 px-2 py-1 rounded-md font-medium ${
+                index === items.length - 1
+                  ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800'
+                  : 'text-gray-600 dark:text-gray-400'
+              }`}
+            >
               {item.icon && <item.icon className="w-3 h-3" />}
               <span>{item.label}</span>
             </div>
