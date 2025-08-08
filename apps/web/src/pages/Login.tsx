@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 import LoginForm from '../components/forms/LoginForm';
 import { staticLogin } from '../lib/staticAuth';
 import { useNavigate } from '../hooks/useNavigate';
+import { useAuthStore } from '../store/authStore';
 import logoImg from '../assets/img/logo/logo-b.svg';
 
 const Login = () => {
   const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
@@ -20,12 +22,7 @@ const Login = () => {
       // Use static login instead of API call
       const user = await staticLogin(email, password);
       if (user) {
-        if (keepLoggedIn) {
-          localStorage.setItem('user', JSON.stringify(user));
-          localStorage.setItem('keepLoggedIn', 'true');
-        } else {
-          sessionStorage.setItem('user', JSON.stringify(user));
-        }
+        login(user, keepLoggedIn);
         navigate.goTo('/dashboard');
       } else {
         setError('Invalid credentials. Use admin@loopint.com / admin123');

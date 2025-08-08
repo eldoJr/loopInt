@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Plus, Star, X, Filter, Edit, Copy, Trash2, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
+import { useProjectStore } from '../../store/projectStore';
+import { useAuthStore } from '../../store/authStore';
+import type { Project } from '../../store/projectStore';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { showToast } from '../../components/ui/Toast';
@@ -17,35 +20,18 @@ interface ProjectsProps {
   onNavigateToEditProject?: (projectId: string) => void;
 }
 
-interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  status: 'planning' | 'active' | 'on-hold' | 'completed' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  start_date?: string;
-  deadline?: string;
-  progress: number;
-  budget?: number;
-  team_id?: string;
-  client_id?: string;
-  created_by?: string;
-  is_favorite: boolean;
-  tags: string[];
-  color: string;
-  created_at: string;
-  updated_at: string;
-}
+
 
 const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProject }: ProjectsProps) => {
   useTheme();
-  const [loading, setLoading] = useState(true);
+  // Removed duplicate loading state, using loading from useProjectStore instead
   const [showContent, setShowContent] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [filters, setFilters] = useState({ name: '', dates: '', tags: '' });
   const debouncedSearchTerm = useDebounce(filters.name, 300);
   
-  const [projects, setProjects] = useState<Project[]>([]);
+  const { projects, setProjects, toggleFavorite, loading, setLoading } = useProjectStore();
+  const user = useAuthStore((state) => state.user);
   
   // Fuzzy search setup
   const { results: searchResults, setQuery: setSearchQuery } = useSearch({
@@ -53,43 +39,27 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
     keys: ['name', 'description', 'tags'],
     threshold: 0.3
   });
-  const [currentUser, setCurrentUser] = useState<{ id: string; name: string; } | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; projectId: string; projectName: string }>({ isOpen: false, projectId: '', projectName: '' });
 
-  useEffect(() => {
-    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
-    if (userData) {
-      setCurrentUser(JSON.parse(userData));
-    }
-  }, []);
+
 
   const fetchProjects = async () => {
+    if (!user) return;
+    
+    setLoading(true);
     try {
-      const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
-      const currentUser = userData ? JSON.parse(userData) : null;
-      
-      if (!currentUser) {
-        console.log('No user found, skipping project fetch');
-        return;
-      }
-      
       const response = await fetch('http://localhost:3000/projects');
       if (response.ok) {
         const fetchedProjects = await response.json();
-        console.log('Fetched projects from API:', fetchedProjects);
-        
-        const userProjects = fetchedProjects.filter((project: Project) => {
-          return project.created_by === currentUser.id;
-        });
-        
-        console.log('User projects after filtering:', userProjects);
+        const userProjects = fetchedProjects.filter((project: Project) => 
+          project.created_by === user.id
+        );
         setProjects(userProjects);
-      } else {
-        console.error('Failed to fetch projects:', response.statusText);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
-      console.log('Backend server may not be running. Please start the API server.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -125,7 +95,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
 
 
 
-  const toggleFavorite = async (id: string) => {
+  const handleToggleFavorite = async (id: string) => {
     const project = projects.find(p => p.id === id);
     if (!project) return;
 
@@ -137,9 +107,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
       });
       
       if (response.ok) {
-        setProjects(prev => prev.map(p => 
-          p.id === id ? { ...p, is_favorite: !p.is_favorite } : p
-        ));
+        toggleFavorite(id);
         showToast.success(project.is_favorite ? 'Removed from favorites' : 'Added to favorites');
       } else {
         showToast.error('Failed to update favorite');
@@ -186,7 +154,8 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
       const projectCopy = {
         ...projectData,
         name: `${project.name} (Copy)`,
-        created_by: currentUser?.id
+        created_by: user?.id,
+        tags: project.tags || []
       };
       
       const response = await fetch('http://localhost:3000/projects', {
@@ -422,7 +391,7 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
                         <div className="flex items-center space-x-2 mb-1">
                           <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">{project.name}</h3>
                           <button
-                            onClick={() => toggleFavorite(project.id)}
+                            onClick={() => handleToggleFavorite(project.id)}
                             className={`transition-colors flex-shrink-0 ${
                               project.is_favorite 
                                 ? 'text-yellow-500 hover:text-yellow-400' 

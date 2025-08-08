@@ -1,14 +1,15 @@
 import { Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { useAuthStore } from '../store/authStore';
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
-  if (!userData) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 

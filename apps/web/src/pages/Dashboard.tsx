@@ -1,6 +1,9 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from '../hooks/useNavigate';
+import { useAuthStore } from '../store/authStore';
+import { useProjectStore } from '../store/projectStore';
+import { useTaskStore } from '../store/taskStore';
 import ModalProvider from '../context/ModalContext';
 import { PageTransition } from '../components/animations/PageTransition';
 import SkeletonLoader from '../components/ui/SkeletonLoader';
@@ -21,7 +24,6 @@ import foldersIcon from '../assets/icons/folders.png';
 import taskManagementIcon from '../assets/icons/task-management.png';
 import teamBuildingIcon from '../assets/icons/team-building.png';
 import increaseIcon from '../assets/icons/increase.png';
-import type { User as UserType } from '../lib/staticAuth';
 import Breadcrumb from '../components/ui/Breadcrumb';
 import DashboardHeader from '../components/ui/DashboardHeader';
 import DashboardCard from '../components/ui/DashboardCard';
@@ -104,7 +106,9 @@ const DashboardModals = () => {
 const Dashboard = () => {
   useTheme();
   const navigate = useNavigate();
-  const [user, setUser] = useState<UserType | null>(null);
+  const { user, logout, login } = useAuthStore();
+  const { projects, setProjects } = useProjectStore();
+  const { tasks, setTasks, toggleTask } = useTaskStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [isMouseOverButton, setIsMouseOverButton] = useState(false);
@@ -112,15 +116,7 @@ const Dashboard = () => {
   const [currentView, setCurrentView] = useState('Dashboard');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showCustomizationAlert, setShowCustomizationAlert] = useState(false);
-  interface Todo {
-    id: string;
-    text: string;
-    starred: boolean;
-    date: string;
-    completed: boolean;
-  }
-  
-  const [todos, setTodos] = useState<Todo[]>([]);
+
   interface Project {
     id: string;
     name: string;
@@ -140,7 +136,6 @@ const Dashboard = () => {
     assigned_to?: string;
   }
   
-  const [projects, setProjects] = useState<Project[]>([]);
   const [activeProjectsCount, setActiveProjectsCount] = useState(0);
   const [teamMembersCount, setTeamMembersCount] = useState(0);
   
@@ -187,14 +182,13 @@ const Dashboard = () => {
           mockTasks.filter((task: Task) => task.assigned_to === user.id) : 
           mockTasks;
         
-        const formattedTodos: Todo[] = userTasks.map((task: Task) => ({
-          id: task.id,
-          text: task.title,
-          starred: task.priority === 'high',
-          date: task.due_date ? new Date(task.due_date).toLocaleDateString() : new Date().toLocaleDateString(),
+        const formattedTasks = userTasks.map((task: Task) => ({
+          ...task,
+          status: task.status as 'todo' | 'in-progress' | 'done',
+          priority: task.priority as 'low' | 'medium' | 'high' | 'urgent',
           completed: task.status === 'done'
         }));
-        setTodos(formattedTodos);
+        setTasks(formattedTasks);
       } catch (error) {
         console.error('Error with tasks:', error);
       }
@@ -210,7 +204,7 @@ const Dashboard = () => {
     if (userParam) {
       try {
         const oauthUser = JSON.parse(decodeURIComponent(userParam));
-        setUser(oauthUser);
+        login(oauthUser);
         localStorage.setItem('user', JSON.stringify(oauthUser));
         window.history.replaceState({}, document.title, '/dashboard');
         return;
@@ -221,13 +215,12 @@ const Dashboard = () => {
     
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (userData) {
-      setUser(JSON.parse(userData));
+      login(JSON.parse(userData));
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('user');
+    logout();
     navigate.replace('/');
   };
 
@@ -240,21 +233,18 @@ const Dashboard = () => {
   }, []);
 
 
-  const toggleTodo = useCallback(async (id: string) => {
-    const todo = todos.find(t => t.id === id);
-    if (!todo) return;
+  const handleToggleTask = useCallback(async (id: string) => {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
     
     try {
-      // In static mode, just update the local state
-      setTodos(todos.map(todo => 
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      ));
-      showToast.success(!todo.completed ? 'Task completed!' : 'Task reopened');
+      toggleTask(id);
+      showToast.success(!task.completed ? 'Task completed!' : 'Task reopened');
     } catch (error) {
       console.error('Error updating task:', error);
       showToast.error('Failed to update task');
     }
-  }, [todos]);
+  }, [tasks, toggleTask]);
 
 
   const fetchProjects = async () => {
@@ -265,24 +255,33 @@ const Dashboard = () => {
           id: '1',
           name: 'Website Redesign',
           description: 'Redesign the company website with new branding',
-          status: 'active',
+          status: 'active' as const,
+          priority: 'high' as const,
+          progress: 75,
           color: '#4F46E5',
+          is_favorite: false,
           created_by: '1'
         },
         {
           id: '2',
           name: 'Mobile App Development',
           description: 'Create a new mobile app for customers',
-          status: 'planning',
+          status: 'planning' as const,
+          priority: 'medium' as const,
+          progress: 25,
           color: '#10B981',
+          is_favorite: true,
           created_by: '1'
         },
         {
           id: '3',
           name: 'Marketing Campaign',
           description: 'Q3 marketing campaign for new product launch',
-          status: 'on-hold',
+          status: 'on-hold' as const,
+          priority: 'low' as const,
+          progress: 50,
           color: '#F59E0B',
+          is_favorite: false,
           created_by: '1'
         }
       ];
@@ -394,7 +393,7 @@ const Dashboard = () => {
         />
         <DashboardStatCard
           title="Completed Tasks"
-          value={todos.filter(t => t.completed).length}
+          value={tasks.filter(t => t.completed).length}
           iconSrc={taskManagementIcon}
           iconAlt="Tasks"
           onClick={() => navigateToSection('Tasks')}
@@ -455,37 +454,37 @@ const Dashboard = () => {
             }
           >
             <div className="space-y-2">
-              {todos.length > 0 ? (
-                todos
-                  .filter(todo => showFinishedTodos || !todo.completed)
+              {tasks.length > 0 ? (
+                tasks
+                  .filter(task => showFinishedTodos || !task.completed)
                   .slice(0, 2)
-                  .map((todo) => (
-                    <div key={todo.id} className="p-3 bg-white/60 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/30 rounded-lg hover:bg-white/80 dark:hover:bg-gray-800/60 transition-all duration-200 cursor-pointer backdrop-blur-sm" onClick={() => navigateToSection('Tasks')}>
+                  .map((task) => (
+                    <div key={task.id} className="p-3 bg-white/60 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/30 rounded-lg hover:bg-white/80 dark:hover:bg-gray-800/60 transition-all duration-200 cursor-pointer backdrop-blur-sm" onClick={() => navigateToSection('Tasks')}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleTodo(todo.id);
+                              handleToggleTask(task.id);
                             }}
                             className={`w-4 h-4 rounded border-2 transition-colors ${
-                              todo.completed 
+                              task.completed 
                                 ? 'bg-green-500 border-green-500' 
                                 : 'border-gray-400 dark:border-gray-500 hover:border-gray-500 dark:hover:border-gray-400'
                             }`}
                           >
-                            {todo.completed && (
+                            {task.completed && (
                               <CheckCircle className="w-3 h-3 text-white" />
                             )}
                           </button>
                           <div>
-                            <p className={`text-sm font-medium ${todo.completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'}`}>
-                              {todo.text}
+                            <p className={`text-sm font-medium ${task.completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'}`}>
+                              {task.title}
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{todo.date}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{task.due_date ? new Date(task.due_date).toLocaleDateString() : new Date().toLocaleDateString()}</p>
                           </div>
                         </div>
-                        {todo.starred && (
+                        {task.priority === 'high' && (
                           <Star className="w-3 h-3 text-yellow-500 fill-current" />
                         )}
                       </div>
