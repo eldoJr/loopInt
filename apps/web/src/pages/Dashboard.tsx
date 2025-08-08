@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useNavigate } from '../hooks/useNavigate';
 import ModalProvider from '../context/ModalContext';
 import { PageTransition } from '../components/animations/PageTransition';
 import SkeletonLoader from '../components/ui/SkeletonLoader';
@@ -102,6 +103,7 @@ const DashboardModals = () => {
 
 const Dashboard = () => {
   useTheme();
+  const navigate = useNavigate();
   const [user, setUser] = useState<UserType | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
@@ -226,7 +228,7 @@ const Dashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem('user');
     sessionStorage.removeItem('user');
-    window.location.href = '/';
+    navigate.replace('/');
   };
 
   const navigateToSection = useCallback((section: string) => {

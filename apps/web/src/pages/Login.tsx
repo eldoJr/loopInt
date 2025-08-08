@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import LoginForm from '../components/forms/LoginForm';
 import { staticLogin } from '../lib/staticAuth';
+import { useNavigate } from '../hooks/useNavigate';
 import logoImg from '../assets/img/logo/logo-b.svg';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
@@ -23,7 +26,7 @@ const Login = () => {
         } else {
           sessionStorage.setItem('user', JSON.stringify(user));
         }
-        window.location.href = '/dashboard';
+        navigate.goTo('/dashboard');
       } else {
         setError('Invalid credentials. Use admin@loopint.com / admin123');
       }
@@ -139,9 +142,9 @@ const Login = () => {
           <div className="text-center">
             <p className="text-gray-400">
               Don't have an account?{' '}
-              <a href="/register" className="text-blue-400 hover:text-blue-300 font-medium">
+              <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium">
                 Sign up
-              </a>
+              </Link>
             </p>
           </div>
         </div>

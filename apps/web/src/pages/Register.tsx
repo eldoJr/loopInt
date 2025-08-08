@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
+import { useNavigate } from '../hooks/useNavigate';
 import logoImg from '../assets/img/logo/logo-b.svg';
 
 const Register = () => {
+  const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
 
   const handleRegisterClick = () => {
@@ -25,7 +27,7 @@ const Register = () => {
             <h1 className="text-2xl font-bold text-white mb-2">Account Created!</h1>
             <p className="text-gray-400 mb-6">Welcome to Loopint! Your account is ready.</p>
             <button
-              onClick={() => window.location.href = '/login'}
+              onClick={() => navigate.goTo('/login')}
               className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
             >
               Sign In Now
@@ -65,7 +67,7 @@ const Register = () => {
           </button>
           <div className="mt-6">
             <button 
-              onClick={() => window.location.href = '/login'}
+              onClick={() => navigate.goTo('/login')}
               className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200"
             >
               Back to Login
