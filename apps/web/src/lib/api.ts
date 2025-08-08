@@ -35,12 +35,24 @@ const apiRequest = async <T>(
   const url = `${API_BASE_URL}${endpoint}`;
   const controller = new AbortController();
   
-  // Apply auth interceptor
-  const token = localStorage.getItem('auth_token');
+  // Import security modules
+  const { authManager } = await import('./auth');
+  const { csrfManager } = await import('./csrf');
+  const { rateLimiter, RATE_LIMITS } = await import('./rateLimiter');
+  
+  // Rate limiting check
+  const rateLimitKey = `api_${endpoint}`;
+  if (!rateLimiter.isAllowed(rateLimitKey, RATE_LIMITS.API)) {
+    throw new ApiError('Rate limit exceeded', 429);
+  }
+  
+  // Apply security headers
+  const token = authManager.getToken();
   const headers = {
     'Content-Type': 'application/json',
     ...fetchConfig.headers,
     ...(token && { Authorization: `Bearer ${token}` }),
+    ...csrfManager.getHeaders(),
   };
   
   const fetchPromise = fetch(url, {

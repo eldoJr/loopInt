@@ -4,9 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { projectSchema } from '../../lib/validations';
 import type { ProjectFormData } from '../../lib/validations';
 import { useFormPersistence } from '../../hooks/useFormPersistence';
+import { sanitizeFormData } from '../../lib/sanitizer';
+import { rateLimiter, RATE_LIMITS } from '../../lib/rateLimiter';
 import { FormField } from './FormField';
 import { FormSelect } from './FormSelect';
 import Button from '../ui/Button';
+import { showToast } from '../ui/Toast';
 
 interface ProjectFormProps {
   onSubmit: (data: ProjectFormData) => void;
@@ -61,7 +64,15 @@ export const ProjectForm = memo(({
   });
 
   const handleFormSubmit = (data: ProjectFormData) => {
-    onSubmit(data);
+    // Rate limiting check
+    if (!rateLimiter.isAllowed('project_form', RATE_LIMITS.FORM_SUBMIT)) {
+      showToast.error('Too many submissions. Please wait before trying again.');
+      return;
+    }
+    
+    // Sanitize form data
+    const sanitizedData = sanitizeFormData(data);
+    onSubmit(sanitizedData);
     clearPersistedData();
   };
 
