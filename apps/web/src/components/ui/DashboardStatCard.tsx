@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import type { LucideIcon } from 'lucide-react';
 import { AnimatedCard } from '../animations/MicroInteractions';
@@ -23,7 +24,7 @@ interface DashboardStatCardProps {
   subtitle?: string;
 }
 
-const DashboardStatCard = ({
+const DashboardStatCard = memo(({
   title,
   value,
   iconSrc,
@@ -51,70 +52,77 @@ const DashboardStatCard = ({
   }
 
   return (
-    <AnimatedCard 
-      className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-2.5 cursor-pointer group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50"
+    <div
+      className="relative overflow-hidden rounded-2xl cursor-pointer"
       onClick={onClick}
+      style={{ display: 'inline-block', width: '100%' }}
+      tabIndex={onClick ? 0 : undefined}
+      role={onClick ? 'button' : undefined}
     >
-      {/* Background Pattern */}
-      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/10 to-blue-300/20 dark:from-blue-400/10 dark:to-blue-300/10 rounded-full -translate-y-10 translate-x-10 group-hover:scale-125 transition-transform duration-700"></div>
-      
-      {/* Content */}
-      <div className="relative z-10">
-        {/* Header */}
-        <div className="flex items-start justify-end mb-2">
-          {trend && (
-            <div className={`px-2 py-1 rounded-full text-xs font-bold ${
-              trend.direction === 'up' 
-                ? 'bg-emerald-400/90 text-emerald-900' 
-                : 'bg-red-400/90 text-red-900'
-            }`}>
-              {trend.direction === 'up' ? '↗' : '↘'}{trend.value}%
-            </div>
-          )}
-        </div>
+      <AnimatedCard 
+        className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-2.5 group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50"
+      >
+        {/* Background Pattern */}
+        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/10 to-blue-300/20 dark:from-blue-400/10 dark:to-blue-300/10 rounded-full -translate-y-10 translate-x-10 group-hover:scale-125 transition-transform duration-700"></div>
         
-        {/* Value and Icon */}
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <p className="text-lg sm:text-xl font-black text-white mb-0.5 tracking-tight leading-none drop-shadow-sm">
-              {value}
-            </p>
-            <p className="text-blue-100 font-semibold text-xs sm:text-sm">
-              {title}
-            </p>
+        {/* Content */}
+        <div className="relative z-10">
+          {/* Header */}
+          <div className="flex items-start justify-end mb-2">
+            {trend && (
+              <div className={`px-2 py-1 rounded-full text-xs font-bold ${
+                trend.direction === 'up' 
+                  ? 'bg-emerald-400/90 text-emerald-900' 
+                  : 'bg-red-400/90 text-red-900'
+              }`}>
+                {trend.direction === 'up' ? '↗' : '↘'}{trend.value}%
+              </div>
+            )}
           </div>
-          <div className="p-1.5 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
-            {IconComponent ? (
-              <IconComponent className={`w-5 h-5 sm:w-6 sm:h-6 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`} />
-            ) : (
-              <img 
-                src={iconSrc} 
-                alt={iconAlt} 
-                className="w-5 h-5 sm:w-6 sm:h-6 opacity-90 group-hover:opacity-100" 
-              />
+          
+          {/* Value and Icon */}
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <p className="text-lg sm:text-xl font-black text-white mb-0.5 tracking-tight leading-none drop-shadow-sm">
+                {value}
+              </p>
+              <p className="text-blue-100 font-semibold text-xs sm:text-sm">
+                {title}
+              </p>
+            </div>
+            <div className="p-1.5 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
+              {IconComponent ? (
+                <IconComponent className={`w-5 h-5 sm:w-6 sm:h-6 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`} />
+              ) : (
+                <img 
+                  src={iconSrc} 
+                  alt={iconAlt} 
+                  className="w-5 h-5 sm:w-6 sm:h-6 opacity-90 group-hover:opacity-100" 
+                />
+              )}
+            </div>
+          </div>
+          
+          {/* Footer */}
+          <div className="flex items-center justify-between">
+            {subtitle && (
+              <p className="text-blue-200 font-medium text-xs">
+                {subtitle}
+              </p>
+            )}
+            {trend?.period && (
+              <p className="text-blue-300 font-medium text-xs">
+                {trend.period}
+              </p>
             )}
           </div>
         </div>
         
-        {/* Footer */}
-        <div className="flex items-center justify-between">
-          {subtitle && (
-            <p className="text-blue-200 font-medium text-xs">
-              {subtitle}
-            </p>
-          )}
-          {trend?.period && (
-            <p className="text-blue-300 font-medium text-xs">
-              {trend.period}
-            </p>
-          )}
-        </div>
-      </div>
-      
-      {/* Hover Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-2xl"></div>
-    </AnimatedCard>
+        {/* Hover Effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-2xl"></div>
+      </AnimatedCard>
+    </div>
   );
-};
+});
 
 export default DashboardStatCard;

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -14,7 +15,7 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-const Button = ({ 
+const Button = memo(({ 
   children, 
   variant = 'primary', 
   size = 'md', 
@@ -63,6 +64,6 @@ const Button = ({
       {content}
     </button>
   );
-};
+});
 
 export default Button;

@@ -37,12 +37,8 @@ import EditTask from '../features/tasks/EditTask';
 import NewClient from '../features/clients/NewClient';
 import TeamMember from '../features/auth/TeamMember';
 import { GenerateReport } from '../features/ai/GenerateReport';
-import Projects from '../features/projects/Projects';
-import Tasks from '../features/tasks/Tasks';
-import CalendarView from '../features/calendar/Calendar';
-import Team from '../features/team/Team';
-import Analytics from '../features/analytics/Analytics';
-import Clients from '../features/clients/Clients';
+import { Suspense } from 'react';
+import { LazyProjects, LazyTasks, LazyCalendar, LazyTeam, LazyAnalytics, LazyClients } from '../components/performance/LazyComponents';
 import PersonalData from '../features/profile/PersonalData';
 import AccountSettings from '../features/profile/AccountSettings';
 import HelpCenter from '../features/support/HelpCenter';
@@ -630,31 +626,51 @@ const Dashboard = () => {
 
     switch (currentView) {
       case 'Projects':
-        return <Projects 
-          onNavigateBack={backToMain} 
-          onNavigateToNewProject={() => navigateToSection('New Project')}
-          onNavigateToEditProject={(projectId) => {
-            setCurrentView(`Edit Project ${projectId}`);
-          }}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyProjects 
+              onNavigateBack={backToMain} 
+              onNavigateToNewProject={() => navigateToSection('New Project')}
+              onNavigateToEditProject={(projectId) => {
+                setCurrentView(`Edit Project ${projectId}`);
+              }}
+            />
+          </Suspense>
+        );
       case 'Tasks':
-        return <Tasks 
-          onNavigateBack={backToMain} 
-          onNavigateToAddTask={() => navigateToSection('Add Task')}
-          onNavigateToEditTask={(taskId) => {
-            setCurrentView(`Edit Task ${taskId}`);
-          }}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyTasks 
+              onNavigateBack={backToMain} 
+              onNavigateToAddTask={() => navigateToSection('Add Task')}
+              onNavigateToEditTask={(taskId) => {
+                setCurrentView(`Edit Task ${taskId}`);
+              }}
+            />
+          </Suspense>
+        );
       case 'Calendar':
-        return <CalendarView onNavigateBack={backToMain} />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyCalendar onNavigateBack={backToMain} />
+          </Suspense>
+        );
       case 'Team':
-        return <Team 
-          onNavigateBack={backToMain} 
-          onNavigateToNewCoworker={() => navigateToSection('New Coworker')}
-          onNavigateToEditMember={(memberId) => setCurrentView(`Edit Member ${memberId}`)}
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyTeam 
+              onNavigateBack={backToMain} 
+              onNavigateToNewCoworker={() => navigateToSection('New Coworker')}
+              onNavigateToEditMember={(memberId) => setCurrentView(`Edit Member ${memberId}`)}
+            />
+          </Suspense>
+        );
       case 'Analytics':
-        return <Analytics onNavigateBack={backToMain} />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyAnalytics onNavigateBack={backToMain} />
+          </Suspense>
+        );
       case 'Reports':
         return <Reports 
           onNavigateBack={backToMain}
@@ -678,11 +694,15 @@ const Dashboard = () => {
       case 'Generate Report':
         return <GenerateReport />;
       case 'Clients':
-        return <Clients 
-          onNavigateBack={backToMain} 
-          onNavigateToNewCompany={() => navigateToSection('New Company')} 
-          onNavigateToNewContact={() => navigateToSection('New Contact')} 
-        />;
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LazyClients 
+              onNavigateBack={backToMain} 
+              onNavigateToNewCompany={() => navigateToSection('New Company')} 
+              onNavigateToNewContact={() => navigateToSection('New Contact')} 
+            />
+          </Suspense>
+        );
       case 'Personal Data':
         return <PersonalData onNavigateBack={backToMain} />;
       case 'Account Settings':

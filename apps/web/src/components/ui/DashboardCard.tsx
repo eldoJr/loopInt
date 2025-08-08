@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Plus } from 'lucide-react';
@@ -11,7 +12,7 @@ interface DashboardCardProps {
   headerActions?: ReactNode;
 }
 
-const DashboardCard = ({ title, icon: Icon, children, onAdd, headerActions }: DashboardCardProps) => {
+const DashboardCard = memo(({ title, icon: Icon, children, onAdd, headerActions }: DashboardCardProps) => {
   useTheme();
   
   return (
@@ -40,6 +41,6 @@ const DashboardCard = ({ title, icon: Icon, children, onAdd, headerActions }: Da
       </div>
     </div>
   );
-};
+});
 
 export default DashboardCard;
