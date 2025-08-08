@@ -13,6 +13,10 @@ interface ButtonProps {
   className?: string;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
+  'aria-label'?: string;
+  'aria-describedby'?: string;
+  'aria-expanded'?: boolean;
+  'aria-pressed'?: boolean;
 }
 
 const Button = memo(
@@ -27,6 +31,10 @@ const Button = memo(
     className = '',
     type = 'button',
     disabled = false,
+    'aria-label': ariaLabel,
+    'aria-describedby': ariaDescribedby,
+    'aria-expanded': ariaExpanded,
+    'aria-pressed': ariaPressed,
   }: ButtonProps) => {
     const baseClasses =
       'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-100';
@@ -60,7 +68,12 @@ const Button = memo(
 
     if (href) {
       return (
-        <a href={href} className={`${classes} group`}>
+        <a 
+          href={href} 
+          className={`${classes} group`}
+          aria-label={ariaLabel}
+          aria-describedby={ariaDescribedby}
+        >
           {content}
         </a>
       );
@@ -72,6 +85,11 @@ const Button = memo(
         type={type}
         disabled={disabled}
         className={`${classes} group ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        aria-label={ariaLabel}
+        aria-describedby={ariaDescribedby}
+        aria-expanded={ariaExpanded}
+        aria-pressed={ariaPressed}
+        aria-disabled={disabled}
       >
         {content}
       </button>

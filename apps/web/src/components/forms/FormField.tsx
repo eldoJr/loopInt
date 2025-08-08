@@ -10,6 +10,7 @@ interface FormFieldProps {
   error?: FieldError;
   required?: boolean;
   className?: string;
+  'aria-describedby'?: string;
 }
 
 export const FormField = memo(({
@@ -20,7 +21,8 @@ export const FormField = memo(({
   register,
   error,
   required = false,
-  className = ''
+  className = '',
+  'aria-describedby': ariaDescribedby
 }: FormFieldProps) => {
   return (
     <div className={`space-y-1 ${className}`}>
@@ -41,9 +43,14 @@ export const FormField = memo(({
             ? 'border-red-500 focus:ring-red-500' 
             : 'border-gray-300 dark:border-gray-600'
         } bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${name}-error` : ariaDescribedby}
+        aria-required={required}
       />
       {error && (
-        <p className="text-sm text-red-500">{error.message}</p>
+        <p id={`${name}-error`} className="text-sm text-red-500" role="alert">
+          {error.message}
+        </p>
       )}
     </div>
   );
