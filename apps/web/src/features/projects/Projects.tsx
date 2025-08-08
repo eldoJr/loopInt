@@ -24,13 +24,13 @@ interface ProjectsProps {
 
 const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProject }: ProjectsProps) => {
   useTheme();
-  // Removed duplicate loading state, using loading from useProjectStore instead
+  const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [filters, setFilters] = useState({ name: '', dates: '', tags: '' });
   const debouncedSearchTerm = useDebounce(filters.name, 300);
   
-  const { projects, setProjects, toggleFavorite, loading, setLoading } = useProjectStore();
+  const { projects, setProjects, toggleFavorite } = useProjectStore();
   const user = useAuthStore((state) => state.user);
   
   // Fuzzy search setup
@@ -44,22 +44,28 @@ const Projects = ({ onNavigateBack, onNavigateToNewProject, onNavigateToEditProj
 
 
   const fetchProjects = async () => {
-    if (!user) return;
-    
-    setLoading(true);
     try {
+      const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+      const currentUser = userData ? JSON.parse(userData) : null;
+      
+      if (!currentUser) {
+        console.log('No user found, skipping project fetch');
+        return;
+      }
+      
       const response = await fetch('http://localhost:3000/projects');
       if (response.ok) {
         const fetchedProjects = await response.json();
         const userProjects = fetchedProjects.filter((project: Project) => 
-          project.created_by === user.id
+          project.created_by === currentUser.id
         );
         setProjects(userProjects);
+      } else {
+        console.error('Failed to fetch projects:', response.statusText);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
-    } finally {
-      setLoading(false);
+      console.log('Backend server may not be running. Please start the API server.');
     }
   };
 

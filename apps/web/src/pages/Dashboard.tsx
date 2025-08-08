@@ -7,6 +7,7 @@ import { useTaskStore } from '../store/taskStore';
 import ModalProvider from '../context/ModalContext';
 import { PageTransition } from '../components/animations/PageTransition';
 import SkeletonLoader from '../components/ui/SkeletonLoader';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { 
   Clock,
   FolderOpen, 
@@ -109,6 +110,8 @@ const Dashboard = () => {
   const { user, logout, login } = useAuthStore();
   const { projects, setProjects } = useProjectStore();
   const { tasks, setTasks, toggleTask } = useTaskStore();
+  const [loading, setLoading] = useState(true);
+  const [showContent, setShowContent] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [isMouseOverButton, setIsMouseOverButton] = useState(false);
@@ -143,59 +146,55 @@ const Dashboard = () => {
   
 
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        // Mock data for static mode
-        const mockTasks = [
-          {
-            id: '1',
-            title: 'Complete project documentation',
-            description: 'Finish all documentation for the current sprint',
-            status: 'todo',
-            priority: 'high',
-            due_date: new Date().toISOString(),
-            assigned_to: '1'
-          },
-          {
-            id: '2',
-            title: 'Review pull requests',
-            description: 'Review team PRs for the new feature',
-            status: 'done',
-            priority: 'medium',
-            due_date: new Date().toISOString(),
-            assigned_to: '1'
-          },
-          {
-            id: '3',
-            title: 'Prepare for demo',
-            description: 'Create slides for the client demo',
-            status: 'todo',
-            priority: 'high',
-            due_date: new Date().toISOString(),
-            assigned_to: '1'
-          }
-        ];
-        
-        // Filter tasks for current user
-        const userTasks = user ? 
-          mockTasks.filter((task: Task) => task.assigned_to === user.id) : 
-          mockTasks;
-        
-        const formattedTasks = userTasks.map((task: Task) => ({
-          ...task,
-          status: task.status as 'todo' | 'in-progress' | 'done',
-          priority: task.priority as 'low' | 'medium' | 'high' | 'urgent',
-          completed: task.status === 'done'
-        }));
-        setTasks(formattedTasks);
-      } catch (error) {
-        console.error('Error with tasks:', error);
-      }
-    };
-    
-    fetchTasks();
-  }, [currentView, user?.id]);
+  const fetchTasks = async () => {
+    try {
+      // Mock data for static mode
+      const mockTasks = [
+        {
+          id: '1',
+          title: 'Complete project documentation',
+          description: 'Finish all documentation for the current sprint',
+          status: 'todo',
+          priority: 'high',
+          due_date: new Date().toISOString(),
+          assigned_to: '1'
+        },
+        {
+          id: '2',
+          title: 'Review pull requests',
+          description: 'Review team PRs for the new feature',
+          status: 'done',
+          priority: 'medium',
+          due_date: new Date().toISOString(),
+          assigned_to: '1'
+        },
+        {
+          id: '3',
+          title: 'Prepare for demo',
+          description: 'Create slides for the client demo',
+          status: 'todo',
+          priority: 'high',
+          due_date: new Date().toISOString(),
+          assigned_to: '1'
+        }
+      ];
+      
+      // Filter tasks for current user
+      const userTasks = user ? 
+        mockTasks.filter((task: Task) => task.assigned_to === user.id) : 
+        mockTasks;
+      
+      const formattedTasks = userTasks.map((task: Task) => ({
+        ...task,
+        status: task.status as 'todo' | 'in-progress' | 'done',
+        priority: task.priority as 'low' | 'medium' | 'high' | 'urgent',
+        completed: task.status === 'done'
+      }));
+      setTasks(formattedTasks);
+    } catch (error) {
+      console.error('Error with tasks:', error);
+    }
+  };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -349,10 +348,16 @@ const Dashboard = () => {
   ], [navigateToSection]);
 
   useEffect(() => {
-    if (user) {
-      fetchProjects();
-      fetchTeamMembers();
-    }
+    const timer = setTimeout(() => {
+      setLoading(false);
+      setTimeout(() => setShowContent(true), 200);
+      if (user) {
+        fetchProjects();
+        fetchTeamMembers();
+        fetchTasks();
+      }
+    }, 800);
+    return () => clearTimeout(timer);
   }, [user, currentView]);
 
   const renderDashboardContent = () => (
@@ -389,7 +394,7 @@ const Dashboard = () => {
           onClick={() => navigateToSection('Projects')}
           trend={{ value: 12, direction: 'up', period: 'vs last month' }}
           subtitle="In progress"
-          loading={!user}
+          loading={loading || !user}
         />
         <DashboardStatCard
           title="Completed Tasks"
@@ -399,7 +404,7 @@ const Dashboard = () => {
           onClick={() => navigateToSection('Tasks')}
           trend={{ value: 8, direction: 'up', period: 'vs last week' }}
           subtitle="This month"
-          loading={!user}
+          loading={loading || !user}
         />
         <DashboardStatCard
           title="Team Members"
@@ -605,6 +610,14 @@ const Dashboard = () => {
   );
 
   const renderCurrentView = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-20">
+          <LoadingSpinner />
+        </div>
+      );
+    }
+    
     if (isTransitioning) {
       return (
         <div className="flex items-center justify-center py-20">
@@ -846,7 +859,9 @@ const Dashboard = () => {
           }
         }}
       >
-        <div className="min-h-[calc(100vh-8rem)]">
+        <div className={`min-h-[calc(100vh-8rem)] transition-all duration-500 ${
+          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}>
           <PageTransition location={currentView}>
             {renderCurrentView()}
           </PageTransition>
