@@ -1,50 +1,101 @@
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  avatar_url?: string;
-  created_at: Date;
-  updated_at: Date;
+const API_BASE_URL = 'http://localhost:3000';
+
+interface RequestConfig extends RequestInit {
+  timeout?: number;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-const API_URL = `${API_BASE}/api`;
+class ApiError extends Error {
+  public status: number;
+  public data?: any;
 
-export const createUser = async (
-  email: string,
-  password: string,
-  name: string
-): Promise<User> => {
-  const response = await fetch(`${API_URL}/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, name }),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error || 'Registration failed');
+  constructor(
+    message: string,
+    status: number,
+    data?: any
+  ) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.data = data;
   }
+}
 
-  return response.json();
+const createTimeoutPromise = (timeout: number) => {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('Request timeout')), timeout);
+  });
 };
 
-export const loginUser = async (
-  email: string,
-  password: string
-): Promise<User | null> => {
-  const response = await fetch(`${API_URL}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+const apiRequest = async <T>(
+  endpoint: string,
+  config: RequestConfig = {}
+): Promise<T> => {
+  const { timeout = 10000, ...fetchConfig } = config;
+  
+  const url = `${API_BASE_URL}${endpoint}`;
+  const controller = new AbortController();
+  
+  // Apply auth interceptor
+  const token = localStorage.getItem('auth_token');
+  const headers = {
+    'Content-Type': 'application/json',
+    ...fetchConfig.headers,
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+  
+  const fetchPromise = fetch(url, {
+    ...fetchConfig,
+    signal: controller.signal,
+    headers,
   });
 
-  if (!response.ok) {
-    if (response.status === 401) return null;
-    const error = await response.text();
-    throw new Error(error || 'Login failed');
-  }
+  try {
+    const response = await Promise.race([
+      fetchPromise,
+      createTimeoutPromise(timeout),
+    ]) as Response;
 
-  return response.json();
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new ApiError(
+        errorData.message || `HTTP ${response.status}`,
+        response.status,
+        errorData
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new ApiError(
+      error instanceof Error ? error.message : 'Network error',
+      0
+    );
+  }
 };
+
+export const api = {
+  get: <T>(endpoint: string, config?: RequestConfig) =>
+    apiRequest<T>(endpoint, { ...config, method: 'GET' }),
+  
+  post: <T>(endpoint: string, data?: any, config?: RequestConfig) =>
+    apiRequest<T>(endpoint, {
+      ...config,
+      method: 'POST',
+      body: data ? JSON.stringify(data) : undefined,
+    }),
+  
+  put: <T>(endpoint: string, data?: any, config?: RequestConfig) =>
+    apiRequest<T>(endpoint, {
+      ...config,
+      method: 'PUT',
+      body: data ? JSON.stringify(data) : undefined,
+    }),
+  
+  delete: <T>(endpoint: string, config?: RequestConfig) =>
+    apiRequest<T>(endpoint, { ...config, method: 'DELETE' }),
+};
+
+export { ApiError };
