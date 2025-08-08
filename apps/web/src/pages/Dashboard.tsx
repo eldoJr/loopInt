@@ -35,6 +35,8 @@ import Sidebar from '../components/ui/Sidebar';
 import { DashboardRoutes } from '../features/dashboard/DashboardRoutes';
 import NewIssueModal from '../features/calendar/components/NewIssueModal';
 import { useModal } from '../hooks/useModal';
+import { useErrorHandler } from '../hooks/useErrorHandler';
+import { ErrorFallback } from '../components/error/ErrorFallback';
 
 // Component to render modals
 const DashboardModals = () => {
@@ -60,7 +62,9 @@ const Dashboard = () => {
   const { user, logout, login } = useAuthStore();
   const { projects, setProjects } = useProjectStore();
   const { tasks, setTasks, toggleTask } = useTaskStore();
+  const { handleAsyncError } = useErrorHandler();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const [showContent, setShowContent] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarHovered, setSidebarHovered] = useState(false);
@@ -97,7 +101,7 @@ const Dashboard = () => {
 
 
   const fetchTasks = async () => {
-    try {
+    const result = await handleAsyncError(async () => {
       // Mock data for static mode
       const mockTasks = [
         {
@@ -141,8 +145,11 @@ const Dashboard = () => {
         completed: task.status === 'done'
       }));
       setTasks(formattedTasks);
-    } catch (error) {
-      console.error('Error with tasks:', error);
+      return formattedTasks;
+    }, { fallbackMessage: 'Failed to load tasks' });
+    
+    if (!result) {
+      setError(new Error('Failed to load tasks'));
     }
   };
 
@@ -197,7 +204,7 @@ const Dashboard = () => {
 
 
   const fetchProjects = async () => {
-    try {
+    const result = await handleAsyncError(async () => {
       // Mock data for static mode
       const mockProjects = [
         {
@@ -247,8 +254,11 @@ const Dashboard = () => {
       
       setProjects(activeProjects);
       setActiveProjectsCount(activeProjects.length);
-    } catch (error) {
-      console.error('Error with projects:', error);
+      return activeProjects;
+    }, { fallbackMessage: 'Failed to load projects' });
+    
+    if (!result) {
+      setError(new Error('Failed to load projects'));
     }
   };
 
@@ -298,14 +308,17 @@ const Dashboard = () => {
   ], [navigateToSection]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
+      setError(null);
+      if (user) {
+        await Promise.all([
+          fetchProjects(),
+          fetchTeamMembers(),
+          fetchTasks()
+        ]);
+      }
       setLoading(false);
       setTimeout(() => setShowContent(true), 200);
-      if (user) {
-        fetchProjects();
-        fetchTeamMembers();
-        fetchTasks();
-      }
     }, 800);
     return () => clearTimeout(timer);
   }, [user, currentView]);
@@ -565,6 +578,19 @@ const Dashboard = () => {
         <div className="flex items-center justify-center py-20">
           <LoadingSpinner />
         </div>
+      );
+    }
+    
+    if (error) {
+      return (
+        <ErrorFallback 
+          error={error}
+          onRetry={() => {
+            setError(null);
+            setLoading(true);
+            setTimeout(() => setLoading(false), 800);
+          }}
+        />
       );
     }
     
