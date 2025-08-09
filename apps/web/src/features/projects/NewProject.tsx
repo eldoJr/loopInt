@@ -16,7 +16,6 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Slider } from '../../components/ui/Slider';
 import { useCreateProject } from '../../hooks/useProjects';
 import { projectSchema, type ProjectFormData } from '../../schemas/projectSchema';
-import { AlertCircle } from 'lucide-react';
 import { RichTextEditor } from '../../components/ui/RichTextEditor';
 import { ErrorBoundary } from '../../components/error/ErrorBoundary';
 
@@ -57,13 +56,14 @@ const NewProject = ({
     watch,
     setValue,
     formState: { errors, isValid },
-  } = useForm<ProjectFormData>({
+  } = useForm({
     resolver: zodResolver(projectSchema),
+    mode: 'onChange',
     defaultValues: {
       name: '',
       description: '',
-      status: 'planning',
-      priority: 'medium',
+      status: 'planning' as const,
+      priority: 'medium' as const,
       start_date: format(new Date(), 'yyyy-MM-dd'),
       deadline: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
       progress: 0,
