@@ -244,7 +244,8 @@ const UserProfileDropdown = ({
                               onClick={() => {
                                 if (
                                   option.key === 'light' ||
-                                  option.key === 'dark'
+                                  option.key === 'dark' ||
+                                  option.key === 'system'
                                 ) {
                                   setTheme(option.key);
                                 }
