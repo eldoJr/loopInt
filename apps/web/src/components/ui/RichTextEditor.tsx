@@ -211,14 +211,6 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       return attrs?.color || null;
     };
 
-
-    const getCurrentAlignment = () => {
-      if (editor?.isActive({ textAlign: 'center' })) return 'Center';
-      if (editor?.isActive({ textAlign: 'right' })) return 'Right';
-      if (editor?.isActive({ textAlign: 'justify' })) return 'Justify';
-      return 'Left';
-    };
-
     const alignments = [
       { name: 'Left', action: () => editor?.chain().focus().setTextAlign('left').run(), active: () => editor?.isActive({ textAlign: 'left' }) || (!editor?.isActive({ textAlign: 'center' }) && !editor?.isActive({ textAlign: 'right' }) && !editor?.isActive({ textAlign: 'justify' })), icon: AlignLeft },
       { name: 'Center', action: () => editor?.chain().focus().setTextAlign('center').run(), active: () => editor?.isActive({ textAlign: 'center' }), icon: AlignCenter },
