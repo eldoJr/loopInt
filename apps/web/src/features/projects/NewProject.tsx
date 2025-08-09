@@ -174,8 +174,8 @@ const NewProject = ({
           <Breadcrumb items={breadcrumbItems} />
         </div>
 
-        <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
-          <div className="sticky top-12 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900/50 backdrop-blur-sm rounded-t-xl">
+        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+          <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                 New Project

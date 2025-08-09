@@ -43,7 +43,11 @@ const DashboardHeader = ({
   setSidebarHovered,
   setIsMouseOverButton,
 }: DashboardHeaderProps) => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+
+  const handleThemeToggle = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
   const [globalSearchData, setGlobalSearchData] = useState<GlobalSearchItem[]>(
     []
   );
@@ -260,7 +264,7 @@ const DashboardHeader = ({
             <SettingsDropdown onNavigate={onNavigate} />
 
             <button
-              onClick={toggleTheme}
+              onClick={handleThemeToggle}
               className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-all duration-200"
               title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >

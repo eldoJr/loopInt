@@ -217,7 +217,7 @@ const SearchBar = ({
               }, 150);
             }}
             placeholder={placeholder}
-            className="flex-1 bg-transparent text-gray-900 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-500 py-2 px-2 focus:outline-none text-sm"
+            className="flex-1 bg-transparent text-gray-900 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-500 py-1.5 px-2 focus:outline-none text-sm"
           />
 
           {showCommandHint && !isFocused && !searchValue && (
