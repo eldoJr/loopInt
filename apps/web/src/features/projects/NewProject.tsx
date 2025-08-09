@@ -26,8 +26,8 @@ import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Slider } from '../../components/ui/Slider';
 import { Toggle } from '../../components/ui/Toggle';
-import { showToast } from '../../components/ui/Toast';
 import CustomSelect from '../../components/ui/CustomSelect';
+import { useCreateProject } from '../../hooks/useProjects';
 
 interface NewProjectProps {
   onNavigateBack?: () => void;
@@ -51,14 +51,14 @@ const NewProject = ({
 }: NewProjectProps) => {
   useTheme();
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [currentUser, setCurrentUser] = useState<{
     id: string;
     name: string;
   } | null>(null);
+  
+  const createProjectMutation = useCreateProject();
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>(
     'left'
@@ -161,45 +161,31 @@ const NewProject = ({
     e.preventDefault();
     if (!validateForm()) return;
 
-    setSaving(true);
-    try {
-      const projectData = {
-        name: formData.name.trim(),
-        description: formData.description.trim(),
-        status: formData.status,
-        priority: formData.priority,
-        start_date: formData.start_date,
-        deadline: formData.deadline,
-        progress: Number(formData.progress),
-        budget: formData.budget?.trim() ? parseFloat(formData.budget) : null,
-        team_id: formData.team_id.trim() || null,
-        client_id: formData.client_id.trim() || null,
-        created_by: currentUser?.id,
-        is_favorite: formData.is_favorite,
-        tags: formData.tags,
-        color: formData.color,
-      };
+    const projectData = {
+      name: formData.name.trim(),
+      description: formData.description.trim(),
+      status: formData.status as 'planning' | 'active' | 'on-hold' | 'completed' | 'cancelled',
+      priority: formData.priority as 'low' | 'medium' | 'high' | 'urgent',
+      start_date: formData.start_date,
+      deadline: formData.deadline,
+      progress: Number(formData.progress),
+      budget: formData.budget?.trim() ? parseFloat(formData.budget) : undefined,
+      team_id: formData.team_id.trim() ? formData.team_id.trim() : undefined,
+      client_id: formData.client_id.trim() ? formData.client_id.trim() : undefined,
+      created_by: currentUser?.id,
+      is_favorite: formData.is_favorite,
+      tags: formData.tags,
+      color: formData.color,
+    };
 
-      const response = await fetch('http://localhost:3000/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(projectData),
-      });
-
-      if (response.ok) {
-        setIsSaved(true);
-        showToast.success('Project created successfully!');
+    createProjectMutation.mutate(projectData, {
+      onSuccess: () => {
         setTimeout(() => onNavigateToProjects?.(), 1000);
-      } else {
-        throw new Error('Failed to create project');
-      }
-    } catch (error) {
-      console.error('Error creating project:', error);
-      showToast.error('Failed to create project. Please try again.');
-      setErrors({ submit: 'Failed to create project. Please try again.' });
-    } finally {
-      setSaving(false);
-    }
+      },
+      onError: () => {
+        setErrors({ submit: 'Failed to create project. Please try again.' });
+      },
+    });
   };
 
   const handleChange = useCallback(
@@ -313,15 +299,15 @@ const NewProject = ({
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={!isFormValid || saving}
+                disabled={!isFormValid || createProjectMutation.isPending}
                 className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                  isFormValid && !saving
+                  isFormValid && !createProjectMutation.isPending
                     ? 'bg-blue-500 text-white hover:bg-blue-600'
                     : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                 }`}
               >
                 <Save size={14} />
-                <span>{saving ? 'Saving...' : 'Save'}</span>
+                <span>{createProjectMutation.isPending ? 'Saving...' : 'Save'}</span>
               </button>
             </div>
           </div>
@@ -731,7 +717,7 @@ const NewProject = ({
                         {descriptionLength}/{maxDescriptionLength} characters
                       </span>
                       <div className="flex items-center space-x-2">
-                        {isSaved && (
+                        {createProjectMutation.isSuccess && (
                           <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
                             <Check size={14} />
                             <span className="text-xs">Saved</span>
@@ -771,7 +757,7 @@ const NewProject = ({
               <span>Press Esc to cancel</span>
             </div>
             <div className="flex items-center space-x-2">
-              {isSaved && (
+              {createProjectMutation.isSuccess && (
                 <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
                   <Check size={14} />
                   <span>Saved</span>

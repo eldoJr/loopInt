@@ -11,17 +11,16 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useTheme } from '../../context/ThemeContext';
-import { useProjectStore } from '../../store/projectStore';
 import { useAuthStore } from '../../store/authStore';
 import type { Project } from '../../store/projectStore';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import { showToast } from '../../components/ui/Toast';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
 import SearchBar from '../../components/ui/SearchBar';
 import { useSearch } from '../../hooks/useSearch';
 import { useDebounce } from '../../hooks/useDebounce';
 import { ListAnimation } from '../../components/animations/ListAnimation';
+import { useProjects, useDeleteProject, useToggleFavorite, useCreateProject } from '../../hooks/useProjects';
 
 interface ProjectsProps {
   onNavigateBack?: () => void;
@@ -35,14 +34,16 @@ const Projects = ({
   onNavigateToEditProject,
 }: ProjectsProps) => {
   useTheme();
-  const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [filters, setFilters] = useState({ name: '', dates: '', tags: '' });
   const debouncedSearchTerm = useDebounce(filters.name, 300);
 
-  const { projects, setProjects, toggleFavorite } = useProjectStore();
   const user = useAuthStore(state => state.user);
+  const { data: projects = [], isLoading, refetch } = useProjects(user?.id);
+  const deleteProjectMutation = useDeleteProject();
+  const toggleFavoriteMutation = useToggleFavorite();
+  const createProjectMutation = useCreateProject();
 
   // Fuzzy search setup
   const { results: searchResults, setQuery: setSearchQuery } = useSearch({
@@ -56,41 +57,10 @@ const Projects = ({
     projectName: string;
   }>({ isOpen: false, projectId: '', projectName: '' });
 
-  const fetchProjects = async () => {
-    try {
-      const userData =
-        localStorage.getItem('user') || sessionStorage.getItem('user');
-      const currentUser = userData ? JSON.parse(userData) : null;
-
-      if (!currentUser) {
-        console.log('No user found, skipping project fetch');
-        return;
-      }
-
-      const response = await fetch('http://localhost:3000/projects');
-      if (response.ok) {
-        const fetchedProjects = await response.json();
-        const userProjects = fetchedProjects.filter(
-          (project: Project) => project.created_by === currentUser.id
-        );
-        setProjects(userProjects);
-      } else {
-        console.error('Failed to fetch projects:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error fetching projects:', error);
-      console.log(
-        'Backend server may not be running. Please start the API server.'
-      );
-    }
-  };
-
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false);
-      setTimeout(() => setShowContent(true), 200);
-      fetchProjects();
-    }, 800);
+      setShowContent(true);
+    }, 200);
     return () => clearTimeout(timer);
   }, []);
 
@@ -126,29 +96,11 @@ const Projects = ({
     }
   };
 
-  const handleToggleFavorite = async (id: string) => {
+  const handleToggleFavorite = (id: string) => {
     const project = projects.find(p => p.id === id);
     if (!project) return;
-
-    try {
-      const response = await fetch(`http://localhost:3000/projects/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_favorite: !project.is_favorite }),
-      });
-
-      if (response.ok) {
-        toggleFavorite(id);
-        showToast.success(
-          project.is_favorite ? 'Removed from favorites' : 'Added to favorites'
-        );
-      } else {
-        showToast.error('Failed to update favorite');
-      }
-    } catch (error) {
-      console.error('Error updating favorite:', error);
-      showToast.error('Failed to update favorite');
-    }
+    
+    toggleFavoriteMutation.mutate({ id, is_favorite: !project.is_favorite });
   };
 
   const clearFilter = (field: keyof typeof filters) => {
@@ -180,33 +132,17 @@ const Projects = ({
     onNavigateToEditProject?.(projectId);
   };
 
-  const handleCopy = async (project: Project) => {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id, created_at, updated_at, ...projectData } = project;
-      const projectCopy = {
-        ...projectData,
-        name: `${project.name} (Copy)`,
-        created_by: user?.id,
-        tags: project.tags || [],
-      };
-
-      const response = await fetch('http://localhost:3000/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(projectCopy),
-      });
-
-      if (response.ok) {
-        fetchProjects();
-        showToast.success('Project copied successfully!');
-      } else {
-        showToast.error('Failed to copy project');
-      }
-    } catch (error) {
-      console.error('Error copying project:', error);
-      showToast.error('Failed to copy project');
-    }
+  const handleCopy = (project: Project) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, created_at, updated_at, ...projectData } = project;
+    const projectCopy = {
+      ...projectData,
+      name: `${project.name} (Copy)`,
+      created_by: user?.id,
+      tags: project.tags || [],
+    };
+    
+    createProjectMutation.mutate(projectCopy);
   };
 
   const handleDelete = (projectId: string) => {
@@ -220,25 +156,9 @@ const Projects = ({
     }
   };
 
-  const confirmDelete = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/projects/${deleteConfirmation.projectId}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      if (response.ok) {
-        fetchProjects();
-        showToast.success('Project deleted successfully!');
-      } else {
-        showToast.error('Failed to delete project');
-      }
-    } catch (error) {
-      console.error('Error deleting project:', error);
-      showToast.error('Failed to delete project');
-    }
+  const confirmDelete = () => {
+    deleteProjectMutation.mutate(deleteConfirmation.projectId);
+    setDeleteConfirmation({ isOpen: false, projectId: '', projectName: '' });
   };
 
   const filteredProjects = (() => {
@@ -282,7 +202,7 @@ const Projects = ({
     { label: 'Projects' },
   ];
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <Breadcrumb items={breadcrumbItems} />
@@ -322,7 +242,7 @@ const Projects = ({
                 <span>Favorites</span>
               </button>
               <button
-                onClick={fetchProjects}
+                onClick={() => refetch()}
                 className="bg-gray-500 dark:bg-gray-600 text-white px-3 py-1.5 rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors text-sm"
               >
                 Refresh

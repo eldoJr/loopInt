@@ -26,8 +26,8 @@ import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Slider } from '../../components/ui/Slider';
 import { Toggle } from '../../components/ui/Toggle';
-import { showToast } from '../../components/ui/Toast';
 import CustomSelect from '../../components/ui/CustomSelect';
+import { useProject, useUpdateProject } from '../../hooks/useProjects';
 
 interface EditProjectProps {
   projectId: string;
@@ -52,15 +52,15 @@ const EditProject = ({
   onNavigateToProjects,
 }: EditProjectProps) => {
   useTheme();
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [currentUser, setCurrentUser] = useState<{
     id: string;
     name: string;
   } | null>(null);
+  
+  const { data: project, isLoading } = useProject(projectId);
+  const updateProjectMutation = useUpdateProject();
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>(
     'left'
@@ -109,48 +109,34 @@ const EditProject = ({
   }, []);
 
   useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/projects/${projectId}`
-        );
-        if (response.ok) {
-          const project = await response.json();
-          setFormData({
-            name: project.name || '',
-            description: project.description || '',
-            status: project.status || 'planning',
-            priority: project.priority || 'medium',
-            start_date: project.start_date
-              ? format(new Date(project.start_date), 'yyyy-MM-dd')
-              : format(new Date(), 'yyyy-MM-dd'),
-            deadline: project.deadline
-              ? format(new Date(project.deadline), 'yyyy-MM-dd')
-              : format(addDays(new Date(), 30), 'yyyy-MM-dd'),
-            progress: project.progress || 0,
-            budget: project.budget?.toString() || '',
-            team_id: project.team_id || '',
-            client_id: project.client_id || '',
-            tags: project.tags || [],
-            color: project.color || '#3B82F6',
-            is_favorite: project.is_favorite || false,
-          });
-          setDescriptionLength(project.description?.length || 0);
-        }
-      } catch (error) {
-        console.error('Error fetching project:', error);
-        showToast.error('Failed to load project data');
-      }
-    };
-
-    fetchProject();
-  }, [projectId]);
+    if (project) {
+      setFormData({
+        name: project.name || '',
+        description: project.description || '',
+        status: project.status || 'planning',
+        priority: project.priority || 'medium',
+        start_date: project.start_date
+          ? format(new Date(project.start_date), 'yyyy-MM-dd')
+          : format(new Date(), 'yyyy-MM-dd'),
+        deadline: project.deadline
+          ? format(new Date(project.deadline), 'yyyy-MM-dd')
+          : format(addDays(new Date(), 30), 'yyyy-MM-dd'),
+        progress: project.progress || 0,
+        budget: project.budget?.toString() || '',
+        team_id: project.team_id || '',
+        client_id: project.client_id || '',
+        tags: project.tags || [],
+        color: project.color || '#3B82F6',
+        is_favorite: project.is_favorite || false,
+      });
+      setDescriptionLength(project.description?.length || 0);
+    }
+  }, [project]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false);
-      setTimeout(() => setShowForm(true), 200);
-    }, 800);
+      setShowForm(true);
+    }, 200);
     return () => clearTimeout(timer);
   }, []);
 
@@ -201,50 +187,33 @@ const EditProject = ({
     e.preventDefault();
     if (!validateForm()) return;
 
-    setSaving(true);
-    try {
-      const projectData = {
-        name: formData.name.trim(),
-        description: formData.description.trim(),
-        status: formData.status,
-        priority: formData.priority,
-        start_date: formData.start_date,
-        deadline: formData.deadline,
-        progress: Number(formData.progress),
-        budget: formData.budget?.trim() ? parseFloat(formData.budget) : null,
-        team_id: formData.team_id.trim() || null,
-        client_id: formData.client_id.trim() || null,
-        is_favorite: formData.is_favorite,
-        tags: formData.tags,
-        color: formData.color,
-      };
+    const projectData = {
+      name: formData.name.trim(),
+      description: formData.description.trim(),
+      status: formData.status as 'planning' | 'active' | 'on-hold' | 'completed' | 'cancelled',
+      priority: formData.priority as 'low' | 'medium' | 'high' | 'urgent',
+      start_date: formData.start_date,
+      deadline: formData.deadline,
+      progress: Number(formData.progress),
+      budget: formData.budget?.trim() ? parseFloat(formData.budget) : undefined,
+      team_id: formData.team_id.trim() ? formData.team_id.trim() : undefined,
+      client_id: formData.client_id.trim() ? formData.client_id.trim() : undefined,
+      is_favorite: formData.is_favorite,
+      tags: formData.tags,
+      color: formData.color,
+    };
 
-      console.log('Sending project data:', projectData);
-      console.log('Form data before sending:', formData);
-
-      const response = await fetch(
-        `http://localhost:3000/projects/${projectId}`,
-        {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(projectData),
-        }
-      );
-
-      if (response.ok) {
-        setIsSaved(true);
-        showToast.success('Project updated successfully!');
-        setTimeout(() => onNavigateToProjects?.(), 1000);
-      } else {
-        throw new Error('Failed to update project');
+    updateProjectMutation.mutate(
+      { id: projectId, data: projectData },
+      {
+        onSuccess: () => {
+          setTimeout(() => onNavigateToProjects?.(), 1000);
+        },
+        onError: () => {
+          setErrors({ submit: 'Failed to update project. Please try again.' });
+        },
       }
-    } catch (error) {
-      console.error('Error updating project:', error);
-      showToast.error('Failed to update project. Please try again.');
-      setErrors({ submit: 'Failed to update project. Please try again.' });
-    } finally {
-      setSaving(false);
-    }
+    );
   };
 
   const handleChange = useCallback(
@@ -326,7 +295,7 @@ const EditProject = ({
     { label: 'Edit Project' },
   ];
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <Breadcrumb items={breadcrumbItems} />
@@ -358,15 +327,15 @@ const EditProject = ({
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={!isFormValid || saving}
+                disabled={!isFormValid || updateProjectMutation.isPending}
                 className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                  isFormValid && !saving
+                  isFormValid && !updateProjectMutation.isPending
                     ? 'bg-blue-500 text-white hover:bg-blue-600'
                     : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                 }`}
               >
                 <Save size={14} />
-                <span>{saving ? 'Updating...' : 'Update'}</span>
+                <span>{updateProjectMutation.isPending ? 'Updating...' : 'Update'}</span>
               </button>
             </div>
           </div>
@@ -793,7 +762,7 @@ const EditProject = ({
                         {descriptionLength}/{maxDescriptionLength} characters
                       </span>
                       <div className="flex items-center space-x-2">
-                        {isSaved && (
+                        {updateProjectMutation.isSuccess && (
                           <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
                             <Check size={14} />
                             <span className="text-xs">Saved</span>
@@ -833,7 +802,7 @@ const EditProject = ({
               <span>Press Esc to cancel</span>
             </div>
             <div className="flex items-center space-x-2">
-              {isSaved && (
+              {updateProjectMutation.isSuccess && (
                 <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
                   <Check size={14} />
                   <span>Saved</span>

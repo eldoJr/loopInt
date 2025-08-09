@@ -12,6 +12,9 @@ export interface Project {
   created_by?: string;
   start_date?: string;
   deadline?: string;
+  budget?: number;
+  team_id?: string;
+  client_id?: string;
   tags?: string[];
   created_at?: string;
   updated_at?: string;
