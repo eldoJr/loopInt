@@ -215,15 +215,17 @@ const Projects = ({
   return (
     <ErrorBoundary>
       <div
-        className={`space-y-6 transition-all duration-500 ${
+        className={`transition-all duration-500 ${
           showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
       >
-      <Breadcrumb items={breadcrumbItems} />
+        {/* Sticky Breadcrumb */}
+        <div className="sticky top-0 z-20">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
 
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
+        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+        <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
               Projects
@@ -262,23 +264,22 @@ const Projects = ({
 
         {/* Enhanced Search & Filters */}
         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/30">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex-1 max-w-md">
-              <SearchBar
-                placeholder="Search projects by name, description, or tags..."
-                value={filters.name}
-                onChange={handleSearchChange}
-                searchData={projects as unknown as Record<string, unknown>[]}
-                searchKeys={['name', 'description', 'tags']}
-                onResultSelect={handleProjectSelect}
-                showResults={true}
-                maxResults={8}
-                showCommandHint={false}
-              />
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center space-x-3 flex-1">
+              <div className="flex-1 max-w-md">
+                <SearchBar
+                  placeholder="Search projects by name, description, or tags..."
+                  value={filters.name}
+                  onChange={handleSearchChange}
+                  searchData={projects as unknown as Record<string, unknown>[]}
+                  searchKeys={['name', 'description', 'tags']}
+                  onResultSelect={handleProjectSelect}
+                  showResults={true}
+                  maxResults={8}
+                  showCommandHint={false}
+                />
+              </div>
+              
               <div className="relative">
                 <Calendar
                   size={14}
@@ -336,7 +337,7 @@ const Projects = ({
               </button>
             </div>
 
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
               <span className="font-medium text-gray-900 dark:text-white">
                 {filteredProjects.length}
               </span>{' '}
@@ -349,10 +350,10 @@ const Projects = ({
             </div>
           </div>
         </div>
-      </div>
+        </div>
 
-      {/* Projects List */}
-      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300">
+        {/* Projects List */}
+        <div className="mt-6 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300">
         {filteredProjects.length > 0 ? (
           <>
             {/* Table Header */}
@@ -510,21 +511,21 @@ const Projects = ({
         )}
       </div>
 
-      <ConfirmationModal
-        isOpen={deleteConfirmation.isOpen}
-        onClose={() =>
-          setDeleteConfirmation({
-            isOpen: false,
-            projectId: '',
-            projectName: '',
-          })
-        }
-        onConfirm={confirmDelete}
-        title="Delete Project"
-        message={`Are you sure you want to delete "${deleteConfirmation.projectName}"? This action cannot be undone and will permanently remove all project data.`}
-        confirmText="Delete Project"
-        cancelText="Cancel"
-        type="danger"
+        <ConfirmationModal
+          isOpen={deleteConfirmation.isOpen}
+          onClose={() =>
+            setDeleteConfirmation({
+              isOpen: false,
+              projectId: '',
+              projectName: '',
+            })
+          }
+          onConfirm={confirmDelete}
+          title="Delete Project"
+          message={`Are you sure you want to delete "${deleteConfirmation.projectName}"? This action cannot be undone and will permanently remove all project data.`}
+          confirmText="Delete Project"
+          cancelText="Cancel"
+          type="danger"
         />
       </div>
     </ErrorBoundary>
