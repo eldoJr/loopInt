@@ -21,6 +21,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { useDebounce } from '../../hooks/useDebounce';
 import { ListAnimation } from '../../components/animations/ListAnimation';
 import { useProjects, useDeleteProject, useToggleFavorite, useCreateProject } from '../../hooks/useProjects';
+import { ErrorBoundary } from '../../components/error/ErrorBoundary';
 
 interface ProjectsProps {
   onNavigateBack?: () => void;
@@ -212,11 +213,12 @@ const Projects = ({
   }
 
   return (
-    <div
-      className={`space-y-6 transition-all duration-500 ${
-        showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      }`}
-    >
+    <ErrorBoundary>
+      <div
+        className={`space-y-6 transition-all duration-500 ${
+          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}
+      >
       <Breadcrumb items={breadcrumbItems} />
 
       {/* Header */}
@@ -523,8 +525,9 @@ const Projects = ({
         confirmText="Delete Project"
         cancelText="Cancel"
         type="danger"
-      />
-    </div>
+        />
+      </div>
+    </ErrorBoundary>
   );
 };
 

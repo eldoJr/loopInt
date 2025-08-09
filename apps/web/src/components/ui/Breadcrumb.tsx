@@ -18,7 +18,7 @@ const Breadcrumb = ({ items, onHomeClick }: BreadcrumbProps) => {
 
   return (
     <motion.nav
-      className="flex items-center space-x-1 text-sm py-3 mb-6 overflow-x-auto"
+      className="flex items-center space-x-1 text-sm py-3 mb-2 overflow-x-auto"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}

@@ -1,60 +1,44 @@
-import { memo } from 'react';
-import type { UseFormRegister, FieldError } from 'react-hook-form';
+import { forwardRef } from 'react';
+import { AlertCircle } from 'lucide-react';
 
-interface Option {
-  value: string;
+interface FormSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
-}
-
-interface FormSelectProps {
-  label: string;
-  name: string;
-  options: Option[];
-  register: UseFormRegister<any>;
-  error?: FieldError;
+  error?: string;
   required?: boolean;
-  placeholder?: string;
-  className?: string;
+  options: { value: string; label: string }[];
 }
 
-export const FormSelect = memo(({
-  label,
-  name,
-  options,
-  register,
-  error,
-  required = false,
-  placeholder = 'Select an option',
-  className = ''
-}: FormSelectProps) => {
-  return (
-    <div className={`space-y-1 ${className}`}>
-      <label 
-        htmlFor={name}
-        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-      >
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
-      <select
-        id={name}
-        {...register(name)}
-        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-          error 
-            ? 'border-red-500 focus:ring-red-500' 
-            : 'border-gray-300 dark:border-gray-600'
-        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
-      >
-        <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      {error && (
-        <p className="text-sm text-red-500">{error.message}</p>
-      )}
-    </div>
-  );
-});
+export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
+  ({ label, error, required, options, className = '', ...props }, ref) => {
+    return (
+      <div className="grid grid-cols-12 gap-3 items-center">
+        <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+          {label} {required && '*'}
+        </label>
+        <div className="col-span-4">
+          <select
+            ref={ref}
+            className={`w-full bg-white dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
+              error
+                ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50'
+                : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50'
+            } ${className}`}
+            {...props}
+          >
+            {options.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {error && (
+            <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
+              <AlertCircle className="w-4 h-4 mr-1" />
+              {error}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+);

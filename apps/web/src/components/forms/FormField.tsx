@@ -1,57 +1,37 @@
-import { memo } from 'react';
-import type { UseFormRegister, FieldError } from 'react-hook-form';
+import { forwardRef } from 'react';
+import { AlertCircle } from 'lucide-react';
 
-interface FormFieldProps {
+interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
-  register: UseFormRegister<any>;
-  error?: FieldError;
+  error?: string;
   required?: boolean;
-  className?: string;
-  'aria-describedby'?: string;
 }
 
-export const FormField = memo(({
-  label,
-  name,
-  type = 'text',
-  placeholder,
-  register,
-  error,
-  required = false,
-  className = '',
-  'aria-describedby': ariaDescribedby
-}: FormFieldProps) => {
-  return (
-    <div className={`space-y-1 ${className}`}>
-      <label 
-        htmlFor={name}
-        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-      >
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
-      <input
-        id={name}
-        type={type}
-        placeholder={placeholder}
-        {...register(name)}
-        className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-          error 
-            ? 'border-red-500 focus:ring-red-500' 
-            : 'border-gray-300 dark:border-gray-600'
-        } bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
-        aria-invalid={!!error}
-        aria-describedby={error ? `${name}-error` : ariaDescribedby}
-        aria-required={required}
-      />
-      {error && (
-        <p id={`${name}-error`} className="text-sm text-red-500" role="alert">
-          {error.message}
-        </p>
-      )}
-    </div>
-  );
-});
+export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
+  ({ label, error, required, className = '', ...props }, ref) => {
+    return (
+      <div className="grid grid-cols-12 gap-3 items-center">
+        <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+          {label} {required && '*'}
+        </label>
+        <div className="col-span-9">
+          <input
+            ref={ref}
+            className={`w-full bg-white dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
+              error
+                ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50'
+                : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50'
+            } ${className}`}
+            {...props}
+          />
+          {error && (
+            <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
+              <AlertCircle className="w-4 h-4 mr-1" />
+              {error}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+);

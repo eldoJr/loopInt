@@ -1,5 +1,4 @@
-import type { ErrorInfo, ReactNode } from 'react';
-import { Component } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Props {
@@ -33,15 +32,14 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center">
-            <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+        <div className="min-h-[400px] flex items-center justify-center p-8">
+          <div className="text-center max-w-md">
+            <AlertTriangle className="mx-auto h-12 w-12 text-red-500 mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
               Something went wrong
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              We encountered an unexpected error. Please try refreshing the
-              page.
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              We encountered an unexpected error. Please try refreshing the page.
             </p>
             <button
               onClick={() => window.location.reload()}
