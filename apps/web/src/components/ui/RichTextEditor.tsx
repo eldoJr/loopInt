@@ -211,64 +211,6 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       return attrs?.color || null;
     };
 
-    const getFormattingInfo = () => {
-      if (!editor) return [];
-      
-      const info = [];
-      
-      // Text style
-      info.push({ label: 'Style', value: getCurrentStyle() });
-      
-      // Font family
-      const font = getCurrentFont();
-      if (font !== 'Default') {
-        info.push({ label: 'Font', value: font });
-      }
-      
-      // Font size
-      info.push({ label: 'Size', value: getCurrentSize() });
-      
-      // Text formatting
-      const formatting = [];
-      if (editor.isActive('bold')) formatting.push('Bold');
-      if (editor.isActive('italic')) formatting.push('Italic');
-      if (editor.isActive('underline')) formatting.push('Underline');
-      if (editor.isActive('strike')) formatting.push('Strikethrough');
-      if (editor.isActive('code')) formatting.push('Code');
-      
-      if (formatting.length > 0) {
-        info.push({ label: 'Format', value: formatting.join(', ') });
-      }
-      
-      // Text color
-      const color = getCurrentColor();
-      if (color) {
-        info.push({ label: 'Color', value: color });
-      }
-      
-      // Alignment
-      const alignment = getCurrentAlignment();
-      if (alignment !== 'Left') {
-        info.push({ label: 'Align', value: alignment });
-      }
-      
-      // Lists
-      if (editor.isActive('bulletList')) {
-        info.push({ label: 'List', value: 'Bullet List' });
-      } else if (editor.isActive('orderedList')) {
-        info.push({ label: 'List', value: 'Numbered List' });
-      }
-      
-      // Other elements
-      if (editor.isActive('blockquote')) {
-        info.push({ label: 'Element', value: 'Blockquote' });
-      }
-      if (editor.isActive('link')) {
-        info.push({ label: 'Link', value: 'Active' });
-      }
-      
-      return info;
-    };
 
     const getCurrentAlignment = () => {
       if (editor?.isActive({ textAlign: 'center' })) return 'Center';
