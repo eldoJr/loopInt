@@ -64,7 +64,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     const [showAlignDropdown, setShowAlignDropdown] = useState(false);
     const [fontSearch, setFontSearch] = useState('');
     const [sizeSearch, setSizeSearch] = useState('');
-    const [updateCounter, setUpdateCounter] = useState(0);
+    const [, setUpdateCounter] = useState(0);
 
     // Close all dropdowns helper
     const closeAllDropdowns = useCallback(() => {
