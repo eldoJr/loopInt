@@ -32,6 +32,11 @@ import {
   Palette,
   ChevronDown,
   Minus,
+  Type,
+  Heading1,
+  Heading2,
+  Heading3,
+  FileText,
 } from 'lucide-react';
 
 interface RichTextEditorProps {
@@ -79,25 +84,36 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
 
     // Handle dropdown toggle with auto-close others
     const toggleDropdown = useCallback((dropdownName: string) => {
+      const isCurrentlyOpen = {
+        color: showColorPicker,
+        style: showStyleDropdown,
+        font: showFontDropdown,
+        size: showSizeDropdown,
+        align: showAlignDropdown
+      }[dropdownName];
+      
       closeAllDropdowns();
-      switch (dropdownName) {
-        case 'color':
-          setShowColorPicker(true);
-          break;
-        case 'style':
-          setShowStyleDropdown(true);
-          break;
-        case 'font':
-          setShowFontDropdown(true);
-          break;
-        case 'size':
-          setShowSizeDropdown(true);
-          break;
-        case 'align':
-          setShowAlignDropdown(true);
-          break;
+      
+      if (!isCurrentlyOpen) {
+        switch (dropdownName) {
+          case 'color':
+            setShowColorPicker(true);
+            break;
+          case 'style':
+            setShowStyleDropdown(true);
+            break;
+          case 'font':
+            setShowFontDropdown(true);
+            break;
+          case 'size':
+            setShowSizeDropdown(true);
+            break;
+          case 'align':
+            setShowAlignDropdown(true);
+            break;
+        }
       }
-    }, [closeAllDropdowns]);
+    }, [closeAllDropdowns, showColorPicker, showStyleDropdown, showFontDropdown, showSizeDropdown, showAlignDropdown]);
 
     // Close dropdowns when clicking outside
     useEffect(() => {
@@ -269,10 +285,10 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
     ];
 
     const styles = [
-      { name: 'Paragraph', action: () => editor?.chain().focus().setParagraph().run(), active: () => !editor?.isActive('heading') },
-      { name: 'Heading 1', action: () => editor?.chain().focus().setHeading({ level: 1 }).run(), active: () => editor?.isActive('heading', { level: 1 }) },
-      { name: 'Heading 2', action: () => editor?.chain().focus().setHeading({ level: 2 }).run(), active: () => editor?.isActive('heading', { level: 2 }) },
-      { name: 'Heading 3', action: () => editor?.chain().focus().setHeading({ level: 3 }).run(), active: () => editor?.isActive('heading', { level: 3 }) },
+      { name: 'Paragraph', action: () => editor?.chain().focus().setParagraph().run(), active: () => !editor?.isActive('heading'), icon: FileText },
+      { name: 'Heading 1', action: () => editor?.chain().focus().setHeading({ level: 1 }).run(), active: () => editor?.isActive('heading', { level: 1 }), icon: Heading1 },
+      { name: 'Heading 2', action: () => editor?.chain().focus().setHeading({ level: 2 }).run(), active: () => editor?.isActive('heading', { level: 2 }), icon: Heading2 },
+      { name: 'Heading 3', action: () => editor?.chain().focus().setHeading({ level: 3 }).run(), active: () => editor?.isActive('heading', { level: 3 }), icon: Heading3 },
     ];
 
     const FontSize = Extension.create({
@@ -402,21 +418,26 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
       }
     }, [ref, editor]);
 
-    const MenuButton = useCallback(({ onClick, active = false, disabled = false, children, tooltip }: { onClick: () => void; active?: boolean; disabled?: boolean; children: React.ReactNode; tooltip?: string }) => (
+    const MenuButton = useCallback(({ onClick, active = false, disabled = false, children, tooltip, size = 'default' }: { onClick: () => void; active?: boolean; disabled?: boolean; children: React.ReactNode; tooltip?: string; size?: 'sm' | 'default' }) => (
       <button
         type="button"
         onClick={onClick}
         disabled={disabled}
         title={tooltip}
-        className={`p-2 rounded-md transition-all duration-150 ${
+        className={`${size === 'sm' ? 'p-1.5' : 'p-2'} rounded-lg group relative ${
           active 
-            ? 'bg-blue-500 text-white shadow-md ring-2 ring-blue-200 dark:ring-blue-800' 
+            ? 'bg-blue-500 text-white shadow-lg' 
             : disabled
             ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50'
-            : 'text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300 hover:shadow-sm'
+            : 'text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300'
         }`}
       >
         {children}
+        {tooltip && (
+          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">
+            {tooltip}
+          </div>
+        )}
       </button>
     ), []);
 
@@ -440,14 +461,14 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
           </label>
         )}
 
-        <div className={`border rounded-xl overflow-hidden bg-white dark:bg-gray-900 transition-all duration-200 shadow-sm ${
+        <div className={`border rounded-2xl overflow-hidden bg-white dark:bg-gray-900 transition-all duration-300 backdrop-blur-sm ${
           isFocused 
-            ? 'border-blue-500 dark:border-blue-400 shadow-lg ring-2 ring-blue-100 dark:ring-blue-900/30' 
+            ? 'border-blue-500 dark:border-blue-400 shadow-2xl shadow-blue-500/10 ring-4 ring-blue-100/50 dark:ring-blue-900/30 scale-[1.01]' 
             : error
-            ? 'border-red-500 dark:border-red-400'
-            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+            ? 'border-red-500 dark:border-red-400 shadow-lg shadow-red-500/10'
+            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 shadow-lg hover:shadow-xl'
         }`}>
-          <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-800/80">
+          <div className="flex flex-wrap items-center gap-1 p-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50/90 to-gray-100/50 dark:from-gray-800/90 dark:to-gray-700/50 backdrop-blur-sm">
             {/* Text Formatting */}
             <MenuButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} tooltip="Bold (Ctrl+B)">
               <Bold size={16} />
@@ -474,14 +495,22 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                 tooltip="Text Color"
               >
                 <div className="flex items-center gap-1">
-                  <Palette size={16} />
-                  <ChevronDown size={12} />
+                  <div className="relative">
+                    <Palette size={16} />
+                    {getCurrentColor() && (
+                      <div 
+                        className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white dark:border-gray-800"
+                        style={{ backgroundColor: getCurrentColor() }}
+                      />
+                    )}
+                  </div>
+                  <ChevronDown size={10} className={showColorPicker ? 'rotate-180' : ''} />
                 </div>
               </MenuButton>
               
               {showColorPicker && (
-                <div className="absolute top-full left-0 mt-1 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-[100]">
-                  <div className="grid grid-cols-4 gap-1">
+                <div className="absolute top-full left-0 mt-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-[100] backdrop-blur-sm">
+                  <div className="grid grid-cols-4 gap-2">
                     {colors.map((color) => {
                       const isActive = editor?.getAttributes('textStyle')?.color === color;
                       return (
@@ -491,14 +520,20 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                             editor.chain().focus().setColor(color).run();
                             closeAllDropdowns();
                           }}
-                          className={`w-6 h-6 rounded border-2 hover:scale-110 transition-all ${
+                          className={`w-7 h-7 rounded-lg border-2 relative group ${
                             isActive 
                               ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
                               : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
                           }`}
                           style={{ backgroundColor: color }}
                           title={color}
-                        />
+                        >
+                          {isActive && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full shadow-sm" />
+                            </div>
+                          )}
+                        </button>
                       );
                     })}
                   </div>
@@ -507,7 +542,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                       editor.chain().focus().unsetColor().run();
                       closeAllDropdowns();
                     }}
-                    className="w-full mt-2 px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                    className="w-full mt-3 px-3 py-2 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium"
                   >
                     Remove Color
                   </button>
@@ -524,16 +559,18 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                 active={showStyleDropdown}
                 tooltip="Text Style"
               >
-                <div className="flex items-center gap-1 min-w-20 text-xs">
-                  <span>{getCurrentStyle()}</span>
-                  <ChevronDown size={12} />
+                <div className="flex items-center gap-2 min-w-24 text-xs font-medium">
+                  <Type size={14} />
+                  <span className="truncate">{getCurrentStyle()}</span>
+                  <ChevronDown size={10} className={showStyleDropdown ? 'rotate-180' : ''} />
                 </div>
               </MenuButton>
               
               {showStyleDropdown && (
-                <div className="absolute top-full left-0 mt-1 p-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-[100] min-w-36">
+                <div className="absolute top-full left-0 mt-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-[100] min-w-40 backdrop-blur-sm">
                   {styles.map((style) => {
                     const isActive = style.active();
+                    const IconComponent = style.icon;
                     return (
                       <button
                         key={style.name}
@@ -541,14 +578,15 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                           style.action();
                           closeAllDropdowns();
                         }}
-                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-all duration-150 ${
+                        className={`w-full text-left px-3 py-2.5 text-sm rounded-lg flex items-center gap-3 ${
                           isActive 
-                            ? 'bg-blue-500 text-white shadow-sm font-medium' 
+                            ? 'bg-blue-500 text-white font-medium' 
                             : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300'
                         }`}
                       >
+                        <IconComponent size={16} />
                         <span className={isActive ? 'font-medium' : ''}>{style.name}</span>
-                        {isActive && <span className="ml-2 text-blue-200">✓</span>}
+                        {isActive && <span className="ml-auto text-blue-200">✓</span>}
                       </button>
                     );
                   })}
@@ -809,7 +847,7 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
               <ListOrdered size={16} />
             </MenuButton>
 
-            <div className="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-2" />
+            <div className="w-px h-6 bg-gradient-to-b from-transparent via-gray-300 to-transparent dark:via-gray-600 mx-2" />
 
             {/* Additional Tools */}
             <MenuButton onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')} tooltip="Quote">
@@ -842,27 +880,15 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
 
           <EditorContent 
             editor={editor} 
-            className="prose prose-sm dark:prose-invert max-w-none p-4 focus:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px] [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3 [&_h3]:text-lg [&_h3]:font-medium [&_h3]:mb-2 [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 dark:[&_blockquote]:text-gray-400 [&_hr]:border-gray-300 [&_hr]:my-4"
+            className="prose prose-sm dark:prose-invert max-w-none p-6 focus:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px] [&_.ProseMirror]:leading-relaxed [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-6 [&_h1]:text-gray-900 dark:[&_h1]:text-gray-100 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-4 [&_h2]:text-gray-800 dark:[&_h2]:text-gray-200 [&_h3]:text-xl [&_h3]:font-medium [&_h3]:mb-3 [&_h3]:text-gray-700 dark:[&_h3]:text-gray-300 [&_p]:mb-4 [&_p]:text-gray-700 dark:[&_p]:text-gray-300 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-400 [&_blockquote]:pl-6 [&_blockquote]:py-2 [&_blockquote]:italic [&_blockquote]:text-gray-600 dark:[&_blockquote]:text-gray-400 [&_blockquote]:bg-blue-50/50 dark:[&_blockquote]:bg-blue-900/10 [&_blockquote]:rounded-r-lg [&_hr]:border-gray-300 dark:[&_hr]:border-gray-600 [&_hr]:my-6 [&_code]:bg-gray-100 dark:[&_code]:bg-gray-800 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded-md [&_code]:text-sm [&_code]:font-mono"
             style={{ minHeight }}
             onClick={closeAllDropdowns}
           />
           
-          {/* Formatting Status Panel */}
-          <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-4 py-2">
-            <div className="flex flex-wrap items-center gap-3 text-xs text-gray-600 dark:text-gray-400">
-              {getFormattingInfo().length > 0 ? (
-                getFormattingInfo().map((item, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    <span className="font-medium text-gray-500 dark:text-gray-500">{item.label}:</span>
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">{item.value}</span>
-                    {index < getFormattingInfo().length - 1 && (
-                      <span className="text-gray-400 dark:text-gray-600 ml-2">•</span>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <span className="text-gray-500 dark:text-gray-500">No formatting applied</span>
-              )}
+          {/* Word Count */}
+          <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {editor.getText().length} characters
             </div>
           </div>
         </div>
