@@ -1,23 +1,12 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Save,
-  Bold,
-  Italic,
-  Underline,
-  Strikethrough,
-  List,
-  ListOrdered,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Link,
-  Code,
-  Check,
-  Calendar,
   DollarSign,
   Tag,
   ChevronDown,
-  AlertCircle,
+  Check,
   Star,
 } from 'lucide-react';
 import { format, addDays } from 'date-fns';
@@ -25,9 +14,10 @@ import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Slider } from '../../components/ui/Slider';
-import { Toggle } from '../../components/ui/Toggle';
-import CustomSelect from '../../components/ui/CustomSelect';
 import { useProject, useUpdateProject } from '../../hooks/useProjects';
+import { projectSchema, type ProjectFormData } from '../../schemas/projectSchema';
+import { RichTextEditor } from '../../components/ui/RichTextEditor';
+import { ErrorBoundary } from '../../components/error/ErrorBoundary';
 
 interface EditProjectProps {
   projectId: string;
@@ -52,8 +42,9 @@ const EditProject = ({
   onNavigateToProjects,
 }: EditProjectProps) => {
   useTheme();
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [currentUser, setCurrentUser] = useState<{
     id: string;
     name: string;
@@ -61,44 +52,33 @@ const EditProject = ({
   
   const { data: project, isLoading } = useProject(projectId);
   const updateProjectMutation = useUpdateProject();
-  const [showTagDropdown, setShowTagDropdown] = useState(false);
-  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>(
-    'left'
-  );
-  const [textStyles, setTextStyles] = useState({
-    bold: false,
-    italic: false,
-    underline: false,
-    strikethrough: false,
+  
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors, isValid },
+  } = useForm({
+    resolver: zodResolver(projectSchema),
+    mode: 'onChange',
+    defaultValues: {
+      name: '',
+      description: '',
+      status: 'planning' as const,
+      priority: 'medium' as const,
+      start_date: format(new Date(), 'yyyy-MM-dd'),
+      deadline: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
+      progress: 0,
+      tags: [],
+      color: '#3B82F6',
+      is_favorite: false,
+    },
   });
-
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    status: 'planning',
-    priority: 'medium',
-    start_date: format(new Date(), 'yyyy-MM-dd'),
-    deadline: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
-    progress: 0,
-    budget: '',
-    team_id: '',
-    client_id: '',
-    tags: [] as string[],
-    color: '#3B82F6',
-    is_favorite: false,
-  });
-
-  const [descriptionLength, setDescriptionLength] = useState(0);
-  const maxDescriptionLength = 2000;
-
-  const isFormValid = useMemo(() => {
-    return (
-      formData.name.trim().length > 0 &&
-      formData.start_date &&
-      formData.deadline &&
-      new Date(formData.start_date) <= new Date(formData.deadline)
-    );
-  }, [formData.name, formData.start_date, formData.deadline]);
+  
+  const watchedTags = watch('tags');
+  const watchedDescription = watch('description');
 
   useEffect(() => {
     const userData =
@@ -110,7 +90,7 @@ const EditProject = ({
 
   useEffect(() => {
     if (project) {
-      setFormData({
+      reset({
         name: project.name || '',
         description: project.description || '',
         status: project.status || 'planning',
@@ -122,32 +102,34 @@ const EditProject = ({
           ? format(new Date(project.deadline), 'yyyy-MM-dd')
           : format(addDays(new Date(), 30), 'yyyy-MM-dd'),
         progress: project.progress || 0,
-        budget: project.budget?.toString() || '',
-        team_id: project.team_id || '',
-        client_id: project.client_id || '',
+        budget: project.budget || undefined,
+        team_id: project.team_id || undefined,
+        client_id: project.client_id || undefined,
         tags: project.tags || [],
         color: project.color || '#3B82F6',
         is_favorite: project.is_favorite || false,
       });
-      setDescriptionLength(project.description?.length || 0);
+      setLoading(false);
+      setTimeout(() => setShowForm(true), 200);
     }
-  }, [project]);
+  }, [project, reset]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowForm(true);
-    }, 200);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!isLoading && !project) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+        setTimeout(() => setShowForm(true), 200);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, project]);
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        if (isFormValid) {
-          const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
-          handleSubmit(fakeEvent);
+        if (isValid) {
+          handleSubmit(onSubmit)();
         }
       }
       if (e.key === 'Escape') {
@@ -157,50 +139,12 @@ const EditProject = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isFormValid, onNavigateToProjects]);
+  }, [isValid, onNavigateToProjects, handleSubmit]);
 
-  const validateForm = useCallback(() => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) newErrors.name = 'Project name is required';
-    if (!formData.start_date) newErrors.start_date = 'Start date is required';
-    if (!formData.deadline) newErrors.deadline = 'Deadline is required';
-    if (
-      formData.start_date &&
-      formData.deadline &&
-      new Date(formData.start_date) > new Date(formData.deadline)
-    ) {
-      newErrors.deadline = 'Deadline must be after start date';
-    }
-    if (formData.budget && parseFloat(formData.budget) < 0) {
-      newErrors.budget = 'Budget must be positive';
-    }
-    if (formData.description.length > maxDescriptionLength) {
-      newErrors.description = `Description must be under ${maxDescriptionLength} characters`;
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [formData, maxDescriptionLength]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
+  const onSubmit = (data: ProjectFormData) => {
     const projectData = {
-      name: formData.name.trim(),
-      description: formData.description.trim(),
-      status: formData.status as 'planning' | 'active' | 'on-hold' | 'completed' | 'cancelled',
-      priority: formData.priority as 'low' | 'medium' | 'high' | 'urgent',
-      start_date: formData.start_date,
-      deadline: formData.deadline,
-      progress: Number(formData.progress),
-      budget: formData.budget?.trim() ? parseFloat(formData.budget) : undefined,
-      team_id: formData.team_id.trim() ? formData.team_id.trim() : undefined,
-      client_id: formData.client_id.trim() ? formData.client_id.trim() : undefined,
-      is_favorite: formData.is_favorite,
-      tags: formData.tags,
-      color: formData.color,
+      ...data,
+      updated_by: currentUser?.id,
     };
 
     updateProjectMutation.mutate(
@@ -209,73 +153,20 @@ const EditProject = ({
         onSuccess: () => {
           setTimeout(() => onNavigateToProjects?.(), 1000);
         },
-        onError: () => {
-          setErrors({ submit: 'Failed to update project. Please try again.' });
-        },
       }
     );
   };
 
-  const handleChange = useCallback(
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >
-    ) => {
-      const { name, value } = e.target;
-      setFormData(prev => ({ ...prev, [name]: value }));
-
-      if (name === 'description') {
-        setDescriptionLength(value.length);
-
-        // Apply text styling to selected text if supported by the browser
-        const textarea = e.target as HTMLTextAreaElement;
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-
-        // Store selection for potential formatting
-        if (start !== end) {
-          // Selection exists, could be used for formatting
-          // (This is a placeholder for potential future enhancement)
-        }
-      }
-
-      // Clear field-specific errors
-      if (errors[name]) {
-        setErrors(prev => ({ ...prev, [name]: '' }));
-      }
-    },
-    [errors]
-  );
-
   const handleToggleFavorite = () => {
-    setFormData(prev => ({ ...prev, is_favorite: !prev.is_favorite }));
+    setValue('is_favorite', !watch('is_favorite'));
   };
 
-  const handleTagSelect = useCallback((tag: string) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.includes(tag)
-        ? prev.tags.filter(t => t !== tag)
-        : [...prev.tags, tag],
-    }));
-  }, []);
-
-  const handleTextStyle = (style: keyof typeof textStyles) => {
-    setTextStyles(prev => ({ ...prev, [style]: !prev[style] }));
-
-    // Apply style to selected text if there's a selection
-    const textarea = document.querySelector(
-      'textarea[name="description"]'
-    ) as HTMLTextAreaElement;
-    if (textarea && textarea.selectionStart !== textarea.selectionEnd) {
-      // This is a placeholder for potential future enhancement with a more sophisticated rich text editor
-      // For now, we're just toggling the global style state
-    }
-  };
-
-  const handleTextAlign = (align: 'left' | 'center' | 'right') => {
-    setTextAlign(align);
+  const handleTagSelect = (tag: string) => {
+    const currentTags = watchedTags || [];
+    const newTags = currentTags.includes(tag)
+      ? currentTags.filter(t => t !== tag)
+      : [...currentTags, tag];
+    setValue('tags', newTags);
   };
 
   const colorOptions = [
@@ -295,7 +186,7 @@ const EditProject = ({
     { label: 'Edit Project' },
   ];
 
-  if (isLoading) {
+  if (isLoading || loading) {
     return (
       <div className="space-y-6">
         <Breadcrumb items={breadcrumbItems} />
@@ -305,43 +196,47 @@ const EditProject = ({
   }
 
   return (
-    <div
-      className={`space-y-6 transition-all duration-500 ${
-        showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      }`}
-    >
-      <Breadcrumb items={breadcrumbItems} />
-
-      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Edit Project
-            </h1>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={onNavigateToProjects}
-                className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={!isFormValid || updateProjectMutation.isPending}
-                className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                  isFormValid && !updateProjectMutation.isPending
-                    ? 'bg-blue-500 text-white hover:bg-blue-600'
-                    : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                <Save size={14} />
-                <span>{updateProjectMutation.isPending ? 'Updating...' : 'Update'}</span>
-              </button>
-            </div>
-          </div>
+    <ErrorBoundary>
+      <div
+        className={`transition-all duration-500 ${
+          showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}
+      >
+        {/* Sticky Breadcrumb */}
+        <div className="sticky top-0 z-20">
+          <Breadcrumb items={breadcrumbItems} />
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4">
+        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+          <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
+            <div className="flex items-center justify-between">
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Edit Project
+              </h1>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={onNavigateToProjects}
+                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={!isValid || updateProjectMutation.isPending}
+                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                    isValid && !updateProjectMutation.isPending
+                      ? 'bg-blue-500 text-white hover:bg-blue-600'
+                      : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  <Save size={14} />
+                  <span>{updateProjectMutation.isPending ? 'Updating...' : 'Update'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="p-4">
           <div className="space-y-6 max-w-3xl mx-auto">
             {/* Section 1 - Basic Information */}
             <div className="space-y-4">
@@ -355,22 +250,16 @@ const EditProject = ({
                 <div className="col-span-9">
                   <input
                     type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
+                    {...register('name')}
+                    placeholder="Enter project name"
                     className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.name
-                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50'
-                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50 focus:border-blue-500/50'
+                        ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
                     }`}
-                    placeholder="Enter project name"
                   />
                   {errors.name && (
-                    <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
-                      <AlertCircle className="w-4 h-4 mr-1" />
-                      {errors.name}
-                    </div>
+                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
                   )}
                 </div>
               </div>
@@ -394,33 +283,53 @@ const EditProject = ({
                   Status *
                 </label>
                 <div className="col-span-4">
-                  <CustomSelect
-                    options={[
-                      'planning',
-                      'active',
-                      'on-hold',
-                      'completed',
-                      'cancelled',
-                    ]}
-                    value={formData.status}
-                    onChange={value =>
-                      setFormData(prev => ({ ...prev, status: value }))
-                    }
-                  />
+                  <div className="relative">
+                    <select
+                      {...register('status')}
+                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
+                        errors.status
+                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                      }`}
+                    >
+                      <option value="planning">Planning</option>
+                      <option value="active">Active</option>
+                      <option value="on-hold">On Hold</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                  </div>
+                  {errors.status && (
+                    <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
+                  )}
                 </div>
               </div>
+
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Priority *
                 </label>
                 <div className="col-span-4">
-                  <CustomSelect
-                    options={['low', 'medium', 'high', 'urgent']}
-                    value={formData.priority}
-                    onChange={value =>
-                      setFormData(prev => ({ ...prev, priority: value }))
-                    }
-                  />
+                  <div className="relative">
+                    <select
+                      {...register('priority')}
+                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
+                        errors.priority
+                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                      }`}
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                  </div>
+                  {errors.priority && (
+                    <p className="text-red-500 text-sm mt-1">{errors.priority.message}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -433,68 +342,64 @@ const EditProject = ({
 
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Start Date *
+                  Project Duration *
                 </label>
-                <div className="col-span-4">
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                    <input
-                      type="date"
-                      name="start_date"
-                      value={formData.start_date}
-                      onChange={handleChange}
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                    />
+                <div className="col-span-9">
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <input
+                        type="date"
+                        {...register('start_date')}
+                        className="bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                      />
+                    </div>
+                    <span className="text-gray-500 dark:text-gray-400">-</span>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        {...register('deadline')}
+                        className="bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                      />
+                    </div>
                   </div>
-                </div>
-                <label className="col-span-1 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Deadline
-                </label>
-                <div className="col-span-4">
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                    <input
-                      type="date"
-                      name="deadline"
-                      value={formData.deadline}
-                      onChange={handleChange}
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                    />
-                  </div>
+                  {(errors.start_date || errors.deadline) && (
+                    <div className="text-red-500 text-sm mt-1">
+                      {errors.start_date?.message || errors.deadline?.message}
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Budget *
+                  Budget
                 </label>
                 <div className="col-span-9">
                   <div className="relative">
                     <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                     <input
                       type="number"
-                      name="budget"
-                      value={formData.budget}
-                      onChange={handleChange}
+                      {...register('budget', { valueAsNumber: true })}
                       placeholder="0.00"
                       step="0.01"
                       min="0"
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                      className="w-48 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     />
                   </div>
+                  {errors.budget && (
+                    <p className="text-red-500 text-sm mt-1">{errors.budget.message}</p>
+                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Progress: {formData.progress}%
+                  Progress: {watch('progress')}%
                 </label>
                 <div className="col-span-9">
                   <Slider
-                    value={[formData.progress]}
-                    onValueChange={(value: number[]) =>
-                      setFormData(prev => ({ ...prev, progress: value[0] }))
-                    }
+                    value={[watch('progress')]}
+                    onValueChange={(value: number[]) => setValue('progress', value[0])}
                     max={100}
                     step={1}
                     className="w-full"
@@ -506,18 +411,18 @@ const EditProject = ({
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Team *
                 </label>
-                <div className="col-span-9">
+                <div className="col-span-6">
                   <div className="relative">
-                    <CustomSelect
-                      options={['', 'Team 1', 'Team 2', 'Team 3']}
-                      value={formData.team_id || 'Select a team...'}
-                      onChange={value =>
-                        setFormData(prev => ({
-                          ...prev,
-                          team_id: value === 'Select a team...' ? '' : value,
-                        }))
-                      }
-                    />
+                    <select
+                      {...register('team_id')}
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                    >
+                      <option value="">Select a team...</option>
+                      <option value="Team 1">Team 1</option>
+                      <option value="Team 2">Team 2</option>
+                      <option value="Team 3">Team 3</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
                   </div>
                 </div>
               </div>
@@ -526,59 +431,42 @@ const EditProject = ({
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Client *
                 </label>
-                <div className="col-span-9">
+                <div className="col-span-6">
                   <div className="relative">
-                    <CustomSelect
-                      options={['', 'Client 1', 'Client 2', 'Client 3']}
-                      value={formData.client_id || 'Select a client...'}
-                      onChange={value =>
-                        setFormData(prev => ({
-                          ...prev,
-                          client_id:
-                            value === 'Select a client...' ? '' : value,
-                        }))
-                      }
-                    />
+                    <select
+                      {...register('client_id')}
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                    >
+                      <option value="">Select a client...</option>
+                      <option value="Client 1">Client 1</option>
+                      <option value="Client 2">Client 2</option>
+                      <option value="Client 3">Client 3</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Section 3 - Configuration */}
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-white border-b border-gray-700/50 pb-2">
-                Configuration
-              </h2>
-
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
                   Tags *
                 </label>
-                <div className="col-span-9">
+                <div className="col-span-6">
                   <div className="relative">
                     <button
                       type="button"
                       onClick={() => setShowTagDropdown(!showTagDropdown)}
-                      className="w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm min-h-[36px]"
+                      className="w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     >
-                      <div className="flex items-center space-x-2 flex-1">
-                        <Tag className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                        <div className="flex flex-wrap gap-1 flex-1">
-                          {formData.tags.length > 0 ? (
-                            formData.tags.map(tag => (
-                              <span
-                                key={tag}
-                                className="px-2 py-1 bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 text-xs rounded border border-blue-200 dark:border-blue-500/30"
-                              >
-                                {tag}
-                              </span>
-                            ))
-                          ) : (
-                            <span className="text-gray-500 dark:text-gray-400">
-                              Select tags...
-                            </span>
-                          )}
-                        </div>
+                      <div className="flex items-center space-x-2">
+                        <Tag className="h-4 w-4 text-gray-400" />
+                        <span className="truncate">
+                          {watchedTags && watchedTags.length > 0
+                            ? watchedTags.join(', ')
+                            : 'Select tags...'}
+                        </span>
                       </div>
                       <ChevronDown
                         className={`h-4 w-4 transition-transform flex-shrink-0 ${showTagDropdown ? 'rotate-180' : ''}`}
@@ -594,13 +482,13 @@ const EditProject = ({
                               type="button"
                               onClick={() => handleTagSelect(tag)}
                               className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md transition-colors ${
-                                formData.tags.includes(tag)
+                                watchedTags?.includes(tag)
                                   ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400'
                                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                               }`}
                             >
                               <span>{tag}</span>
-                              {formData.tags.includes(tag) && (
+                              {watchedTags?.includes(tag) && (
                                 <Check className="h-4 w-4" />
                               )}
                             </button>
@@ -621,9 +509,9 @@ const EditProject = ({
                     <button
                       key={color}
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, color }))}
-                      className={`w-6 h-6 rounded-full border-2 transition-all ${
-                        formData.color === color
+                      onClick={() => setValue('color', color)}
+                      className={`w-5 h-5 rounded-full border-2 transition-all ${
+                        watch('color') === color
                           ? 'border-gray-900 dark:border-white scale-110'
                           : 'border-gray-300 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400'
                       }`}
@@ -635,23 +523,23 @@ const EditProject = ({
 
               <div className="grid grid-cols-12 gap-3 items-center">
                 <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Favorite *
+                  Favorite
                 </label>
-                <div className="col-span-9">
+                <div className="col-span-6">
                   <button
                     type="button"
                     onClick={handleToggleFavorite}
-                    className={`flex items-center space-x-2 px-3 py-1.5 w-full rounded-lg transition-colors text-sm ${
-                      formData.is_favorite
+                    className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                      watch('is_favorite')
                         ? 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30'
                         : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 border border-gray-300 dark:border-gray-700/50'
                     }`}
                   >
                     <Star
-                      className={`w-4 h-4 ${formData.is_favorite ? 'fill-current' : ''}`}
+                      className={`w-4 h-4 ${watch('is_favorite') ? 'fill-current' : ''}`}
                     />
                     <span>
-                      {formData.is_favorite
+                      {watch('is_favorite')
                         ? 'Remove from Favorites'
                         : 'Mark as Favorite'}
                     </span>
@@ -659,160 +547,52 @@ const EditProject = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-3 items-start">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right pt-2">
-                  Description *
-                </label>
-                <div className="col-span-9">
-                  <div className="flex items-center space-x-1 p-2 bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-t-lg">
-                    <Toggle
-                      pressed={textStyles.bold}
-                      onPressedChange={() => handleTextStyle('bold')}
-                      aria-label="Bold"
-                    >
-                      <Bold className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textStyles.italic}
-                      onPressedChange={() => handleTextStyle('italic')}
-                      aria-label="Italic"
-                    >
-                      <Italic className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textStyles.underline}
-                      onPressedChange={() => handleTextStyle('underline')}
-                      aria-label="Underline"
-                    >
-                      <Underline className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textStyles.strikethrough}
-                      onPressedChange={() => handleTextStyle('strikethrough')}
-                      aria-label="Strikethrough"
-                    >
-                      <Strikethrough className="h-4 w-4" />
-                    </Toggle>
-
-                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-
-                    <Toggle
-                      pressed={textAlign === 'left'}
-                      onPressedChange={() => handleTextAlign('left')}
-                      aria-label="Align left"
-                    >
-                      <AlignLeft className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textAlign === 'center'}
-                      onPressedChange={() => handleTextAlign('center')}
-                      aria-label="Align center"
-                    >
-                      <AlignCenter className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle
-                      pressed={textAlign === 'right'}
-                      onPressedChange={() => handleTextAlign('right')}
-                      aria-label="Align right"
-                    >
-                      <AlignRight className="h-4 w-4" />
-                    </Toggle>
-
-                    <div className="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1" />
-
-                    <Toggle aria-label="List">
-                      <List className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle aria-label="Ordered list">
-                      <ListOrdered className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle aria-label="Link">
-                      <Link className="h-4 w-4" />
-                    </Toggle>
-                    <Toggle aria-label="Code">
-                      <Code className="h-4 w-4" />
-                    </Toggle>
-                  </div>
-
-                  <div className="relative">
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      rows={6}
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-b-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none text-sm"
-                      placeholder="Enter project description..."
-                      style={{
-                        fontWeight: textStyles.bold ? 'bold' : 'normal',
-                        fontStyle: textStyles.italic ? 'italic' : 'normal',
-                        textDecoration:
-                          `${textStyles.underline ? 'underline' : ''} ${textStyles.strikethrough ? 'line-through' : ''}`.trim(),
-                        textAlign: textAlign,
-                      }}
-                    />
-
-                    <div className="absolute bottom-2 left-0 right-0 flex items-center justify-between px-3">
-                      <span
-                        className={`text-xs ${
-                          descriptionLength > maxDescriptionLength * 0.9
-                            ? 'text-red-500 dark:text-red-400'
-                            : 'text-gray-500 dark:text-gray-400'
-                        }`}
-                      >
-                        {descriptionLength}/{maxDescriptionLength} characters
-                      </span>
-                      <div className="flex items-center space-x-2">
-                        {updateProjectMutation.isSuccess && (
-                          <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
-                            <Check size={14} />
-                            <span className="text-xs">Saved</span>
-                          </div>
-                        )}
-                        {errors.description && (
-                          <div className="flex items-center space-x-1 text-red-500 dark:text-red-400">
-                            <AlertCircle size={14} />
-                            <span className="text-xs">
-                              {errors.description}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+              <div className="mt-8">
+                <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2 mb-4">
+                  Project Description
+                </h2>
+                <div className="-mr-10 sm:-mr-16 md:-mr-24 lg:-mr-40 xl:-mr-56 2xl:-mr-80">
+                  <RichTextEditor
+                    value={watchedDescription}
+                    onChange={(value) => setValue('description', value)}
+                    error={errors.description?.message}
+                    placeholder="Enter project description..."
+                    minHeight="200px"
+                  />
                 </div>
               </div>
             </div>
           </div>
         </form>
 
-        {errors.submit && (
-          <div className="mx-6 mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <div className="flex items-center space-x-2 text-red-400">
-              <AlertCircle className="w-5 h-5" />
-              <span>{errors.submit}</span>
+          {updateProjectMutation.isError && (
+            <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
+              <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
+                <span>Failed to update project. Please try again.</span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
-          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-            <div className="flex items-center space-x-4">
-              <span>Press Ctrl+S to save</span>
-              <span>•</span>
-              <span>Press Esc to cancel</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              {updateProjectMutation.isSuccess && (
-                <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
-                  <Check size={14} />
-                  <span>Saved</span>
-                </div>
-              )}
+          <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
+            <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center space-x-4">
+                <span>Press Ctrl+S to save</span>
+                <span>•</span>
+                <span>Press Esc to cancel</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                {updateProjectMutation.isSuccess && (
+                  <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
+                    <Check size={14} />
+                    <span>Saved</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 };
 
