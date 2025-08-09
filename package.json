@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@react-spring/web": "^10.0.1",
+    "@tiptap/extension-font-family": "^3.0.9",
     "@tiptap/extension-image": "^3.0.7",
     "@tiptap/extension-link": "^3.0.7",
     "@tiptap/extension-placeholder": "^3.0.7",
