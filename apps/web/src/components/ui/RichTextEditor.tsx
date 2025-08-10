@@ -402,416 +402,218 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
             ? 'border-red-500 dark:border-red-400 shadow-lg shadow-red-500/10'
             : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 shadow-lg hover:shadow-xl'
         }`}>
-          <div className="flex flex-wrap items-center gap-1 p-2 sm:p-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50/90 to-gray-100/50 dark:from-gray-800/90 dark:to-gray-700/50 backdrop-blur-sm overflow-x-auto">
-            {/* Text Formatting */}
-            <div className="flex items-center gap-1">
-              <MenuButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} tooltip="Bold (Ctrl+B)" size="sm">
-                <Bold size={14} />
-              </MenuButton>
-              <MenuButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} tooltip="Italic (Ctrl+I)" size="sm">
-                <Italic size={14} />
-              </MenuButton>
-              <MenuButton onClick={() => editor.chain().focus().toggleUnderline().run()} active={editor.isActive('underline')} tooltip="Underline (Ctrl+U)" size="sm">
-                <UnderlineIcon size={14} />
-              </MenuButton>
-              <MenuButton onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive('strike')} tooltip="Strikethrough" size="sm">
-                <Strikethrough size={14} />
-              </MenuButton>
-              <MenuButton onClick={() => editor.chain().focus().toggleCode().run()} active={editor.isActive('code')} tooltip="Inline Code" size="sm">
-                <Code size={14} />
-              </MenuButton>
+          <div className="border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50/90 to-gray-100/50 dark:from-gray-800/90 dark:to-gray-700/50 backdrop-blur-sm">
+            {/* First Row - Essential formatting */}
+            <div className="flex items-center justify-between p-2 sm:p-3">
+              <div className="flex items-center gap-1">
+                <MenuButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} tooltip="Bold" size="sm">
+                  <Bold size={14} />
+                </MenuButton>
+                <MenuButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} tooltip="Italic" size="sm">
+                  <Italic size={14} />
+                </MenuButton>
+                <MenuButton onClick={() => editor.chain().focus().toggleUnderline().run()} active={editor.isActive('underline')} tooltip="Underline" size="sm">
+                  <UnderlineIcon size={14} />
+                </MenuButton>
+                <MenuButton onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive('strike')} tooltip="Strike" size="sm">
+                  <Strikethrough size={14} />
+                </MenuButton>
+                <MenuButton onClick={() => editor.chain().focus().toggleCode().run()} active={editor.isActive('code')} tooltip="Code" size="sm">
+                  <Code size={14} />
+                </MenuButton>
+              </div>
+              
+              <div className="flex items-center gap-1">
+                <MenuButton onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} tooltip="Undo" size="sm">
+                  <Undo size={14} />
+                </MenuButton>
+                <MenuButton onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} tooltip="Redo" size="sm">
+                  <Redo size={14} />
+                </MenuButton>
+              </div>
             </div>
             
-            {/* Color Picker */}
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
-              <MenuButton 
-                onClick={() => toggleDropdown('color')} 
-                active={showColorPicker}
-                tooltip="Text Color"
-                size="sm"
-              >
-                <div className="flex items-center gap-1">
-                  <div className="relative">
-                    <Palette size={14} />
-                    {getCurrentColor() && (
-                      <div 
-                        className="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 rounded-full border border-white dark:border-gray-800"
-                        style={{ backgroundColor: getCurrentColor() }}
-                      />
-                    )}
-                  </div>
-                  <ChevronDown size={8} className={`hidden sm:block ${showColorPicker ? 'rotate-180' : ''}`} />
-                </div>
-              </MenuButton>
-              
-              {showColorPicker && (
-                <div className="absolute top-full left-0 mt-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-[100] backdrop-blur-sm">
-                  <div className="grid grid-cols-4 gap-2">
-                    {colors.map((color) => {
-                      const isActive = editor?.getAttributes('textStyle')?.color === color;
-                      return (
-                        <button
-                          key={color}
-                          onClick={() => {
-                            editor.chain().focus().setColor(color).run();
-                            closeAllDropdowns();
-                          }}
-                          className={`w-7 h-7 rounded-lg border-2 relative group ${
-                            isActive 
-                              ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
-                              : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
-                          }`}
-                          style={{ backgroundColor: color }}
-                          title={color}
-                        >
-                          {isActive && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-2 h-2 bg-white rounded-full shadow-sm" />
-                            </div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <button
-                    onClick={() => {
-                      editor.chain().focus().unsetColor().run();
-                      closeAllDropdowns();
-                    }}
-                    className="w-full mt-3 px-3 py-2 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium"
+            {/* Second Row - Style and tools */}
+            <div className="flex items-center justify-between px-2 pb-2 sm:px-3 sm:pb-3 border-t border-gray-200/50 dark:border-gray-700/50">
+              <div className="flex items-center gap-1">
+                {/* Style Dropdown */}
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                  <MenuButton 
+                    onClick={() => toggleDropdown('style')} 
+                    active={showStyleDropdown}
+                    tooltip="Style"
+                    size="sm"
                   >
-                    Remove Color
-                  </button>
-                </div>
-              )}
-            </div>
-            
-            <div className="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-2" />
-            
-            {/* Style Dropdown */}
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
-              <MenuButton 
-                onClick={() => toggleDropdown('style')} 
-                active={showStyleDropdown}
-                tooltip="Text Style"
-              >
-                <div className="flex items-center gap-2 min-w-24 text-xs font-medium">
-                  <Type size={14} />
-                  <span className="truncate">{getCurrentStyle()}</span>
-                  <ChevronDown size={10} className={showStyleDropdown ? 'rotate-180' : ''} />
-                </div>
-              </MenuButton>
-              
-              {showStyleDropdown && (
-                <div className="absolute top-full left-0 mt-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-[100] min-w-40 backdrop-blur-sm">
-                  {styles.map((style) => {
-                    const isActive = style.active();
-                    const IconComponent = style.icon;
-                    return (
-                      <button
-                        key={style.name}
-                        onClick={() => {
-                          style.action();
-                          closeAllDropdowns();
-                        }}
-                        className={`w-full text-left px-3 py-2.5 text-sm rounded-lg flex items-center gap-3 ${
-                          isActive 
-                            ? 'bg-blue-500 text-white font-medium' 
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300'
-                        }`}
-                      >
-                        <IconComponent size={16} />
-                        <span className={isActive ? 'font-medium' : ''}>{style.name}</span>
-                        {isActive && <span className="ml-auto text-blue-200">✓</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Font Family Combobox */}
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
-              {showFontDropdown ? (
-                <div className="flex items-center">
-                  <input
-                    type="text"
-                    value={fontSearch !== '' ? fontSearch : getCurrentFont()}
-                    onChange={(e) => setFontSearch(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const inputValue = fontSearch !== '' ? fontSearch : getCurrentFont();
-                        handleCustomFont(inputValue);
-                      } else if (e.key === 'Escape') {
-                        closeAllDropdowns();
-                      }
-                    }}
-                    onBlur={() => {
-                      setTimeout(() => {
-                        if (fontSearch !== '') {
-                          handleCustomFont(fontSearch);
-                        }
-                        closeAllDropdowns();
-                      }, 200);
-                    }}
-                    onFocus={(e) => {
-                      if (fontSearch === '') {
-                        e.target.select();
-                      }
-                    }}
-                    className="px-2 py-1 text-xs min-w-16 max-w-24 border border-blue-500 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    placeholder="Font family..."
-                    autoFocus
-                  />
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    toggleDropdown('font');
-                  }}
-                  className="p-2 rounded-md transition-all duration-150 text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300 hover:shadow-sm"
-                  title="Font Family"
-                >
-                  <div className="flex items-center gap-1 text-xs min-w-16">
-                    <span className="truncate">{getCurrentFont()}</span>
-                    <ChevronDown size={12} />
-                  </div>
-                </button>
-              )}
-              
-              {showFontDropdown && (
-                <div className="absolute top-full left-0 mt-1 p-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-[100] min-w-44 max-h-48 overflow-y-auto">
-                  {filteredFonts.length > 0 ? (
-                    filteredFonts.map((font) => {
-                      const isActive = getCurrentFont() === font.name;
-                      return (
-                        <button
-                          key={font.name}
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            if (font.value) {
-                              editor?.chain().setFontFamily(font.value).run();
-                            } else {
-                              editor?.chain().unsetFontFamily().run();
-                            }
-                            closeAllDropdowns();
-                          }}
-                          className={`w-full text-left px-3 py-2 text-sm rounded-md transition-all duration-150 flex items-center justify-between ${
-                            isActive 
-                              ? 'bg-blue-500 text-white shadow-sm font-medium' 
-                              : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300'
-                          }`}
-                          style={{ fontFamily: font.value }}
-                        >
-                          <span>{font.name}</span>
-                          {isActive && <span className="text-blue-200">✓</span>}
-                        </button>
-                      );
-                    })
-                  ) : (
-                    <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
-                      {fontSearch ? (
-                        <button
-                          onClick={() => handleCustomFont(fontSearch)}
-                          className="text-blue-600 dark:text-blue-400 hover:underline"
-                        >
-                          Use "{fontSearch}" as custom font
-                        </button>
-                      ) : (
-                        'No fonts found'
-                      )}
+                    <div className="flex items-center gap-1">
+                      <Type size={12} />
+                      <span className="text-xs hidden sm:inline">{getCurrentStyle()}</span>
+                      <ChevronDown size={8} className={showStyleDropdown ? 'rotate-180' : ''} />
+                    </div>
+                  </MenuButton>
+                  
+                  {showStyleDropdown && (
+                    <div className="absolute top-full left-0 mt-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-[100] min-w-40 backdrop-blur-sm">
+                      {styles.map((style) => {
+                        const isActive = style.active();
+                        const IconComponent = style.icon;
+                        return (
+                          <button
+                            key={style.name}
+                            onClick={() => {
+                              style.action();
+                              closeAllDropdowns();
+                            }}
+                            className={`w-full text-left px-3 py-2.5 text-sm rounded-lg flex items-center gap-3 ${
+                              isActive 
+                                ? 'bg-blue-500 text-white font-medium' 
+                                : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300'
+                            }`}
+                          >
+                            <IconComponent size={16} />
+                            <span className={isActive ? 'font-medium' : ''}>{style.name}</span>
+                            {isActive && <span className="ml-auto text-blue-200">✓</span>}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
-              )}
-            </div>
-
-            {/* Font Size Combobox */}
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
-              {showSizeDropdown ? (
-                <div className="flex items-center">
-                  <input
-                    type="text"
-                    value={sizeSearch !== '' ? sizeSearch : getCurrentSize()}
-                    onChange={(e) => setSizeSearch(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const inputValue = sizeSearch !== '' ? sizeSearch : getCurrentSize();
-                        handleCustomSize(inputValue);
-                      } else if (e.key === 'Escape') {
-                        closeAllDropdowns();
-                      }
-                    }}
-                    onBlur={() => {
-                      setTimeout(() => {
-                        if (sizeSearch !== '') {
-                          handleCustomSize(sizeSearch);
-                        }
-                        closeAllDropdowns();
-                      }, 200);
-                    }}
-                    onFocus={(e) => {
-                      if (sizeSearch === '') {
-                        e.target.select();
-                      }
-                    }}
-                    className="px-2 py-1 text-xs min-w-12 max-w-16 border border-blue-500 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    placeholder="Size..."
-                    autoFocus
-                  />
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    toggleDropdown('size');
-                  }}
-                  className="p-2 rounded-md transition-all duration-150 text-gray-600 dark:text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300 hover:shadow-sm"
-                  title="Font Size"
-                >
-                  <div className="flex items-center gap-1 text-xs min-w-12">
-                    <span>{getCurrentSize()}</span>
-                    <ChevronDown size={12} />
-                  </div>
-                </button>
-              )}
-              
-              {showSizeDropdown && (
-                <div className="absolute top-full left-0 mt-1 p-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-[100] min-w-32 max-h-48 overflow-y-auto">
-                  {filteredSizes.length > 0 ? (
-                    filteredSizes.map((size) => {
-                      const isActive = getCurrentSize() === size;
-                      return (
-                        <button
-                          key={size}
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            editor?.chain().setFontSize(size).run();
-                            closeAllDropdowns();
-                          }}
-                          className={`w-full text-left px-3 py-2 text-sm rounded-md transition-all duration-150 flex items-center justify-between ${
-                            isActive 
-                              ? 'bg-blue-500 text-white shadow-sm font-medium' 
-                              : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300'
-                          }`}
-                        >
-                          <span>{size}</span>
-                          {isActive && <span className="text-blue-200">✓</span>}
-                        </button>
-                      );
-                    })
-                  ) : (
-                    <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
-                      {sizeSearch && /^\d+px$/.test(sizeSearch.trim()) ? (
-                        <button
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            handleCustomSize(sizeSearch);
-                          }}
-                          className="text-blue-600 dark:text-blue-400 hover:underline"
-                        >
-                          Use "{sizeSearch}" as custom size
-                        </button>
-                      ) : (
-                        'No sizes found'
-                      )}
+                
+                {/* Color Picker */}
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                  <MenuButton 
+                    onClick={() => toggleDropdown('color')} 
+                    active={showColorPicker}
+                    tooltip="Color"
+                    size="sm"
+                  >
+                    <div className="flex items-center gap-1">
+                      <div className="relative">
+                        <Palette size={14} />
+                        {getCurrentColor() && (
+                          <div 
+                            className="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 rounded-full border border-white dark:border-gray-800"
+                            style={{ backgroundColor: getCurrentColor() }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </MenuButton>
+                  
+                  {showColorPicker && (
+                    <div className="absolute top-full left-0 mt-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-[100] backdrop-blur-sm">
+                      <div className="grid grid-cols-4 gap-2">
+                        {colors.map((color) => {
+                          const isActive = editor?.getAttributes('textStyle')?.color === color;
+                          return (
+                            <button
+                              key={color}
+                              onClick={() => {
+                                editor.chain().focus().setColor(color).run();
+                                closeAllDropdowns();
+                              }}
+                              className={`w-7 h-7 rounded-lg border-2 relative group ${
+                                isActive 
+                                  ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
+                                  : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
+                              }`}
+                              style={{ backgroundColor: color }}
+                              title={color}
+                            >
+                              {isActive && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-2 h-2 bg-white rounded-full shadow-sm" />
+                                </div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <button
+                        onClick={() => {
+                          editor.chain().focus().unsetColor().run();
+                          closeAllDropdowns();
+                        }}
+                        className="w-full mt-3 px-3 py-2 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium"
+                      >
+                        Remove Color
+                      </button>
                     </div>
                   )}
                 </div>
-              )}
-            </div>
-
-            <div className="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-2" />
-
-            {/* Alignment Dropdown */}
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
-              <MenuButton 
-                onClick={() => toggleDropdown('align')} 
-                active={showAlignDropdown}
-                tooltip="Text Alignment"
-              >
-                <div className="flex items-center gap-1">
-                  {(() => {
-                    const activeAlignment = alignments.find(a => a.active());
-                    const IconComponent = activeAlignment?.icon || AlignLeft;
-                    return <IconComponent size={16} />;
-                  })()}
-                  <ChevronDown size={12} />
-                </div>
-              </MenuButton>
+                
+                {/* Lists */}
+                <MenuButton onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive('bulletList')} tooltip="List" size="sm">
+                  <List size={14} />
+                </MenuButton>
+                <MenuButton onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive('orderedList')} tooltip="Numbers" size="sm">
+                  <ListOrdered size={14} />
+                </MenuButton>
+              </div>
               
-              {showAlignDropdown && (
-                <div className="absolute top-full left-0 mt-1 p-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-[100] min-w-32">
-                  {alignments.map((align) => {
-                    const isActive = align.active();
-                    const IconComponent = align.icon;
-                    return (
-                      <button
-                        key={align.name}
-                        onClick={() => {
-                          align.action();
-                          closeAllDropdowns();
-                        }}
-                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-all duration-150 flex items-center gap-2 ${
-                          isActive 
-                            ? 'bg-blue-500 text-white shadow-sm font-medium' 
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300'
-                        }`}
-                      >
-                        <IconComponent size={16} />
-                        <span>{align.name}</span>
-                        {isActive && <span className="ml-auto text-blue-200">✓</span>}
-                      </button>
-                    );
-                  })}
+              <div className="flex items-center gap-1">
+                {/* Alignment */}
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                  <MenuButton 
+                    onClick={() => toggleDropdown('align')} 
+                    active={showAlignDropdown}
+                    tooltip="Align"
+                    size="sm"
+                  >
+                    <div className="flex items-center gap-1">
+                      {(() => {
+                        const activeAlignment = alignments.find(a => a.active());
+                        const IconComponent = activeAlignment?.icon || AlignLeft;
+                        return <IconComponent size={14} />;
+                      })()}
+                    </div>
+                  </MenuButton>
+                  
+                  {showAlignDropdown && (
+                    <div className="absolute top-full left-0 mt-1 p-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-[100] min-w-32">
+                      {alignments.map((align) => {
+                        const isActive = align.active();
+                        const IconComponent = align.icon;
+                        return (
+                          <button
+                            key={align.name}
+                            onClick={() => {
+                              align.action();
+                              closeAllDropdowns();
+                            }}
+                            className={`w-full text-left px-3 py-2 text-sm rounded-md transition-all duration-150 flex items-center gap-2 ${
+                              isActive 
+                                ? 'bg-blue-500 text-white shadow-sm font-medium' 
+                                : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300'
+                            }`}
+                          >
+                            <IconComponent size={16} />
+                            <span>{align.name}</span>
+                            {isActive && <span className="ml-auto text-blue-200">✓</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
+                
+                <MenuButton onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')} tooltip="Quote" size="sm">
+                  <Quote size={14} />
+                </MenuButton>
+                <MenuButton onClick={addLink} active={editor.isActive('link')} tooltip="Link" size="sm">
+                  <LinkIcon size={14} />
+                </MenuButton>
+                <MenuButton onClick={addImage} tooltip="Image" size="sm">
+                  <ImageIcon size={14} />
+                </MenuButton>
+                <MenuButton onClick={() => editor.chain().focus().setHorizontalRule().run()} tooltip="Line" size="sm">
+                  <Minus size={14} />
+                </MenuButton>
+                <MenuButton onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} tooltip="Clear" size="sm">
+                  <Eraser size={14} />
+                </MenuButton>
+              </div>
             </div>
-
-            <div className="w-px h-5 bg-gray-300 dark:bg-gray-600 mx-2" />
-
-            {/* List Controls */}
-            <MenuButton onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive('bulletList')} tooltip="Bullet List">
-              <List size={16} />
-            </MenuButton>
-            <MenuButton onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive('orderedList')} tooltip="Numbered List">
-              <ListOrdered size={16} />
-            </MenuButton>
-
-            <div className="w-px h-6 bg-gradient-to-b from-transparent via-gray-300 to-transparent dark:via-gray-600 mx-2" />
-
-            {/* Additional Tools */}
-            <MenuButton onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')} tooltip="Quote">
-              <Quote size={16} />
-            </MenuButton>
-            <MenuButton onClick={addLink} active={editor.isActive('link')} tooltip="Add Link">
-              <LinkIcon size={16} />
-            </MenuButton>
-            <MenuButton onClick={addImage} tooltip="Add Image">
-              <ImageIcon size={16} />
-            </MenuButton>
-            <MenuButton onClick={() => editor.chain().focus().setHorizontalRule().run()} tooltip="Horizontal Line">
-              <Minus size={16} />
-            </MenuButton>
-
-            {/* Spacer */}
-            <div className="flex-1" />
-
-            {/* Right-aligned Controls */}
-            <MenuButton onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} tooltip="Clear Formatting">
-              <Eraser size={16} />
-            </MenuButton>
-            <MenuButton onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} tooltip="Undo">
-              <Undo size={16} />
-            </MenuButton>
-            <MenuButton onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} tooltip="Redo">
-              <Redo size={16} />
-            </MenuButton>
           </div>
 
           <EditorContent 
