@@ -65,11 +65,10 @@ export const TaskForm = memo(({
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <FormField
         label="Task Title"
-        name="title"
-        register={register}
-        error={errors.title}
+        error={errors.title?.message}
         required
         placeholder="Enter task title"
+        {...register('title')}
       />
 
       <div className="space-y-1">
@@ -90,29 +89,26 @@ export const TaskForm = memo(({
       <div className="grid grid-cols-2 gap-4">
         <FormSelect
           label="Status"
-          name="status"
           options={statusOptions}
-          register={register}
-          error={errors.status}
+          error={errors.status?.message}
           required
+          {...register('status')}
         />
 
         <FormSelect
           label="Priority"
-          name="priority"
           options={priorityOptions}
-          register={register}
-          error={errors.priority}
+          error={errors.priority?.message}
           required
+          {...register('priority')}
         />
       </div>
 
       <FormField
         label="Due Date"
-        name="due_date"
         type="datetime-local"
-        register={register}
-        error={errors.due_date}
+        error={errors.due_date?.message}
+        {...register('due_date')}
       />
 
       <Button

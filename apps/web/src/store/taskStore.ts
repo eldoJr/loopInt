@@ -1,14 +1,18 @@
 import { create } from 'zustand';
 
-interface Task {
+export interface Task {
   id: string;
   title: string;
   description?: string;
-  status: 'todo' | 'in-progress' | 'done';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: 'todo' | 'in_progress' | 'done';
+  priority: 'low' | 'medium' | 'high';
   due_date?: string;
   assigned_to?: string;
-  completed: boolean;
+  project_id?: string;
+  user_id?: string;
+  user_name?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface TaskState {
@@ -44,8 +48,7 @@ export const useTaskStore = create<TaskState>(set => ({
         t.id === id
           ? {
               ...t,
-              completed: !t.completed,
-              status: t.completed ? 'todo' : 'done',
+              status: t.status === 'done' ? 'todo' : 'done',
             }
           : t
       ),
