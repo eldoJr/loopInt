@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import {
   ChevronDown,
   ChevronRight,
@@ -29,6 +29,8 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { showToast } from '../../components/ui/Toast';
 import SearchBar from '../../components/ui/SearchBar';
 import { useSearch } from '../../hooks/useSearch';
+import { useTasks, useUpdateTask, useDeleteTask } from '../../hooks/api/useTasks';
+import { ErrorBoundary } from '../../components/error/ErrorBoundary';
 
 interface TasksProps {
   onNavigateBack?: () => void;
@@ -36,7 +38,7 @@ interface TasksProps {
   onNavigateToEditTask?: (taskId: string) => void;
 }
 
-const Tasks = ({
+const Tasks = memo(({
   onNavigateBack,
   onNavigateToAddTask,
   onNavigateToEditTask,
@@ -65,6 +67,10 @@ const Tasks = ({
     uuid?: string; // Original UUID from database
   };
 
+  const { data: tasksData, isLoading: tasksLoading, refetch: refetchTasks } = useTasks();
+  const updateTaskMutation = useUpdateTask();
+  const deleteTaskMutation = useDeleteTask();
+  
   const [tasks, setTasks] = useState<Record<SectionKey, Task[]>>({
     today: [],
     tomorrow: [],
@@ -99,93 +105,66 @@ const Tasks = ({
     updated_at: string;
   }
 
-  const fetchTasks = async () => {
-    try {
-      // Get current user to filter tasks
-      const userData =
-        localStorage.getItem('user') || sessionStorage.getItem('user');
-      const currentUser = userData ? JSON.parse(userData) : null;
+  const categorizeTasks = (fetchedTasks: ApiTask[]) => {
+    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+    const currentUser = userData ? JSON.parse(userData) : null;
+    
+    const userTasks = currentUser
+      ? fetchedTasks.filter(task => task.assigned_to === currentUser.id)
+      : fetchedTasks;
 
-      const response = await fetch('http://localhost:3000/tasks');
-      if (response.ok) {
-        const fetchedTasks: ApiTask[] = await response.json();
-        console.log('Fetched tasks from API:', fetchedTasks);
-        console.log('Current user:', currentUser);
-        console.log('Looking for tasks assigned to:', currentUser?.id);
+    const convertedTasks = userTasks.map((task, index) => ({
+      id: index + 1,
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      priority: task.priority,
+      time: task.due_date,
+      uuid: task.id,
+    }));
 
-        // Filter tasks for current user and convert to component format
-        const userTasks = currentUser
-          ? fetchedTasks.filter(task => {
-              console.log(
-                'Comparing task.assigned_to:',
-                task.assigned_to,
-                'with user.id:',
-                currentUser.id
-              );
-              return task.assigned_to === currentUser.id;
-            })
-          : fetchedTasks;
+    const categorizedTasks = {
+      today: [] as Task[],
+      tomorrow: [] as Task[],
+      thisWeek: [] as Task[],
+      later: [] as Task[],
+    };
 
-        console.log('User tasks after filtering:', userTasks);
-
-        const convertedTasks = userTasks.map((task, index) => ({
-          id: index + 1,
-          title: task.title,
-          description: task.description,
-          status: task.status,
-          priority: task.priority,
-          time: task.due_date,
-          uuid: task.id,
-        }));
-
-        console.log('Final converted tasks:', convertedTasks);
-
-        // Categorize tasks by due date
-        const categorizedTasks = {
-          today: [] as Task[],
-          tomorrow: [] as Task[],
-          thisWeek: [] as Task[],
-          later: [] as Task[],
-        };
-
-        convertedTasks.forEach(task => {
-          if (!task.time) {
-            categorizedTasks.later.push(task);
-            return;
-          }
-
-          try {
-            const dueDate = parseISO(task.time);
-
-            if (isToday(dueDate)) {
-              categorizedTasks.today.push(task);
-            } else if (isTomorrow(dueDate)) {
-              categorizedTasks.tomorrow.push(task);
-            } else if (isThisWeek(dueDate)) {
-              categorizedTasks.thisWeek.push(task);
-            } else {
-              categorizedTasks.later.push(task);
-            }
-          } catch (error) {
-            console.error('Error parsing date:', task.time, error);
-            categorizedTasks.later.push(task);
-          }
-        });
-
-        setTasks(categorizedTasks);
-      } else {
-        console.error('Failed to fetch tasks');
+    convertedTasks.forEach(task => {
+      if (!task.time) {
+        categorizedTasks.later.push(task);
+        return;
       }
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-    }
+
+      try {
+        const dueDate = parseISO(task.time);
+        if (isToday(dueDate)) {
+          categorizedTasks.today.push(task);
+        } else if (isTomorrow(dueDate)) {
+          categorizedTasks.tomorrow.push(task);
+        } else if (isThisWeek(dueDate)) {
+          categorizedTasks.thisWeek.push(task);
+        } else {
+          categorizedTasks.later.push(task);
+        }
+      } catch (error) {
+        categorizedTasks.later.push(task);
+      }
+    });
+
+    return categorizedTasks;
   };
+
+  useEffect(() => {
+    if (tasksData) {
+      setTasks(categorizeTasks(tasksData as ApiTask[]));
+    }
+  }, [tasksData]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
       setTimeout(() => setShowContent(true), 200);
-      fetchTasks();
     }, 800);
     return () => clearTimeout(timer);
   }, []);
@@ -197,36 +176,29 @@ const Tasks = ({
     }));
   };
 
-  const toggleTask = async (sectionKey: SectionKey, taskId: number) => {
+  const toggleTask = (sectionKey: SectionKey, taskId: number) => {
     const task = tasks[sectionKey].find(t => t.id === taskId);
     if (!task?.uuid) return;
 
     const newStatus = task.status === 'done' ? 'todo' : 'done';
-
-    try {
-      const response = await fetch(`http://localhost:3000/tasks/${task.uuid}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (response.ok) {
-        setTasks(prev => ({
-          ...prev,
-          [sectionKey]: prev[sectionKey].map(t =>
-            t.id === taskId ? { ...t, status: newStatus } : t
-          ),
-        }));
-        showToast.success(
-          newStatus === 'done' ? 'Task completed!' : 'Task reopened'
-        );
-      } else {
-        showToast.error('Failed to update task');
+    
+    updateTaskMutation.mutate(
+      { id: task.uuid, status: newStatus },
+      {
+        onSuccess: () => {
+          setTasks(prev => ({
+            ...prev,
+            [sectionKey]: prev[sectionKey].map(t =>
+              t.id === taskId ? { ...t, status: newStatus } : t
+            ),
+          }));
+          showToast.success(
+            newStatus === 'done' ? 'Task completed!' : 'Task reopened'
+          );
+        },
+        onError: () => showToast.error('Failed to update task'),
       }
-    } catch (error) {
-      console.error('Error updating task status:', error);
-      showToast.error('Failed to update task');
-    }
+    );
   };
 
   const getPriorityColor = (priority: string) => {
@@ -313,38 +285,22 @@ const Tasks = ({
     }
   };
 
-  const deleteTask = async (
-    taskUuid: string,
-    sectionKey: SectionKey,
-    taskId: number
-  ) => {
+  const deleteTask = (taskUuid: string, sectionKey: SectionKey, taskId: number) => {
     const task = tasks[sectionKey].find(t => t.id === taskId);
-    if (
-      !window.confirm(
-        `Are you sure you want to delete "${task?.title}"? This action cannot be undone.`
-      )
-    ) {
+    if (!window.confirm(`Are you sure you want to delete "${task?.title}"? This action cannot be undone.`)) {
       return;
     }
 
-    try {
-      const response = await fetch(`http://localhost:3000/tasks/${taskUuid}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
+    deleteTaskMutation.mutate(taskUuid, {
+      onSuccess: () => {
         setTasks(prev => ({
           ...prev,
           [sectionKey]: prev[sectionKey].filter(task => task.id !== taskId),
         }));
         showToast.success('Task deleted successfully!');
-      } else {
-        showToast.error('Failed to delete task');
-      }
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      showToast.error('Failed to delete task');
-    }
+      },
+      onError: () => showToast.error('Failed to delete task'),
+    });
   };
 
   const getSections = () => {
@@ -430,7 +386,7 @@ const Tasks = ({
     { label: 'Tasks' },
   ];
 
-  if (loading) {
+  if (loading || tasksLoading) {
     return (
       <div className="space-y-6">
         <Breadcrumb items={breadcrumbItems} />
@@ -440,16 +396,20 @@ const Tasks = ({
   }
 
   return (
-    <div
-      className={`space-y-6 transition-all duration-500 ${
-        showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      }`}
-    >
-      <Breadcrumb items={breadcrumbItems} />
+    <ErrorBoundary>
+      <div
+        className={`transition-all duration-500 ${
+          showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        }`}
+      >
+      {/* Sticky Breadcrumb */}
+      <div className="sticky top-0 z-20">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
 
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
+      <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+        {/* Sticky Header */}
+        <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -458,7 +418,7 @@ const Tasks = ({
             </div>
             <div className="flex items-center space-x-2">
               <button
-                onClick={fetchTasks}
+                onClick={() => refetchTasks()}
                 className="bg-gray-500 dark:bg-gray-600 text-white px-3 py-1.5 rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors text-sm"
               >
                 Refresh
@@ -476,23 +436,21 @@ const Tasks = ({
 
         {/* Enhanced Search & Filters */}
         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/50">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex-1 max-w-md">
-              <SearchBar
-                placeholder="Search tasks by title or description..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-                searchData={allTasks}
-                searchKeys={['title', 'description']}
-                onResultSelect={handleTaskSelect}
-                showResults={true}
-                maxResults={6}
-                showCommandHint={false}
-              />
-            </div>
-          </div>
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
+              <div className="flex-1 max-w-md">
+                <SearchBar
+                  placeholder="Search tasks "
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  searchData={allTasks}
+                  searchKeys={['title', 'description']}
+                  onResultSelect={handleTaskSelect}
+                  showResults={true}
+                  maxResults={6}
+                  showCommandHint={false}
+                />
+              </div>
               <div className="flex space-x-1">
                 {['all', 'completed', 'pending', 'high'].map(filterType => (
                   <button
@@ -533,10 +491,10 @@ const Tasks = ({
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Task Sections */}
-      <div className="space-y-4">
+        {/* Task Sections */}
+        <div className="p-4">
+          <div className="space-y-4">
         {getSections().map(({ key, title, date, icon: Icon }) => {
           const sectionTasks = filteredTasks(tasks[key]);
           const { completed, total } = getTaskCount(tasks[key]);
@@ -710,9 +668,14 @@ const Tasks = ({
             </div>
           );
         })}
+          </div>
+        </div>
       </div>
     </div>
+    </ErrorBoundary>
   );
-};
+});
+
+Tasks.displayName = 'Tasks';
 
 export default Tasks;
