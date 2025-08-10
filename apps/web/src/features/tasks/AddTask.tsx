@@ -250,11 +250,11 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
 
         <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
           <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                 New Task
               </h1>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={() => setShowAIPanel(!showAIPanel)}
                   className={`group flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-300 text-sm ${
@@ -270,7 +270,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                   >
                     {showAIPanel ? <X size={14} /> : <Sparkles size={14} />}
                   </div>
-                  <span className="font-medium">
+                  <span className="font-medium hidden sm:inline">
                     {showAIPanel ? 'Close AI' : 'AI'}
                   </span>
                 </button>
@@ -296,26 +296,26 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             </div>
           </div>
 
-          <div className="flex">
+          <div className="flex flex-col lg:flex-row">
             {/* Main Form */}
             <div className="flex-1">
-              <form onSubmit={handleSubmit(onSubmit)} className="p-4">
-                <div className="space-y-6 max-w-3xl mx-auto">
+              <form onSubmit={handleSubmit(onSubmit)} className="p-4 lg:p-6">
+                <div className="space-y-6 max-w-4xl mx-auto">
                 <div className="space-y-4">
                   <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                     Task Information
                   </h2>
 
-                  <div className="grid grid-cols-12 gap-3 items-center">
-                    <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:items-center">
+                    <label className="md:col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 md:text-right">
                       Task Title *
                     </label>
-                    <div className="col-span-9">
+                    <div className="md:col-span-9">
                       <input
                         type="text"
                         {...register('title')}
                         placeholder="Enter task title"
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
+                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                           errors.title
                             ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                             : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
@@ -330,69 +330,62 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-12 gap-3 items-center">
-                    <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 md:items-center">
+                    <label className="sm:col-span-2 md:col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 md:text-right">
                       Status *
                     </label>
-                    <div className="col-span-4">
-                      <div className="relative">
-                        <select
-                          {...register('status')}
-                          className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
-                            errors.status
-                              ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                              : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                          }`}
-                        >
-                          <option value="todo">To Do</option>
-                          <option value="in_progress">In Progress</option>
-                          <option value="done">Done</option>
-                        </select>
-                      </div>
+                    <div className="sm:col-span-1 md:col-span-4">
+                      <select
+                        {...register('status')}
+                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
+                          errors.status
+                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                        }`}
+                      >
+                        <option value="todo">To Do</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="done">Done</option>
+                      </select>
                       {errors.status && (
                         <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
                       )}
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-12 gap-3 items-center">
-                    <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                    <label className="sm:col-span-2 md:col-span-2 text-sm font-medium text-gray-600 dark:text-gray-300 md:text-right">
                       Priority *
                     </label>
-                    <div className="col-span-4">
-                      <div className="relative">
-                        <select
-                          {...register('priority')}
-                          className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
-                            errors.priority
-                              ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                              : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                          }`}
-                        >
-                          <option value="low">Low</option>
-                          <option value="medium">Medium</option>
-                          <option value="high">High</option>
-                        </select>
-                      </div>
+                    <div className="sm:col-span-1 md:col-span-3">
+                      <select
+                        {...register('priority')}
+                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
+                          errors.priority
+                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                        }`}
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
                       {errors.priority && (
                         <p className="text-red-500 text-sm mt-1">{errors.priority.message}</p>
                       )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-12 gap-3 items-center">
-                    <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:items-start">
+                    <label className="md:col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 md:text-right md:pt-2">
                       Due Date
                     </label>
-                    <div className="col-span-9">
-                      <div className="space-y-2">
-                        <div className="flex flex-wrap gap-1">
+                    <div className="md:col-span-9">
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap gap-2">
                           {quickDateOptions.map(option => (
                             <button
                               key={option.label}
                               type="button"
                               onClick={() => setValue('due_date', option.value)}
-                              className={`px-2 py-1 rounded-lg text-xs font-medium transition-all flex items-center space-x-1 ${
+                              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center space-x-1.5 ${
                                 watch('due_date') === option.value
                                   ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
                                   : 'bg-gray-100 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-700/50'
@@ -403,13 +396,13 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                             </button>
                           ))}
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                           <div className="relative">
                             <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                             <input
                               type="date"
                               {...register('due_date')}
-                              className="w-auto bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
+                              className="w-full sm:w-auto bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
                             />
                           </div>
                           {watch('due_date') && (
@@ -419,44 +412,42 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                           )}
                         </div>
                         {errors.due_date && (
-                          <p className="text-red-500 text-sm mt-1">{errors.due_date.message}</p>
+                          <p className="text-red-500 text-sm">{errors.due_date.message}</p>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-12 gap-3 items-center">
-                    <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:items-center">
+                    <label className="md:col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 md:text-right">
                       Project
                     </label>
-                    <div className="col-span-9">
-                      <div className="relative">
-                        <select
-                          {...register('project_id')}
-                          className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
-                            errors.project_id
-                              ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                              : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                          }`}
-                        >
-                          <option value="">Select a project...</option>
-                          <option value="project1">Project 1</option>
-                          <option value="project2">Project 2</option>
-                          <option value="project3">Project 3</option>
-                        </select>
-                      </div>
+                    <div className="md:col-span-9">
+                      <select
+                        {...register('project_id')}
+                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
+                          errors.project_id
+                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                        }`}
+                      >
+                        <option value="">Select a project...</option>
+                        <option value="project1">Project 1</option>
+                        <option value="project2">Project 2</option>
+                        <option value="project3">Project 3</option>
+                      </select>
                       {errors.project_id && (
                         <p className="text-red-500 text-sm mt-1">{errors.project_id.message}</p>
                       )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-12 gap-3 items-center">
-                    <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:items-center">
+                    <label className="md:col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 md:text-right">
                       Assigned To *
                     </label>
-                    <div className="col-span-9">
-                      <div className="w-full bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-600 dark:text-gray-300 flex items-center space-x-2 text-sm">
+                    <div className="md:col-span-9">
+                      <div className="w-full bg-gray-100 dark:bg-gray-800/30 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-600 dark:text-gray-300 flex items-center space-x-2 text-sm">
                         <User className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                         <span>{currentUser?.name || 'User'} (You)</span>
                       </div>
@@ -468,7 +459,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2 mb-4">
                       Task Description
                     </h2>
-                    <div className="-mr-10 sm:-mr-16 md:-mr-24 lg:-mr-40 xl:-mr-56 2xl:-mr-80">
+                    <div className="w-full">
                       <RichTextEditor
                         value={watchedDescription || ''}
                         onChange={value => handleInputChange('description', value)}
@@ -478,7 +469,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     </div>
 
                     {errors.description && (
-                      <div className="flex items-center mt-1 text-red-500 dark:text-red-400 text-sm">
+                      <div className="flex items-center mt-2 text-red-500 dark:text-red-400 text-sm">
                         <AlertCircle className="w-4 h-4 mr-1" />
                         {errors.description.message}
                       </div>
@@ -491,7 +482,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             
             {/* AI Panel */}
             {showAIPanel && (
-              <div className="w-96 border-l border-gray-200 dark:border-gray-700/50 p-6 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10">
+              <div className="w-full lg:w-96 border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700/50 p-4 lg:p-6 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10">
                 <AIGenerateTask onApplyToForm={handleAIApply} />
               </div>
             )}
