@@ -402,24 +402,25 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
             ? 'border-red-500 dark:border-red-400 shadow-lg shadow-red-500/10'
             : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 shadow-lg hover:shadow-xl'
         }`}>
-          <div className="flex flex-wrap items-center gap-1 p-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50/90 to-gray-100/50 dark:from-gray-800/90 dark:to-gray-700/50 backdrop-blur-sm">
+          <div className="flex flex-wrap items-center gap-1 p-2 sm:p-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50/90 to-gray-100/50 dark:from-gray-800/90 dark:to-gray-700/50 backdrop-blur-sm overflow-x-auto">
             {/* Text Formatting */}
-            <MenuButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} tooltip="Bold (Ctrl+B)">
-              <Bold size={16} />
-            </MenuButton>
-            <MenuButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} tooltip="Italic (Ctrl+I)">
-              <Italic size={16} />
-            </MenuButton>
-            <MenuButton onClick={() => editor.chain().focus().toggleUnderline().run()} active={editor.isActive('underline')} tooltip="Underline (Ctrl+U)">
-              <UnderlineIcon size={16} />
-            </MenuButton>
-            <MenuButton onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive('strike')} tooltip="Strikethrough">
-              <Strikethrough size={16} />
-            </MenuButton>
-            <MenuButton onClick={() => editor.chain().focus().toggleCode().run()} active={editor.isActive('code')} tooltip="Inline Code">
-              <Code size={16} />
-            </MenuButton>
-            
+            <div className="flex items-center gap-1">
+              <MenuButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} tooltip="Bold (Ctrl+B)" size="sm">
+                <Bold size={14} />
+              </MenuButton>
+              <MenuButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} tooltip="Italic (Ctrl+I)" size="sm">
+                <Italic size={14} />
+              </MenuButton>
+              <MenuButton onClick={() => editor.chain().focus().toggleUnderline().run()} active={editor.isActive('underline')} tooltip="Underline (Ctrl+U)" size="sm">
+                <UnderlineIcon size={14} />
+              </MenuButton>
+              <MenuButton onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive('strike')} tooltip="Strikethrough" size="sm">
+                <Strikethrough size={14} />
+              </MenuButton>
+              <MenuButton onClick={() => editor.chain().focus().toggleCode().run()} active={editor.isActive('code')} tooltip="Inline Code" size="sm">
+                <Code size={14} />
+              </MenuButton>
+            </div>
             
             {/* Color Picker */}
             <div className="relative" onClick={(e) => e.stopPropagation()}>
@@ -427,18 +428,19 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
                 onClick={() => toggleDropdown('color')} 
                 active={showColorPicker}
                 tooltip="Text Color"
+                size="sm"
               >
                 <div className="flex items-center gap-1">
                   <div className="relative">
-                    <Palette size={16} />
+                    <Palette size={14} />
                     {getCurrentColor() && (
                       <div 
-                        className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-white dark:border-gray-800"
+                        className="absolute -bottom-0.5 -right-0.5 w-1.5 h-1.5 rounded-full border border-white dark:border-gray-800"
                         style={{ backgroundColor: getCurrentColor() }}
                       />
                     )}
                   </div>
-                  <ChevronDown size={10} className={showColorPicker ? 'rotate-180' : ''} />
+                  <ChevronDown size={8} className={`hidden sm:block ${showColorPicker ? 'rotate-180' : ''}`} />
                 </div>
               </MenuButton>
               
@@ -814,13 +816,13 @@ export const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>
 
           <EditorContent 
             editor={editor} 
-            className="prose prose-sm dark:prose-invert max-w-none p-6 focus:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px] [&_.ProseMirror]:leading-relaxed [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-6 [&_h1]:text-gray-900 dark:[&_h1]:text-gray-100 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-4 [&_h2]:text-gray-800 dark:[&_h2]:text-gray-200 [&_h3]:text-xl [&_h3]:font-medium [&_h3]:mb-3 [&_h3]:text-gray-700 dark:[&_h3]:text-gray-300 [&_p]:mb-4 [&_p]:text-gray-700 dark:[&_p]:text-gray-300 [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4 [&_li]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-400 [&_blockquote]:pl-6 [&_blockquote]:py-2 [&_blockquote]:italic [&_blockquote]:text-gray-600 dark:[&_blockquote]:text-gray-400 [&_blockquote]:bg-blue-50/50 dark:[&_blockquote]:bg-blue-900/10 [&_blockquote]:rounded-r-lg [&_hr]:border-gray-300 dark:[&_hr]:border-gray-600 [&_hr]:my-6 [&_code]:bg-gray-100 dark:[&_code]:bg-gray-800 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded-md [&_code]:text-sm [&_code]:font-mono"
+            className="prose prose-sm dark:prose-invert max-w-none p-3 sm:p-6 focus:outline-none [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[200px] [&_.ProseMirror]:leading-relaxed [&_h1]:text-2xl sm:[&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 sm:[&_h1]:mb-6 [&_h1]:text-gray-900 dark:[&_h1]:text-gray-100 [&_h2]:text-xl sm:[&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 sm:[&_h2]:mb-4 [&_h2]:text-gray-800 dark:[&_h2]:text-gray-200 [&_h3]:text-lg sm:[&_h3]:text-xl [&_h3]:font-medium [&_h3]:mb-2 sm:[&_h3]:mb-3 [&_h3]:text-gray-700 dark:[&_h3]:text-gray-300 [&_p]:mb-3 sm:[&_p]:mb-4 [&_p]:text-gray-700 dark:[&_p]:text-gray-300 [&_ul]:list-disc [&_ul]:ml-4 sm:[&_ul]:ml-6 [&_ul]:mb-3 sm:[&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:ml-4 sm:[&_ol]:ml-6 [&_ol]:mb-3 sm:[&_ol]:mb-4 [&_li]:mb-1 sm:[&_li]:mb-2 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-400 [&_blockquote]:pl-4 sm:[&_blockquote]:pl-6 [&_blockquote]:py-2 [&_blockquote]:italic [&_blockquote]:text-gray-600 dark:[&_blockquote]:text-gray-400 [&_blockquote]:bg-blue-50/50 dark:[&_blockquote]:bg-blue-900/10 [&_blockquote]:rounded-r-lg [&_hr]:border-gray-300 dark:[&_hr]:border-gray-600 [&_hr]:my-4 sm:[&_hr]:my-6 [&_code]:bg-gray-100 dark:[&_code]:bg-gray-800 [&_code]:px-1.5 sm:[&_code]:px-2 [&_code]:py-0.5 sm:[&_code]:py-1 [&_code]:rounded-md [&_code]:text-sm [&_code]:font-mono"
             style={{ minHeight }}
             onClick={closeAllDropdowns}
           />
           
           {/* Word Count */}
-          <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2">
+          <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 sm:px-4 py-2">
             <div className="text-xs text-gray-500 dark:text-gray-400">
               {editor.getText().length} characters
             </div>
