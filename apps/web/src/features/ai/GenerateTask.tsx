@@ -148,11 +148,11 @@ const AIGenerateTask = ({ onApplyToForm }: AIGenerateTaskProps) => {
                     className="w-full p-3 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600/50 rounded-lg transition-all text-left group"
                   >
                     <div className="flex items-start gap-2">
-                      <div className="p-1.5 bg-gray-200 dark:bg-gray-700/50 group-hover:bg-green-100 dark:group-hover:bg-green-500/20 rounded-lg transition-all">
-                        <IconComponent className="w-3 h-3 text-gray-500 dark:text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors" />
+                      <div className="p-1.5 bg-gray-200 dark:bg-gray-700/50 group-hover:bg-purple-100 dark:group-hover:bg-purple-500/20 rounded-lg transition-all">
+                        <IconComponent className="w-3 h-3 text-gray-500 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors" />
                       </div>
                       <div className="flex-1">
-                        <h5 className="font-medium text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors text-sm">
+                        <h5 className="font-medium text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors text-sm">
                           {suggestion.title}
                         </h5>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
