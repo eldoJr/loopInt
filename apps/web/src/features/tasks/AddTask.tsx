@@ -491,7 +491,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             
             {/* AI Panel */}
             {showAIPanel && (
-              <div className="w-80 border-l border-gray-200 dark:border-gray-700/50 p-4 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10">
+              <div className="w-96 border-l border-gray-200 dark:border-gray-700/50 p-6 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10">
                 <AIGenerateTask onApplyToForm={handleAIApply} />
               </div>
             )}

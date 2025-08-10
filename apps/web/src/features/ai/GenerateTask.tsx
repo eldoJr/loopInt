@@ -9,6 +9,7 @@ import {
   Loader2,
   CheckCircle,
   Copy,
+  RotateCcw,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -24,40 +25,148 @@ interface AIGenerateTaskProps {
   onApplyToForm?: (data: GeneratedTaskData) => void;
 }
 
+// Suggestion templates for quick task generation
+const TASK_SUGGESTIONS = [
+  {
+    icon: Brain,
+    title: 'Development Task',
+    description: 'Technical implementation with requirements and deadlines',
+    prompt: 'Create a development task for implementing user authentication with proper security measures',
+    color: 'from-blue-500 to-indigo-500',
+  },
+  {
+    icon: Zap,
+    title: 'Bug Fix Task', 
+    description: 'Issue resolution with priority and investigation steps',
+    prompt: 'Generate a bug fix task for resolving login issues affecting mobile users',
+    color: 'from-red-500 to-orange-500',
+  },
+  {
+    icon: MessageSquare,
+    title: 'Feature Task',
+    description: 'New feature implementation with acceptance criteria',
+    prompt: 'Create a task for implementing a new dashboard widget with user customization options',
+    color: 'from-purple-500 to-pink-500',
+  },
+];
+
+// Minimal step indicator
+const StepIndicator = ({ currentStep }: { currentStep: number }) => (
+  <div className="flex items-center justify-center gap-1 mb-6">
+    {[1, 2, 3].map(num => (
+      <div key={num} className="flex items-center">
+        <div
+          className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
+            currentStep >= num
+              ? 'bg-emerald-500 text-white'
+              : 'bg-gray-200 dark:bg-gray-700 text-gray-400'
+          }`}
+        >
+          {currentStep > num ? '✓' : num}
+        </div>
+        {num < 3 && (
+          <div
+            className={`w-8 h-0.5 mx-1 transition-all ${
+              currentStep > num ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-gray-700'
+            }`}
+          />
+        )}
+      </div>
+    ))}
+  </div>
+);
+
+// Compact suggestion card
+const SuggestionCard = ({ suggestion, onClick }: { 
+  suggestion: typeof TASK_SUGGESTIONS[0]; 
+  onClick: () => void; 
+}) => {
+  const IconComponent = suggestion.icon;
+  return (
+    <button
+      onClick={onClick}
+      className="group w-full p-3 bg-gray-50 dark:bg-gray-800/30 hover:bg-white dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 hover:border-emerald-200 dark:hover:border-emerald-500/30 rounded-lg transition-all text-left"
+    >
+      <div className="flex items-center gap-3">
+        <div className={`p-1.5 bg-gradient-to-r ${suggestion.color} rounded-md`}>
+          <IconComponent className="w-3.5 h-3.5 text-white" />
+        </div>
+        <div className="flex-1">
+          <h5 className="font-medium text-gray-900 dark:text-white text-sm">
+            {suggestion.title}
+          </h5>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            {suggestion.description}
+          </p>
+        </div>
+      </div>
+    </button>
+  );
+};
+
+// Enhanced task preview with modern styling
+const TaskPreview = ({ data, isApplied }: { data: GeneratedTaskData; isApplied?: boolean }) => {
+  const priorityColors = {
+    low: 'text-green-600 bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20',
+    medium: 'text-yellow-600 bg-yellow-50 dark:bg-yellow-500/10 border-yellow-200 dark:border-yellow-500/20', 
+    high: 'text-red-600 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20',
+  };
+
+  const statusColors = {
+    todo: 'text-gray-600 bg-gray-50 dark:bg-gray-500/10',
+    in_progress: 'text-blue-600 bg-blue-50 dark:bg-blue-500/10',
+    done: 'text-green-600 bg-green-50 dark:bg-green-500/10',
+  };
+
+  return (
+    <div className={`relative bg-white dark:bg-gray-800/50 border rounded-xl p-4 space-y-4 transition-all ${
+      isApplied 
+        ? 'border-emerald-200 dark:border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-500/5' 
+        : 'border-gray-200 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600/50'
+    }`}>
+      {isApplied && (
+        <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+          <CheckCircle className="w-4 h-4 text-white" />
+        </div>
+      )}
+      
+      <div className="flex items-start justify-between gap-3">
+        <h5 className="font-semibold text-gray-900 dark:text-white leading-tight">{data.title}</h5>
+        <div className="flex gap-2 flex-shrink-0">
+          <span className={`px-2 py-1 rounded-md text-xs font-medium border ${
+            priorityColors[data.priority as keyof typeof priorityColors] || priorityColors.medium
+          }`}>
+            {data.priority}
+          </span>
+        </div>
+      </div>
+      
+      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3">
+        {data.description}
+      </p>
+      
+      <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700/30">
+        <div className="flex items-center gap-3 text-xs">
+          <span className={`px-2 py-1 rounded-md font-medium ${
+            statusColors[data.status as keyof typeof statusColors] || statusColors.todo
+          }`}>
+            {data.status.replace('_', ' ')}
+          </span>
+          <span className="text-gray-500 dark:text-gray-400">
+            Due: {new Date(data.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const AIGenerateTask = ({ onApplyToForm }: AIGenerateTaskProps) => {
   useTheme();
   const [prompt, setPrompt] = useState('');
-  const [generatedData, setGeneratedData] = useState<GeneratedTaskData | null>(
-    null
-  );
+  const [generatedData, setGeneratedData] = useState<GeneratedTaskData | null>(null);
   const [step, setStep] = useState(1);
-
-  const suggestions = [
-    {
-      icon: Brain,
-      title: 'Development Task',
-      description:
-        'Generate development tasks with technical requirements and deadlines',
-      prompt:
-        'Create a development task for implementing user authentication with proper security measures',
-    },
-    {
-      icon: Zap,
-      title: 'Bug Fix Task',
-      description:
-        'Create bug fixing tasks with priority and investigation steps',
-      prompt:
-        'Generate a bug fix task for resolving login issues affecting mobile users',
-    },
-    {
-      icon: MessageSquare,
-      title: 'Feature Task',
-      description:
-        'Build feature implementation tasks with acceptance criteria',
-      prompt:
-        'Create a task for implementing a new dashboard widget with user customization options',
-    },
-  ];
+  const [isApplied, setIsApplied] = useState(false);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
@@ -84,212 +193,154 @@ const AIGenerateTask = ({ onApplyToForm }: AIGenerateTaskProps) => {
   const handleApply = () => {
     if (generatedData && onApplyToForm) {
       onApplyToForm(generatedData);
+      setIsApplied(true);
     }
   };
 
-  const handleSuggestionClick = (suggestion: (typeof suggestions)[0]) => {
+  const handleSuggestionClick = (suggestion: typeof TASK_SUGGESTIONS[0]) => {
     setPrompt(suggestion.prompt);
   };
 
+  const handleReset = () => {
+    setStep(1);
+    setPrompt('');
+    setGeneratedData(null);
+    setIsApplied(false);
+  };
+
   return (
-    <div className="h-full flex flex-col transition-all duration-300">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-500/20 dark:to-blue-500/20 rounded-lg border border-green-200 dark:border-green-500/30">
-          <Sparkles className="w-4 h-4 text-green-600 dark:text-green-400" />
+    <div className="h-full flex flex-col">
+      {/* Compact Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="p-2 bg-emerald-500 rounded-lg">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-900 dark:text-white">
+              AI Task Generator
+            </h3>
+          </div>
         </div>
-        <div>
-          <h3 className="text-base font-semibold text-gray-900 dark:text-white">
-            AI Task Generator
-          </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Let AI create your task structure
-          </p>
-        </div>
+        {step > 1 && (
+          <button
+            onClick={handleReset}
+            className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-all"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
 
-      <div className="flex items-center gap-2 mb-6">
-        {[1, 2, 3].map(num => (
-          <div key={num} className="flex items-center">
-            <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
-                step >= num
-                  ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white'
-                  : 'bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-              }`}
-            >
-              {step > num ? <CheckCircle className="w-3 h-3" /> : num}
-            </div>
-            {num < 3 && (
-              <div
-                className={`w-8 h-0.5 mx-1 transition-all ${
-                  step > num
-                    ? 'bg-gradient-to-r from-green-500 to-blue-500'
-                    : 'bg-gray-300 dark:bg-gray-700'
-                }`}
-              />
-            )}
-          </div>
-        ))}
-      </div>
+      <StepIndicator currentStep={step} />
 
       <div className="flex-1">
         {step === 1 && (
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
-                Quick Suggestions
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Quick Start
               </h4>
-              {suggestions.map((suggestion, index) => {
-                const IconComponent = suggestion.icon;
-                return (
-                  <button
+              <div className="space-y-1.5">
+                {TASK_SUGGESTIONS.map((suggestion, index) => (
+                  <SuggestionCard
                     key={index}
+                    suggestion={suggestion}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className="w-full p-3 bg-gray-100 dark:bg-gray-800/30 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-600/50 rounded-lg transition-all text-left group"
-                  >
-                    <div className="flex items-start gap-2">
-                      <div className="p-1.5 bg-gray-200 dark:bg-gray-700/50 group-hover:bg-purple-100 dark:group-hover:bg-purple-500/20 rounded-lg transition-all">
-                        <IconComponent className="w-3 h-3 text-gray-500 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors" />
-                      </div>
-                      <div className="flex-1">
-                        <h5 className="font-medium text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors text-sm">
-                          {suggestion.title}
-                        </h5>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {suggestion.description}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
+                  />
+                ))}
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                Or describe your task
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Custom Task
               </h4>
-              <div className="relative">
+              <div className="space-y-2">
                 <textarea
                   value={prompt}
                   onChange={e => setPrompt(e.target.value)}
-                  placeholder="Describe what kind of task you want to generate..."
-                  className="w-full h-24 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all resize-none text-sm"
+                  placeholder="Describe your task..."
+                  className="w-full h-20 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700/50 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all resize-none"
                 />
-                <div className="absolute bottom-2 right-2">
-                  <button
-                    onClick={handleGenerate}
-                    disabled={!prompt.trim()}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-all text-sm ${
-                      prompt.trim()
-                        ? 'bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white shadow-lg'
-                        : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    <Send className="w-3 h-3" />
-                    Generate
-                  </button>
-                </div>
+                <button
+                  onClick={handleGenerate}
+                  disabled={!prompt.trim()}
+                  className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                    prompt.trim()
+                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm hover:shadow-md'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  <Send className="w-4 h-4" />
+                  Generate Task
+                </button>
               </div>
             </div>
           </div>
         )}
 
         {step === 2 && (
-          <div className="flex flex-col items-center justify-center py-8">
-            <div className="relative mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-500/20 dark:to-blue-500/20 rounded-full flex items-center justify-center border border-green-200 dark:border-green-500/30">
-                <Loader2 className="w-6 h-6 text-green-600 dark:text-green-400 animate-spin" />
-              </div>
+          <div className="flex flex-col items-center justify-center py-6">
+            <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center mb-3">
+              <Loader2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 animate-spin" />
             </div>
-            <h4 className="text-base font-medium text-gray-900 dark:text-white mb-2">
-              Generating Your Task
+            <h4 className="font-medium text-gray-900 dark:text-white mb-1">
+              Generating Task
             </h4>
-            <p className="text-gray-500 dark:text-gray-400 text-center max-w-sm text-sm">
-              AI is analyzing your requirements...
+            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              AI is creating your task...
             </p>
-            <div className="mt-4 flex items-center gap-1">
-              <div className="w-1.5 h-1.5 bg-green-500 dark:bg-green-400 rounded-full animate-bounce" />
-              <div
-                className="w-1.5 h-1.5 bg-blue-500 dark:bg-blue-400 rounded-full animate-bounce"
-                style={{ animationDelay: '0.1s' }}
-              />
-              <div
-                className="w-1.5 h-1.5 bg-green-500 dark:bg-green-400 rounded-full animate-bounce"
-                style={{ animationDelay: '0.2s' }}
-              />
-            </div>
           </div>
         )}
 
         {step === 3 && generatedData && (
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-3">
-              <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400" />
-              <h4 className="text-base font-medium text-gray-900 dark:text-white">
-                Task Generated!
+              <CheckCircle className="w-4 h-4 text-emerald-500" />
+              <h4 className="font-semibold text-gray-900 dark:text-white">
+                Task Generated
               </h4>
             </div>
 
-            <div className="bg-gray-100 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700/50 rounded-lg p-4 space-y-3">
-              <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                  Title
-                </label>
-                <p className="text-gray-900 dark:text-white mt-1 text-sm">
-                  {generatedData.title}
-                </p>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                  Priority
-                </label>
-                <p className="text-orange-600 dark:text-orange-400 mt-1 capitalize text-sm">
-                  {generatedData.priority}
-                </p>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                  Due Date
-                </label>
-                <p className="text-blue-600 dark:text-blue-400 mt-1 text-sm">
-                  {new Date(generatedData.due_date).toLocaleDateString()}
-                </p>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                  Description
-                </label>
-                <p className="text-gray-700 dark:text-gray-300 mt-1 text-sm">
-                  {generatedData.description}
-                </p>
-              </div>
-            </div>
+            <TaskPreview data={generatedData} isApplied={isApplied} />
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleApply}
-                className="flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white rounded-lg transition-all shadow-lg font-medium text-sm"
-              >
-                <Wand2 className="w-3 h-3" />
-                Apply
-              </button>
-              <button className="flex items-center gap-1 px-3 py-2 bg-gray-200 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 hover:bg-gray-300 dark:hover:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-lg transition-all text-sm">
-                <Copy className="w-3 h-3" />
-                Copy
-              </button>
-            </div>
-
-            <button
-              onClick={() => {
-                setStep(1);
-                setPrompt('');
-                setGeneratedData(null);
-              }}
-              className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-            >
-              Generate another task
-            </button>
+            {!isApplied ? (
+              <div className="space-y-3">
+                <button
+                  onClick={handleApply}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-all font-medium text-sm shadow-sm hover:shadow-md"
+                >
+                  <Wand2 className="w-4 h-4" />
+                  Apply to Form
+                </button>
+                <div className="flex gap-2">
+                  <button className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-gray-100 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg transition-all text-sm">
+                    <Copy className="w-3.5 h-3.5" />
+                    Copy
+                  </button>
+                  <button
+                    onClick={handleReset}
+                    className="flex-1 py-2 text-gray-500 dark:text-gray-400 hover:text-emerald-500 transition-colors text-sm"
+                  >
+                    Generate New
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-lg text-sm font-medium">
+                  <CheckCircle className="w-4 h-4" />
+                  Applied to form successfully!
+                </div>
+                <button
+                  onClick={handleReset}
+                  className="block mx-auto mt-3 text-sm text-gray-500 dark:text-gray-400 hover:text-emerald-500 transition-colors"
+                >
+                  Generate another task →
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
