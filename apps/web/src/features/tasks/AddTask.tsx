@@ -12,6 +12,7 @@ import {
   CalendarCheck,
   Save,
   Sparkles,
+  X,
 } from 'lucide-react';
 import {
   format,
@@ -29,6 +30,7 @@ import { useCreateTask } from '../../hooks/api/useTasks';
 import { taskSchema, type TaskFormData } from '../../schemas/taskSchema';
 import { RichTextEditor } from '../../components/ui/RichTextEditor';
 import { ErrorBoundary } from '../../components/error/ErrorBoundary';
+import AIGenerateTask from '../ai/GenerateTask';
 
 interface AddTaskProps {
   onNavigateBack?: () => void;
@@ -49,7 +51,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
   useTheme();
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
-  const [showAIAssistance, setShowAIAssistance] = useState(false);
+  const [showAIPanel, setShowAIPanel] = useState(false);
   const [currentUser, setCurrentUser] = useState<{
     id: string;
     name: string;
@@ -184,6 +186,21 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
     }
   };
 
+  const handleAIApply = (aiData: {
+    title: string;
+    description: string;
+    priority: string;
+    status: string;
+    due_date: string;
+  }) => {
+    setValue('title', aiData.title);
+    setValue('description', aiData.description);
+    setValue('priority', aiData.priority as 'low' | 'medium' | 'high');
+    setValue('status', aiData.status as 'todo' | 'in_progress' | 'done');
+    setValue('due_date', aiData.due_date);
+    setShowAIPanel(false);
+  };
+
   const onSubmit = async (data: TaskFormData) => {
     const taskData = {
       ...data,
@@ -239,15 +256,23 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               </h1>
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => setShowAIAssistance(!showAIAssistance)}
-                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                    showAIAssistance
-                      ? 'bg-purple-100 dark:bg-purple-600/20 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/30'
-                      : 'bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600/50'
+                  onClick={() => setShowAIPanel(!showAIPanel)}
+                  className={`group flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-300 text-sm ${
+                    showAIPanel
+                      ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white shadow-lg'
+                      : 'bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-500/20 dark:to-blue-500/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-500/30 hover:from-green-200 hover:to-blue-200 dark:hover:from-green-500/30 dark:hover:to-blue-500/30'
                   }`}
                 >
-                  <Sparkles size={14} />
-                  <span>AI Assist</span>
+                  <div
+                    className={`transition-transform duration-300 ${
+                      showAIPanel ? 'rotate-180' : 'group-hover:rotate-12'
+                    }`}
+                  >
+                    {showAIPanel ? <X size={14} /> : <Sparkles size={14} />}
+                  </div>
+                  <span className="font-medium">
+                    {showAIPanel ? 'Close AI' : 'AI'}
+                  </span>
                 </button>
                 <button
                   onClick={handleCancel}
@@ -271,8 +296,11 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="p-4">
-            <div className="space-y-6 max-w-3xl mx-auto">
+          <div className="flex">
+            {/* Main Form */}
+            <div className="flex-1">
+              <form onSubmit={handleSubmit(onSubmit)} className="p-4">
+                <div className="space-y-6 max-w-3xl mx-auto">
                 <div className="space-y-4">
                   <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                     Task Information
@@ -457,8 +485,17 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     )}
                   </div>
                 </div>
+                </div>
+              </form>
             </div>
-          </form>
+            
+            {/* AI Panel */}
+            {showAIPanel && (
+              <div className="w-80 border-l border-gray-200 dark:border-gray-700/50 p-4 bg-gradient-to-br from-blue-50/50 to-purple-50/50 dark:from-blue-900/10 dark:to-purple-900/10">
+                <AIGenerateTask onApplyToForm={handleAIApply} />
+              </div>
+            )}
+          </div>
 
           {createTaskMutation.error && (
             <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
