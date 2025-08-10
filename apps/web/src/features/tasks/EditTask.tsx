@@ -10,6 +10,8 @@ import {
   Timer,
   Target,
   CalendarCheck,
+  Save,
+  Sparkles,
 } from 'lucide-react';
 import {
   format,
@@ -34,7 +36,7 @@ interface EditTaskProps {
   onNavigateToTasks?: () => void;
 }
 
-type TabType = 'details' | 'preview';
+
 
 interface ConfirmationDialogProps {
   title: string;
@@ -60,7 +62,7 @@ const EditTask = ({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showContent, setShowContent] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>('details');
+  const [showAIAssistance, setShowAIAssistance] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [currentUser, setCurrentUser] = useState<{
     id: string;
@@ -287,19 +289,33 @@ const EditTask = ({
   return (
     <ErrorBoundary>
       <div
-        className={`space-y-6 transition-all duration-500 ${
+        className={`transition-all duration-500 ${
           showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
       >
-        <Breadcrumb items={breadcrumbItems} />
+        {/* Sticky Breadcrumb */}
+        <div className="sticky top-0 z-20">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
 
-        <div className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
-          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50">
+        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+          <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Edit Task
               </h1>
               <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setShowAIAssistance(!showAIAssistance)}
+                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                    showAIAssistance
+                      ? 'bg-purple-100 dark:bg-purple-600/20 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600/50'
+                  }`}
+                >
+                  <Sparkles size={14} />
+                  <span>AI Assist</span>
+                </button>
                 <button
                   onClick={handleCancel}
                   className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
@@ -309,13 +325,13 @@ const EditTask = ({
                 <button
                   onClick={handleSubmit(onSubmit)}
                   disabled={saving || updateTaskMutation.isPending}
-                  className={`flex items-center space-x-1 px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
                     !saving && !updateTaskMutation.isPending
                       ? 'bg-blue-500 text-white hover:bg-blue-600'
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}
                 >
-                  <Check size={14} />
+                  <Save size={14} />
                   <span>{saving || updateTaskMutation.isPending ? 'Updating...' : 'Update'}</span>
                 </button>
               </div>
@@ -324,34 +340,6 @@ const EditTask = ({
 
           <form onSubmit={handleSubmit(onSubmit)} className="p-4">
             <div className="space-y-6 max-w-3xl mx-auto">
-              {/* Tabs */}
-              <div className="flex border-b border-gray-200 dark:border-gray-700/50">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('details')}
-                  className={`px-4 py-2 text-sm font-medium transition-colors ${
-                    activeTab === 'details'
-                      ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Task Details
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('preview')}
-                  className={`px-4 py-2 text-sm font-medium transition-colors ${
-                    activeTab === 'preview'
-                      ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 dark:border-blue-400'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Preview
-                </button>
-              </div>
-
-              {/* Details Tab */}
-              <div className={activeTab === 'details' ? 'block' : 'hidden'}>
                 <div className="space-y-4">
                   <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
                     Task Information
@@ -534,68 +522,6 @@ const EditTask = ({
                     )}
                   </div>
                 </div>
-              </div>
-
-              {/* Preview Tab */}
-              <div className={activeTab === 'preview' ? 'block' : 'hidden'}>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700/50 pb-2">
-                    <h2 className="text-base font-semibold text-gray-900 dark:text-white">
-                      Task Preview
-                    </h2>
-                  </div>
-
-                  <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mx-auto max-w-3xl w-full">
-                    {/* Task Header */}
-                    <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-                      <div>
-                        <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                          {watchedTitle || 'Task Title'}
-                        </h1>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          Priority: {watch('priority')} | Status: {watch('status')}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-lg text-sm inline-block">
-                          {watch('status')}
-                        </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                          Due: {watch('due_date') ? getDateLabel(watch('due_date') || '') : 'Not set'}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Task Content */}
-                    <div className="prose dark:prose-invert max-w-none">
-                      {watchedDescription ? (
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: watchedDescription,
-                          }}
-                        />
-                      ) : (
-                        <p className="text-gray-500 dark:text-gray-400 italic">
-                          Task description will appear here...
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Task Footer */}
-                    <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-                        <div>
-                          Project:{' '}
-                          {watch('project_id') || 'Not assigned'}
-                        </div>
-                        <div>
-                          Assigned to: {currentUser?.name || 'Current User'}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </form>
 
