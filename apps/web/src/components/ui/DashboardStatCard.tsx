@@ -60,9 +60,9 @@ const DashboardStatCard = memo(
         tabIndex={onClick ? 0 : undefined}
         role={onClick ? 'button' : undefined}
       >
-        <AnimatedCard className="relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-700 dark:to-blue-800 rounded-2xl p-2.5 group shadow-lg hover:shadow-xl hover:shadow-blue-500/25 dark:hover:shadow-blue-900/50">
+        <AnimatedCard className="relative overflow-hidden bg-gradient-to-br from-tech-orange-500 to-tech-orange-600 dark:from-tech-orange-700 dark:to-tech-orange-800 rounded-2xl p-2.5 group shadow-lg hover:shadow-xl hover:shadow-tech-orange-500/25 dark:hover:shadow-tech-orange-900/50">
           {/* Background Pattern */}
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/10 to-blue-300/20 dark:from-blue-400/10 dark:to-blue-300/10 rounded-full -translate-y-10 translate-x-10 group-hover:scale-125 transition-transform duration-700"></div>
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/10 to-tech-orange-300/20 dark:from-tech-orange-400/10 dark:to-tech-orange-300/10 rounded-full -translate-y-10 translate-x-10 group-hover:scale-125 transition-transform duration-700"></div>
 
           {/* Content */}
           <div className="relative z-10">
@@ -88,7 +88,7 @@ const DashboardStatCard = memo(
                 <p className="text-lg sm:text-xl font-black text-white mb-0.5 tracking-tight leading-none drop-shadow-sm">
                   {value}
                 </p>
-                <p className="text-blue-100 font-semibold text-xs sm:text-sm">
+                <p className="text-tech-orange-100 font-semibold text-xs sm:text-sm">
                   {title}
                 </p>
               </div>
@@ -110,10 +110,10 @@ const DashboardStatCard = memo(
             {/* Footer */}
             <div className="flex items-center justify-between">
               {subtitle && (
-                <p className="text-blue-200 font-medium text-xs">{subtitle}</p>
+                <p className="text-tech-orange-200 font-medium text-xs">{subtitle}</p>
               )}
               {trend?.period && (
-                <p className="text-blue-300 font-medium text-xs">
+                <p className="text-tech-orange-300 font-medium text-xs">
                   {trend.period}
                 </p>
               )}
@@ -121,7 +121,7 @@ const DashboardStatCard = memo(
           </div>
 
           {/* Hover Effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-2xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-tech-orange-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-2xl"></div>
         </AnimatedCard>
       </div>
     );
