@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 import {
   Bell,
   ExternalLink,
@@ -7,26 +7,33 @@ import {
   MessageSquare,
 } from 'lucide-react';
 
-const NotificationsDropdown = () => {
+const NotificationsDropdown = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
   const [activeTab, setActiveTab] = useState('direct');
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
   const handleGiveFeedback = () => {
     console.log('Give Feedback clicked');
@@ -37,37 +44,37 @@ const NotificationsDropdown = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 hover:bg-tech-purple-50 dark:hover:bg-tech-purple-900/20 rounded-md"
+        className="p-2 text-gray-600 dark:text-gray-400 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 hover:bg-tech-purple-50 dark:hover:bg-tech-purple-900/20 rounded-lg transition-colors touch-manipulation"
         title="Notifications"
       >
         <Bell className="w-5 h-5" />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className={`absolute top-full right-0 mt-2 ${isMobile ? 'w-[calc(100vw-1rem)] max-w-sm' : 'w-96'} bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200`}>
           {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+          <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
                 Notifications
               </h3>
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="flex items-center space-x-1 sm:space-x-2">
                   <button
                     onClick={() => setShowUnreadOnly(!showUnreadOnly)}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-tech-purple-500 focus:ring-offset-2 ${
+                    className={`relative inline-flex h-4 w-7 sm:h-5 sm:w-9 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-tech-purple-500 focus:ring-offset-2 ${
                       showUnreadOnly
                         ? 'bg-tech-purple-600'
                         : 'bg-gray-200 dark:bg-gray-700'
                     }`}
                   >
                     <span
-                      className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                        showUnreadOnly ? 'translate-x-5' : 'translate-x-1'
+                      className={`inline-block h-2.5 w-2.5 sm:h-3 sm:w-3 transform rounded-full bg-white ${
+                        showUnreadOnly ? 'translate-x-3.5 sm:translate-x-5' : 'translate-x-0.5 sm:translate-x-1'
                       }`}
                     />
                   </button>
-                  <span className="text-xs text-gray-700 dark:text-gray-300">
+                  <span className="text-xs text-gray-700 dark:text-gray-300 hidden sm:inline">
                     Show unread
                   </span>
                 </div>
@@ -143,6 +150,8 @@ const NotificationsDropdown = () => {
       )}
     </div>
   );
-};
+});
+
+NotificationsDropdown.displayName = 'NotificationsDropdown';
 
 export default NotificationsDropdown;

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo, useMemo } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import {
   Settings,
@@ -112,38 +112,48 @@ const settingsGroups: SettingsGroup[] = [
   },
 ];
 
-const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
+const SettingsDropdown = memo(({ onNavigate }: SettingsDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
         setShowMoreMenu(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
-  const allItems = settingsGroups.flatMap(group => group.items);
-  const filteredGroups = settingsGroups
-    .map(group => ({
-      ...group,
-      items: group.items.filter(
-        item =>
-          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchQuery.toLowerCase())
-      ),
-    }))
-    .filter(group => group.items.length > 0);
+  const allItems = useMemo(() => settingsGroups.flatMap(group => group.items), []);
+  
+  const filteredGroups = useMemo(() => {
+    return settingsGroups
+      .map(group => ({
+        ...group,
+        items: group.items.filter(
+          item =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.description.toLowerCase().includes(searchQuery.toLowerCase())
+        ),
+      }))
+      .filter(group => group.items.length > 0);
+  }, [searchQuery]);
 
   const handleExportSettings = () => {
     console.log('Export Settings clicked');
@@ -154,14 +164,14 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-tech-orange-600 dark:hover:text-tech-orange-400 hover:bg-tech-orange-50 dark:hover:bg-tech-orange-900/20 rounded-md"
+        className="p-2 text-gray-600 dark:text-gray-400 hover:text-tech-orange-600 dark:hover:text-tech-orange-400 hover:bg-tech-orange-50 dark:hover:bg-tech-orange-900/20 rounded-lg transition-colors touch-manipulation"
         title="Settings"
       >
         <Settings className="w-5 h-5" />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-[24rem] max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className={`absolute top-full right-0 mt-2 ${isMobile ? 'w-[calc(100vw-1rem)] max-w-sm' : 'w-[24rem]'} bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200`}>
           {/* Header */}
           <div className="p-2.5 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-1.5">
@@ -231,21 +241,21 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
                             onNavigate?.(item.section);
                             setIsOpen(false);
                           }}
-                          className="w-full flex items-start space-x-2 p-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 text-left group"
+                          className="w-full flex items-start space-x-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-left group transition-colors touch-manipulation"
                         >
                           <IconComponent className="w-4 h-4 flex-shrink-0 text-tech-orange-500 group-hover:text-tech-orange-600" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-0.5">
-                              <p className="text-xs font-semibold text-gray-900 dark:text-white group-hover:text-tech-orange-600 dark:group-hover:text-tech-orange-400">
+                              <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-tech-orange-600 dark:group-hover:text-tech-orange-400 truncate">
                                 {item.title}
                               </p>
-                              <div className="flex items-center space-x-1">
+                              <div className="flex items-center space-x-1 flex-shrink-0">
                                 {item.external && (
                                   <ExternalLink className="w-3 h-3 text-gray-400 dark:text-gray-500" />
                                 )}
                               </div>
                             </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400 leading-tight truncate">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
                               {item.description}
                             </p>
                           </div>
@@ -283,6 +293,8 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
       )}
     </div>
   );
-};
+});
+
+SettingsDropdown.displayName = 'SettingsDropdown';
 
 export default SettingsDropdown;

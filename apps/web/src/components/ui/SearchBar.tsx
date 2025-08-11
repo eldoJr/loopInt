@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, X, Filter, Command } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,7 +28,7 @@ interface SearchBarProps {
   maxResults?: number;
 }
 
-const SearchBar = ({
+const SearchBar = memo(({
   placeholder = 'Search...',
   value = '',
   onChange,
@@ -49,6 +49,7 @@ const SearchBar = ({
   const [isFocused, setIsFocused] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({
     top: 0,
     left: 0,
@@ -64,6 +65,13 @@ const SearchBar = ({
     keys: searchKeys,
     threshold: 0.3,
   });
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     setSearchValue(value);
@@ -100,22 +108,22 @@ const SearchBar = ({
     setSelectedIndex(-1);
   }, [searchValue, showResults, searchData]);
 
-  const updateDropdownPosition = () => {
+  const updateDropdownPosition = useCallback(() => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       setDropdownPosition({
         top: rect.bottom + window.scrollY + 8,
-        left: rect.left + window.scrollX,
-        width: rect.width,
+        left: isMobile ? 8 : rect.left + window.scrollX,
+        width: isMobile ? window.innerWidth - 16 : rect.width,
       });
     }
-  };
+  }, [isMobile]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setSearchValue(newValue);
     onChange?.(newValue);
-  };
+  }, [onChange]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showSearchResults || searchResults.length === 0) return;
@@ -151,31 +159,31 @@ const SearchBar = ({
     }
   };
 
-  const handleResultSelect = (result: Record<string, unknown>) => {
+  const handleResultSelect = useCallback((result: Record<string, unknown>) => {
     onResultSelect?.(result);
     setShowSearchResults(false);
     setSelectedIndex(-1);
     inputRef.current?.blur();
-  };
+  }, [onResultSelect]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     onSearch?.(searchValue);
-  };
+  }, [onSearch, searchValue]);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setSearchValue('');
     onChange?.('');
     onSearch?.('');
     inputRef.current?.focus();
-  };
+  }, [onChange, onSearch]);
 
-  const toggleFilter = (filterId: string) => {
+  const toggleFilter = useCallback((filterId: string) => {
     const newFilters = selectedFilters.includes(filterId)
       ? selectedFilters.filter(id => id !== filterId)
       : [...selectedFilters, filterId];
     onFilterChange?.(newFilters);
-  };
+  }, [selectedFilters, onFilterChange]);
 
   return (
     <div ref={containerRef} className="relative w-full max-w-2xl">
@@ -186,9 +194,9 @@ const SearchBar = ({
               ? 'border-blue-500 dark:border-blue-500 bg-blue-50/50 dark:bg-gray-800/50 shadow-lg shadow-blue-500/10'
               : 'border-gray-300 dark:border-gray-700/50 hover:border-gray-400 dark:hover:border-gray-600/50'
           }`}
-          whileFocus={{ scale: 1.01 }}
+          whileFocus={isMobile ? {} : { scale: 1.01 }}
         >
-          <div className="pl-2.5 pr-1.5">
+          <div className="pl-3 pr-2">
             {loading ? (
               <div className="w-4 h-4 border-2 border-gray-400 dark:border-gray-600 border-t-blue-500 rounded-full animate-spin" />
             ) : (
@@ -217,10 +225,10 @@ const SearchBar = ({
               }, 150);
             }}
             placeholder={placeholder}
-            className="flex-1 bg-transparent text-gray-900 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-500 py-1.5 px-2 focus:outline-none text-sm"
+            className="flex-1 bg-transparent text-gray-900 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-500 py-2 px-2 focus:outline-none text-sm"
           />
 
-          {showCommandHint && !isFocused && !searchValue && (
+          {showCommandHint && !isFocused && !searchValue && !isMobile && (
             <div className="hidden sm:flex items-center space-x-1 px-2 text-xs text-gray-500 dark:text-gray-500">
               <Command className="w-3 h-3" />
               <span>K</span>
@@ -320,7 +328,7 @@ const SearchBar = ({
           <AnimatePresence>
             <motion.div
               ref={resultsRef}
-              className="fixed bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999] max-h-80 overflow-y-auto"
+              className={`fixed bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-[9999] ${isMobile ? 'max-h-[60vh]' : 'max-h-80'} overflow-y-auto`}
               style={{
                 top: dropdownPosition.top,
                 left: dropdownPosition.left,
@@ -336,7 +344,7 @@ const SearchBar = ({
                   <button
                     key={String(result.item.id) || `result-${index}`}
                     onClick={() => handleResultSelect(result.item)}
-                    className={`w-full text-left p-2.5 rounded-lg transition-colors ${
+                    className={`w-full text-left p-3 rounded-lg transition-colors touch-manipulation ${
                       index === selectedIndex
                         ? 'bg-blue-100 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-800/50'
@@ -344,7 +352,7 @@ const SearchBar = ({
                   >
                     <div className="flex items-center space-x-3">
                       <div className="flex-shrink-0">
-                        <div className="w-7 h-7 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                        <div className={`${isMobile ? 'w-8 h-8' : 'w-7 h-7'} bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center`}>
                           <span className="text-xs text-gray-600 dark:text-gray-300">
                             {String(
                               result.item.name || result.item.title || '?'
@@ -358,16 +366,12 @@ const SearchBar = ({
                         <p className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate">
                           {(() => {
                             const name = result.item.name as string | undefined;
-                            const title = result.item.title as
-                              | string
-                              | undefined;
+                            const title = result.item.title as string | undefined;
                             return name || title || 'Untitled';
                           })()}
                         </p>
                         {(() => {
-                          const description = result.item.description as
-                            | string
-                            | undefined;
+                          const description = result.item.description as string | undefined;
                           return description ? (
                             <p className="text-xs text-gray-400 truncate">
                               {description}
@@ -385,6 +389,8 @@ const SearchBar = ({
         )}
     </div>
   );
-};
+});
+
+SearchBar.displayName = 'SearchBar';
 
 export default SearchBar;

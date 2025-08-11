@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo, useCallback } from 'react';
 import type { ComponentType } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import {
@@ -28,7 +28,7 @@ interface UserProfileDropdownProps {
   onNavigate?: (section: string) => void;
 }
 
-const UserProfileDropdown = ({
+const UserProfileDropdown = memo(({
   user,
   onLogout,
   onNavigate,
@@ -36,29 +36,36 @@ const UserProfileDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
         setShowThemeMenu(false);
         setShowMoreMenu(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
-  const handleDownloadData = () => {
+  const handleDownloadData = useCallback(() => {
     console.log('Download Data clicked');
     setShowMoreMenu(false);
-  };
+  }, []);
 
   type MenuItem = {
     icon?: ComponentType<{ className?: string }>;
@@ -108,48 +115,50 @@ const UserProfileDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-1 sm:space-x-2 p-1 sm:p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50"
+        className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors touch-manipulation"
       >
-        <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-r from-tech-orange-500 to-tech-purple-600 rounded-full flex items-center justify-center shadow-lg">
-          <span className="text-white text-xs sm:text-sm font-medium">
+        <div className="w-7 h-7 bg-gradient-to-r from-tech-orange-500 to-tech-purple-600 rounded-full flex items-center justify-center shadow-lg">
+          <span className="text-white text-sm font-medium">
             {user?.name?.charAt(0) || 'U'}
           </span>
         </div>
         <ChevronDown
-          className={`w-3 h-3 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-80 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className={`absolute top-full right-0 mt-2 ${isMobile ? 'w-[calc(100vw-1rem)] max-w-sm' : 'w-80'} bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200`}>
           {/* User Info Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-tech-orange-500 to-tech-purple-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-tech-orange-100 dark:ring-tech-orange-900/30">
-                  <span className="text-white font-bold text-lg">
+          <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-tech-orange-500 to-tech-purple-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-tech-orange-100 dark:ring-tech-orange-900/30 flex-shrink-0">
+                  <span className="text-white font-bold text-sm sm:text-lg">
                     {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2">
-                    <p className="text-gray-900 dark:text-white font-bold text-lg truncate">
+                  <div className="flex items-center space-x-1 sm:space-x-2">
+                    <p className="text-gray-900 dark:text-white font-bold text-sm sm:text-lg truncate">
                       {user?.name || 'User'}
                     </p>
-                    <Crown className="w-4 h-4 text-yellow-500" />
+                    <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 flex-shrink-0" />
                   </div>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm truncate">
+                  <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm truncate">
                     {user?.email || 'user@example.com'}
                   </p>
                 </div>
               </div>
               <div className="relative">
-                <button
-                  onClick={() => setShowMoreMenu(!showMoreMenu)}
-                  className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 rounded-md transition-colors"
-                >
-                  <MoreHorizontal className="w-4 h-4" />
-                </button>
+                {!isMobile && (
+                  <button
+                    onClick={() => setShowMoreMenu(!showMoreMenu)}
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 rounded-lg transition-colors touch-manipulation"
+                  >
+                    <MoreHorizontal className="w-4 h-4" />
+                  </button>
+                )}
                 {showMoreMenu && (
                   <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
                     <button
@@ -163,11 +172,11 @@ const UserProfileDropdown = ({
                 )}
               </div>
             </div>
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-500 dark:text-gray-400">
-                Last login: 2 hours ago
+            <div className="flex items-center justify-between text-xs mt-2">
+              <span className="text-gray-500 dark:text-gray-400 truncate">
+                Last login: 2h ago
               </span>
-              <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-1 rounded-full font-medium">
+              <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded-full font-medium text-xs flex-shrink-0">
                 Online
               </span>
             </div>
@@ -189,19 +198,15 @@ const UserProfileDropdown = ({
                 <div key={`menu-item-${index}`} className="relative px-2">
                   <button
                     onClick={() => {
-                      if (item.action) {
-                        item.action();
-                      }
-                      if (!item.hasSubmenu) {
-                        setIsOpen(false);
-                      }
+                      if (item.action) item.action();
+                      if (!item.hasSubmenu) setIsOpen(false);
                     }}
-                    className={`w-full px-4 py-3 flex items-center space-x-3 text-left rounded-lg group ${
+                    className={`w-full px-3 sm:px-4 py-3 flex items-center space-x-3 text-left rounded-lg group transition-colors touch-manipulation ${
                       item.danger
-                        ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300'
+                        ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
                         : showThemeMenu && item.hasSubmenu
                           ? 'text-tech-orange-700 dark:text-tech-orange-300 bg-tech-orange-50 dark:bg-tech-orange-900/20'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                     }`}
                   >
                     {item.icon && (
@@ -217,17 +222,17 @@ const UserProfileDropdown = ({
                         <item.icon className="w-4 h-4 flex-shrink-0" />
                       </div>
                     )}
-                    <span className="text-sm font-semibold flex-1">
+                    <span className="text-sm font-semibold flex-1 truncate">
                       {item.label}
                     </span>
                     {item.hasSubmenu && (
-                      <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-hover:translate-x-0.5" />
+                      <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-hover:translate-x-0.5 flex-shrink-0" />
                     )}
                   </button>
 
                   {/* Theme Submenu */}
                   {item.hasSubmenu && showThemeMenu && (
-                    <div className="absolute right-full top-0 mr-2 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 backdrop-blur-sm ring-1 ring-black/5 dark:ring-white/10 animate-in fade-in-0 zoom-in-95 slide-in-from-right-2 duration-200">
+                    <div className={`absolute ${isMobile ? 'left-0 right-0 top-full mt-1' : 'right-full top-0 mr-2'} ${isMobile ? 'w-full' : 'w-56'} bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-2xl z-50 backdrop-blur-sm ring-1 ring-black/5 dark:ring-white/10 animate-in fade-in-0 zoom-in-95 ${isMobile ? 'slide-in-from-top-2' : 'slide-in-from-right-2'} duration-200`}>
                       <div className="p-3">
                         <div className="mb-3 px-1">
                           <h4 className="text-sm font-bold text-gray-900 dark:text-white">
@@ -250,33 +255,33 @@ const UserProfileDropdown = ({
                                   setTheme(option.key);
                                 }
                               }}
-                              className={`w-full px-3 py-3 flex items-center space-x-3 text-left rounded-lg group ${
+                              className={`w-full px-3 py-3 flex items-center space-x-3 text-left rounded-lg group transition-colors touch-manipulation ${
                                 theme === option.key
                                   ? 'bg-tech-orange-50 dark:bg-tech-orange-900/30 text-tech-orange-700 dark:text-tech-orange-300 ring-1 ring-tech-orange-200 dark:ring-tech-orange-800'
                                   : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-300'
                               }`}
                             >
                               <div
-                                className={`w-3 h-3 rounded-full flex-shrink-0 ${
+                                className={`w-3 h-3 rounded-full flex-shrink-0 transition-all ${
                                   theme === option.key
                                     ? 'bg-tech-orange-500 shadow-sm scale-110'
-                                    : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-gray-400 dark:group-hover:bg-gray-500'
+                                    : 'bg-gray-300 dark:bg-gray-600'
                                 }`}
                               />
                               <img
                                 src={option.icon}
                                 alt={option.label}
-                                className="w-8 h-8 flex-shrink-0 opacity-80 group-hover:opacity-100"
+                                className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0 opacity-80 group-hover:opacity-100"
+                                loading="lazy"
                               />
-                              <div className="flex-1">
-                                <span className="text-sm font-semibold group-hover:text-gray-900 dark:group-hover:text-white transition-colors block">
+                              <div className="flex-1 min-w-0">
+                                <span className="text-sm font-semibold block truncate">
                                   {option.label}
                                 </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                <span className="text-xs text-gray-500 dark:text-gray-400 truncate block">
                                   {option.key === 'light' && 'Bright and clean'}
                                   {option.key === 'dark' && 'Easy on the eyes'}
-                                  {option.key === 'system' &&
-                                    'Follows system preference'}
+                                  {option.key === 'system' && 'Follows system'}
                                 </span>
                               </div>
                             </button>
@@ -291,19 +296,21 @@ const UserProfileDropdown = ({
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
+          <div className="px-3 sm:px-4 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 rounded-b-lg">
             <div className="flex items-center justify-between">
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex-1">
                 Signed in as{' '}
                 <span className="font-medium">{user?.name || 'User'}</span>
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">v2.1.0</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0 ml-2">v2.1.0</p>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-};
+});
+
+UserProfileDropdown.displayName = 'UserProfileDropdown';
 
 export default UserProfileDropdown;

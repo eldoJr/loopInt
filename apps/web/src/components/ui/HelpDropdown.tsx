@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo, useMemo } from 'react';
 import {
   HelpCircle,
   Book,
@@ -55,45 +55,54 @@ const helpCategories = {
   ],
 };
 
-const HelpDropdown = () => {
+const HelpDropdown = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('resources');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
-  const currentItems = helpCategories[activeTab as keyof typeof helpCategories];
-  const filteredItems = currentItems.filter(
-    item =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredItems = useMemo(() => {
+    const currentItems = helpCategories[activeTab as keyof typeof helpCategories];
+    return currentItems.filter(
+      item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [activeTab, searchQuery]);
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 hover:bg-tech-purple-50 dark:hover:bg-tech-purple-900/20 rounded-md"
+        className="p-2 text-gray-600 dark:text-gray-400 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 hover:bg-tech-purple-50 dark:hover:bg-tech-purple-900/20 rounded-lg transition-colors touch-manipulation"
         title="Help"
       >
         <HelpCircle className="w-5 h-5" />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-80 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className={`absolute top-full right-0 mt-2 ${isMobile ? 'w-[calc(100vw-1rem)] max-w-sm' : 'w-80'} bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200`}>
           {/* Header */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-3">
@@ -148,7 +157,7 @@ const HelpDropdown = () => {
           </div>
 
           {/* Content */}
-          <div className="p-3 max-h-64 overflow-y-auto">
+          <div className={`p-3 ${isMobile ? 'max-h-[50vh]' : 'max-h-64'} overflow-y-auto`}>
             {filteredItems.length > 0 ? (
               <div className="space-y-1">
                 {filteredItems.map((item, index) => {
@@ -160,17 +169,17 @@ const HelpDropdown = () => {
                         item.action();
                         setIsOpen(false);
                       }}
-                      className="w-full flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-left group"
+                      className="w-full flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-left group transition-colors touch-manipulation"
                     >
                       <div className="flex-shrink-0 mt-0.5">
                         <IconComponent className="w-5 h-5 text-tech-purple-500 group-hover:text-tech-purple-600" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-tech-purple-600 dark:group-hover:text-tech-purple-400">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-tech-purple-600 dark:group-hover:text-tech-purple-400 truncate">
                             {item.title}
                           </p>
-                          <ExternalLink className="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100" />
+                          <ExternalLink className="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100 flex-shrink-0" />
                         </div>
                         <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                           {item.description}
@@ -208,6 +217,8 @@ const HelpDropdown = () => {
       )}
     </div>
   );
-};
+});
+
+HelpDropdown.displayName = 'HelpDropdown';
 
 export default HelpDropdown;

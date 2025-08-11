@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo, useMemo } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import {
   Plus,
@@ -37,25 +37,32 @@ interface MenuGroup {
   items: MenuItem[];
 }
 
-const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
+const AddDropdown = memo(({ onNavigate }: AddDropdownProps = {}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
   const { openNewIssueModal } = useModal();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
   const menuGroups: MenuGroup[] = [
     {
@@ -176,33 +183,35 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
     },
   ];
 
-  // Filter menu items based on search query
-  const filteredGroups = searchQuery
-    ? menuGroups
-        .map(group => ({
-          ...group,
-          items: group.items.filter(
-            item =>
-              item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              item.category.toLowerCase().includes(searchQuery.toLowerCase())
-          ),
-        }))
-        .filter(group => group.items.length > 0)
-    : menuGroups;
+  // Memoized filtered groups for better performance
+  const filteredGroups = useMemo(() => {
+    if (!searchQuery) return menuGroups;
+    
+    return menuGroups
+      .map(group => ({
+        ...group,
+        items: group.items.filter(
+          item =>
+            item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.category.toLowerCase().includes(searchQuery.toLowerCase())
+        ),
+      }))
+      .filter(group => group.items.length > 0);
+  }, [searchQuery]);
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="px-2 sm:px-3 py-1.5 bg-tech-orange-500 hover:bg-tech-orange-600 text-white rounded-md flex items-center space-x-1 sm:space-x-1.5"
-        title="Add"
+        className="px-3 py-2 bg-tech-orange-500 hover:bg-tech-orange-600 text-white rounded-lg flex items-center space-x-1.5 transition-colors touch-manipulation"
+        title="Create"
       >
-        <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-        <span className="text-xs sm:text-sm font-medium hidden xs:inline">Create</span>
+        <Plus className="w-4 h-4" />
+        <span className="text-sm font-medium hidden xs:inline">Create</span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-1.5 w-80 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200">
+        <div className={`absolute top-full right-0 mt-1.5 ${isMobile ? 'w-[calc(100vw-1rem)] max-w-sm' : 'w-80'} bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50 backdrop-blur-sm animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200`}>
           {/* Header */}
           <div className="p-3 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-2.5">
@@ -213,13 +222,13 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
 
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+              <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-tech-orange-500 focus:border-transparent"
+                className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-tech-orange-500 focus:border-transparent transition-colors"
               />
             </div>
           </div>
@@ -231,7 +240,7 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
                 <div key={groupIndex} className="p-2.5">
                   <h4 className="text-xs font-semibold text-gray-900 dark:text-white mb-1.5 uppercase tracking-wide flex items-center space-x-1.5">
                     <span>{group.title}</span>
-                    <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded-full">
+                    <span className="text-[10px] bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded-full">
                       {group.items.length}
                     </span>
                   </h4>
@@ -245,10 +254,10 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
                             item.action();
                             setIsOpen(false);
                           }}
-                          className="w-full flex items-center space-x-2 text-xs py-1.5 px-2.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800/50 text-left group text-gray-700 dark:text-gray-300 hover:text-tech-orange-600 dark:hover:text-tech-orange-400"
+                          className="w-full flex items-center space-x-2 text-sm py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-left group text-gray-700 dark:text-gray-300 hover:text-tech-orange-600 dark:hover:text-tech-orange-400 transition-colors touch-manipulation"
                         >
-                          <IconComponent className="w-3.5 h-3.5 flex-shrink-0 text-tech-orange-500" />
-                          <span className="font-medium">{item.label}</span>
+                          <IconComponent className="w-4 h-4 flex-shrink-0 text-tech-orange-500" />
+                          <span className="font-medium truncate">{item.label}</span>
                         </button>
                       );
                     })}
@@ -256,7 +265,7 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
                 </div>
               ))
             ) : (
-              <div className="p-3 text-center text-xs text-gray-500 dark:text-gray-400">
+              <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
                 No results found.
               </div>
             )}
@@ -265,6 +274,8 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
       )}
     </div>
   );
-};
+});
+
+AddDropdown.displayName = 'AddDropdown';
 
 export default AddDropdown;
