@@ -360,7 +360,7 @@ const Dashboard = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-8 max-w-full overflow-x-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 mb-6 max-w-full overflow-x-auto">
         <DashboardStatCard
           title="Active Projects"
           value={activeProjectsCount}
@@ -413,9 +413,9 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {/* Left Column */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* My Tasks */}
           <DashboardCard
             title="My Tasks"
@@ -481,7 +481,7 @@ const Dashboard = () => {
                     </div>
                   ))
               ) : (
-                <div className="bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200/60 dark:border-blue-800/40 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200 backdrop-blur-sm">
+                <div className="bg-tech-orange-50/80 dark:bg-tech-orange-900/30 border border-tech-orange-200/60 dark:border-tech-orange-800/40 rounded-lg p-3 text-sm text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm">
                   Here you will see a list of all tasks assigned to you. Click
                   on a task to view details or mark as complete.
                 </div>
@@ -492,7 +492,7 @@ const Dashboard = () => {
           {/* Issues */}
           <DashboardCard title="Issues" icon={AlertTriangle}>
             <div className="space-y-2">
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
+              <div className="bg-tech-purple-50 dark:bg-tech-purple-900/20 border border-tech-purple-200 dark:border-tech-purple-800/30 rounded-lg p-3 text-sm text-tech-purple-800 dark:text-tech-purple-200">
                 No data to display
               </div>
             </div>
@@ -501,7 +501,7 @@ const Dashboard = () => {
           {/* Favorite Contacts */}
           <DashboardCard title="Favorite Contacts" icon={Heart}>
             <div className="space-y-2">
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
+              <div className="bg-tech-purple-50 dark:bg-tech-purple-900/20 border border-tech-purple-200 dark:border-tech-purple-800/30 rounded-lg p-3 text-sm text-tech-purple-800 dark:text-tech-purple-200">
                 A list of all your favorite coworkers will appear here. Mark a
                 particular coworker as a favorite if you want it to appear in
                 this section.
@@ -512,7 +512,7 @@ const Dashboard = () => {
           {/* Recent Activity */}
           <DashboardCard title="Recent Activity" icon={Clock}>
             <div className="space-y-2">
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
+              <div className="bg-tech-orange-50 dark:bg-tech-orange-900/20 border border-tech-orange-200 dark:border-tech-orange-800/30 rounded-lg p-3 text-sm text-tech-orange-800 dark:text-tech-orange-200">
                 Here you will see a list of all recent activities in your
                 projects and tasks. Click on an activity to view details.
               </div>
@@ -521,7 +521,7 @@ const Dashboard = () => {
         </div>
 
         {/* Right Column */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Active Projects */}
           <DashboardCard
             title="Active Projects"
@@ -568,7 +568,7 @@ const Dashboard = () => {
                   </div>
                 ))
               ) : (
-                <div className="bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200/60 dark:border-blue-800/40 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200 backdrop-blur-sm">
+                <div className="bg-tech-orange-50/80 dark:bg-tech-orange-900/30 border border-tech-orange-200/60 dark:border-tech-orange-800/40 rounded-lg p-3 text-sm text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm">
                   Here you will see a list of all active projects that you are
                   managing or participating in. Click on a project to view
                   details.
@@ -584,7 +584,7 @@ const Dashboard = () => {
             onAdd={() => console.log('New check-in')}
           >
             <div className="space-y-2">
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
+              <div className="bg-tech-purple-50 dark:bg-tech-purple-900/20 border border-tech-purple-200 dark:border-tech-purple-800/30 rounded-lg p-3 text-sm text-tech-purple-800 dark:text-tech-purple-200">
                 Here you will see a list of all active check-ins that you are
                 the author of or need to reply to. Click on the name of the
                 check-in to do so.
@@ -599,7 +599,7 @@ const Dashboard = () => {
             onAdd={() => navigateToSection('Calendar')}
           >
             <div className="space-y-2">
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-3 text-sm text-blue-800 dark:text-blue-200">
+              <div className="bg-tech-purple-50 dark:bg-tech-purple-900/20 border border-tech-purple-200 dark:border-tech-purple-800/30 rounded-lg p-3 text-sm text-tech-purple-800 dark:text-tech-purple-200">
                 This is where all the latest notifications for your scheduled
                 meetings will appear. You can also add them directly from your
                 desktop using the top right plus button.

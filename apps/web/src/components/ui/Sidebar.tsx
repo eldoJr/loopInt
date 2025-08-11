@@ -67,7 +67,7 @@ const Sidebar = ({
 
   return (
     <div
-      className={`fixed left-0 top-14 h-[calc(100vh-3.5rem)] bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 border-r border-slate-200/60 dark:border-slate-700/60 transition-all duration-300 ease-in-out shadow-xl backdrop-blur-sm ${
+      className={`fixed left-0 top-14 h-[calc(100vh-3.5rem)] bg-gradient-to-b from-white via-gray-50/90 to-gray-100/80 dark:from-gray-900 dark:via-gray-900/95 dark:to-gray-800/90 border-r border-gray-200/60 dark:border-gray-700/60 transition-all duration-300 ease-in-out shadow-xl backdrop-blur-md ${
         isOpen ? 'w-72 z-30' : shouldShow ? 'w-72 z-40' : 'w-0 z-40'
       } overflow-hidden`}
       onMouseEnter={() => {
@@ -83,8 +83,8 @@ const Sidebar = ({
     >
       <div className="flex-1 overflow-y-auto pb-16">
         {/* For You Section */}
-        <div className="p-3">
-          <h3 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3 flex items-center">
+        <div className="p-2.5">
+          <h3 className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2.5 flex items-center">
             <div className="w-2 h-2 bg-tech-orange-500 rounded-full mr-2"></div>
             For You
           </h3>
@@ -103,19 +103,19 @@ const Sidebar = ({
                     onNavigate(item.name);
                     if (!isOpen) onClose();
                   }}
-                  className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 group ${
+                  className={`w-full flex items-center space-x-3 px-2.5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 group ${
                     isActive
                       ? 'bg-gradient-to-r from-tech-orange-500 to-tech-orange-600 text-white shadow-lg shadow-tech-orange-500/25'
                       : isHovered
                         ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-md'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/50'
                   }`}
                 >
                   <div
                     className={`p-1.5 rounded-lg transition-all duration-300 ${
                       isActive
                         ? 'bg-white/20'
-                        : 'bg-slate-200/50 dark:bg-slate-700/50 group-hover:bg-slate-300/70 dark:group-hover:bg-slate-600/70'
+                        : 'bg-gray-200/50 dark:bg-gray-700/50 group-hover:bg-gray-300/70 dark:group-hover:bg-gray-600/70'
                     }`}
                   >
                     <IconComponent className="w-4 h-4" />

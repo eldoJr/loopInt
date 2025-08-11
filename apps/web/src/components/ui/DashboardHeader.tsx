@@ -181,7 +181,7 @@ const DashboardHeader = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50 px-2 sm:px-4 py-2 h-14">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-200/60 dark:border-gray-800/60 px-2 sm:px-4 py-2 h-14 shadow-sm">
       <div className="flex items-center justify-between mx-auto max-w-full">
         {/* Left Side */}
         <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
@@ -199,7 +199,7 @@ const DashboardHeader = ({
                 setSidebarHovered?.(false);
               }
             }}
-            className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-all duration-200 hover:scale-110"
+            className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-tech-orange-600 dark:hover:text-tech-orange-400 hover:bg-tech-orange-50 dark:hover:bg-tech-orange-900/20 rounded-md transition-all duration-200 hover:scale-110"
             title={sidebarOpen ? 'Close Menu' : 'Open Menu'}
           >
             {sidebarOpen ? (
@@ -265,7 +265,7 @@ const DashboardHeader = ({
 
             <button
               onClick={handleThemeToggle}
-              className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-all duration-200"
+              className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 hover:bg-tech-purple-50 dark:hover:bg-tech-purple-900/20 rounded-md transition-all duration-200"
               title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
               {theme === 'dark' ? (
