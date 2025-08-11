@@ -13,6 +13,7 @@ export interface Task {
   user_name?: string;
   created_at?: string;
   updated_at?: string;
+  completed?: boolean;
 }
 
 interface TaskState {
@@ -49,6 +50,7 @@ export const useTaskStore = create<TaskState>(set => ({
           ? {
               ...t,
               status: t.status === 'done' ? 'todo' : 'done',
+              completed: t.status !== 'done',
             }
           : t
       ),

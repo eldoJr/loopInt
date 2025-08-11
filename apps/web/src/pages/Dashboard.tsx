@@ -83,15 +83,7 @@ const Dashboard = () => {
     created_by: string;
   }
 
-  interface Task {
-    id: string;
-    title: string;
-    description?: string;
-    status: string;
-    priority: string;
-    due_date?: string;
-    assigned_to?: string;
-  }
+
 
   const [activeProjectsCount, setActiveProjectsCount] = useState(0);
   const [teamMembersCount, setTeamMembersCount] = useState(0);
@@ -132,13 +124,13 @@ const Dashboard = () => {
 
         // Filter tasks for current user
         const userTasks = user
-          ? mockTasks.filter((task: Task) => task.assigned_to === user.id)
+          ? mockTasks.filter((task: any) => task.assigned_to === user.id)
           : mockTasks;
 
-        const formattedTasks = userTasks.map((task: Task) => ({
+        const formattedTasks = userTasks.map((task: any) => ({
           ...task,
-          status: task.status as 'todo' | 'in-progress' | 'done',
-          priority: task.priority as 'low' | 'medium' | 'high' | 'urgent',
+          status: task.status as 'todo' | 'in_progress' | 'done',
+          priority: task.priority as 'low' | 'medium' | 'high',
           completed: task.status === 'done',
         }));
         setTasks(formattedTasks);
