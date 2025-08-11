@@ -27,7 +27,7 @@ const DashboardCard = memo(
         <div className="p-4 border-b border-gray-200/50 dark:border-gray-800/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Icon className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+              <Icon className="w-4 h-4 text-tech-orange-500 dark:text-tech-orange-400" />
               <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
                 {title}
               </h2>
@@ -37,7 +37,7 @@ const DashboardCard = memo(
               {onAdd && (
                 <button
                   onClick={onAdd}
-                  className="w-6 h-6 bg-blue-500 hover:bg-blue-600 rounded-md flex items-center justify-center transition-colors"
+                  className="w-6 h-6 bg-tech-orange-500 hover:bg-tech-orange-600 rounded-md flex items-center justify-center transition-colors"
                 >
                   <Plus className="w-3 h-3 text-white" />
                 </button>
