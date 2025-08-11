@@ -60,17 +60,17 @@ const DashboardStatCard = memo(
         tabIndex={onClick ? 0 : undefined}
         role={onClick ? 'button' : undefined}
       >
-        <AnimatedCard className="relative overflow-hidden bg-gradient-to-br from-tech-orange-500 to-tech-orange-600 dark:from-tech-orange-700 dark:to-tech-orange-800 rounded-2xl p-2.5 group shadow-lg hover:shadow-xl hover:shadow-tech-orange-500/25 dark:hover:shadow-tech-orange-900/50">
+        <AnimatedCard className="relative overflow-hidden bg-gradient-to-br from-tech-orange-500 to-tech-orange-600 dark:from-tech-orange-700 dark:to-tech-orange-800 rounded-xl p-2 group shadow-md hover:shadow-lg hover:shadow-tech-orange-500/25 dark:hover:shadow-tech-orange-900/50">
           {/* Background Pattern */}
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/10 to-tech-orange-300/20 dark:from-tech-orange-400/10 dark:to-tech-orange-300/10 rounded-full -translate-y-10 translate-x-10 group-hover:scale-125 transition-transform duration-700"></div>
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-white/10 to-tech-orange-300/20 dark:from-tech-orange-400/10 dark:to-tech-orange-300/10 rounded-full -translate-y-8 translate-x-8 group-hover:scale-125 transition-transform duration-700"></div>
 
           {/* Content */}
           <div className="relative z-10">
             {/* Header */}
-            <div className="flex items-start justify-end mb-2">
+            <div className="flex items-start justify-end mb-1">
               {trend && (
                 <div
-                  className={`px-2 py-1 rounded-full text-xs font-bold ${
+                  className={`px-1.5 py-0.5 rounded-full text-xs font-bold ${
                     trend.direction === 'up'
                       ? 'bg-emerald-400/90 text-emerald-900'
                       : 'bg-red-400/90 text-red-900'
@@ -83,25 +83,25 @@ const DashboardStatCard = memo(
             </div>
 
             {/* Value and Icon */}
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-1">
               <div>
-                <p className="text-lg sm:text-xl font-black text-white mb-0.5 tracking-tight leading-none drop-shadow-sm">
+                <p className="text-base sm:text-lg font-black text-white mb-0.5 tracking-tight leading-none drop-shadow-sm">
                   {value}
                 </p>
-                <p className="text-tech-orange-100 font-semibold text-xs sm:text-sm">
+                <p className="text-tech-orange-100 font-semibold text-xs">
                   {title}
                 </p>
               </div>
-              <div className="p-1.5 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-xl group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
+              <div className="p-1 bg-white/20 dark:bg-white/10 backdrop-blur-sm rounded-lg group-hover:bg-white/30 dark:group-hover:bg-white/20 transition-all duration-300">
                 {IconComponent ? (
                   <IconComponent
-                    className={`w-5 h-5 sm:w-6 sm:h-6 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`}
+                    className={`w-4 h-4 sm:w-5 sm:h-5 opacity-90 group-hover:opacity-100 ${color || 'text-white'}`}
                   />
                 ) : (
                   <img
                     src={iconSrc}
                     alt={iconAlt}
-                    className="w-5 h-5 sm:w-6 sm:h-6 opacity-90 group-hover:opacity-100"
+                    className="w-4 h-4 sm:w-5 sm:h-5 opacity-90 group-hover:opacity-100"
                   />
                 )}
               </div>
@@ -121,7 +121,7 @@ const DashboardStatCard = memo(
           </div>
 
           {/* Hover Effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-tech-orange-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-2xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-tech-orange-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-400 rounded-xl"></div>
         </AnimatedCard>
       </div>
     );

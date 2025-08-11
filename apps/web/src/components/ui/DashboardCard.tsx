@@ -24,7 +24,7 @@ const DashboardCard = memo(
 
     return (
       <div className="bg-white/90 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-800/50 rounded-lg shadow-sm">
-        <div className="p-4 border-b border-gray-200/50 dark:border-gray-800/50">
+        <div className="p-3 border-b border-gray-200/50 dark:border-gray-800/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Icon className="w-4 h-4 text-tech-orange-500 dark:text-tech-orange-400" />
@@ -45,7 +45,7 @@ const DashboardCard = memo(
             </div>
           </div>
         </div>
-        <div className="p-4">{children}</div>
+        <div className="p-3">{children}</div>
       </div>
     );
   }
