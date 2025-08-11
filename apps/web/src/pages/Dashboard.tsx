@@ -340,7 +340,7 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
           <div>
             <Breadcrumb items={breadcrumbItems} />
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="dashboard-text-secondary text-sm font-medium">
               Here's what's happening with your projects today.
             </p>
           </div>
@@ -349,7 +349,7 @@ const Dashboard = () => {
               <AllActionsDropdown onNavigate={navigateToSection} />
               <button
                 onClick={() => setShowCustomizationAlert(true)}
-                className="p-2.5 bg-white/80 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-white dark:hover:bg-gray-700/80 hover:text-gray-900 dark:hover:text-white border border-gray-200/60 dark:border-gray-600/40 shadow-sm hover:shadow-md transition-all duration-200 backdrop-blur-sm"
+                className="dashboard-button-secondary p-2.5"
                 title="Settings"
               >
                 <Settings className="w-4 h-4" />
@@ -656,7 +656,7 @@ const Dashboard = () => {
 
   return (
     <ModalProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-gray-900 dark:via-black dark:to-gray-900">
+      <div className="min-h-screen bg-neutral-50 dark:bg-gradient-to-br dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-900">
         <DashboardModals />
         {/* Persistent Header */}
         {user && (
