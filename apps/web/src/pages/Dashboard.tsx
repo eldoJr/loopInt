@@ -441,7 +441,7 @@ const Dashboard = () => {
                   .map(task => (
                     <div
                       key={task.id}
-                      className="p-3 bg-white/70 dark:bg-gray-800/50 border border-gray-200/60 dark:border-gray-700/40 rounded-lg hover:bg-gradient-to-r hover:from-white hover:to-gray-50/90 dark:hover:from-gray-800/80 dark:hover:to-gray-700/60 hover:shadow-lg hover:ring-1 hover:ring-gray-200/50 dark:hover:ring-gray-600/50 hover:border-tech-orange-200/60 dark:hover:border-tech-orange-700/40 transition-all duration-300 cursor-pointer backdrop-blur-sm transform hover:scale-[1.01]"
+                      className="p-3 bg-white/70 dark:bg-gray-800/50 border border-gray-200/60 dark:border-gray-700/40 rounded-lg hover:bg-white hover:to-gray-50/90 dark:hover:bg-gray-800/80 hover:shadow-lg hover:ring-1 hover:ring-gray-200/50 dark:hover:ring-gray-600/50 hover:border-tech-orange-200/60 dark:hover:border-tech-orange-700/40 cursor-pointer backdrop-blur-sm"
                       onClick={() => navigateToSection('Tasks')}
                     >
                       <div className="flex items-center justify-between">
@@ -463,7 +463,7 @@ const Dashboard = () => {
                           </button>
                           <div>
                             <p
-                              className={`text-sm font-medium ${task.completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'}`}
+                              className={`text-xs font-medium ${task.completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-gray-100'}`}
                             >
                               {task.title}
                             </p>
@@ -481,7 +481,7 @@ const Dashboard = () => {
                     </div>
                   ))
               ) : (
-                <div className="bg-gradient-to-r from-tech-orange-50/90 to-tech-orange-100/70 dark:from-tech-orange-900/40 dark:to-tech-orange-800/30 border border-tech-orange-200/70 dark:border-tech-orange-700/50 rounded-lg p-4 text-sm text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm shadow-sm hover:shadow-md hover:from-tech-orange-100/90 hover:to-tech-orange-50/80 dark:hover:from-tech-orange-900/50 dark:hover:to-tech-orange-800/40 transition-all duration-300">
+                <div className="bg-gradient-to-r from-tech-orange-50/90 to-tech-orange-100/70 dark:from-tech-orange-900/40 dark:to-tech-orange-800/30 border border-tech-orange-200/70 dark:border-tech-orange-700/50 rounded-lg p-4 text-xs text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm shadow-sm">
                   Here you will see a list of all tasks assigned to you. Click
                   on a task to view details or mark as complete.
                 </div>
@@ -491,31 +491,25 @@ const Dashboard = () => {
 
           {/* Issues */}
           <DashboardCard title="Issues" icon={AlertTriangle}>
-            <div className="space-y-2">
-              <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-sm text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm shadow-sm hover:shadow-md hover:from-tech-purple-100/90 hover:to-tech-purple-50/80 dark:hover:from-tech-purple-900/40 dark:hover:to-tech-purple-800/30 transition-all duration-300">
-                No data to display
-              </div>
+            <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-xs text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm shadow-sm">
+              No data to display
             </div>
           </DashboardCard>
 
           {/* Favorite Contacts */}
           <DashboardCard title="Favorite Contacts" icon={Heart}>
-            <div className="space-y-2">
-              <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-sm text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm shadow-sm hover:shadow-md hover:from-tech-purple-100/90 hover:to-tech-purple-50/80 dark:hover:from-tech-purple-900/40 dark:hover:to-tech-purple-800/30 transition-all duration-300">
-                A list of all your favorite coworkers will appear here. Mark a
-                particular coworker as a favorite if you want it to appear in
-                this section.
-              </div>
+            <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-xs text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm shadow-sm">
+              A list of all your favorite coworkers will appear here. Mark a
+              particular coworker as a favorite if you want it to appear in
+              this section.
             </div>
           </DashboardCard>
 
           {/* Recent Activity */}
           <DashboardCard title="Recent Activity" icon={Clock}>
-            <div className="space-y-2">
-              <div className="bg-gradient-to-r from-tech-orange-50/90 to-tech-orange-100/70 dark:from-tech-orange-900/30 dark:to-tech-orange-800/20 border border-tech-orange-200/70 dark:border-tech-orange-700/50 rounded-lg p-4 text-sm text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm shadow-sm hover:shadow-md hover:from-tech-orange-100/90 hover:to-tech-orange-50/80 dark:hover:from-tech-orange-900/40 dark:hover:to-tech-orange-800/30 transition-all duration-300">
-                Here you will see a list of all recent activities in your
-                projects and tasks. Click on an activity to view details.
-              </div>
+            <div className="bg-gradient-to-r from-tech-orange-50/90 to-tech-orange-100/70 dark:from-tech-orange-900/30 dark:to-tech-orange-800/20 border border-tech-orange-200/70 dark:border-tech-orange-700/50 rounded-lg p-4 text-xs text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm shadow-sm">
+              Here you will see a list of all recent activities in your
+              projects and tasks. Click on an activity to view details.
             </div>
           </DashboardCard>
         </div>
@@ -533,7 +527,7 @@ const Dashboard = () => {
                 projects.slice(0, 2).map(project => (
                   <div
                     key={project.id}
-                    className="p-3 bg-white/70 dark:bg-gray-800/50 border border-gray-200/60 dark:border-gray-700/40 rounded-lg hover:bg-gradient-to-r hover:from-white hover:to-gray-50/90 dark:hover:from-gray-800/80 dark:hover:to-gray-700/60 hover:shadow-lg hover:ring-1 hover:ring-gray-200/50 dark:hover:ring-gray-600/50 hover:border-tech-orange-200/60 dark:hover:border-tech-orange-700/40 transition-all duration-300 cursor-pointer backdrop-blur-sm transform hover:scale-[1.01]"
+                    className="p-3 bg-white/70 dark:bg-gray-800/50 border border-gray-200/60 dark:border-gray-700/40 rounded-lg hover:bg-white dark:hover:bg-gray-800/80 hover:shadow-lg hover:ring-1 hover:ring-gray-200/50 dark:hover:ring-gray-600/50 hover:border-tech-orange-200/60 dark:hover:border-tech-orange-700/40 cursor-pointer backdrop-blur-sm"
                     onClick={() => navigateToSection('Projects')}
                   >
                     <div className="flex items-center justify-between">
@@ -543,7 +537,7 @@ const Dashboard = () => {
                           style={{ backgroundColor: project.color }}
                         ></div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          <p className="text-xs font-medium text-gray-900 dark:text-gray-100">
                             {project.name}
                           </p>
                           {project.description && (
@@ -568,7 +562,7 @@ const Dashboard = () => {
                   </div>
                 ))
               ) : (
-                <div className="bg-gradient-to-r from-tech-orange-50/90 to-tech-orange-100/70 dark:from-tech-orange-900/40 dark:to-tech-orange-800/30 border border-tech-orange-200/70 dark:border-tech-orange-700/50 rounded-lg p-4 text-sm text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm shadow-sm hover:shadow-md hover:from-tech-orange-100/90 hover:to-tech-orange-50/80 dark:hover:from-tech-orange-900/50 dark:hover:to-tech-orange-800/40 transition-all duration-300">
+                <div className="bg-gradient-to-r from-tech-orange-50/90 to-tech-orange-100/70 dark:from-tech-orange-900/40 dark:to-tech-orange-800/30 border border-tech-orange-200/70 dark:border-tech-orange-700/50 rounded-lg p-4 text-xs text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm shadow-sm">
                   Here you will see a list of all active projects that you are
                   managing or participating in. Click on a project to view
                   details.
@@ -583,12 +577,10 @@ const Dashboard = () => {
             icon={MapPin}
             onAdd={() => console.log('New check-in')}
           >
-            <div className="space-y-2">
-              <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-sm text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm shadow-sm hover:shadow-md hover:from-tech-purple-100/90 hover:to-tech-purple-50/80 dark:hover:from-tech-purple-900/40 dark:hover:to-tech-purple-800/30 transition-all duration-300">
-                Here you will see a list of all active check-ins that you are
-                the author of or need to reply to. Click on the name of the
-                check-in to do so.
-              </div>
+            <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-xs text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm shadow-sm">
+              Here you will see a list of all active check-ins that you are
+              the author of or need to reply to. Click on the name of the
+              check-in to do so.
             </div>
           </DashboardCard>
 
@@ -598,12 +590,10 @@ const Dashboard = () => {
             icon={Calendar}
             onAdd={() => navigateToSection('Calendar')}
           >
-            <div className="space-y-2">
-              <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-sm text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm shadow-sm hover:shadow-md hover:from-tech-purple-100/90 hover:to-tech-purple-50/80 dark:hover:from-tech-purple-900/40 dark:hover:to-tech-purple-800/30 transition-all duration-300">
-                This is where all the latest notifications for your scheduled
-                meetings will appear. You can also add them directly from your
-                desktop using the top right plus button.
-              </div>
+            <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-xs text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm shadow-sm">
+              This is where all the latest notifications for your scheduled
+              meetings will appear. You can also add them directly from your
+              desktop using the top right plus button.
             </div>
           </DashboardCard>
         </div>
