@@ -2,6 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Comfortaa Font Family */
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('./assets/fonts/Comfortaa-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('./assets/fonts/Comfortaa-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('./assets/fonts/Comfortaa-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('./assets/fonts/Comfortaa-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('./assets/fonts/Comfortaa-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Modern Tech Color Variables */
+:root {
+  --tech-orange-50: #fff7ed;
+  --tech-orange-100: #ffedd5;
+  --tech-orange-200: #fed7aa;
+  --tech-orange-300: #fdba74;
+  --tech-orange-400: #fb923c;
+  --tech-orange-500: #f97316;
+  --tech-orange-600: #ea580c;
+  --tech-orange-700: #c2410c;
+  --tech-orange-800: #9a3412;
+  --tech-orange-900: #7c2d12;
+  
+  --tech-purple-50: #faf5ff;
+  --tech-purple-100: #f3e8ff;
+  --tech-purple-200: #e9d5ff;
+  --tech-purple-300: #d8b4fe;
+  --tech-purple-400: #c084fc;
+  --tech-purple-500: #a855f7;
+  --tech-purple-600: #9333ea;
+  --tech-purple-700: #7c3aed;
+  --tech-purple-800: #6b21a8;
+  --tech-purple-900: #581c87;
+}
+
 /* Screen reader only utility */
 .sr-only {
   position: absolute;
