@@ -510,7 +510,7 @@ const Dashboard = () => {
                 {/* Favorite contacts content would go here */}
               </div>
             ) : (
-              <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-xs text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm">
+              <div className="bg-gradient-to-r from-tech-orange-50/90 to-tech-orange-100/70 dark:from-tech-orange-900/40 dark:to-tech-orange-800/30 border border-tech-orange-200/70 dark:border-tech-orange-700/50 rounded-lg p-4 text-xs text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm">
                 A list of all your favorite coworkers will appear here. Mark a
                 particular coworker as a favorite if you want it to appear in
                 this section.
@@ -601,7 +601,7 @@ const Dashboard = () => {
                 {/* Check-ins content would go here */}
               </div>
             ) : (
-              <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-xs text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm">
+              <div className="bg-gradient-to-r from-tech-orange-50/90 to-tech-orange-100/70 dark:from-tech-orange-900/40 dark:to-tech-orange-800/30 border border-tech-orange-200/70 dark:border-tech-orange-700/50 rounded-lg p-4 text-xs text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm">
                 Here you will see a list of all active check-ins that you are
                 the author of or need to reply to. Click on the name of the
                 check-in to do so.
@@ -620,7 +620,7 @@ const Dashboard = () => {
                 {/* Events content would go here */}
               </div>
             ) : (
-              <div className="bg-gradient-to-r from-tech-purple-50/90 to-tech-purple-100/70 dark:from-tech-purple-900/30 dark:to-tech-purple-800/20 border border-tech-purple-200/70 dark:border-tech-purple-700/50 rounded-lg p-4 text-xs text-tech-purple-800 dark:text-tech-purple-200 backdrop-blur-sm">
+              <div className="bg-gradient-to-r from-tech-orange-50/90 to-tech-orange-100/70 dark:from-tech-orange-900/40 dark:to-tech-orange-800/30 border border-tech-orange-200/70 dark:border-tech-orange-700/50 rounded-lg p-4 text-xs text-tech-orange-800 dark:text-tech-orange-200 backdrop-blur-sm">
                 This is where all the latest notifications for your scheduled
                 meetings will appear. You can also add them directly from your
                 desktop using the top right plus button.
