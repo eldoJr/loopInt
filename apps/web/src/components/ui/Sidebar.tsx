@@ -85,7 +85,7 @@ const Sidebar = ({
         {/* For You Section */}
         <div className="p-3">
           <h3 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3 flex items-center">
-            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+            <div className="w-2 h-2 bg-tech-orange-500 rounded-full mr-2"></div>
             For You
           </h3>
           <div className="space-y-1">
@@ -105,7 +105,7 @@ const Sidebar = ({
                   }}
                   className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 group ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
+                      ? 'bg-gradient-to-r from-tech-orange-500 to-tech-orange-600 text-white shadow-lg shadow-tech-orange-500/25'
                       : isHovered
                         ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-md'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'
@@ -134,11 +134,11 @@ const Sidebar = ({
             className="w-full flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3 hover:text-slate-800 dark:hover:text-slate-200 transition-colors group"
           >
             <div className="flex items-center">
-              <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-tech-purple-500 rounded-full mr-2"></div>
               <span>Recent</span>
             </div>
             <ChevronRight
-              className={`w-4 h-4 transition-transform duration-300 group-hover:text-blue-500 ${expandedSections.recent ? 'rotate-90' : ''}`}
+              className={`w-4 h-4 transition-transform duration-300 group-hover:text-tech-orange-500 ${expandedSections.recent ? 'rotate-90' : ''}`}
             />
           </button>
           <div
@@ -175,11 +175,11 @@ const Sidebar = ({
             className="w-full flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3 hover:text-slate-800 dark:hover:text-slate-200 transition-colors group"
           >
             <div className="flex items-center">
-              <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+              <div className="w-2 h-2 bg-tech-purple-500 rounded-full mr-2"></div>
               <span>More</span>
             </div>
             <ChevronRight
-              className={`w-4 h-4 transition-transform duration-300 group-hover:text-blue-500 ${expandedSections.more ? 'rotate-90' : ''}`}
+              className={`w-4 h-4 transition-transform duration-300 group-hover:text-tech-purple-500 ${expandedSections.more ? 'rotate-90' : ''}`}
             />
           </button>
           <div

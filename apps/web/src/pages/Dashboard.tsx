@@ -475,7 +475,7 @@ const Dashboard = () => {
                           </div>
                         </div>
                         {task.priority === 'high' && (
-                          <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                          <Star className="w-3 h-3 text-tech-purple-500 fill-current" />
                         )}
                       </div>
                     </div>
@@ -556,9 +556,9 @@ const Dashboard = () => {
                       <span
                         className={`px-2 py-1 text-xs rounded-full ${
                           project.status === 'active'
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                            ? 'bg-tech-orange-100 dark:bg-tech-orange-900/30 text-tech-orange-800 dark:text-tech-orange-300'
                             : project.status === 'planning'
-                              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'
+                              ? 'bg-tech-purple-100 dark:bg-tech-purple-900/30 text-tech-purple-800 dark:text-tech-purple-300'
                               : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
                         }`}
                       >
