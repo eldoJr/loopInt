@@ -67,7 +67,7 @@ const Sidebar = ({
 
   return (
     <div
-      className={`fixed left-0 top-14 h-[calc(100vh-3.5rem)] bg-gradient-to-b from-white via-gray-50/90 to-gray-100/80 dark:from-gray-900 dark:via-gray-900/95 dark:to-gray-800/90 border-r border-gray-200/60 dark:border-gray-700/60 transition-all duration-300 ease-in-out shadow-xl backdrop-blur-md ${
+      className={`fixed left-0 top-14 h-[calc(100vh-3.5rem)] bg-gradient-to-b from-white/95 via-gray-50/90 to-gray-100/85 dark:from-gray-900/98 dark:via-gray-900/95 dark:to-gray-800/92 border-r border-gray-200/70 dark:border-gray-700/70 transition-all duration-300 ease-in-out shadow-2xl backdrop-blur-xl ${
         isOpen ? 'w-72 z-30' : shouldShow ? 'w-72 z-40' : 'w-0 z-40'
       } overflow-hidden`}
       onMouseEnter={() => {
@@ -83,8 +83,8 @@ const Sidebar = ({
     >
       <div className="flex-1 overflow-y-auto pb-16">
         {/* For You Section */}
-        <div className="p-2.5">
-          <h3 className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2.5 flex items-center">
+        <div className="p-3">
+          <h3 className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center">
             <div className="w-2 h-2 bg-tech-orange-500 rounded-full mr-2"></div>
             For You
           </h3>
@@ -103,19 +103,19 @@ const Sidebar = ({
                     onNavigate(item.name);
                     if (!isOpen) onClose();
                   }}
-                  className={`w-full flex items-center space-x-3 px-2.5 py-2 rounded-xl text-sm font-semibold transition-all duration-300 group ${
+                  className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 group transform hover:scale-[1.02] ${
                     isActive
-                      ? 'bg-gradient-to-r from-tech-orange-500 to-tech-orange-600 text-white shadow-lg shadow-tech-orange-500/25'
+                      ? 'bg-gradient-to-r from-tech-orange-500 to-tech-orange-600 text-white shadow-lg shadow-tech-orange-500/30 ring-1 ring-tech-orange-400/20'
                       : isHovered
-                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white shadow-md'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100/50 dark:hover:bg-gray-800/50'
+                        ? 'bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-700 text-gray-900 dark:text-white shadow-lg ring-1 ring-gray-200/50 dark:ring-gray-600/50'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100/80 dark:hover:from-gray-800/60 dark:hover:to-gray-700/60 hover:shadow-md hover:ring-1 hover:ring-gray-200/30 dark:hover:ring-gray-600/30'
                   }`}
                 >
                   <div
-                    className={`p-1.5 rounded-lg transition-all duration-300 ${
+                    className={`p-2 rounded-xl transition-all duration-300 shadow-sm ${
                       isActive
-                        ? 'bg-white/20'
-                        : 'bg-gray-200/50 dark:bg-gray-700/50 group-hover:bg-gray-300/70 dark:group-hover:bg-gray-600/70'
+                        ? 'bg-white/25 shadow-inner'
+                        : 'bg-gray-200/60 dark:bg-gray-700/60 group-hover:bg-tech-orange-100/80 dark:group-hover:bg-tech-orange-900/40 group-hover:shadow-md'
                     }`}
                   >
                     <IconComponent className="w-4 h-4" />
@@ -131,14 +131,14 @@ const Sidebar = ({
         <div className="p-3">
           <button
             onClick={() => toggleSection('recent')}
-            className="w-full flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3 hover:text-slate-800 dark:hover:text-slate-200 transition-colors group"
+            className="w-full flex items-center justify-between text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 transition-all duration-300 group px-2 py-1 rounded-lg hover:bg-tech-purple-50/50 dark:hover:bg-tech-purple-900/20"
           >
             <div className="flex items-center">
               <div className="w-2 h-2 bg-tech-purple-500 rounded-full mr-2"></div>
               <span>Recent</span>
             </div>
             <ChevronRight
-              className={`w-4 h-4 transition-transform duration-300 group-hover:text-tech-orange-500 ${expandedSections.recent ? 'rotate-90' : ''}`}
+              className={`w-4 h-4 transition-all duration-300 group-hover:text-tech-purple-500 group-hover:scale-110 ${expandedSections.recent ? 'rotate-90' : ''}`}
             />
           </button>
           <div
@@ -149,16 +149,16 @@ const Sidebar = ({
               return (
                 <div
                   key={index}
-                  className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 cursor-pointer group"
+                  className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100/80 dark:hover:from-gray-800/60 dark:hover:to-gray-700/60 hover:shadow-md hover:ring-1 hover:ring-gray-200/30 dark:hover:ring-gray-600/30 transition-all duration-300 cursor-pointer group transform hover:scale-[1.01]"
                 >
-                  <div className="p-1.5 bg-slate-200/50 dark:bg-slate-700/50 rounded-lg group-hover:bg-slate-300/70 dark:group-hover:bg-slate-600/70 transition-colors">
-                    <IconComponent className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  <div className="p-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-lg group-hover:bg-tech-purple-100/80 dark:group-hover:bg-tech-purple-900/40 transition-all duration-300 shadow-sm group-hover:shadow-md">
+                    <IconComponent className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-tech-purple-600 dark:group-hover:text-tech-purple-400 transition-colors duration-300" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                       {item.name}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors duration-300">
                       {item.time}
                     </p>
                   </div>
@@ -172,88 +172,88 @@ const Sidebar = ({
         <div className="p-3">
           <button
             onClick={() => toggleSection('more')}
-            className="w-full flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3 hover:text-slate-800 dark:hover:text-slate-200 transition-colors group"
+            className="w-full flex items-center justify-between text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-3 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 transition-all duration-300 group px-2 py-1 rounded-lg hover:bg-tech-purple-50/50 dark:hover:bg-tech-purple-900/20"
           >
             <div className="flex items-center">
               <div className="w-2 h-2 bg-tech-purple-500 rounded-full mr-2"></div>
               <span>More</span>
             </div>
             <ChevronRight
-              className={`w-4 h-4 transition-transform duration-300 group-hover:text-tech-purple-500 ${expandedSections.more ? 'rotate-90' : ''}`}
+              className={`w-4 h-4 transition-all duration-300 group-hover:text-tech-purple-500 group-hover:scale-110 ${expandedSections.more ? 'rotate-90' : ''}`}
             />
           </button>
           <div
             className={`space-y-1 overflow-hidden transition-all duration-300 ${expandedSections.more ? 'max-h-72 opacity-100' : 'max-h-0 opacity-0'}`}
           >
-            <div className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 cursor-pointer group">
-              <div className="p-1.5 bg-slate-200/50 dark:bg-slate-700/50 rounded-lg group-hover:bg-slate-300/70 dark:group-hover:bg-slate-600/70 transition-colors">
-                <Filter className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+            <div className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100/80 dark:hover:from-gray-800/60 dark:hover:to-gray-700/60 hover:shadow-md hover:ring-1 hover:ring-gray-200/30 dark:hover:ring-gray-600/30 transition-all duration-300 cursor-pointer group transform hover:scale-[1.01]">
+              <div className="p-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-lg group-hover:bg-tech-orange-100/80 dark:group-hover:bg-tech-orange-900/40 transition-all duration-300 shadow-sm group-hover:shadow-md">
+                <Filter className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-tech-orange-600 dark:group-hover:text-tech-orange-400 transition-colors duration-300" />
               </div>
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                 Filters
               </span>
             </div>
-            <div className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 cursor-pointer group">
-              <div className="p-1.5 bg-slate-200/50 dark:bg-slate-700/50 rounded-lg group-hover:bg-slate-300/70 dark:group-hover:bg-slate-600/70 transition-colors">
-                <Target className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+            <div className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100/80 dark:hover:from-gray-800/60 dark:hover:to-gray-700/60 hover:shadow-md hover:ring-1 hover:ring-gray-200/30 dark:hover:ring-gray-600/30 transition-all duration-300 cursor-pointer group transform hover:scale-[1.01]">
+              <div className="p-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-lg group-hover:bg-tech-orange-100/80 dark:group-hover:bg-tech-orange-900/40 transition-all duration-300 shadow-sm group-hover:shadow-md">
+                <Target className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-tech-orange-600 dark:group-hover:text-tech-orange-400 transition-colors duration-300" />
               </div>
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                 Goals
               </span>
             </div>
             <div
-              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 cursor-pointer group"
+              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100/80 dark:hover:from-gray-800/60 dark:hover:to-gray-700/60 hover:shadow-md hover:ring-1 hover:ring-gray-200/30 dark:hover:ring-gray-600/30 transition-all duration-300 cursor-pointer group transform hover:scale-[1.01]"
               onClick={() => {
                 onNavigate('Clients');
                 if (!isOpen) onClose();
               }}
             >
-              <div className="p-1.5 bg-slate-200/50 dark:bg-slate-700/50 rounded-lg group-hover:bg-slate-300/70 dark:group-hover:bg-slate-600/70 transition-colors">
-                <Building className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+              <div className="p-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-lg group-hover:bg-tech-purple-100/80 dark:group-hover:bg-tech-purple-900/40 transition-all duration-300 shadow-sm group-hover:shadow-md">
+                <Building className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-tech-purple-600 dark:group-hover:text-tech-purple-400 transition-colors duration-300" />
               </div>
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                 Clients
               </span>
             </div>
             <div
-              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 cursor-pointer group"
+              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100/80 dark:hover:from-gray-800/60 dark:hover:to-gray-700/60 hover:shadow-md hover:ring-1 hover:ring-gray-200/30 dark:hover:ring-gray-600/30 transition-all duration-300 cursor-pointer group transform hover:scale-[1.01]"
               onClick={() => {
                 onNavigate('HR Project');
                 if (!isOpen) onClose();
               }}
             >
-              <div className="p-1.5 bg-slate-200/50 dark:bg-slate-700/50 rounded-lg group-hover:bg-slate-300/70 dark:group-hover:bg-slate-600/70 transition-colors">
-                <Briefcase className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+              <div className="p-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-lg group-hover:bg-tech-purple-100/80 dark:group-hover:bg-tech-purple-900/40 transition-all duration-300 shadow-sm group-hover:shadow-md">
+                <Briefcase className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-tech-purple-600 dark:group-hover:text-tech-purple-400 transition-colors duration-300" />
               </div>
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                 Job Ads
               </span>
             </div>
             <div
-              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 cursor-pointer group"
+              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100/80 dark:hover:from-gray-800/60 dark:hover:to-gray-700/60 hover:shadow-md hover:ring-1 hover:ring-gray-200/30 dark:hover:ring-gray-600/30 transition-all duration-300 cursor-pointer group transform hover:scale-[1.01]"
               onClick={() => {
                 onNavigate('Help Center');
                 if (!isOpen) onClose();
               }}
             >
-              <div className="p-1.5 bg-slate-200/50 dark:bg-slate-700/50 rounded-lg group-hover:bg-slate-300/70 dark:group-hover:bg-slate-600/70 transition-colors">
-                <MessageSquare className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+              <div className="p-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-lg group-hover:bg-tech-purple-100/80 dark:group-hover:bg-tech-purple-900/40 transition-all duration-300 shadow-sm group-hover:shadow-md">
+                <MessageSquare className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-tech-purple-600 dark:group-hover:text-tech-purple-400 transition-colors duration-300" />
               </div>
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                 Help Center
               </span>
             </div>
             <div
-              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 cursor-pointer group"
+              className="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100/80 dark:hover:from-gray-800/60 dark:hover:to-gray-700/60 hover:shadow-md hover:ring-1 hover:ring-gray-200/30 dark:hover:ring-gray-600/30 transition-all duration-300 cursor-pointer group transform hover:scale-[1.01]"
               onClick={() => {
                 onNavigate('Account Settings');
                 if (!isOpen) onClose();
               }}
             >
-              <div className="p-1.5 bg-slate-200/50 dark:bg-slate-700/50 rounded-lg group-hover:bg-slate-300/70 dark:group-hover:bg-slate-600/70 transition-colors">
-                <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+              <div className="p-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-lg group-hover:bg-tech-orange-100/80 dark:group-hover:bg-tech-orange-900/40 transition-all duration-300 shadow-sm group-hover:shadow-md">
+                <Settings className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-tech-orange-600 dark:group-hover:text-tech-orange-400 transition-colors duration-300" />
               </div>
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                 Customize sidebar
               </span>
             </div>
@@ -262,18 +262,18 @@ const Sidebar = ({
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-slate-200/60 dark:border-slate-700/60 bg-gradient-to-t from-slate-100/50 to-transparent dark:from-slate-800/50 backdrop-blur-sm">
+      <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-gray-200/70 dark:border-gray-700/70 bg-gradient-to-t from-gray-100/60 to-transparent dark:from-gray-800/60 backdrop-blur-md">
         <button
           onClick={() => {
             onNavigate('Report Bug');
             if (!isOpen) onClose();
           }}
-          className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-200 text-left group"
+          className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-gradient-to-r hover:from-tech-orange-50 hover:to-tech-orange-100/80 dark:hover:from-tech-orange-900/30 dark:hover:to-tech-orange-800/30 hover:shadow-lg hover:ring-1 hover:ring-tech-orange-200/50 dark:hover:ring-tech-orange-700/50 transition-all duration-300 text-left group transform hover:scale-[1.02]"
         >
-          <div className="p-1.5 bg-slate-200/50 dark:bg-slate-700/50 rounded-lg group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
-            <MessageSquare className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
+          <div className="p-1.5 bg-gray-200/60 dark:bg-gray-700/60 rounded-lg group-hover:bg-tech-orange-100 dark:group-hover:bg-tech-orange-900/50 transition-all duration-300 shadow-sm group-hover:shadow-md">
+            <MessageSquare className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-tech-orange-600 dark:group-hover:text-tech-orange-400 transition-colors duration-300" />
           </div>
-          <span className="text-sm font-medium text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200">
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-tech-orange-700 dark:group-hover:text-tech-orange-300 transition-colors duration-300">
             Give feedback on LoopInt
           </span>
         </button>
