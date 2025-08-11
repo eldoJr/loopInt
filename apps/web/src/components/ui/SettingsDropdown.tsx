@@ -154,7 +154,7 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-colors"
+        className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-tech-orange-600 dark:hover:text-tech-orange-400 hover:bg-tech-orange-50 dark:hover:bg-tech-orange-900/20 rounded-md"
         title="Settings"
       >
         <Settings className="w-5 h-5" />
@@ -205,7 +205,7 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
                 placeholder="Search settings..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-tech-orange-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -231,12 +231,12 @@ const SettingsDropdown = ({ onNavigate }: SettingsDropdownProps) => {
                             onNavigate?.(item.section);
                             setIsOpen(false);
                           }}
-                          className="w-full flex items-start space-x-2 p-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group"
+                          className="w-full flex items-start space-x-2 p-1.5 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800/50 text-left group"
                         >
-                          <IconComponent className="w-4 h-4 flex-shrink-0 text-blue-500 group-hover:text-blue-600 transition-colors" />
+                          <IconComponent className="w-4 h-4 flex-shrink-0 text-tech-orange-500 group-hover:text-tech-orange-600" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-0.5">
-                              <p className="text-xs font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                              <p className="text-xs font-semibold text-gray-900 dark:text-white group-hover:text-tech-orange-600 dark:group-hover:text-tech-orange-400">
                                 {item.title}
                               </p>
                               <div className="flex items-center space-x-1">

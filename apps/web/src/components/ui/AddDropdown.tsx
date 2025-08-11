@@ -194,11 +194,11 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors flex items-center space-x-1.5"
+        className="px-2 sm:px-3 py-1.5 bg-tech-orange-500 hover:bg-tech-orange-600 text-white rounded-md flex items-center space-x-1 sm:space-x-1.5"
         title="Add"
       >
-        <Plus className="w-4 h-4" />
-        <span className="text-sm font-medium">Create</span>
+        <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+        <span className="text-xs sm:text-sm font-medium hidden xs:inline">Create</span>
       </button>
 
       {isOpen && (
@@ -219,7 +219,7 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md focus:outline-none focus:ring-1 focus:ring-tech-orange-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -245,9 +245,9 @@ const AddDropdown = ({ onNavigate }: AddDropdownProps = {}) => {
                             item.action();
                             setIsOpen(false);
                           }}
-                          className="w-full flex items-center space-x-2 text-xs py-1.5 px-2.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                          className="w-full flex items-center space-x-2 text-xs py-1.5 px-2.5 rounded hover:bg-gray-50 dark:hover:bg-gray-800/50 text-left group text-gray-700 dark:text-gray-300 hover:text-tech-orange-600 dark:hover:text-tech-orange-400"
                         >
-                          <IconComponent className="w-3.5 h-3.5 flex-shrink-0 text-blue-500" />
+                          <IconComponent className="w-3.5 h-3.5 flex-shrink-0 text-tech-orange-500" />
                           <span className="font-medium">{item.label}</span>
                         </button>
                       );

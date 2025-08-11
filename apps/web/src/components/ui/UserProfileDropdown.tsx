@@ -108,10 +108,10 @@ const UserProfileDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-colors"
+        className="flex items-center space-x-1 sm:space-x-2 p-1 sm:p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800/50"
       >
-        <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-          <span className="text-white text-sm font-medium">
+        <div className="w-6 h-6 sm:w-7 sm:h-7 bg-gradient-to-r from-tech-orange-500 to-tech-purple-600 rounded-full flex items-center justify-center shadow-lg">
+          <span className="text-white text-xs sm:text-sm font-medium">
             {user?.name?.charAt(0) || 'U'}
           </span>
         </div>
@@ -126,7 +126,7 @@ const UserProfileDropdown = ({
           <div className="p-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-blue-100 dark:ring-blue-900/30">
+                <div className="w-12 h-12 bg-gradient-to-br from-tech-orange-500 to-tech-purple-600 rounded-full flex items-center justify-center shadow-lg ring-2 ring-tech-orange-100 dark:ring-tech-orange-900/30">
                   <span className="text-white font-bold text-lg">
                     {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                   </span>
@@ -196,11 +196,11 @@ const UserProfileDropdown = ({
                         setIsOpen(false);
                       }
                     }}
-                    className={`w-full px-4 py-3 flex items-center space-x-3 transition-all duration-200 text-left rounded-lg group ${
+                    className={`w-full px-4 py-3 flex items-center space-x-3 text-left rounded-lg group ${
                       item.danger
                         ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300'
                         : showThemeMenu && item.hasSubmenu
-                          ? 'text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20'
+                          ? 'text-tech-orange-700 dark:text-tech-orange-300 bg-tech-orange-50 dark:bg-tech-orange-900/20'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-white'
                     }`}
                   >
@@ -210,7 +210,7 @@ const UserProfileDropdown = ({
                           item.danger
                             ? 'bg-red-100 dark:bg-red-900/30 group-hover:bg-red-200 dark:group-hover:bg-red-900/50'
                             : showThemeMenu && item.hasSubmenu
-                              ? 'bg-blue-100 dark:bg-blue-900/30'
+                              ? 'bg-tech-orange-100 dark:bg-tech-orange-900/30'
                               : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
                         }`}
                       >
@@ -250,23 +250,23 @@ const UserProfileDropdown = ({
                                   setTheme(option.key);
                                 }
                               }}
-                              className={`w-full px-3 py-3 flex items-center space-x-3 text-left transition-all duration-200 rounded-lg group ${
+                              className={`w-full px-3 py-3 flex items-center space-x-3 text-left rounded-lg group ${
                                 theme === option.key
-                                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800'
+                                  ? 'bg-tech-orange-50 dark:bg-tech-orange-900/30 text-tech-orange-700 dark:text-tech-orange-300 ring-1 ring-tech-orange-200 dark:ring-tech-orange-800'
                                   : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-300'
                               }`}
                             >
                               <div
-                                className={`w-3 h-3 rounded-full flex-shrink-0 transition-all ${
+                                className={`w-3 h-3 rounded-full flex-shrink-0 ${
                                   theme === option.key
-                                    ? 'bg-blue-500 shadow-sm scale-110'
+                                    ? 'bg-tech-orange-500 shadow-sm scale-110'
                                     : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-gray-400 dark:group-hover:bg-gray-500'
                                 }`}
                               />
                               <img
                                 src={option.icon}
                                 alt={option.label}
-                                className="w-8 h-8 flex-shrink-0 opacity-80 group-hover:opacity-100 transition-all group-hover:scale-105"
+                                className="w-8 h-8 flex-shrink-0 opacity-80 group-hover:opacity-100"
                               />
                               <div className="flex-1">
                                 <span className="text-sm font-semibold group-hover:text-gray-900 dark:group-hover:text-white transition-colors block">

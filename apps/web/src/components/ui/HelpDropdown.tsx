@@ -86,7 +86,7 @@ const HelpDropdown = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-colors"
+        className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 hover:bg-tech-purple-50 dark:hover:bg-tech-purple-900/20 rounded-md"
         title="Help"
       >
         <HelpCircle className="w-5 h-5" />
@@ -101,7 +101,7 @@ const HelpDropdown = () => {
                 Help & Support
               </h3>
               <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4 text-blue-500" />
+                <Users className="w-4 h-4 text-tech-purple-500" />
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   24/7 Support
                 </span>
@@ -116,7 +116,7 @@ const HelpDropdown = () => {
                 placeholder="Search help topics..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-tech-purple-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -126,9 +126,9 @@ const HelpDropdown = () => {
             <div className="flex">
               <button
                 onClick={() => setActiveTab('resources')}
-                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-3 text-sm font-medium ${
                   activeTab === 'resources'
-                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                    ? 'text-tech-purple-600 dark:text-tech-purple-400 border-b-2 border-tech-purple-600 dark:border-tech-purple-400'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
@@ -136,9 +136,9 @@ const HelpDropdown = () => {
               </button>
               <button
                 onClick={() => setActiveTab('support')}
-                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-3 text-sm font-medium ${
                   activeTab === 'support'
-                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                    ? 'text-tech-purple-600 dark:text-tech-purple-400 border-b-2 border-tech-purple-600 dark:border-tech-purple-400'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
@@ -160,17 +160,17 @@ const HelpDropdown = () => {
                         item.action();
                         setIsOpen(false);
                       }}
-                      className="w-full flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left group"
+                      className="w-full flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-left group"
                     >
                       <div className="flex-shrink-0 mt-0.5">
-                        <IconComponent className="w-5 h-5 text-blue-500 group-hover:text-blue-600 transition-colors" />
+                        <IconComponent className="w-5 h-5 text-tech-purple-500 group-hover:text-tech-purple-600" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-tech-purple-600 dark:group-hover:text-tech-purple-400">
                             {item.title}
                           </p>
-                          <ExternalLink className="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <ExternalLink className="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100" />
                         </div>
                         <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                           {item.description}
@@ -198,7 +198,7 @@ const HelpDropdown = () => {
               </p>
               <a
                 href="mailto:support@loopint.com"
-                className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                className="text-xs text-tech-purple-600 dark:text-tech-purple-400 hover:underline font-medium"
               >
                 Contact Support →
               </a>

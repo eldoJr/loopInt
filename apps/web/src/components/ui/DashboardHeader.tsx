@@ -199,7 +199,7 @@ const DashboardHeader = ({
                 setSidebarHovered?.(false);
               }
             }}
-            className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-tech-orange-600 dark:hover:text-tech-orange-400 hover:bg-tech-orange-50 dark:hover:bg-tech-orange-900/20 rounded-md transition-all duration-200 hover:scale-110"
+            className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-tech-orange-600 dark:hover:text-tech-orange-400 hover:bg-tech-orange-50 dark:hover:bg-tech-orange-900/20 rounded-md"
             title={sidebarOpen ? 'Close Menu' : 'Open Menu'}
           >
             {sidebarOpen ? (
@@ -222,8 +222,8 @@ const DashboardHeader = ({
         </div>
 
         {/* Center - Global Search */}
-        <div className="flex-1 flex items-center justify-center px-2 sm:px-4 max-w-2xl">
-          <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl">
+        <div className="flex-1 flex items-center justify-center px-1 sm:px-4 max-w-2xl">
+          <div className="w-full max-w-xs sm:max-w-md lg:max-w-lg xl:max-w-xl">
             <SearchBar
               placeholder="Search projects, tasks, or navigate..."
               value={searchQuery}
@@ -238,7 +238,7 @@ const DashboardHeader = ({
               showCommandHint={true}
             />
           </div>
-          <div className="ml-2 sm:ml-3 hidden sm:block">
+          <div className="ml-1 sm:ml-3 hidden sm:block">
             <AddDropdown onNavigate={onNavigate} />
           </div>
         </div>
@@ -265,7 +265,7 @@ const DashboardHeader = ({
 
             <button
               onClick={handleThemeToggle}
-              className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 hover:bg-tech-purple-50 dark:hover:bg-tech-purple-900/20 rounded-md transition-all duration-200"
+              className="p-1.5 text-gray-600 dark:text-gray-400 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 hover:bg-tech-purple-50 dark:hover:bg-tech-purple-900/20 rounded-md"
               title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
               {theme === 'dark' ? (

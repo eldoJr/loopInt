@@ -37,7 +37,7 @@ const NotificationsDropdown = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800/50 rounded-md transition-colors"
+        className="p-1.5 sm:p-2 text-gray-600 dark:text-gray-400 hover:text-tech-purple-600 dark:hover:text-tech-purple-400 hover:bg-tech-purple-50 dark:hover:bg-tech-purple-900/20 rounded-md"
         title="Notifications"
       >
         <Bell className="w-5 h-5" />
@@ -55,9 +55,9 @@ const NotificationsDropdown = () => {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setShowUnreadOnly(!showUnreadOnly)}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full focus:outline-none focus:ring-2 focus:ring-tech-purple-500 focus:ring-offset-2 ${
                       showUnreadOnly
-                        ? 'bg-blue-600'
+                        ? 'bg-tech-purple-600'
                         : 'bg-gray-200 dark:bg-gray-700'
                     }`}
                   >
@@ -102,9 +102,9 @@ const NotificationsDropdown = () => {
             <div className="flex">
               <button
                 onClick={() => setActiveTab('direct')}
-                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-3 text-sm font-medium ${
                   activeTab === 'direct'
-                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                    ? 'text-tech-purple-600 dark:text-tech-purple-400 border-b-2 border-tech-purple-600 dark:border-tech-purple-400'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
@@ -112,9 +112,9 @@ const NotificationsDropdown = () => {
               </button>
               <button
                 onClick={() => setActiveTab('watching')}
-                className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 px-4 py-3 text-sm font-medium ${
                   activeTab === 'watching'
-                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                    ? 'text-tech-purple-600 dark:text-tech-purple-400 border-b-2 border-tech-purple-600 dark:border-tech-purple-400'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
@@ -126,7 +126,7 @@ const NotificationsDropdown = () => {
           {/* Empty State */}
           <div className="p-8 text-center">
             <div className="mb-4">
-              <Flag className="w-12 h-12 text-blue-500 mx-auto" />
+              <Flag className="w-12 h-12 text-tech-purple-500 mx-auto" />
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
               You have no notifications from the last 30 days.
