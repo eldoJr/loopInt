@@ -15,6 +15,7 @@ import {
   Check,
   ChevronDown,
   Tag,
+  Briefcase,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
@@ -22,6 +23,7 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { ErrorBoundary } from '../../components/error/ErrorBoundary';
 import { coworkerSchema } from '../../schemas/coworkerSchema';
 import { useCreateCoworker } from '../../hooks/useCoworkers';
+import NewOptionModal from '../../components/ui/NewOptionModal';
 
 interface NewCoworkerProps {
   onNavigateBack?: () => void;
@@ -36,6 +38,12 @@ const NewCoworker = ({
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [showSkillDropdown, setShowSkillDropdown] = useState(false);
+  const [showSkillDialog, setShowSkillDialog] = useState(false);
+  const [newSkillInput, setNewSkillInput] = useState('');
+  const [showPositionDialog, setShowPositionDialog] = useState(false);
+  const [newPositionInput, setNewPositionInput] = useState('');
+  const [showNewOptionModal, setShowNewOptionModal] = useState(false);
+  const [newOptionContext, setNewOptionContext] = useState<{ type: 'skill' | 'position' } | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
 
@@ -114,13 +122,24 @@ const NewCoworker = ({
         }
       }
       if (e.key === 'Escape') {
-        onNavigateToTeam?.();
+        if (showSkillDialog) {
+          setShowSkillDialog(false);
+          setNewSkillInput('');
+        } else if (showPositionDialog) {
+          setShowPositionDialog(false);
+          setNewPositionInput('');
+        } else if (showNewOptionModal) {
+          setShowNewOptionModal(false);
+          setNewOptionContext(null);
+        } else {
+          onNavigateToTeam?.();
+        }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isValid, onNavigateToTeam, handleSubmit]);
+  }, [isValid, onNavigateToTeam, handleSubmit, showSkillDialog, showPositionDialog, showNewOptionModal]);
 
   const onSubmit = (data: any) => {
     createCoworkerMutation.mutate(data, {
@@ -157,10 +176,56 @@ const NewCoworker = ({
   };
 
   const addNewSkill = () => {
-    const skillName = prompt('Enter new skill:');
-    if (skillName && skillName.trim()) {
-      handleSkillSelect(skillName.trim());
+    if (newSkillInput.trim()) {
+      handleSkillSelect(newSkillInput.trim());
+      setNewSkillInput('');
+      setShowSkillDialog(false);
     }
+  };
+
+  const handleSkillDialogKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addNewSkill();
+    } else if (e.key === 'Escape') {
+      setShowSkillDialog(false);
+      setNewSkillInput('');
+    }
+  };
+
+  const addNewPosition = () => {
+    if (newPositionInput.trim()) {
+      setValue('position', newPositionInput.trim());
+      setNewPositionInput('');
+      setShowPositionDialog(false);
+    }
+  };
+
+  const handlePositionDialogKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addNewPosition();
+    } else if (e.key === 'Escape') {
+      setShowPositionDialog(false);
+      setNewPositionInput('');
+    }
+  };
+
+  const handleNewOptionSave = (data: {
+    module: string;
+    field: string;
+    language: string;
+    optionName: string;
+    isDefault: boolean;
+    useInField: boolean;
+  }) => {
+    if (newOptionContext?.type === 'skill') {
+      handleSkillSelect(data.optionName);
+    } else if (newOptionContext?.type === 'position') {
+      setValue('position', data.optionName);
+    }
+    setShowNewOptionModal(false);
+    setNewOptionContext(null);
   };
 
   const breadcrumbItems = [
@@ -362,26 +427,39 @@ const NewCoworker = ({
                   </label>
                   <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
                     <div className="flex-1 relative">
-                      <Controller
-                        name="position"
-                        control={control}
-                        render={({ field }) => (
-                          <select
-                            {...field}
-                            className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
-                              errors.position
-                                ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                                : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
-                            }`}
-                          >
-                            <option value="">Select position...</option>
-                            {positions.map(pos => (
-                              <option key={pos} value={pos}>{pos}</option>
-                            ))}
-                          </select>
-                        )}
-                      />
-                      <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
+                      <div className="flex items-center space-x-2">
+                        <Controller
+                          name="position"
+                          control={control}
+                          render={({ field }) => (
+                            <select
+                              {...field}
+                              className={`flex-1 bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
+                                errors.position
+                                  ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                                  : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
+                              }`}
+                            >
+                              <option value="">Select position...</option>
+                              {positions.map(pos => (
+                                <option key={pos} value={pos}>{pos}</option>
+                              ))}
+                            </select>
+                          )}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewOptionContext({ type: 'position' });
+                            setShowNewOptionModal(true);
+                          }}
+                          className="p-2 text-orange-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded transition-colors"
+                          title="Add new position"
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
+                      <ChevronDown className="absolute right-8 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
                     <div className="flex-1 relative">
                       <Building className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
@@ -532,7 +610,10 @@ const NewCoworker = ({
                     </label>
                     <button
                       type="button"
-                      onClick={addNewSkill}
+                      onClick={() => {
+                        setNewOptionContext({ type: 'skill' });
+                        setShowNewOptionModal(true);
+                      }}
                       className="ml-2 p-1 text-orange-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded transition-colors"
                       title="Add new skill"
                     >
@@ -564,7 +645,10 @@ const NewCoworker = ({
                           <div className="p-3">
                             <button
                               type="button"
-                              onClick={addNewSkill}
+                              onClick={() => {
+                                setNewOptionContext({ type: 'skill' });
+                                setShowNewOptionModal(true);
+                              }}
                               className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-orange-50 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-500/30 transition-colors text-sm"
                             >
                               <Plus className="h-4 w-4" />
@@ -775,6 +859,126 @@ const NewCoworker = ({
             </div>
           </div>
         </div>
+
+        {/* Skill Dialog Modal */}
+        {showSkillDialog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-sm">
+              <div className="p-4">
+                <div className="flex items-center space-x-2 mb-3">
+                  <div className="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
+                    <Tag className="text-white w-3 h-3" />
+                  </div>
+                  <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                    Add New Skill
+                  </h3>
+                </div>
+                
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={newSkillInput}
+                    onChange={(e) => setNewSkillInput(e.target.value)}
+                    onKeyDown={handleSkillDialogKeyDown}
+                    placeholder="Enter skill name..."
+                    className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+                    autoFocus
+                  />
+                  
+                  <div className="flex items-center justify-end space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowSkillDialog(false);
+                        setNewSkillInput('');
+                      }}
+                      className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={addNewSkill}
+                      disabled={!newSkillInput.trim()}
+                      className={`px-3 py-1.5 text-sm rounded font-medium transition-all ${
+                        newSkillInput.trim()
+                          ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white hover:from-orange-600 hover:to-purple-700'
+                          : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Position Dialog Modal */}
+        {showPositionDialog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-sm">
+              <div className="p-4">
+                <div className="flex items-center space-x-2 mb-3">
+                  <div className="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
+                    <Briefcase className="text-white w-3 h-3" />
+                  </div>
+                  <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                    Add New Position
+                  </h3>
+                </div>
+                
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={newPositionInput}
+                    onChange={(e) => setNewPositionInput(e.target.value)}
+                    onKeyDown={handlePositionDialogKeyDown}
+                    placeholder="Enter position title..."
+                    className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
+                    autoFocus
+                  />
+                  
+                  <div className="flex items-center justify-end space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowPositionDialog(false);
+                        setNewPositionInput('');
+                      }}
+                      className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={addNewPosition}
+                      disabled={!newPositionInput.trim()}
+                      className={`px-3 py-1.5 text-sm rounded font-medium transition-all ${
+                        newPositionInput.trim()
+                          ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white hover:from-orange-600 hover:to-purple-700'
+                          : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* New Option Modal */}
+        <NewOptionModal
+          isOpen={showNewOptionModal}
+          onClose={() => {
+            setShowNewOptionModal(false);
+            setNewOptionContext(null);
+          }}
+          onSave={handleNewOptionSave}
+        />
       </div>
     </ErrorBoundary>
   );
