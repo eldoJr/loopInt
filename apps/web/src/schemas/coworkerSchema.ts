@@ -21,4 +21,9 @@ export const coworkerSchema = z.object({
   resumeFile: z.any().optional(),
 });
 
-export type CoworkerFormData = z.infer<typeof coworkerSchema>;
+// Export the inferred type
+type CoworkerFormDataType = z.infer<typeof coworkerSchema>;
+export type CoworkerFormData = CoworkerFormDataType;
+
+// Also export as default for compatibility
+export default coworkerSchema;

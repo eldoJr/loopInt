@@ -90,10 +90,7 @@ const EditCoworker = ({
     'Graphic Designer',
   ];
   const departments = ['Engineering', 'Design', 'Product', 'Marketing', 'Data', 'Operations'];
-  const skillOptions = [
-    'React', 'TypeScript', 'Node.js', 'Python', 'AWS', 'Docker', 'Figma', 'PostgreSQL',
-    'Next.js', 'TailwindCSS', 'Kubernetes', 'Django', 'Adobe XD', 'Machine Learning'
-  ];
+
 
   useEffect(() => {
     const loadMemberData = async () => {
@@ -591,24 +588,15 @@ const EditCoworker = ({
 
                       {showSkillDropdown && (
                         <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
-                          <div className="p-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {skillOptions.map(skill => (
-                              <button
-                                key={skill}
-                                type="button"
-                                onClick={() => handleSkillSelect(skill)}
-                                className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md transition-colors ${
-                                  watchedSkills?.includes(skill)
-                                    ? 'bg-orange-100 dark:bg-orange-600/20 text-orange-600 dark:text-orange-400'
-                                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                }`}
-                              >
-                                <span>{skill}</span>
-                                {watchedSkills?.includes(skill) && (
-                                  <Check className="h-4 w-4" />
-                                )}
-                              </button>
-                            ))}
+                          <div className="p-3">
+                            <button
+                              type="button"
+                              onClick={addNewSkill}
+                              className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-orange-50 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-500/30 transition-colors text-sm"
+                            >
+                              <Plus className="h-4 w-4" />
+                              <span>Add New Skill</span>
+                            </button>
                           </div>
                         </div>
                       )}

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CoworkerFormData } from '../schemas/coworkerSchema';
+import type { CoworkerFormData } from '../schemas/coworkerSchema';
 
 export const useCreateCoworker = () => {
   const queryClient = useQueryClient();
