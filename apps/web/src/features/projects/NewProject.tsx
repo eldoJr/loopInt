@@ -137,14 +137,14 @@ const NewProject = ({
 
 
   const colorOptions = [
-    '#3B82F6',
-    '#10B981',
-    '#8B5CF6',
-    '#F59E0B',
-    '#EF4444',
-    '#06B6D4',
-    '#84CC16',
-    '#F97316',
+    '#f97316', // tech-orange-500
+    '#a855f7', // tech-purple-500
+    '#3B82F6', // blue-500
+    '#10B981', // emerald-500
+    '#EF4444', // red-500
+    '#06B6D4', // cyan-500
+    '#84CC16', // lime-500
+    '#F59E0B', // amber-500
   ];
 
   const breadcrumbItems = [
@@ -174,25 +174,25 @@ const NewProject = ({
           <Breadcrumb items={breadcrumbItems} />
         </div>
 
-        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
-          <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg shadow-sm transition-all duration-300">
+          <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
                 New Project
               </h1>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={onNavigateToProjects}
-                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
+                  className="flex-1 sm:flex-none px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm text-center"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit(onSubmit)}
                   disabled={!isValid || createProjectMutation.isPending}
-                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                  className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
                     isValid && !createProjectMutation.isPending
-                      ? 'bg-blue-500 text-white hover:bg-blue-600'
+                      ? 'bg-orange-500 text-white hover:bg-orange-600'
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}
                 >
@@ -207,24 +207,29 @@ const NewProject = ({
             <div className="space-y-6 max-w-3xl mx-auto">
             {/* Section 1 - Basic Information */}
             <div className="space-y-4">
-              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
-                Basic Information
-              </h2>
+              <div className="flex items-center space-x-3">
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs font-bold">1</span>
+                </div>
+                <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                  Basic Information
+                </h2>
+              </div>
               
               {/* Project Name */}
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
                   Project Name *
                 </label>
-                <div className="col-span-9">
+                <div className="sm:col-span-9">
                   <input
                     type="text"
                     {...register('name')}
                     placeholder="Enter project name"
-                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
+                    className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                       errors.name
                         ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                        : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
                     }`}
                   />
                   {errors.name && (
@@ -234,33 +239,34 @@ const NewProject = ({
               </div>
 
               {/* Project Signature */}
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
                   Project Signature *
                 </label>
-                <div className="col-span-9">
+                <div className="sm:col-span-9">
                   <input
                     type="text"
                     value={currentUser?.name || ''}
                     readOnly
-                    className="w-full bg-gray-100 dark:bg-gray-800/20 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
+                    className="w-full bg-gray-100 dark:bg-gray-800/20 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
                   />
                 </div>
               </div>
 
-              {/* Status */}
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Status *
+              {/* Status & Priority */}
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-start">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right sm:pt-2">
+                  Status & Priority *
                 </label>
-                <div className="col-span-4">
-                  <div className="relative">
+                <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
+                  <div className="flex-1 relative">
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Status</label>
                     <select
                       {...register('status')}
-                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
+                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
                         errors.status
                           ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
                       }`}
                     >
                       <option value="planning">Planning</option>
@@ -269,27 +275,16 @@ const NewProject = ({
                       <option value="completed">Completed</option>
                       <option value="cancelled">Cancelled</option>
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-8 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
                   </div>
-                  {errors.status && (
-                    <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Priority */}
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Priority *
-                </label>
-                <div className="col-span-4">
-                  <div className="relative">
+                  <div className="flex-1 relative">
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Priority</label>
                     <select
                       {...register('priority')}
-                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
+                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
                         errors.priority
                           ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-purple-500/50'
                       }`}
                     >
                       <option value="low">Low</option>
@@ -297,57 +292,70 @@ const NewProject = ({
                       <option value="high">High</option>
                       <option value="urgent">Urgent</option>
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-8 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
                   </div>
-                  {errors.priority && (
-                    <p className="text-red-500 text-sm mt-1">{errors.priority.message}</p>
-                  )}
                 </div>
+                {(errors.status || errors.priority) && (
+                  <div className="sm:col-span-9 sm:col-start-4">
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.status?.message || errors.priority?.message}
+                    </p>
+                  </div>
+                )}
               </div>
+
+
             </div>
 
             {/* Section 2 - Project Details */}
             <div className="space-y-6">
-              <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
-                Project Details
-              </h2>
+              <div className="flex items-center space-x-3">
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs font-bold">2</span>
+                </div>
+                <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                  Project Details
+                </h2>
+              </div>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-start">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right sm:pt-2">
                   Project Duration *
                 </label>
-                <div className="col-span-9">
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <input
-                        type="date"
-                        {...register('start_date')}
-                        className="bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                      />
-                    </div>
-                    <span className="text-gray-500 dark:text-gray-400">-</span>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        {...register('deadline')}
-                        className="bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                      />
-                    </div>
+                <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
+                  <div className="flex-1">
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Start Date</label>
+                    <input
+                      type="date"
+                      {...register('start_date')}
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500/50 text-sm"
+                    />
                   </div>
-                  {(errors.start_date || errors.deadline) && (
+                  <span className="hidden sm:block text-gray-500 dark:text-gray-400 mt-6">-</span>
+                  <div className="flex-1">
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">End Date</label>
+                    <input
+                      type="date"
+                      {...register('deadline')}
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                    />
+                  </div>
+                </div>
+                {(errors.start_date || errors.deadline) && (
+                  <div className="sm:col-span-9 sm:col-start-4">
                     <div className="text-red-500 text-sm mt-1">
                       {errors.start_date?.message || errors.deadline?.message}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
                   Budget
                 </label>
-                <div className="col-span-9">
-                  <div className="relative">
+                <div className="sm:col-span-9">
+                  <div className="relative w-full sm:w-48">
                     <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                     <input
                       type="number"
@@ -355,7 +363,7 @@ const NewProject = ({
                       placeholder="0.00"
                       step="0.01"
                       min="0"
-                      className="w-48 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 text-sm"
                     />
                   </div>
                   {errors.budget && (
@@ -364,11 +372,11 @@ const NewProject = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
                   Progress: {watch('progress')}%
                 </label>
-                <div className="col-span-9">
+                <div className="sm:col-span-9">
                   <Slider
                     value={[watch('progress')]}
                     onValueChange={(value: number[]) => setValue('progress', value[0])}
@@ -379,56 +387,51 @@ const NewProject = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Team *
+              {/* Team & Client */}
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-start">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right sm:pt-2">
+                  Team & Client *
                 </label>
-                <div className="col-span-6">
-                  <div className="relative">
+                <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
+                  <div className="flex-1 relative">
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Team</label>
                     <select
                       {...register('team_id')}
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     >
                       <option value="">Select a team...</option>
                       <option value="Team 1">Team 1</option>
                       <option value="Team 2">Team 2</option>
                       <option value="Team 3">Team 3</option>
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-8 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
                   </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
-                  Client *
-                </label>
-                <div className="col-span-6">
-                  <div className="relative">
+                  <div className="flex-1 relative">
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Client</label>
                     <select
                       {...register('client_id')}
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
                     >
                       <option value="">Select a client...</option>
                       <option value="Client 1">Client 1</option>
                       <option value="Client 2">Client 2</option>
                       <option value="Client 3">Client 3</option>
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-8 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
                   Tags *
                 </label>
-                <div className="col-span-6">
+                <div className="sm:col-span-9">
                   <div className="relative">
                     <button
                       type="button"
                       onClick={() => setShowTagDropdown(!showTagDropdown)}
-                      className="w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-1.5 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                      className="w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 text-sm"
                     >
                       <div className="flex items-center space-x-2">
                         <Tag className="h-4 w-4 text-gray-400" />
@@ -445,7 +448,7 @@ const NewProject = ({
 
                     {showTagDropdown && (
                       <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
-                        <div className="p-2 grid grid-cols-2 gap-2">
+                        <div className="p-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {tagOptions.map(tag => (
                             <button
                               key={tag}
@@ -453,7 +456,7 @@ const NewProject = ({
                               onClick={() => handleTagSelect(tag)}
                               className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md transition-colors ${
                                 watchedTags?.includes(tag)
-                                  ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400'
+                                  ? 'bg-orange-100 dark:bg-orange-600/20 text-orange-600 dark:text-orange-400'
                                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                               }`}
                             >
@@ -470,17 +473,17 @@ const NewProject = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
                   Color *
                 </label>
-                <div className="col-span-9 flex space-x-2">
+                <div className="sm:col-span-9 flex flex-wrap gap-2">
                   {colorOptions.map(color => (
                     <button
                       key={color}
                       type="button"
                       onClick={() => setValue('color', color)}
-                      className={`w-5 h-5 rounded-full border-2 transition-all ${
+                      className={`w-6 h-6 rounded-full border-2 transition-all ${
                         watch('color') === color
                           ? 'border-gray-900 dark:border-white scale-110'
                           : 'border-gray-300 dark:border-gray-600 hover:border-gray-500 dark:hover:border-gray-400'
@@ -491,15 +494,15 @@ const NewProject = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 gap-3 items-center">
-                <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
+              <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
+                <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
                   Favorite
                 </label>
-                <div className="col-span-6">
+                <div className="sm:col-span-9">
                   <button
                     type="button"
                     onClick={handleToggleFavorite}
-                    className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm w-full sm:w-auto ${
                       watch('is_favorite')
                         ? 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30'
                         : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 border border-gray-300 dark:border-gray-700/50'
@@ -518,9 +521,14 @@ const NewProject = ({
               </div>
 
               <div className="mt-8">
-                <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2 mb-4">
-                  Project Description
-                </h2>
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xs font-bold">3</span>
+                  </div>
+                  <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                    Project Description
+                  </h2>
+                </div>
                 <div className="-mr-10 sm:-mr-16 md:-mr-24 lg:-mr-40 xl:-mr-56 2xl:-mr-80">
                   <RichTextEditor
                     value={watchedDescription}
