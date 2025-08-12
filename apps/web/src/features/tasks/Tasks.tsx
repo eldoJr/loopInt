@@ -407,25 +407,29 @@ const Tasks = memo(({
         <Breadcrumb items={breadcrumbItems} />
       </div>
 
-      <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
+      <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg shadow-sm transition-all duration-300">
         {/* Sticky Header */}
-        <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+        <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
+                <span className="text-white text-sm font-bold">T</span>
+              </div>
+              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Tasks
               </h1>
             </div>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => refetchTasks()}
-                className="bg-gray-500 dark:bg-gray-600 text-white px-3 py-1.5 rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors text-sm"
+                className="bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
-                Refresh
+                <span className="hidden sm:inline">Refresh</span>
+                <span className="sm:hidden">↻</span>
               </button>
               <button
                 onClick={() => onNavigateToAddTask?.()}
-                className="bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2 text-sm"
+                className="bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-colors flex items-center space-x-2 text-sm"
               >
                 <Plus size={14} />
                 <span>New</span>
@@ -436,11 +440,11 @@ const Tasks = memo(({
 
         {/* Enhanced Search & Filters */}
         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 flex-1">
               <div className="flex-1 max-w-md">
                 <SearchBar
-                  placeholder="Search tasks "
+                  placeholder="Search tasks..."
                   value={searchQuery}
                   onChange={handleSearchChange}
                   searchData={allTasks}
@@ -458,7 +462,7 @@ const Tasks = memo(({
                     onClick={() => setFilter(filterType)}
                     className={`px-2 py-1 rounded-lg text-xs transition-colors ${
                       filter === filterType
-                        ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30'
+                        ? 'bg-orange-100 dark:bg-orange-600/20 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-500/30'
                         : 'bg-gray-100 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-700/50'
                     }`}
                   >
@@ -467,8 +471,8 @@ const Tasks = memo(({
                 ))}
               </div>
               {searchQuery && (
-                <div className="text-xs text-blue-400">
-                  • Search: "{searchQuery}"
+                <div className="text-xs text-orange-500 dark:text-orange-400">
+                  • "{searchQuery}"
                 </div>
               )}
             </div>
@@ -480,7 +484,7 @@ const Tasks = memo(({
                     onClick={() => setView(viewType)}
                     className={`px-2 py-1 rounded text-xs transition-colors ${
                       view === viewType
-                        ? 'bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400'
+                        ? 'bg-purple-100 dark:bg-purple-600/20 text-purple-600 dark:text-purple-400'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-600 dark:text-gray-400'
                     }`}
                   >
@@ -502,7 +506,7 @@ const Tasks = memo(({
           return (
             <div
               key={key}
-              className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300"
+              className="bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg overflow-hidden transition-all duration-300"
             >
               <div
                 className="px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors"
@@ -543,7 +547,7 @@ const Tasks = memo(({
                         e.stopPropagation();
                         onNavigateToAddTask?.();
                       }}
-                      className="bg-blue-500 text-white p-1 rounded hover:bg-blue-600 transition-colors"
+                      className="bg-orange-500 text-white p-1 rounded hover:bg-orange-600 transition-colors"
                     >
                       <Plus size={14} />
                     </button>
@@ -580,14 +584,14 @@ const Tasks = memo(({
                               {task.status === 'done' ? (
                                 <CheckCircle
                                   size={18}
-                                  className="text-green-400"
+                                  className="text-green-500"
                                 />
                               ) : (
                                 <Circle size={18} />
                               )}
                             </button>
                             <div
-                              className={`w-2 h-2 rounded-full ${getPriorityColor(task.priority)}`}
+                              className={`w-3 h-3 rounded-full ${getPriorityColor(task.priority)}`}
                             />
                             <div className="flex-1">
                               <p
@@ -638,7 +642,7 @@ const Tasks = memo(({
                                     onNavigateToEditTask?.(task.uuid);
                                   }
                                 }}
-                                className="text-gray-400 hover:text-blue-500 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                                className="text-gray-400 hover:text-orange-500 p-1 rounded hover:bg-orange-50 dark:hover:bg-orange-500/10"
                               >
                                 <Edit size={12} />
                               </button>
@@ -653,7 +657,7 @@ const Tasks = memo(({
                                     deleteTask(task.uuid, section, task.id);
                                   }
                                 }}
-                                className="text-gray-400 hover:text-red-500 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                                className="text-gray-400 hover:text-red-500 p-1 rounded hover:bg-red-50 dark:hover:bg-red-500/10"
                               >
                                 <Trash2 size={12} />
                               </button>

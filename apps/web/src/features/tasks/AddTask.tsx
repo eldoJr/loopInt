@@ -13,6 +13,7 @@ import {
   Save,
   Sparkles,
   X,
+  Plus
 } from 'lucide-react';
 import {
   format,
@@ -248,12 +249,17 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
           <Breadcrumb items={breadcrumbItems} />
         </div>
 
-        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
-          <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                New Task
-              </h1>
+        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg shadow-sm transition-all duration-300">
+          <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
+                  <Plus className="w-4 h-4 text-white" />
+                </div>
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  New Task
+                </h1>
+              </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <button
                   onClick={() => setShowAIPanel(!showAIPanel)}
@@ -276,16 +282,16 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
+                  className="flex-1 sm:flex-none px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm text-center"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit(onSubmit)}
                   disabled={!isValid || createTaskMutation.isPending}
-                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                  className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
                     isValid && !createTaskMutation.isPending
-                      ? 'bg-blue-500 text-white hover:bg-blue-600'
+                      ? 'bg-orange-500 text-white hover:bg-orange-600'
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}
                 >
@@ -302,15 +308,20 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
               <form onSubmit={handleSubmit(onSubmit)} className="p-4 lg:p-6">
                 <div className="space-y-6 max-w-4xl mx-auto">
                 <div className="space-y-4">
-                  <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
-                    Task Information
-                  </h2>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-xs font-bold">1</span>
+                    </div>
+                    <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                      Task Information
+                    </h2>
+                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:items-center">
-                    <label className="md:col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 md:text-right">
+                  <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
+                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
                       Task Title *
                     </label>
-                    <div className="md:col-span-9">
+                    <div className="sm:col-span-9">
                       <input
                         type="text"
                         {...register('title')}
@@ -318,7 +329,7 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                         className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                           errors.title
                             ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
                         }`}
                       />
                       {errors.title && (
@@ -330,47 +341,50 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 md:items-center">
-                    <label className="sm:col-span-2 md:col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 md:text-right">
-                      Status *
+                  {/* Status & Priority */}
+                  <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-start">
+                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right sm:pt-2">
+                      Status & Priority *
                     </label>
-                    <div className="sm:col-span-1 md:col-span-4">
-                      <select
-                        {...register('status')}
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.status
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                        }`}
-                      >
-                        <option value="todo">To Do</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="done">Done</option>
-                      </select>
-                      {errors.status && (
-                        <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
-                      )}
+                    <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
+                      <div className="flex-1 relative">
+                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                        <select
+                          {...register('status')}
+                          className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
+                            errors.status
+                              ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                              : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
+                          }`}
+                        >
+                          <option value="todo">To Do</option>
+                          <option value="in_progress">In Progress</option>
+                          <option value="done">Done</option>
+                        </select>
+                      </div>
+                      <div className="flex-1 relative">
+                        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Priority</label>
+                        <select
+                          {...register('priority')}
+                          className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
+                            errors.priority
+                              ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                              : 'border-gray-300 dark:border-gray-700/50 focus:ring-purple-500/50'
+                          }`}
+                        >
+                          <option value="low">Low</option>
+                          <option value="medium">Medium</option>
+                          <option value="high">High</option>
+                        </select>
+                      </div>
                     </div>
-                    <label className="sm:col-span-2 md:col-span-2 text-sm font-medium text-gray-600 dark:text-gray-300 md:text-right">
-                      Priority *
-                    </label>
-                    <div className="sm:col-span-1 md:col-span-3">
-                      <select
-                        {...register('priority')}
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.priority
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                        }`}
-                      >
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                      </select>
-                      {errors.priority && (
-                        <p className="text-red-500 text-sm mt-1">{errors.priority.message}</p>
-                      )}
-                    </div>
+                    {(errors.status || errors.priority) && (
+                      <div className="sm:col-span-9 sm:col-start-4">
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.status?.message || errors.priority?.message}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:items-start">
@@ -456,9 +470,14 @@ const AddTask = ({ onNavigateBack, onNavigateToTasks }: AddTaskProps) => {
 
                   {/* Task Description */}
                   <div className="mt-8">
-                    <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2 mb-4">
-                      Task Description
-                    </h2>
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-xs font-bold">2</span>
+                      </div>
+                      <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                        Task Description
+                      </h2>
+                    </div>
                     <div className="w-full">
                       <RichTextEditor
                         value={watchedDescription || ''}

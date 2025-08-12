@@ -2,13 +2,23 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import type { Task } from '../../store/taskStore';
 import { showToast } from '../../components/ui/Toast';
+import { mockTasks } from '../../data/mockTasks';
 
 const TASKS_KEY = 'tasks';
 
 export const useTasks = () => {
   return useQuery({
     queryKey: [TASKS_KEY],
-    queryFn: () => api.get<Task[]>('/tasks'),
+    queryFn: async () => {
+      // For development, return mock data directly
+      return mockTasks;
+      
+      // try {
+      //   return await api.get<Task[]>('/tasks');
+      // } catch (error) {
+      //   return mockTasks;
+      // }
+    },
   });
 };
 

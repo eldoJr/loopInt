@@ -298,12 +298,17 @@ const EditTask = ({
           <Breadcrumb items={breadcrumbItems} />
         </div>
 
-        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
-          <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Edit Task
-              </h1>
+        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg shadow-sm transition-all duration-300">
+          <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
+                  <Save className="w-4 h-4 text-white" />
+                </div>
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Edit Task
+                </h1>
+              </div>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setShowAIAssistance(!showAIAssistance)}
@@ -314,20 +319,20 @@ const EditTask = ({
                   }`}
                 >
                   <Sparkles size={14} />
-                  <span>AI Assist</span>
+                  <span className="hidden sm:inline">AI Assist</span>
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
+                  className="flex-1 sm:flex-none px-3 py-1.5 bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm text-center"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit(onSubmit)}
                   disabled={saving || updateTaskMutation.isPending}
-                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
+                  className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
                     !saving && !updateTaskMutation.isPending
-                      ? 'bg-blue-500 text-white hover:bg-blue-600'
+                      ? 'bg-orange-500 text-white hover:bg-orange-600'
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}
                 >
@@ -341,9 +346,14 @@ const EditTask = ({
           <form onSubmit={handleSubmit(onSubmit)} className="p-4">
             <div className="space-y-6 max-w-3xl mx-auto">
                 <div className="space-y-4">
-                  <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2">
-                    Task Information
-                  </h2>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-xs font-bold">1</span>
+                    </div>
+                    <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                      Task Information
+                    </h2>
+                  </div>
 
                   <div className="grid grid-cols-12 gap-3 items-center">
                     <label className="col-span-3 text-sm font-medium text-gray-600 dark:text-gray-300 text-right">
@@ -503,9 +513,14 @@ const EditTask = ({
 
                   {/* Task Description */}
                   <div className="mt-8">
-                    <h2 className="text-base font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700/50 pb-2 mb-4">
-                      Task Description
-                    </h2>
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-xs font-bold">2</span>
+                      </div>
+                      <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                        Task Description
+                      </h2>
+                    </div>
                     <div className="-mr-10 sm:-mr-16 md:-mr-24 lg:-mr-40 xl:-mr-56 2xl:-mr-80">
                       <RichTextEditor
                         value={watchedDescription}
