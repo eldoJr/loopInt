@@ -1,8 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  Save,
+  X,
   Upload,
+  Plus,
   Linkedin,
-  AlertCircle,
   User,
   Building,
   Mail,
@@ -11,39 +15,19 @@ import {
   Check,
   ChevronDown,
   Tag,
-  X
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { ErrorBoundary } from '../../components/error/ErrorBoundary';
+import { coworkerSchema } from '../../schemas/coworkerSchema';
+import { useUpdateCoworker } from '../../hooks/useCoworkers';
 import { mockTeamMembers } from '../../data/mockTeamData';
 
 interface EditCoworkerProps {
   memberId: string;
   onNavigateBack?: () => void;
   onNavigateToTeam?: () => void;
-}
-
-interface FormData {
-  photo: File | null;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  isIndividual: boolean;
-  company: string;
-  position: string;
-  positionDescription: string;
-  location: string;
-  skype: string;
-  linkedin: string;
-  status: 'active' | 'inactive' | 'pending';
-  contractType: 'full-time' | 'part-time' | 'contractor' | 'intern';
-  department: string;
-  skills: string[];
-  salary: number;
-  resumeFile: File | null;
 }
 
 const EditCoworker = ({
@@ -53,32 +37,44 @@ const EditCoworker = ({
 }: EditCoworkerProps) => {
   useTheme();
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [showContent, setShowContent] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [showSkillDropdown, setShowSkillDropdown] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<FormData>({
-    photo: null,
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    isIndividual: false,
-    company: '',
-    position: '',
-    positionDescription: '',
-    location: '',
-    skype: '',
-    linkedin: '',
-    status: 'active',
-    contractType: 'full-time',
-    department: '',
-    skills: [],
-    salary: 0,
-    resumeFile: null,
+  const updateCoworkerMutation = useUpdateCoworker();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors, isValid },
+  } = useForm({
+    resolver: zodResolver(coworkerSchema),
+    mode: 'onChange',
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      position: '',
+      company: '',
+      location: '',
+      status: 'active' as const,
+      contractType: 'full-time' as const,
+      department: '',
+      skills: [],
+      salary: 0,
+      positionDescription: '',
+      linkedin: '',
+      skype: '',
+      isIndividual: false,
+    },
   });
+
+  const watchedSkills = watch('skills');
+  const watchedPositionDescription = watch('positionDescription');
 
   const companies = ['TechCorp Inc.', 'StartupXYZ', 'Independent', 'QualityFirst Agency'];
   const positions = [
@@ -107,26 +103,22 @@ const EditCoworker = ({
         const member = mockTeamMembers.find(m => m.id === memberId);
         
         if (member) {
-          setFormData({
-            photo: null,
-            firstName: member.firstName,
-            lastName: member.lastName,
-            email: member.email,
-            phone: member.phone,
-            isIndividual: member.isIndividual,
-            company: member.company,
-            position: member.position,
-            location: member.location,
-            skype: member.skype || '',
-            linkedin: member.linkedin || '',
-            status: member.status,
-            contractType: member.contractType || 'full-time',
-            department: member.department || '',
-            skills: member.skills || [],
-            salary: member.salary || 0,
-            positionDescription: '',
-            resumeFile: null,
-          });
+          setValue('firstName', member.firstName);
+          setValue('lastName', member.lastName);
+          setValue('email', member.email);
+          setValue('phone', member.phone);
+          setValue('position', member.position);
+          setValue('company', member.company);
+          setValue('location', member.location);
+          setValue('status', member.status);
+          setValue('contractType', member.contractType || 'full-time');
+          setValue('department', member.department || '');
+          setValue('skills', member.skills || []);
+          setValue('salary', member.salary || 0);
+          setValue('positionDescription', '');
+          setValue('linkedin', member.linkedin || '');
+          setValue('skype', member.skype || '');
+          setValue('isIndividual', member.isIndividual);
 
           if (member.photo) {
             setPhotoPreview(member.photo);
@@ -141,13 +133,15 @@ const EditCoworker = ({
     };
 
     loadMemberData();
-  }, [memberId]);
+  }, [memberId, setValue]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        handleSubmit();
+        if (isValid) {
+          handleSubmit(onSubmit)();
+        }
       }
       if (e.key === 'Escape') {
         onNavigateToTeam?.();
@@ -156,83 +150,46 @@ const EditCoworker = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onNavigateToTeam]);
+  }, [isValid, onNavigateToTeam, handleSubmit]);
 
-  const handleInputChange = useCallback(
-    (field: keyof FormData, value: string | boolean | File | null | string[] | number) => {
-      setFormData(prev => ({ ...prev, [field]: value }));
-      if (errors[field]) {
-        setErrors(prev => ({ ...prev, [field]: '' }));
-      }
-    },
-    [errors]
-  );
+  const onSubmit = (data: any) => {
+    updateCoworkerMutation.mutate({ id: memberId, data }, {
+      onSuccess: () => {
+        setTimeout(() => onNavigateToTeam?.(), 1000);
+      },
+    });
+  };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
       if (!validTypes.includes(file.type)) {
-        setErrors(prev => ({
-          ...prev,
-          photo: 'Please upload JPG, JPEG, or PNG format only',
-        }));
         return;
       }
       if (file.size > 5 * 1024 * 1024) {
-        setErrors(prev => ({
-          ...prev,
-          photo: 'File size must be less than 5MB',
-        }));
         return;
       }
 
-      setFormData(prev => ({ ...prev, photo: file }));
+      setValue('photo', file);
       const reader = new FileReader();
       reader.onload = () => setPhotoPreview(reader.result as string);
       reader.readAsDataURL(file);
-      setErrors(prev => ({ ...prev, photo: '' }));
     }
   };
 
   const handleSkillSelect = (skill: string) => {
-    const currentSkills = formData.skills || [];
+    const currentSkills = watchedSkills || [];
     const newSkills = currentSkills.includes(skill)
       ? currentSkills.filter(s => s !== skill)
       : [...currentSkills, skill];
-    handleInputChange('skills', newSkills);
+    setValue('skills', newSkills);
   };
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-    if (!formData.position.trim()) newErrors.position = 'Position is required';
-    if (!formData.company.trim()) newErrors.company = 'Company is required';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async () => {
-    if (!validateForm()) return;
-
-    setSaving(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log('Team member updated:', formData);
-      onNavigateToTeam?.();
-    } catch (error) {
-      console.error('Error updating team member:', error);
-      setErrors({ submit: 'Failed to update team member. Please try again.' });
-    } finally {
-      setSaving(false);
+  const addNewSkill = () => {
+    const skillName = prompt('Enter new skill:');
+    if (skillName && skillName.trim()) {
+      handleSkillSelect(skillName.trim());
     }
   };
 
@@ -282,22 +239,22 @@ const EditCoworker = ({
                   Cancel
                 </button>
                 <button
-                  onClick={handleSubmit}
-                  disabled={saving}
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={!isValid || updateCoworkerMutation.isPending}
                   className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                    saving
-                      ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                      : 'bg-orange-500 text-white hover:bg-orange-600'
+                    isValid && !updateCoworkerMutation.isPending
+                      ? 'bg-orange-500 text-white hover:bg-orange-600'
+                      : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}
                 >
-                  <Check size={14} />
-                  <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+                  <Save size={14} />
+                  <span>{updateCoworkerMutation.isPending ? 'Saving...' : 'Save Changes'}</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <form className="p-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-4">
             <div className="space-y-6 max-w-3xl mx-auto">
               {/* Section 1 - Basic Information */}
               <div className="space-y-4">
@@ -345,9 +302,6 @@ const EditCoworker = ({
                         </p>
                       </div>
                     </div>
-                    {errors.photo && (
-                      <p className="text-red-500 text-sm mt-1">{errors.photo}</p>
-                    )}
                   </div>
                 </div>
 
@@ -359,9 +313,7 @@ const EditCoworker = ({
                   <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
                     <div className="flex-1">
                       <input
-                        type="text"
-                        value={formData.firstName}
-                        onChange={e => handleInputChange('firstName', e.target.value)}
+                        {...register('firstName')}
                         placeholder="First name"
                         className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                           errors.firstName
@@ -372,9 +324,7 @@ const EditCoworker = ({
                     </div>
                     <div className="flex-1">
                       <input
-                        type="text"
-                        value={formData.lastName}
-                        onChange={e => handleInputChange('lastName', e.target.value)}
+                        {...register('lastName')}
                         placeholder="Last name"
                         className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                           errors.lastName
@@ -387,7 +337,7 @@ const EditCoworker = ({
                   {(errors.firstName || errors.lastName) && (
                     <div className="sm:col-span-9 sm:col-start-4">
                       <p className="text-red-500 text-sm mt-1">
-                        {errors.firstName || errors.lastName}
+                        {errors.firstName?.message || errors.lastName?.message}
                       </p>
                     </div>
                   )}
@@ -402,9 +352,8 @@ const EditCoworker = ({
                     <div className="flex-1 relative">
                       <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                       <input
+                        {...register('email')}
                         type="email"
-                        value={formData.email}
-                        onChange={e => handleInputChange('email', e.target.value)}
                         placeholder="Email address"
                         className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
                           errors.email
@@ -416,17 +365,22 @@ const EditCoworker = ({
                     <div className="flex-1 relative">
                       <Phone className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                       <input
+                        {...register('phone')}
                         type="tel"
-                        value={formData.phone}
-                        onChange={e => handleInputChange('phone', e.target.value)}
                         placeholder="Phone number"
-                        className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
+                          errors.phone
+                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-emerald-500/50'
+                        }`}
                       />
                     </div>
                   </div>
-                  {errors.email && (
+                  {(errors.email || errors.phone) && (
                     <div className="sm:col-span-9 sm:col-start-4">
-                      <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.email?.message || errors.phone?.message}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -438,45 +392,55 @@ const EditCoworker = ({
                   </label>
                   <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
                     <div className="flex-1 relative">
-                      <select
-                        value={formData.position}
-                        onChange={e => handleInputChange('position', e.target.value)}
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.position
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
-                        }`}
-                      >
-                        <option value="">Select position...</option>
-                        {positions.map(pos => (
-                          <option key={pos} value={pos}>{pos}</option>
-                        ))}
-                      </select>
+                      <Controller
+                        name="position"
+                        control={control}
+                        render={({ field }) => (
+                          <select
+                            {...field}
+                            className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
+                              errors.position
+                                ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                                : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
+                            }`}
+                          >
+                            <option value="">Select position...</option>
+                            {positions.map(pos => (
+                              <option key={pos} value={pos}>{pos}</option>
+                            ))}
+                          </select>
+                        )}
+                      />
                       <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
                     <div className="flex-1 relative">
                       <Building className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                      <select
-                        value={formData.company}
-                        onChange={e => handleInputChange('company', e.target.value)}
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-10 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.company
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-purple-500/50'
-                        }`}
-                      >
-                        <option value="">Select company...</option>
-                        {companies.map(comp => (
-                          <option key={comp} value={comp}>{comp}</option>
-                        ))}
-                      </select>
+                      <Controller
+                        name="company"
+                        control={control}
+                        render={({ field }) => (
+                          <select
+                            {...field}
+                            className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-10 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
+                              errors.company
+                                ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                                : 'border-gray-300 dark:border-gray-700/50 focus:ring-purple-500/50'
+                            }`}
+                          >
+                            <option value="">Select company...</option>
+                            {companies.map(comp => (
+                              <option key={comp} value={comp}>{comp}</option>
+                            ))}
+                          </select>
+                        )}
+                      />
                       <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
                   </div>
                   {(errors.position || errors.company) && (
                     <div className="sm:col-span-9 sm:col-start-4">
                       <p className="text-red-500 text-sm mt-1">
-                        {errors.position || errors.company}
+                        {errors.position?.message || errors.company?.message}
                       </p>
                     </div>
                   )}
@@ -491,9 +455,7 @@ const EditCoworker = ({
                     <div className="relative">
                       <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                       <input
-                        type="text"
-                        value={formData.location}
-                        onChange={e => handleInputChange('location', e.target.value)}
+                        {...register('location')}
                         placeholder="City, State/Country"
                         className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 text-sm"
                       />
@@ -520,28 +482,38 @@ const EditCoworker = ({
                   </label>
                   <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
                     <div className="flex-1 relative">
-                      <select
-                        value={formData.status}
-                        onChange={e => handleInputChange('status', e.target.value as 'active' | 'inactive' | 'pending')}
-                        className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                      >
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="pending">Pending</option>
-                      </select>
+                      <Controller
+                        name="status"
+                        control={control}
+                        render={({ field }) => (
+                          <select
+                            {...field}
+                            className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                          >
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending</option>
+                          </select>
+                        )}
+                      />
                       <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
                     <div className="flex-1 relative">
-                      <select
-                        value={formData.contractType}
-                        onChange={e => handleInputChange('contractType', e.target.value as 'full-time' | 'part-time' | 'contractor' | 'intern')}
-                        className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
-                      >
-                        <option value="full-time">Full-time</option>
-                        <option value="part-time">Part-time</option>
-                        <option value="contractor">Contractor</option>
-                        <option value="intern">Intern</option>
-                      </select>
+                      <Controller
+                        name="contractType"
+                        control={control}
+                        render={({ field }) => (
+                          <select
+                            {...field}
+                            className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
+                          >
+                            <option value="full-time">Full-time</option>
+                            <option value="part-time">Part-time</option>
+                            <option value="contractor">Contractor</option>
+                            <option value="intern">Intern</option>
+                          </select>
+                        )}
+                      />
                       <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
                   </div>
@@ -554,23 +526,27 @@ const EditCoworker = ({
                   </label>
                   <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
                     <div className="flex-1 relative">
-                      <select
-                        value={formData.department}
-                        onChange={e => handleInputChange('department', e.target.value)}
-                        className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
-                      >
-                        <option value="">Select department...</option>
-                        {departments.map(dept => (
-                          <option key={dept} value={dept}>{dept}</option>
-                        ))}
-                      </select>
+                      <Controller
+                        name="department"
+                        control={control}
+                        render={({ field }) => (
+                          <select
+                            {...field}
+                            className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                          >
+                            <option value="">Select department...</option>
+                            {departments.map(dept => (
+                              <option key={dept} value={dept}>{dept}</option>
+                            ))}
+                          </select>
+                        )}
+                      />
                       <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
                     <div className="flex-1">
                       <input
+                        {...register('salary', { valueAsNumber: true })}
                         type="number"
-                        value={formData.salary || ''}
-                        onChange={e => handleInputChange('salary', parseInt(e.target.value) || 0)}
                         placeholder="Annual salary"
                         className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 text-sm"
                       />
@@ -580,9 +556,19 @@ const EditCoworker = ({
 
                 {/* Skills */}
                 <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Skills
-                  </label>
+                  <div className="sm:col-span-3 flex items-center justify-between sm:justify-end">
+                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:text-right">
+                      Skills
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addNewSkill}
+                      className="ml-2 p-1 text-orange-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded transition-colors"
+                      title="Add new skill"
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
                   <div className="sm:col-span-9">
                     <div className="relative">
                       <button
@@ -593,8 +579,8 @@ const EditCoworker = ({
                         <div className="flex items-center space-x-2">
                           <Tag className="h-4 w-4 text-gray-400" />
                           <span className="truncate">
-                            {formData.skills && formData.skills.length > 0
-                              ? formData.skills.join(', ')
+                            {watchedSkills && watchedSkills.length > 0
+                              ? `${watchedSkills.length} skills selected`
                               : 'Select skills...'}
                           </span>
                         </div>
@@ -612,19 +598,65 @@ const EditCoworker = ({
                                 type="button"
                                 onClick={() => handleSkillSelect(skill)}
                                 className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md transition-colors ${
-                                  formData.skills?.includes(skill)
+                                  watchedSkills?.includes(skill)
                                     ? 'bg-orange-100 dark:bg-orange-600/20 text-orange-600 dark:text-orange-400'
                                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                                 }`}
                               >
                                 <span>{skill}</span>
-                                {formData.skills?.includes(skill) && (
+                                {watchedSkills?.includes(skill) && (
                                   <Check className="h-4 w-4" />
                                 )}
                               </button>
                             ))}
                           </div>
                         </div>
+                      )}
+                    </div>
+                    {watchedSkills && watchedSkills.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {watchedSkills.map(skill => (
+                          <span
+                            key={skill}
+                            className="inline-flex items-center space-x-1 px-2 py-1 bg-orange-100 dark:bg-orange-600/20 text-orange-600 dark:text-orange-400 text-xs rounded-md"
+                          >
+                            <span>{skill}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleSkillSelect(skill)}
+                              className="hover:text-orange-800 dark:hover:text-orange-300"
+                            >
+                              <X size={12} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Position Description */}
+                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-start">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right sm:pt-2">
+                    Position Description
+                  </label>
+                  <div className="sm:col-span-9">
+                    <textarea
+                      {...register('positionDescription')}
+                      rows={3}
+                      placeholder="Describe the role and responsibilities..."
+                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm resize-none ${
+                        errors.positionDescription
+                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                      }`}
+                    />
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {watchedPositionDescription?.length || 0}/500 characters
+                      </span>
+                      {errors.positionDescription && (
+                        <p className="text-red-500 text-xs">{errors.positionDescription.message}</p>
                       )}
                     </div>
                   </div>
@@ -639,39 +671,29 @@ const EditCoworker = ({
                     <div className="flex-1 relative">
                       <Linkedin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                       <input
+                        {...register('linkedin')}
                         type="url"
-                        value={formData.linkedin}
-                        onChange={e => handleInputChange('linkedin', e.target.value)}
                         placeholder="LinkedIn profile URL"
-                        className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
+                          errors.linkedin
+                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
+                        }`}
                       />
                     </div>
                     <div className="flex-1">
                       <input
-                        type="text"
-                        value={formData.skype}
-                        onChange={e => handleInputChange('skype', e.target.value)}
+                        {...register('skype')}
                         placeholder="Skype username"
                         className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
                       />
                     </div>
                   </div>
-                </div>
-
-                {/* Position Description */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-start">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right sm:pt-2">
-                    Position Description
-                  </label>
-                  <div className="sm:col-span-9">
-                    <textarea
-                      value={formData.positionDescription}
-                      onChange={e => handleInputChange('positionDescription', e.target.value)}
-                      rows={3}
-                      placeholder="Describe the role and responsibilities..."
-                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm resize-none"
-                    />
-                  </div>
+                  {errors.linkedin && (
+                    <div className="sm:col-span-9 sm:col-start-4">
+                      <p className="text-red-500 text-sm mt-1">{errors.linkedin.message}</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Individual Contractor Toggle */}
@@ -680,19 +702,25 @@ const EditCoworker = ({
                     Contractor Type
                   </label>
                   <div className="sm:col-span-9">
-                    <button
-                      type="button"
-                      onClick={() => handleInputChange('isIndividual', !formData.isIndividual)}
-                      className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm w-full sm:w-auto ${
-                        formData.isIndividual
-                          ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-500/30'
-                          : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 border border-gray-300 dark:border-gray-700/50'
-                      }`}
-                    >
-                      <span>
-                        {formData.isIndividual ? 'Individual Contractor' : 'Company Employee'}
-                      </span>
-                    </button>
+                    <Controller
+                      name="isIndividual"
+                      control={control}
+                      render={({ field }) => (
+                        <button
+                          type="button"
+                          onClick={() => field.onChange(!field.value)}
+                          className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm w-full sm:w-auto ${
+                            field.value
+                              ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-500/30'
+                              : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 border border-gray-300 dark:border-gray-700/50'
+                          }`}
+                        >
+                          <span>
+                            {field.value ? 'Individual Contractor' : 'Company Employee'}
+                          </span>
+                        </button>
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -714,39 +742,43 @@ const EditCoworker = ({
                     Resume/CV
                   </label>
                   <div className="sm:col-span-9">
-                    <div className="flex items-center space-x-3">
-                      <div className="relative">
-                        <input
-                          type="file"
-                          accept=".pdf,.doc,.docx"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              handleInputChange('resumeFile', file);
-                            }
-                          }}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
-                          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
-                            <Upload className="w-4 h-4" />
-                            <span>Choose file</span>
+                    <Controller
+                      name="resumeFile"
+                      control={control}
+                      render={({ field }) => (
+                        <div className="flex items-center space-x-3">
+                          <div className="relative">
+                            <input
+                              type="file"
+                              accept=".pdf,.doc,.docx"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                field.onChange(file || null);
+                              }}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
+                              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                                <Upload className="w-4 h-4" />
+                                <span>Choose file</span>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                      {formData.resumeFile && (
-                        <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
-                          <span>{formData.resumeFile.name}</span>
-                          <button
-                            type="button"
-                            onClick={() => handleInputChange('resumeFile', null)}
-                            className="text-red-500 hover:text-red-600"
-                          >
-                            <X size={16} />
-                          </button>
+                          {field.value && (
+                            <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                              <span>{field.value.name}</span>
+                              <button
+                                type="button"
+                                onClick={() => field.onChange(null)}
+                                className="text-red-500 hover:text-red-600"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          )}
                         </div>
                       )}
-                    </div>
+                    />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       PDF, DOC, DOCX (max 10MB)
                     </p>
@@ -756,11 +788,10 @@ const EditCoworker = ({
             </div>
           </form>
 
-          {errors.submit && (
+          {updateCoworkerMutation.isError && (
             <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
               <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
-                <AlertCircle className="w-4 h-4" />
-                <span>{errors.submit}</span>
+                <span>Failed to update team member. Please try again.</span>
               </div>
             </div>
           )}
@@ -773,9 +804,10 @@ const EditCoworker = ({
                 <span>Press Esc to cancel</span>
               </div>
               <div className="flex items-center space-x-2">
-                {saving && (
-                  <div className="flex items-center space-x-1 text-orange-500 dark:text-orange-400">
-                    <span>Saving...</span>
+                {updateCoworkerMutation.isSuccess && (
+                  <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
+                    <Check size={14} />
+                    <span>Saved</span>
                   </div>
                 )}
               </div>
