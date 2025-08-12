@@ -2,15 +2,24 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { showToast } from '../components/ui/Toast';
 import type { Project } from '../store/projectStore';
+import { mockProjects } from '../data/mockProjects';
 
 export const useProjects = (userId?: string) => {
   return useQuery({
     queryKey: ['projects', userId],
     queryFn: async () => {
-      const projects = await api.get<Project[]>('/projects');
-      return userId ? projects.filter(p => p.created_by === userId) : projects;
+      // For development, return mock data directly
+      // In production, you would uncomment the API call below
+      return mockProjects;
+      
+      // try {
+      //   const projects = await api.get<Project[]>('/projects');
+      //   return userId ? projects.filter(p => p.created_by === userId) : projects;
+      // } catch (error) {
+      //   return userId ? mockProjects.filter(p => p.created_by === userId) : mockProjects;
+      // }
     },
-    enabled: !!userId,
+    enabled: true, // Always enabled for mock data
   });
 };
 

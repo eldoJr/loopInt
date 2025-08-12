@@ -224,18 +224,23 @@ const Projects = ({
           <Breadcrumb items={breadcrumbItems} />
         </div>
 
-        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl transition-all duration-300">
-        <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-xl">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Projects
-            </h1>
+        <div className="mt-1 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg shadow-sm transition-all duration-300">
+        <div className="sticky top-14 z-10 px-4 py-3 border-b border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-900 backdrop-blur-sm rounded-t-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
+                <span className="text-white text-sm font-bold">P</span>
+              </div>
+              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Projects
+              </h1>
+            </div>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowFavorites(!showFavorites)}
                 className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
                   showFavorites
-                    ? 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border border-yellow-500/30'
+                    ? 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-500/30'
                     : 'bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600/50'
                 }`}
               >
@@ -243,17 +248,18 @@ const Projects = ({
                   size={14}
                   className={showFavorites ? 'fill-current' : ''}
                 />
-                <span>Favorites</span>
+                <span className="hidden sm:inline">Favorites</span>
               </button>
               <button
                 onClick={() => refetch()}
-                className="bg-gray-500 dark:bg-gray-600 text-white px-3 py-1.5 rounded-lg hover:bg-gray-600 dark:hover:bg-gray-700 transition-colors text-sm"
+                className="bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600/50 transition-colors text-sm"
               >
-                Refresh
+                <span className="hidden sm:inline">Refresh</span>
+                <span className="sm:hidden">↻</span>
               </button>
               <button
                 onClick={() => onNavigateToNewProject?.()}
-                className="bg-blue-500 text-white px-3 py-1.5 rounded-lg hover:bg-blue-600 transition-colors flex items-center space-x-2 text-sm"
+                className="bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition-colors flex items-center space-x-2 text-sm"
               >
                 <Plus size={14} />
                 <span>New</span>
@@ -264,11 +270,11 @@ const Projects = ({
 
         {/* Enhanced Search & Filters */}
         <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/30 border-b border-gray-200 dark:border-gray-700/30">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center space-x-3 flex-1">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 flex-1">
               <div className="flex-1 max-w-md">
                 <SearchBar
-                  placeholder="Search projects by name, description, or tags..."
+                  placeholder="Search projects..."
                   value={filters.name}
                   onChange={handleSearchChange}
                   searchData={projects as unknown as Record<string, unknown>[]}
@@ -280,61 +286,63 @@ const Projects = ({
                 />
               </div>
               
-              <div className="relative">
-                <Calendar
-                  size={14}
-                  className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  type="text"
-                  placeholder="Filter by dates"
-                  value={filters.dates}
-                  onChange={e =>
-                    setFilters(prev => ({ ...prev, dates: e.target.value }))
-                  }
-                  className="w-auto pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
-                />
-                {filters.dates && (
-                  <button
-                    onClick={() => clearFilter('dates')}
-                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
-                  >
-                    <X size={12} />
-                  </button>
-                )}
-              </div>
+              <div className="flex space-x-2">
+                <div className="relative">
+                  <Calendar
+                    size={14}
+                    className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Dates"
+                    value={filters.dates}
+                    onChange={e =>
+                      setFilters(prev => ({ ...prev, dates: e.target.value }))
+                    }
+                    className="w-24 sm:w-auto pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-orange-500/50 transition-all text-sm"
+                  />
+                  {filters.dates && (
+                    <button
+                      onClick={() => clearFilter('dates')}
+                      className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <X size={12} />
+                    </button>
+                  )}
+                </div>
 
-              <div className="relative">
-                <Filter
-                  size={14}
-                  className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  type="text"
-                  placeholder="Filter by tags"
-                  value={filters.tags}
-                  onChange={e =>
-                    setFilters(prev => ({ ...prev, tags: e.target.value }))
-                  }
-                  className="w-auto pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all text-sm"
-                />
-                {filters.tags && (
-                  <button
-                    onClick={() => clearFilter('tags')}
-                    className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
-                  >
-                    <X size={12} />
-                  </button>
-                )}
-              </div>
+                <div className="relative">
+                  <Filter
+                    size={14}
+                    className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Tags"
+                    value={filters.tags}
+                    onChange={e =>
+                      setFilters(prev => ({ ...prev, tags: e.target.value }))
+                    }
+                    className="w-20 sm:w-auto pl-8 pr-8 py-1.5 bg-white dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-purple-500/50 transition-all text-sm"
+                  />
+                  {filters.tags && (
+                    <button
+                      onClick={() => clearFilter('tags')}
+                      className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <X size={12} />
+                    </button>
+                  )}
+                </div>
 
-              <button
-                onClick={resetAllFilters}
-                className="p-1.5 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 transition-colors"
-                title="Clear all filters"
-              >
-                <X size={14} />
-              </button>
+                <button
+                  onClick={resetAllFilters}
+                  className="p-1.5 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-500/30 transition-colors"
+                  title="Clear all filters"
+                >
+                  <X size={14} />
+                </button>
+              </div>
             </div>
 
             <div className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
@@ -343,8 +351,8 @@ const Projects = ({
               </span>{' '}
               of {projects.length}
               {debouncedSearchTerm && (
-                <span className="ml-2 text-blue-400">
-                  • Search: "{debouncedSearchTerm}"
+                <span className="ml-2 text-orange-500 dark:text-orange-400">
+                  • "{debouncedSearchTerm}"
                 </span>
               )}
             </div>
@@ -353,14 +361,14 @@ const Projects = ({
         </div>
 
         {/* Projects List */}
-        <div className="mt-6 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-xl overflow-hidden transition-all duration-300">
+        <div className="mt-6 bg-white dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800/50 rounded-lg overflow-hidden transition-all duration-300">
         {filteredProjects.length > 0 ? (
           <>
-            {/* Table Header */}
-            <div className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700/50 px-4 py-3">
+            {/* Table Header - Hidden on mobile */}
+            <div className="hidden lg:block bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700/50 px-4 py-3">
               <div className="grid grid-cols-12 gap-4 items-center">
                 <div className="col-span-5 flex items-center space-x-3">
-                  <div className="w-2"></div>
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-br from-orange-500 to-purple-600"></div>
                   <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                     Project
                   </span>
@@ -395,11 +403,110 @@ const Projects = ({
             <ListAnimation items={filteredProjects}>
               {project => (
                 <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                  <div className="grid grid-cols-12 gap-4 items-center">
+                  {/* Mobile Layout */}
+                  <div className="lg:hidden space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                        <div
+                          className="w-3 h-3 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: project.color }}
+                        ></div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">
+                              {project.name}
+                            </h3>
+                            <button
+                              onClick={() => handleToggleFavorite(project.id)}
+                              className={`transition-colors flex-shrink-0 ${
+                                project.is_favorite
+                                  ? 'text-yellow-500 hover:text-yellow-400'
+                                  : 'text-gray-400 hover:text-yellow-500'
+                              }`}
+                            >
+                              <Star
+                                size={14}
+                                className={
+                                  project.is_favorite ? 'fill-current' : ''
+                                }
+                              />
+                            </button>
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            {project.description || 'No description'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1 ml-2">
+                        <button
+                          onClick={() => handleEdit(project.id)}
+                          className="text-gray-400 hover:text-orange-500 transition-colors p-1.5 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-500/10"
+                          title="Edit"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleCopy(project)}
+                          className="text-gray-400 hover:text-green-500 transition-colors p-1.5 rounded-lg hover:bg-green-50 dark:hover:bg-green-500/10"
+                          title="Copy"
+                        >
+                          <Copy size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(project.id)}
+                          className="text-gray-400 hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10"
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <span
+                          className={`px-2 py-1 rounded-lg text-xs font-medium ${getStatusColor(project.status)} capitalize`}
+                        >
+                          {project.status.replace('-', ' ')}
+                        </span>
+                        <span
+                          className={`px-2 py-1 rounded-lg text-xs font-medium ${getPriorityColor(project.priority)} capitalize`}
+                        >
+                          {project.priority}
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-300 font-medium">
+                        {project.deadline
+                          ? new Date(project.deadline).toLocaleDateString(
+                              'en-US',
+                              { month: 'short', day: 'numeric' }
+                            )
+                          : 'No deadline'}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-3">
+                      <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                        {project.progress}%
+                      </span>
+                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div
+                          className="h-2 rounded-full transition-all"
+                          style={{
+                            width: `${project.progress}%`,
+                            backgroundColor: project.color,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Desktop Layout */}
+                  <div className="hidden lg:grid lg:grid-cols-12 gap-4 items-center">
                     {/* Project Info */}
                     <div className="col-span-5 flex items-center space-x-3">
                       <div
-                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        className="w-3 h-3 rounded-full flex-shrink-0"
                         style={{ backgroundColor: project.color }}
                       ></div>
                       <div className="min-w-0 flex-1">
@@ -432,7 +539,7 @@ const Projects = ({
                     {/* Status */}
                     <div className="col-span-1 flex justify-center">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(project.status)} capitalize`}
+                        className={`px-2 py-1 rounded-lg text-xs font-medium ${getStatusColor(project.status)} capitalize`}
                       >
                         {project.status.replace('-', ' ')}
                       </span>
@@ -441,7 +548,7 @@ const Projects = ({
                     {/* Priority */}
                     <div className="col-span-1 flex justify-center">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(project.priority)} capitalize`}
+                        className={`px-2 py-1 rounded-lg text-xs font-medium ${getPriorityColor(project.priority)} capitalize`}
                       >
                         {project.priority}
                       </span>
@@ -479,7 +586,7 @@ const Projects = ({
                     <div className="col-span-2 flex items-center justify-center space-x-1">
                       <button
                         onClick={() => handleEdit(project.id)}
-                        className="text-gray-400 hover:text-blue-500 transition-colors p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                        className="text-gray-400 hover:text-orange-500 transition-colors p-1.5 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-500/10"
                         title="Edit"
                       >
                         <Edit size={14} />
@@ -505,8 +612,12 @@ const Projects = ({
             </ListAnimation>
           </>
         ) : (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            <p className="text-sm">No projects found matching your filters.</p>
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
+              <span className="text-white text-xl font-bold">P</span>
+            </div>
+            <p className="text-sm font-medium mb-2">No projects found</p>
+            <p className="text-xs">Try adjusting your filters or create a new project.</p>
           </div>
         )}
       </div>
