@@ -11,6 +11,7 @@ import {
   Check,
   ChevronDown,
   Tag,
+  X
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import Breadcrumb from '../../components/ui/Breadcrumb';
@@ -31,6 +32,7 @@ interface FormData {
   isIndividual: boolean;
   company: string;
   position: string;
+  positionDescription: string;
   location: string;
   skype: string;
   linkedin: string;
@@ -39,6 +41,7 @@ interface FormData {
   department: string;
   skills: string[];
   salary: number;
+  resumeFile: File | null;
 }
 
 const NewCoworker = ({
@@ -62,6 +65,7 @@ const NewCoworker = ({
     isIndividual: false,
     company: '',
     position: '',
+    positionDescription: '',
     location: '',
     skype: '',
     linkedin: '',
@@ -70,6 +74,7 @@ const NewCoworker = ({
     department: '',
     skills: [],
     salary: 0,
+    resumeFile: null,
   });
 
   const companies = ['TechCorp Inc.', 'StartupXYZ', 'Independent', 'QualityFirst Agency'];
@@ -438,6 +443,22 @@ const NewCoworker = ({
                   )}
                 </div>
 
+                                {/* Position Description */}
+                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-start">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right sm:pt-2">
+                    Position Description
+                  </label>
+                  <div className="sm:col-span-9">
+                    <textarea
+                      value={formData.positionDescription}
+                      onChange={e => handleInputChange('positionDescription', e.target.value)}
+                      rows={3}
+                      placeholder="Describe the role and responsibilities..."
+                      className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm resize-none"
+                    />
+                  </div>
+                </div>
+
                 {/* Location */}
                 <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
@@ -633,6 +654,63 @@ const NewCoworker = ({
                         {formData.isIndividual ? 'Individual Contractor' : 'Company Employee'}
                       </span>
                     </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 3 - File Upload */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xs font-bold">3</span>
+                  </div>
+                  <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                    Documents
+                  </h2>
+                </div>
+
+                {/* Resume Upload */}
+                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
+                    Resume/CV
+                  </label>
+                  <div className="sm:col-span-9">
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <input
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              handleInputChange('resumeFile', file);
+                            }
+                          }}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
+                          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                            <Upload className="w-4 h-4" />
+                            <span>Choose file</span>
+                          </div>
+                        </div>
+                      </div>
+                      {formData.resumeFile && (
+                        <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                          <span>{formData.resumeFile.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleInputChange('resumeFile', null)}
+                            className="text-red-500 hover:text-red-600"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      PDF, DOC, DOCX (max 10MB)
+                    </p>
                   </div>
                 </div>
               </div>
