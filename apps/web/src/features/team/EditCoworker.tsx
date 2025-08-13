@@ -24,6 +24,7 @@ import { ErrorBoundary } from '../../components/error/ErrorBoundary';
 import { coworkerSchema } from '../../schemas/coworkerSchema';
 import { useUpdateCoworker } from '../../hooks/useCoworkers';
 import { mockTeamMembers } from '../../data/mockTeamData';
+import NewOptionModal from '../../components/ui/NewOptionModal';
 
 interface EditCoworkerProps {
   memberId: string;
@@ -40,10 +41,14 @@ const EditCoworker = ({
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
   const [showSkillDropdown, setShowSkillDropdown] = useState(false);
+  const [showPositionDropdown, setShowPositionDropdown] = useState(false);
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
   const [showSkillDialog, setShowSkillDialog] = useState(false);
   const [newSkillInput, setNewSkillInput] = useState('');
   const [showPositionDialog, setShowPositionDialog] = useState(false);
   const [newPositionInput, setNewPositionInput] = useState('');
+  const [showNewOptionModal, setShowNewOptionModal] = useState(false);
+  const [newOptionContext, setNewOptionContext] = useState<{ type: 'skill' | 'position' | 'company' } | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   const updateCoworkerMutation = useUpdateCoworker();
@@ -81,19 +86,6 @@ const EditCoworker = ({
   const watchedSkills = watch('skills');
   const watchedPositionDescription = watch('positionDescription');
 
-  const companies = ['TechCorp Inc.', 'StartupXYZ', 'Independent', 'QualityFirst Agency'];
-  const positions = [
-    'Frontend Developer',
-    'Backend Developer', 
-    'Full Stack Developer',
-    'DevOps Engineer',
-    'UX/UI Designer',
-    'Product Manager',
-    'Marketing Specialist',
-    'QA Engineer',
-    'Data Scientist',
-    'Graphic Designer',
-  ];
   const departments = ['Engineering', 'Design', 'Product', 'Marketing', 'Data', 'Operations'];
 
 
@@ -152,6 +144,13 @@ const EditCoworker = ({
         } else if (showPositionDialog) {
           setShowPositionDialog(false);
           setNewPositionInput('');
+        } else if (showNewOptionModal) {
+          setShowNewOptionModal(false);
+          setNewOptionContext(null);
+        } else if (showPositionDropdown) {
+          setShowPositionDropdown(false);
+        } else if (showCompanyDropdown) {
+          setShowCompanyDropdown(false);
         } else {
           onNavigateToTeam?.();
         }
@@ -160,7 +159,7 @@ const EditCoworker = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isValid, onNavigateToTeam, handleSubmit, showSkillDialog, showPositionDialog]);
+  }, [isValid, onNavigateToTeam, handleSubmit, showSkillDialog, showPositionDialog, showNewOptionModal, showPositionDropdown, showCompanyDropdown]);
 
   const onSubmit = (data: any) => {
     updateCoworkerMutation.mutate({ id: memberId, data }, {
@@ -230,6 +229,27 @@ const EditCoworker = ({
       setShowPositionDialog(false);
       setNewPositionInput('');
     }
+  };
+
+  const handleNewOptionSave = (data: {
+    module: string;
+    field: string;
+    language: string;
+    optionName: string;
+    isDefault: boolean;
+    useInField: boolean;
+  }) => {
+    if (newOptionContext?.type === 'skill') {
+      handleSkillSelect(data.optionName);
+    } else if (newOptionContext?.type === 'position') {
+      setValue('position', data.optionName);
+      setShowPositionDropdown(false);
+    } else if (newOptionContext?.type === 'company') {
+      setValue('company', data.optionName);
+      setShowCompanyDropdown(false);
+    }
+    setShowNewOptionModal(false);
+    setNewOptionContext(null);
   };
 
   const breadcrumbItems = [
@@ -431,59 +451,89 @@ const EditCoworker = ({
                   </label>
                   <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
                     <div className="flex-1 relative">
-                      <div className="flex items-center space-x-2">
-                        <Controller
-                          name="position"
-                          control={control}
-                          render={({ field }) => (
-                            <select
-                              {...field}
-                              className={`flex-1 bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 transition-all text-sm ${
+                      <Controller
+                        name="position"
+                        control={control}
+                        render={({ field }) => (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => setShowPositionDropdown(!showPositionDropdown)}
+                              className={`w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
                                 errors.position
                                   ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
                                   : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
                               }`}
                             >
-                              <option value="">Select position...</option>
-                              {positions.map(pos => (
-                                <option key={pos} value={pos}>{pos}</option>
-                              ))}
-                            </select>
-                          )}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPositionDialog(true)}
-                          className="p-2 text-orange-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded transition-colors"
-                          title="Add new position"
-                        >
-                          <Plus size={14} />
-                        </button>
-                      </div>
-                      <ChevronDown className="absolute right-8 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
+                              <span className={field.value ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}>
+                                {field.value || 'Select position...'}
+                              </span>
+                              <ChevronDown className={`h-4 w-4 transition-transform ${showPositionDropdown ? 'rotate-180' : ''}`} />
+                            </button>
+                            {showPositionDropdown && (
+                              <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
+                                <div className="p-3">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setNewOptionContext({ type: 'position' });
+                                      setShowNewOptionModal(true);
+                                    }}
+                                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-orange-50 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-500/30 transition-colors text-sm"
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add New Position</span>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      />
                     </div>
                     <div className="flex-1 relative">
-                      <Building className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                       <Controller
                         name="company"
                         control={control}
                         render={({ field }) => (
-                          <select
-                            {...field}
-                            className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-10 py-2 text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 transition-all text-sm ${
-                              errors.company
-                                ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                                : 'border-gray-300 dark:border-gray-700/50 focus:ring-purple-500/50'
-                            }`}
-                          >
-                            <option value="">Select company...</option>
-                            {companies.map(comp => (
-                              <option key={comp} value={comp}>{comp}</option>
-                            ))}
-                          </select>
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => setShowCompanyDropdown(!showCompanyDropdown)}
+                              className={`w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
+                                errors.company
+                                  ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
+                                  : 'border-gray-300 dark:border-gray-700/50 focus:ring-purple-500/50'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <Building className="h-4 w-4 text-gray-400" />
+                                <span className={field.value ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}>
+                                  {field.value || 'Select company...'}
+                                </span>
+                              </div>
+                              <ChevronDown className={`h-4 w-4 transition-transform ${showCompanyDropdown ? 'rotate-180' : ''}`} />
+                            </button>
+                            {showCompanyDropdown && (
+                              <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
+                                <div className="p-3">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setNewOptionContext({ type: 'company' });
+                                      setShowNewOptionModal(true);
+                                    }}
+                                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-purple-50 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-500/30 transition-colors text-sm"
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add New Company</span>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </>
                         )}
                       />
-                      <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
                   </div>
                   {(errors.position || errors.company) && (
@@ -605,19 +655,9 @@ const EditCoworker = ({
 
                 {/* Skills */}
                 <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <div className="sm:col-span-3 flex items-center justify-between sm:justify-end">
-                    <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:text-right">
-                      Skills
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowSkillDialog(true)}
-                      className="ml-2 p-1 text-orange-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded transition-colors"
-                      title="Add new skill"
-                    >
-                      <Plus size={14} />
-                    </button>
-                  </div>
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
+                    Skills
+                  </label>
                   <div className="sm:col-span-9">
                     <div className="relative">
                       <button
@@ -964,6 +1004,16 @@ const EditCoworker = ({
             </div>
           </div>
         )}
+
+        {/* New Option Modal */}
+        <NewOptionModal
+          isOpen={showNewOptionModal}
+          onClose={() => {
+            setShowNewOptionModal(false);
+            setNewOptionContext(null);
+          }}
+          onSave={handleNewOptionSave}
+        />
       </div>
     </ErrorBoundary>
   );
