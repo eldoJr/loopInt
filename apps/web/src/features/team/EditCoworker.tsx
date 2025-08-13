@@ -43,12 +43,13 @@ const EditCoworker = ({
   const [showSkillDropdown, setShowSkillDropdown] = useState(false);
   const [showPositionDropdown, setShowPositionDropdown] = useState(false);
   const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const [showDepartmentDropdown, setShowDepartmentDropdown] = useState(false);
   const [showSkillDialog, setShowSkillDialog] = useState(false);
   const [newSkillInput, setNewSkillInput] = useState('');
   const [showPositionDialog, setShowPositionDialog] = useState(false);
   const [newPositionInput, setNewPositionInput] = useState('');
   const [showNewOptionModal, setShowNewOptionModal] = useState(false);
-  const [newOptionContext, setNewOptionContext] = useState<{ type: 'skill' | 'position' | 'company' } | null>(null);
+  const [newOptionContext, setNewOptionContext] = useState<{ type: 'skill' | 'position' | 'company' | 'department' } | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   const updateCoworkerMutation = useUpdateCoworker();
@@ -151,6 +152,8 @@ const EditCoworker = ({
           setShowPositionDropdown(false);
         } else if (showCompanyDropdown) {
           setShowCompanyDropdown(false);
+        } else if (showDepartmentDropdown) {
+          setShowDepartmentDropdown(false);
         } else {
           onNavigateToTeam?.();
         }
@@ -247,6 +250,9 @@ const EditCoworker = ({
     } else if (newOptionContext?.type === 'company') {
       setValue('company', data.optionName);
       setShowCompanyDropdown(false);
+    } else if (newOptionContext?.type === 'department') {
+      setValue('department', data.optionName);
+      setShowDepartmentDropdown(false);
     }
     setShowNewOptionModal(false);
     setNewOptionContext(null);
@@ -629,18 +635,52 @@ const EditCoworker = ({
                         name="department"
                         control={control}
                         render={({ field }) => (
-                          <select
-                            {...field}
-                            className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
-                          >
-                            <option value="">Select department...</option>
-                            {departments.map(dept => (
-                              <option key={dept} value={dept}>{dept}</option>
-                            ))}
-                          </select>
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => setShowDepartmentDropdown(!showDepartmentDropdown)}
+                              className="w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                            >
+                              <span className={field.value ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}>
+                                {field.value || 'Select department...'}
+                              </span>
+                              <ChevronDown className={`h-4 w-4 transition-transform ${showDepartmentDropdown ? 'rotate-180' : ''}`} />
+                            </button>
+                            {showDepartmentDropdown && (
+                              <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
+                                <div className="max-h-48 overflow-y-auto">
+                                  {departments.map(dept => (
+                                    <button
+                                      key={dept}
+                                      type="button"
+                                      onClick={() => {
+                                        field.onChange(dept);
+                                        setShowDepartmentDropdown(false);
+                                      }}
+                                      className="w-full text-left px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-sm text-gray-900 dark:text-white"
+                                    >
+                                      {dept}
+                                    </button>
+                                  ))}
+                                </div>
+                                <div className="border-t border-gray-200 dark:border-gray-600 p-3">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setNewOptionContext({ type: 'department' });
+                                      setShowNewOptionModal(true);
+                                    }}
+                                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-purple-50 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-500/30 transition-colors text-sm"
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add New Department</span>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </>
                         )}
                       />
-                      <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
                     <div className="flex-1">
                       <input
@@ -1008,6 +1048,7 @@ const EditCoworker = ({
         {/* New Option Modal */}
         <NewOptionModal
           isOpen={showNewOptionModal}
+          context={newOptionContext}
           onClose={() => {
             setShowNewOptionModal(false);
             setNewOptionContext(null);

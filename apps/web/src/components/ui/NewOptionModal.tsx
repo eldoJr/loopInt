@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Plus, ChevronDown } from 'lucide-react';
 
 interface NewOptionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  context?: {
+    type: 'skill' | 'position' | 'company' | 'department';
+  } | null;
   onSave: (data: {
     module: string;
     field: string;
@@ -14,7 +17,7 @@ interface NewOptionModalProps {
   }) => void;
 }
 
-const NewOptionModal = ({ isOpen, onClose, onSave }: NewOptionModalProps) => {
+const NewOptionModal = ({ isOpen, onClose, context, onSave }: NewOptionModalProps) => {
   const [module, setModule] = useState('');
   const [field, setField] = useState('');
   const [language, setLanguage] = useState('en');
@@ -23,7 +26,30 @@ const NewOptionModal = ({ isOpen, onClose, onSave }: NewOptionModalProps) => {
   const [useInField, setUseInField] = useState(true);
 
   const modules = ['Coworking', 'Company'];
-  const fields = ['Position', 'Skills'];
+  const fields = ['Position', 'Skills', 'Company', 'Department'];
+
+  // Pre-fill module and field based on context
+  const getModuleFromContext = (type: string) => {
+    return 'Coworking'; // All fields are part of Coworking module
+  };
+
+  const getFieldFromContext = (type: string) => {
+    switch (type) {
+      case 'skill': return 'Skills';
+      case 'position': return 'Position';
+      case 'company': return 'Company';
+      case 'department': return 'Department';
+      default: return '';
+    }
+  };
+
+  // Update module and field when context changes
+  useEffect(() => {
+    if (isOpen && context?.type) {
+      setModule(getModuleFromContext(context.type));
+      setField(getFieldFromContext(context.type));
+    }
+  }, [isOpen, context?.type]);
   const languages = [
     { code: 'en', name: 'English', flag: '🇬🇧' },
     { code: 'es', name: 'Spanish', flag: '🇪🇸' },
@@ -53,6 +79,8 @@ const NewOptionModal = ({ isOpen, onClose, onSave }: NewOptionModalProps) => {
     setUseInField(true);
     onClose();
   };
+
+
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
