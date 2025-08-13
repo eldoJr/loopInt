@@ -40,12 +40,13 @@ const NewCoworker = ({
   const [showSkillDropdown, setShowSkillDropdown] = useState(false);
   const [showPositionDropdown, setShowPositionDropdown] = useState(false);
   const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const [showDepartmentDropdown, setShowDepartmentDropdown] = useState(false);
   const [showSkillDialog, setShowSkillDialog] = useState(false);
   const [newSkillInput, setNewSkillInput] = useState('');
   const [showPositionDialog, setShowPositionDialog] = useState(false);
   const [newPositionInput, setNewPositionInput] = useState('');
   const [showNewOptionModal, setShowNewOptionModal] = useState(false);
-  const [newOptionContext, setNewOptionContext] = useState<{ type: 'skill' | 'position' | 'company' } | null>(null);
+  const [newOptionContext, setNewOptionContext] = useState<{ type: 'skill' | 'position' | 'company' | 'department' } | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
 
@@ -84,7 +85,7 @@ const NewCoworker = ({
   const watchedSkills = watch('skills');
   const watchedPositionDescription = watch('positionDescription');
 
-  const departments = ['Engineering', 'Design', 'Product', 'Marketing', 'Data', 'Operations'];
+  const departments = ['Engineering', 'Design', 'Product', 'Marketing', 'Data', 'Operations', 'Sales', 'Support', 'HR'];
 
 
   useEffect(() => {
