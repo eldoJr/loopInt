@@ -37,18 +37,17 @@ const NewCoworker = ({
   useTheme();
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [showSkillDropdown, setShowSkillDropdown] = useState(false);
-  const [showPositionDropdown, setShowPositionDropdown] = useState(false);
-  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
-  const [showDepartmentDropdown, setShowDepartmentDropdown] = useState(false);
-  const [showSkillDialog, setShowSkillDialog] = useState(false);
-  const [newSkillInput, setNewSkillInput] = useState('');
-  const [showPositionDialog, setShowPositionDialog] = useState(false);
-  const [newPositionInput, setNewPositionInput] = useState('');
+  const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [showNewOptionModal, setShowNewOptionModal] = useState(false);
   const [newOptionContext, setNewOptionContext] = useState<{ type: 'skill' | 'position' | 'company' | 'department' } | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [, setCurrentUser] = useState<{ id: string; name: string } | null>(null);
+  const [currentUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
+    } catch {
+      return {};
+    }
+  });
 
   const createCoworkerMutation = useCreateCoworker();
 
@@ -86,14 +85,10 @@ const NewCoworker = ({
   const watchedPositionDescription = watch('positionDescription');
 
   const departments = ['Engineering', 'Design', 'Product', 'Marketing', 'Data', 'Operations', 'Sales', 'Support', 'HR'];
-
-
-  useEffect(() => {
-    const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
-    if (userData) {
-      setCurrentUser(JSON.parse(userData));
-    }
-  }, []);
+  const skillOptions = [
+    'React', 'TypeScript', 'Node.js', 'Python', 'AWS', 'Docker', 'Figma', 'PostgreSQL',
+    'Next.js', 'TailwindCSS', 'Kubernetes', 'Django', 'Adobe XD', 'Machine Learning'
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -112,21 +107,11 @@ const NewCoworker = ({
         }
       }
       if (e.key === 'Escape') {
-        if (showSkillDialog) {
-          setShowSkillDialog(false);
-          setNewSkillInput('');
-        } else if (showPositionDialog) {
-          setShowPositionDialog(false);
-          setNewPositionInput('');
-        } else if (showNewOptionModal) {
+        if (showNewOptionModal) {
           setShowNewOptionModal(false);
           setNewOptionContext(null);
-        } else if (showPositionDropdown) {
-          setShowPositionDropdown(false);
-        } else if (showCompanyDropdown) {
-          setShowCompanyDropdown(false);
-        } else if (showDepartmentDropdown) {
-          setShowDepartmentDropdown(false);
+        } else if (showTagDropdown) {
+          setShowTagDropdown(false);
         } else {
           onNavigateToTeam?.();
         }
@@ -135,7 +120,7 @@ const NewCoworker = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isValid, onNavigateToTeam, handleSubmit, showSkillDialog, showPositionDialog, showNewOptionModal]);
+  }, [isValid, onNavigateToTeam, handleSubmit, showNewOptionModal, showTagDropdown]);
 
   const onSubmit = (data: any) => {
     createCoworkerMutation.mutate(data, {
@@ -171,42 +156,6 @@ const NewCoworker = ({
     setValue('skills', newSkills);
   };
 
-  const addNewSkill = () => {
-    if (newSkillInput.trim()) {
-      handleSkillSelect(newSkillInput.trim());
-      setNewSkillInput('');
-      setShowSkillDialog(false);
-    }
-  };
-
-  const handleSkillDialogKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addNewSkill();
-    } else if (e.key === 'Escape') {
-      setShowSkillDialog(false);
-      setNewSkillInput('');
-    }
-  };
-
-  const addNewPosition = () => {
-    if (newPositionInput.trim()) {
-      setValue('position', newPositionInput.trim());
-      setNewPositionInput('');
-      setShowPositionDialog(false);
-    }
-  };
-
-  const handlePositionDialogKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addNewPosition();
-    } else if (e.key === 'Escape') {
-      setShowPositionDialog(false);
-      setNewPositionInput('');
-    }
-  };
-
   const handleNewOptionSave = (data: {
     module: string;
     field: string;
@@ -219,13 +168,10 @@ const NewCoworker = ({
       handleSkillSelect(data.optionName);
     } else if (newOptionContext?.type === 'position') {
       setValue('position', data.optionName);
-      setShowPositionDropdown(false);
     } else if (newOptionContext?.type === 'company') {
       setValue('company', data.optionName);
-      setShowCompanyDropdown(false);
     } else if (newOptionContext?.type === 'department') {
       setValue('department', data.optionName);
-      setShowDepartmentDropdown(false);
     }
     setShowNewOptionModal(false);
     setNewOptionContext(null);
@@ -253,7 +199,6 @@ const NewCoworker = ({
           showForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
       >
-        {/* Sticky Breadcrumb */}
         <div className="sticky top-0 z-20">
           <Breadcrumb items={breadcrumbItems} />
         </div>
@@ -278,11 +223,11 @@ const NewCoworker = ({
                 </button>
                 <button
                   onClick={handleSubmit(onSubmit)}
-                  disabled={!isValid || createCoworkerMutation.isPending}
+                  disabled={createCoworkerMutation.isPending || !isValid}
                   className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 px-3 py-1.5 rounded-lg transition-colors text-sm ${
-                    isValid && !createCoworkerMutation.isPending
-                      ? 'bg-orange-500 text-white hover:bg-orange-600'
-                      : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                    createCoworkerMutation.isPending || !isValid
+                      ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                      : 'bg-orange-500 text-white hover:bg-orange-600'
                   }`}
                 >
                   <Save size={14} />
@@ -294,7 +239,45 @@ const NewCoworker = ({
 
           <form onSubmit={handleSubmit(onSubmit)} className="p-4">
             <div className="space-y-6 max-w-3xl mx-auto">
-              {/* Section 1 - Basic Information */}
+              {/* Photo Upload Section */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                    <User className="text-white w-3 h-3" />
+                  </div>
+                  <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                    Profile Photo
+                  </h2>
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                    {photoPreview ? (
+                      <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-8 h-8 text-gray-400" />
+                    )}
+                  </div>
+                  <div>
+                    <input
+                      type="file"
+                      id="photo-upload"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="photo-upload"
+                      className="inline-flex items-center space-x-2 px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors text-sm"
+                    >
+                      <Upload size={14} />
+                      <span>Upload Photo</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Basic Information */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
@@ -305,730 +288,422 @@ const NewCoworker = ({
                   </h2>
                 </div>
 
-                {/* Photo Upload */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Photo
-                  </label>
-                  <div className="sm:col-span-9">
-                    <div className="flex items-center space-x-3">
-                      <div className="relative">
-                        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600/50 rounded-lg flex items-center justify-center overflow-hidden">
-                          {photoPreview ? (
-                            <img
-                              src={photoPreview}
-                              alt="Preview"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <Upload className="w-6 h-6 text-gray-400 dark:text-gray-500" />
-                          )}
-                        </div>
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/jpg,image/png"
-                          onChange={handlePhotoUpload}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
-                          Upload photo
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          JPG, JPEG, PNG (max 5MB)
-                        </p>
-                      </div>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      First Name *
+                    </label>
+                    <input
+                      {...register('firstName')}
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
+                    )}
                   </div>
-                </div>
 
-                {/* Name Fields */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Full Name *
-                  </label>
-                  <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
-                    <div className="flex-1">
-                      <input
-                        {...register('firstName')}
-                        placeholder="First name"
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.firstName
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
-                        }`}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <input
-                        {...register('lastName')}
-                        placeholder="Last name"
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.lastName
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-purple-500/50'
-                        }`}
-                      />
-                    </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Last Name *
+                    </label>
+                    <input
+                      {...register('lastName')}
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
+                    )}
                   </div>
-                  {(errors.firstName || errors.lastName) && (
-                    <div className="sm:col-span-9 sm:col-start-4">
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.firstName?.message || errors.lastName?.message}
-                      </p>
-                    </div>
-                  )}
-                </div>
 
-                {/* Contact Information */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Contact *
-                  </label>
-                  <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
-                    <div className="flex-1 relative">
-                      <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Email *
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <input
                         {...register('email')}
                         type="email"
-                        placeholder="Email address"
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.email
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                        }`}
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       />
                     </div>
-                    <div className="flex-1 relative">
-                      <Phone className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                    {errors.email && (
+                      <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Phone *
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <input
                         {...register('phone')}
                         type="tel"
-                        placeholder="Phone number"
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.phone
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-emerald-500/50'
-                        }`}
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       />
                     </div>
-                  </div>
-                  {(errors.email || errors.phone) && (
-                    <div className="sm:col-span-9 sm:col-start-4">
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.email?.message || errors.phone?.message}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Position & Company */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Role & Company *
-                  </label>
-                  <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
-                    <div className="flex-1 relative">
-                      <Controller
-                        name="position"
-                        control={control}
-                        render={({ field }) => (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => setShowPositionDropdown(!showPositionDropdown)}
-                              className={`w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
-                                errors.position
-                                  ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                                  : 'border-gray-300 dark:border-gray-700/50 focus:ring-orange-500/50'
-                              }`}
-                            >
-                              <span className={field.value ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}>
-                                {field.value || 'Select position...'}
-                              </span>
-                              <ChevronDown className={`h-4 w-4 transition-transform ${showPositionDropdown ? 'rotate-180' : ''}`} />
-                            </button>
-                            {showPositionDropdown && (
-                              <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
-                                <div className="p-3">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setNewOptionContext({ type: 'position' });
-                                      setShowNewOptionModal(true);
-                                    }}
-                                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-orange-50 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-500/30 transition-colors text-sm"
-                                  >
-                                    <Plus className="h-4 w-4" />
-                                    <span>Add New Position</span>
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                          </>
-                        )}
-                      />
-                    </div>
-                    <div className="flex-1 relative">
-                      <Controller
-                        name="company"
-                        control={control}
-                        render={({ field }) => (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => setShowCompanyDropdown(!showCompanyDropdown)}
-                              className={`w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-all text-sm ${
-                                errors.company
-                                  ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                                  : 'border-gray-300 dark:border-gray-700/50 focus:ring-purple-500/50'
-                              }`}
-                            >
-                              <div className="flex items-center space-x-2">
-                                <Building className="h-4 w-4 text-gray-400" />
-                                <span className={field.value ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}>
-                                  {field.value || 'Select company...'}
-                                </span>
-                              </div>
-                              <ChevronDown className={`h-4 w-4 transition-transform ${showCompanyDropdown ? 'rotate-180' : ''}`} />
-                            </button>
-                            {showCompanyDropdown && (
-                              <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
-                                <div className="p-3">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setNewOptionContext({ type: 'company' });
-                                      setShowNewOptionModal(true);
-                                    }}
-                                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-purple-50 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-500/30 transition-colors text-sm"
-                                  >
-                                    <Plus className="h-4 w-4" />
-                                    <span>Add New Company</span>
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                          </>
-                        )}
-                      />
-                    </div>
-                  </div>
-                  {(errors.position || errors.company) && (
-                    <div className="sm:col-span-9 sm:col-start-4">
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.position?.message || errors.company?.message}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Location */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Location
-                  </label>
-                  <div className="sm:col-span-9">
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                      <input
-                        {...register('location')}
-                        placeholder="City, State/Country"
-                        className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 text-sm"
-                      />
-                    </div>
+                    {errors.phone && (
+                      <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Section 2 - Professional Details */}
+              {/* Professional Information */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                    <Briefcase className="text-white w-3 h-3" />
+                  </div>
+                  <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                    Professional Information
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Controller
+                    name="position"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Position *
+                        </label>
+                        <div className="relative">
+                          <input
+                            {...field}
+                            type="text"
+                            placeholder="Enter or select position"
+                            className="w-full px-3 py-2 pr-8 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setNewOptionContext({ type: 'position' });
+                              setShowNewOptionModal(true);
+                            }}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
+                        {errors.position && (
+                          <p className="text-red-500 text-xs mt-1">{errors.position.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    name="company"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Company *
+                        </label>
+                        <div className="relative">
+                          <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                          <input
+                            {...field}
+                            type="text"
+                            placeholder="Enter company name"
+                            className="w-full pl-10 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setNewOptionContext({ type: 'company' });
+                              setShowNewOptionModal(true);
+                            }}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
+                        {errors.company && (
+                          <p className="text-red-500 text-xs mt-1">{errors.company.message}</p>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    name="department"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Department
+                        </label>
+                        <div className="relative">
+                          <select
+                            {...field}
+                            className="w-full px-3 py-2 pr-8 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent appearance-none"
+                          >
+                            <option value="">Select department</option>
+                            {departments.map(dept => (
+                              <option key={dept} value={dept}>{dept}</option>
+                            ))}
+                          </select>
+                          <ChevronDown className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setNewOptionContext({ type: 'department' });
+                              setShowNewOptionModal(true);
+                            }}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-500 transition-colors"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  />
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Location
+                    </label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        {...register('location')}
+                        type="text"
+                        placeholder="City, Country"
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Position Description
+                    {watchedPositionDescription && (
+                      <span className="text-xs text-gray-500 ml-2">
+                        ({watchedPositionDescription.length}/500 characters)
+                      </span>
+                    )}
+                  </label>
+                  <textarea
+                    {...register('positionDescription')}
+                    rows={3}
+                    maxLength={500}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    placeholder="Describe the role and responsibilities..."
+                  />
+                  {errors.positionDescription && (
+                    <p className="text-red-500 text-xs mt-1">{errors.positionDescription.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Skills Section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                      <Tag className="text-white w-3 h-3" />
+                    </div>
+                    <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                      Skills & Expertise
+                    </h2>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewOptionContext({ type: 'skill' });
+                      setShowNewOptionModal(true);
+                    }}
+                    className="flex items-center space-x-1 px-2 py-1 text-xs bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+                  >
+                    <Plus size={12} />
+                    <span>Add Skill</span>
+                  </button>
+                </div>
+                
+                <Controller
+                  name="skills"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowTagDropdown(!showTagDropdown)}
+                        className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white hover:border-orange-500 dark:hover:border-orange-400 transition-colors"
+                      >
+                        <span className="text-sm">
+                          {field.value?.length ? `${field.value.length} skills selected` : 'Select skills'}
+                        </span>
+                        <ChevronDown size={16} className={`transition-transform ${showTagDropdown ? 'rotate-180' : ''}`} />
+                      </button>
+                      
+                      {showTagDropdown && (
+                        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                          {skillOptions.map((skill) => (
+                            <button
+                              key={skill}
+                              type="button"
+                              onClick={() => handleSkillSelect(skill)}
+                              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                                field.value?.includes(skill)
+                                  ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400'
+                                  : 'text-gray-900 dark:text-white'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span>{skill}</span>
+                                {field.value?.includes(skill) && <Check size={14} />}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {field.value && field.value.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {field.value.map((skill) => (
+                            <span
+                              key={skill}
+                              className="inline-flex items-center space-x-1 px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-md text-xs"
+                            >
+                              <span>{skill}</span>
+                              <button
+                                type="button"
+                                onClick={() => handleSkillSelect(skill)}
+                                className="hover:text-orange-800 dark:hover:text-orange-200"
+                              >
+                                <X size={12} />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
+
+              {/* Contract Information */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-xs font-bold">2</span>
                   </div>
                   <h2 className="text-base font-semibold text-gray-900 dark:text-white">
-                    Professional Details
+                    Contract Information
                   </h2>
                 </div>
 
-                {/* Status & Contract Type */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Employment
-                  </label>
-                  <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
-                    <div className="flex-1 relative">
-                      <Controller
-                        name="status"
-                        control={control}
-                        render={({ field }) => (
-                          <select
-                            {...field}
-                            className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                          >
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="pending">Pending</option>
-                          </select>
-                        )}
-                      />
-                      <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
-                    </div>
-                    <div className="flex-1 relative">
-                      <Controller
-                        name="contractType"
-                        control={control}
-                        render={({ field }) => (
-                          <select
-                            {...field}
-                            className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white appearance-none pr-10 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-sm"
-                          >
-                            <option value="full-time">Full-time</option>
-                            <option value="part-time">Part-time</option>
-                            <option value="contractor">Contractor</option>
-                            <option value="intern">Intern</option>
-                          </select>
-                        )}
-                      />
-                      <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Status
+                    </label>
+                    <select
+                      {...register('status')}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="pending">Pending</option>
+                    </select>
                   </div>
-                </div>
 
-                {/* Department & Salary */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Department & Salary
-                  </label>
-                  <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
-                    <div className="flex-1 relative">
-                      <Controller
-                        name="department"
-                        control={control}
-                        render={({ field }) => (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => setShowDepartmentDropdown(!showDepartmentDropdown)}
-                              className="w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
-                            >
-                              <span className={field.value ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}>
-                                {field.value || 'Select department...'}
-                              </span>
-                              <ChevronDown className={`h-4 w-4 transition-transform ${showDepartmentDropdown ? 'rotate-180' : ''}`} />
-                            </button>
-                            {showDepartmentDropdown && (
-                              <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
-                                <div className="max-h-48 overflow-y-auto">
-                                  {departments.map(dept => (
-                                    <button
-                                      key={dept}
-                                      type="button"
-                                      onClick={() => {
-                                        field.onChange(dept);
-                                        setShowDepartmentDropdown(false);
-                                      }}
-                                      className="w-full text-left px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-700/50 text-sm text-gray-900 dark:text-white"
-                                    >
-                                      {dept}
-                                    </button>
-                                  ))}
-                                </div>
-                                <div className="border-t border-gray-200 dark:border-gray-600 p-3">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setNewOptionContext({ type: 'department' });
-                                      setShowNewOptionModal(true);
-                                    }}
-                                    className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-purple-50 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-500/30 transition-colors text-sm"
-                                  >
-                                    <Plus className="h-4 w-4" />
-                                    <span>Add New Department</span>
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                          </>
-                        )}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <input
-                        {...register('salary', { valueAsNumber: true })}
-                        type="number"
-                        placeholder="Annual salary"
-                        className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 text-sm"
-                      />
-                    </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Contract Type
+                    </label>
+                    <select
+                      {...register('contractType')}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    >
+                      <option value="full-time">Full-time</option>
+                      <option value="part-time">Part-time</option>
+                      <option value="contractor">Contractor</option>
+                      <option value="intern">Intern</option>
+                    </select>
                   </div>
-                </div>
 
-                {/* Skills */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Skills
-                  </label>
-                  <div className="sm:col-span-9">
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setShowSkillDropdown(!showSkillDropdown)}
-                        className="w-full flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 text-sm"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <Tag className="h-4 w-4 text-gray-400" />
-                          <span className="truncate">
-                            {watchedSkills && watchedSkills.length > 0
-                              ? `${watchedSkills.length} skills selected`
-                              : 'Select skills...'}
-                          </span>
-                        </div>
-                        <ChevronDown
-                          className={`h-4 w-4 transition-transform flex-shrink-0 ${showSkillDropdown ? 'rotate-180' : ''}`}
-                        />
-                      </button>
-
-                      {showSkillDropdown && (
-                        <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg">
-                          <div className="p-3">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setNewOptionContext({ type: 'skill' });
-                                setShowNewOptionModal(true);
-                              }}
-                              className="w-full flex items-center justify-center space-x-2 px-3 py-2 bg-orange-50 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-500/30 transition-colors text-sm"
-                            >
-                              <Plus className="h-4 w-4" />
-                              <span>Add New Skill</span>
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    {watchedSkills && watchedSkills.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {watchedSkills.map(skill => (
-                          <span
-                            key={skill}
-                            className="inline-flex items-center space-x-1 px-2 py-1 bg-orange-100 dark:bg-orange-600/20 text-orange-600 dark:text-orange-400 text-xs rounded-md"
-                          >
-                            <span>{skill}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleSkillSelect(skill)}
-                              className="hover:text-orange-800 dark:hover:text-orange-300"
-                            >
-                              <X size={12} />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Salary (Optional)
+                    </label>
+                    <input
+                      {...register('salary', { valueAsNumber: true })}
+                      type="number"
+                      min="0"
+                      step="1000"
+                      placeholder="0"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    {errors.salary && (
+                      <p className="text-red-500 text-xs mt-1">{errors.salary.message}</p>
                     )}
-                  </div>
-                </div>
-
-                {/* Position Description */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-start">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right sm:pt-2">
-                    Position Description
-                  </label>
-                  <div className="sm:col-span-9">
-                    <textarea
-                      {...register('positionDescription')}
-                      rows={3}
-                      placeholder="Describe the role and responsibilities..."
-                      className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm resize-none ${
-                        errors.positionDescription
-                          ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                          : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                      }`}
-                    />
-                    <div className="flex justify-between items-center mt-1">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {watchedPositionDescription?.length || 0}/500 characters
-                      </span>
-                      {errors.positionDescription && (
-                        <p className="text-red-500 text-xs">{errors.positionDescription.message}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Social Links */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Social Links
-                  </label>
-                  <div className="sm:col-span-9 space-y-3 sm:space-y-0 sm:flex sm:space-x-4">
-                    <div className="flex-1 relative">
-                      <Linkedin className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                      <input
-                        {...register('linkedin')}
-                        type="url"
-                        placeholder="LinkedIn profile URL"
-                        className={`w-full bg-gray-50 dark:bg-gray-800/50 border rounded-lg pl-10 pr-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-sm ${
-                          errors.linkedin
-                            ? 'border-red-300 dark:border-red-500/50 focus:ring-red-500/50'
-                            : 'border-gray-300 dark:border-gray-700/50 focus:ring-blue-500/50'
-                        }`}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <input
-                        {...register('skype')}
-                        placeholder="Skype username"
-                        className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
-                      />
-                    </div>
-                  </div>
-                  {errors.linkedin && (
-                    <div className="sm:col-span-9 sm:col-start-4">
-                      <p className="text-red-500 text-sm mt-1">{errors.linkedin.message}</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Individual Contractor Toggle */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Contractor Type
-                  </label>
-                  <div className="sm:col-span-9">
-                    <Controller
-                      name="isIndividual"
-                      control={control}
-                      render={({ field }) => (
-                        <button
-                          type="button"
-                          onClick={() => field.onChange(!field.value)}
-                          className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm w-full sm:w-auto ${
-                            field.value
-                              ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-300 dark:border-blue-500/30'
-                              : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 border border-gray-300 dark:border-gray-700/50'
-                          }`}
-                        >
-                          <span>
-                            {field.value ? 'Individual Contractor' : 'Company Employee'}
-                          </span>
-                        </button>
-                      )}
-                    />
                   </div>
                 </div>
               </div>
 
-              {/* Section 3 - File Upload */}
+              {/* Social Links */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-xs font-bold">3</span>
                   </div>
                   <h2 className="text-base font-semibold text-gray-900 dark:text-white">
-                    Documents
+                    Social Links
                   </h2>
                 </div>
 
-                {/* Resume Upload */}
-                <div className="flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:gap-3 sm:items-center">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-300 sm:col-span-3 sm:text-right">
-                    Resume/CV
-                  </label>
-                  <div className="sm:col-span-9">
-                    <Controller
-                      name="resumeFile"
-                      control={control}
-                      render={({ field }) => (
-                        <div className="flex items-center space-x-3">
-                          <div className="relative">
-                            <input
-                              type="file"
-                              accept=".pdf,.doc,.docx"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                field.onChange(file || null);
-                              }}
-                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            />
-                            <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
-                              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
-                                <Upload className="w-4 h-4" />
-                                <span>Choose file</span>
-                              </div>
-                            </div>
-                          </div>
-                          {field.value && (
-                            <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
-                              <span>{field.value.name}</span>
-                              <button
-                                type="button"
-                                onClick={() => field.onChange(null)}
-                                className="text-red-500 hover:text-red-600"
-                              >
-                                <X size={16} />
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      LinkedIn
+                    </label>
+                    <div className="relative">
+                      <Linkedin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        {...register('linkedin')}
+                        type="url"
+                        placeholder="https://linkedin.com/in/username"
+                        className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      />
+                    </div>
+                    {errors.linkedin && (
+                      <p className="text-red-500 text-xs mt-1">{errors.linkedin.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Skype
+                    </label>
+                    <input
+                      {...register('skype')}
+                      type="text"
+                      placeholder="skype-username"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      PDF, DOC, DOCX (max 10MB)
-                    </p>
                   </div>
                 </div>
               </div>
             </div>
           </form>
-
-          {createCoworkerMutation.isError && (
-            <div className="mx-4 mb-4 p-3 bg-red-100 dark:bg-red-500/10 border border-red-300 dark:border-red-500/30 rounded-lg">
-              <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
-                <span>Failed to save team member. Please try again.</span>
-              </div>
-            </div>
-          )}
-
-          <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-800/30">
-            <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-              <div className="flex items-center space-x-4">
-                <span>Press Ctrl+S to save</span>
-                <span>•</span>
-                <span>Press Esc to cancel</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                {createCoworkerMutation.isSuccess && (
-                  <div className="flex items-center space-x-1 text-green-500 dark:text-green-400">
-                    <Check size={14} />
-                    <span>Saved</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* Skill Dialog Modal */}
-        {showSkillDialog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-sm">
-              <div className="p-4">
-                <div className="flex items-center space-x-2 mb-3">
-                  <div className="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
-                    <Tag className="text-white w-3 h-3" />
-                  </div>
-                  <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                    Add New Skill
-                  </h3>
-                </div>
-                
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    value={newSkillInput}
-                    onChange={(e) => setNewSkillInput(e.target.value)}
-                    onKeyDown={handleSkillDialogKeyDown}
-                    placeholder="Enter skill name..."
-                    className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
-                    autoFocus
-                  />
-                  
-                  <div className="flex items-center justify-end space-x-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowSkillDialog(false);
-                        setNewSkillInput('');
-                      }}
-                      className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={addNewSkill}
-                      disabled={!newSkillInput.trim()}
-                      className={`px-3 py-1.5 text-sm rounded font-medium transition-all ${
-                        newSkillInput.trim()
-                          ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white hover:from-orange-600 hover:to-purple-700'
-                          : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                      }`}
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Position Dialog Modal */}
-        {showPositionDialog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-sm">
-              <div className="p-4">
-                <div className="flex items-center space-x-2 mb-3">
-                  <div className="w-6 h-6 rounded bg-gradient-to-br from-orange-500 to-purple-600 flex items-center justify-center">
-                    <Briefcase className="text-white w-3 h-3" />
-                  </div>
-                  <h3 className="text-base font-medium text-gray-900 dark:text-white">
-                    Add New Position
-                  </h3>
-                </div>
-                
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    value={newPositionInput}
-                    onChange={(e) => setNewPositionInput(e.target.value)}
-                    onKeyDown={handlePositionDialogKeyDown}
-                    placeholder="Enter position title..."
-                    className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all"
-                    autoFocus
-                  />
-                  
-                  <div className="flex items-center justify-end space-x-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowPositionDialog(false);
-                        setNewPositionInput('');
-                      }}
-                      className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={addNewPosition}
-                      disabled={!newPositionInput.trim()}
-                      className={`px-3 py-1.5 text-sm rounded font-medium transition-all ${
-                        newPositionInput.trim()
-                          ? 'bg-gradient-to-r from-orange-500 to-purple-600 text-white hover:from-orange-600 hover:to-purple-700'
-                          : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                      }`}
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* New Option Modal */}
         <NewOptionModal
           isOpen={showNewOptionModal}
-          context={newOptionContext}
           onClose={() => {
             setShowNewOptionModal(false);
             setNewOptionContext(null);
           }}
+          context={newOptionContext}
           onSave={handleNewOptionSave}
         />
       </div>
